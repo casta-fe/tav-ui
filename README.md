@@ -15,3 +15,5 @@
 - 每次迁移组件结束后打一次包查看dist下是否生成type文件夹
 
 - utils/hooks/components中如果用到utils/hooks/components的情况，不能直接通过入口导入，要找到确定的文件再导入，避免循环依赖
+
+- 组件名称已Ta开头，驼峰命名
