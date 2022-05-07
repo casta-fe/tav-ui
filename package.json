@@ -21,6 +21,7 @@
     "@purge-icons/generated": "^0.7.0",
     "@tav-ui/build": "workspace:*",
     "@tav-ui/components": "workspace:*",
+    "@tav-ui/enums": "workspace:*",
     "@tav-ui/hooks": "workspace:*",
     "@tav-ui/theme-chalk": "workspace:*",
     "@tav-ui/utils": "workspace:*",

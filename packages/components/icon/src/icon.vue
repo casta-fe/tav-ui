@@ -1,15 +1,16 @@
 <script lang="ts">
-import { isString, propTypes } from '@tav-ui/utils'
+import { isString } from '@tav-ui/utils/is'
+import { propTypes } from '@tav-ui/utils/propTypes'
 import Iconify from '@iconify/iconify'
 import type { CSSProperties, PropType } from 'vue'
 import { computed, defineComponent, nextTick, onMounted, ref, unref, watch } from 'vue'
 import SvgIcon from '../../icon-svg'
 
 const SVG_END_WITH_FLAG = '|svg'
-declare type Nullable<T> = T | null;
-declare type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>;
+declare type Nullable<T> = T | null
+declare type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
 export default defineComponent({
-  name: 'Icon',
+  name: 'TaIcon',
   components: { SvgIcon },
   props: {
     // icon name

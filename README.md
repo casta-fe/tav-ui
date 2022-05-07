@@ -16,12 +16,4 @@
 
 - utils/hooks/components中如果用到utils/hooks/components的情况，不能直接通过入口导入，要找到确定的文件再导入，避免循环依赖
 
-- 组件必须有name，格式：TaXx 驼峰命名， script setup 添加name的方式是在文件最下方添加：
-
-```javascript
-<script lang="ts">
-export default {
-  name: "TaBasicTitle"
-}
-</script>
-```
+- 组件必须有name，格式：TaXx 驼峰命名， script setup 添加name的方式把setup去掉，转换文件为非setup的形式或者tsx文件，否则生成类型文件报错
