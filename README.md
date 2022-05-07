@@ -2,18 +2,45 @@
 
 `tav-ui` 是基于 Vue 3 + Typescript + Vite 技术开发的前端 Vue 组件库。该项目采用`pnpm+monorepo`进行包管理,使用`gulp`控制打包流程,`rollup`进行打包。
 
-# tips
+## Demo
 
-- 文件中用到的自定义类型必须手动复制粘贴过去
+## 目标
 
-- 组件prop提出来放在同层的types中导入使用
+- 开发出完备的组件库
+- 提供易用好用，易维护，易拓展的调用方式
+- 抱团进步，一起学习，共同维护，相互 review，步步高升
+- 熟悉组件库开发，熟悉开源项目流程
+- 300start
 
-- 通过 pnpm plop:cmp 创建组件
+## 参与贡献
 
-- 每个组件必须只有一个导出，可以把之前的复合组件拆开，参考 basic-*
+使用 Issues 管理项目。
+[Issues](https://github.com/zgsgs/tav-ui/issues)
 
-- 每次迁移组件结束后打一次包查看dist下是否生成type文件夹
+## 待完成需求列表
 
-- utils/hooks/components中如果用到utils/hooks/components的情况，不能直接通过入口导入，要找到确定的文件再导入，避免循环依赖
+[New feature](https://github.com/zgsgs/tav-ui/labels/feature)
 
-- 组件名称已Ta开头，驼峰命名
+## 任务是否被领取
+
+- 当 issue 存在 `Developer` 或格式为 `Developer:username` 的 `label`，既已被领取。
+- 否则，视为未被领取。
+
+## 如何领取任务
+
+- 项目成员：对应 issue 添加 `label`，格式为：`Developer:username`。
+- 非项目成员：issue 留言，管理员会为你添加 `label` -> `Developer`。
+
+## 参考项目汇总
+
+拿到一个需求，没有灵感，不知道该怎么下手？
+
+如果你遇到这样的问题，那么你可以[去这里](https://github.com/zgsgs/tav-ui/discussions/4)研究一下这些项目，寻找一些灵感～
+
+## 加入小组
+
+项目初期暂时不增加社群维护成本，等做出一定成绩再吸纳更多优秀的同学参与。
+
+## LICENSE
+
+MIT, Copyright (c) 2021 zgsgs.
