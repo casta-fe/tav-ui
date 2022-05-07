@@ -7,5 +7,5 @@ export * from './button-modal'
 export * from './button-popconfirm'
 export * from './form'
 export * from './basic-arrow'
-// export * from './basic-help';
-// export * from './basic-title';
+export * from './basic-help'
+export * from './basic-title'

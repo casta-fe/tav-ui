@@ -10,9 +10,15 @@ import HelloWorld from './components/HelloWorld.vue'
   <TgIcon color="red" :size="30" class="tg-icon-dropbox">
     Icon Test
   </TgIcon>
-  <TaButton type="text"
-                  preIcon="ant-design:plus-square-filled"
-                  preIconColor="#276dff">aaa</TaButton>
+  <TaButton type="text" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
+    aaa
+  </TaButton>
+  <TaBasicArrow />
+  <TaBasicHelp :text="['1','2']" />
+  <br>
+  <TaBasicTitle icon="ant-design:setting-filled" :help-message="['3','4']">
+    basic title
+  </TaBasicTitle>
 </template>
 
 <style>

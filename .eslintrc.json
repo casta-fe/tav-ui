@@ -1,5 +1,8 @@
 {
   "extends": [
     "@zgsgs"
-  ]
+  ],
+  "rules": {
+    "react/no-unknown-property": 0
+  }
 }
