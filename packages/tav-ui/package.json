@@ -1,0 +1,17 @@
+{
+  "name": "tav-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "typings": "index.d.ts",
+  "output": {
+    "exports": "named"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "i7eo",
+  "license": "ISC"
+}

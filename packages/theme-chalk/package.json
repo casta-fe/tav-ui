@@ -1,0 +1,11 @@
+{
+  "name": "@tav-ui/theme-chalk",
+  "version": "1.0.0",
+  "main": "index.css",
+  "style": "index.css",
+  "scripts": {
+    "build": "gulp --require sucrase/register/ts"
+  },
+  "author": "",
+  "license": "ISC"
+}

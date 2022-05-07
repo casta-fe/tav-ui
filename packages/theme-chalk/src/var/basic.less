@@ -1,0 +1,58 @@
+@namespace: ta;
+@gap16:16px;
+@gapy: 16px;
+@gapx: 24px;
+@item-hover-bg: #f5f5f5;
+@primiary-text-color: #555555;
+@secondary-text-color: #999999;
+@primary-color: #276dff;
+@primiary-color:#276dff;
+//less loader
+@layout-body-background: #F6F8FF;
+@info-color: @primary-color;
+@processing-color: @primary-color;
+@success-color: #55D187; //  Success color
+@error-color: #ED6F6F; //  False color
+@warning-color: #EFBD47; //   Warning color
+@text-color: #555555;
+@font-size-base: 14px;
+@border-radius-base: 4px;
+@border-color-base: #EAEAEA;
+@link-color:@primary-color;
+@app-content-background: #F8F8FB;
+@radio-size:14px;
+@checkbox-size:14px;
+@form-item-margin-bottom:10px;
+@table-header-bg:#F8F8FB;
+@table-row-hover-bg:#F8F8FB;
+@table-selected-row-bg:#DEE8FF;
+
+//lessloader end
+@multiple-height: 30px;
+@header-height: 50px;
+// logo width
+@logo-width: 32px;
+@side-drag-z-index: 200;
+
+@page-loading-z-index: 10000;
+
+@lock-page-z-index: 3000;
+
+@layout-header-fixed-z-index: 510;
+
+@multiple-tab-fixed-z-index: 500;
+
+@layout-sider-fixed-z-index: 505;
+
+@layout-mix-sider-fixed-z-index: 550;
+
+@preview-comp-z-index: 1000;
+
+@page-footer-z-index: 99;
+@component-background: #fff;
+.bem(@n; @content) {
+  @{namespace}-@{n} {
+    @content();
+  }
+}
+@text-color-secondary: #8b949e;

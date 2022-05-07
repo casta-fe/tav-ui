@@ -1,0 +1,30 @@
+{
+  "name": "@tav-ui/docs",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "serve": "vitepress serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zgsgs/tav-ui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zgsgs/tav-ui/issues"
+  },
+  "homepage": "https://github.com/zgsgs/tav-ui#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "@vue/theme": "^1.0.1",
+    "unplugin-vue-components": "^0.18.5",
+    "vite": "^2.9.1",
+    "vitepress": "^0.22.3",
+    "vue": "^3.2.31"
+  }
+}

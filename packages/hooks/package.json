@@ -1,0 +1,11 @@
+{
+  "name": "@tav-ui/hooks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "module": "index.ts",
+  "scripts": {
+    "build": "gulp --require sucrase/register/ts -f ./gulpfile.ts"
+  },
+  "author": "i7eo",
+  "license": "ISC"
+}
