@@ -84,6 +84,7 @@ async function genTypes() {
       paths: {
         '@tav-ui/*': ['packages/*'],
       },
+      preserveSymlinks: true,
       skipLibCheck: true,
       strict: false,
     },
@@ -138,6 +139,15 @@ async function genTypes() {
       }
     }),
   )
+
+  const diagnostics = project.getPreEmitDiagnostics().filter(diagnostic => diagnostic.getSourceFile()?.getFilePath())
+  if (diagnostics.length > 0) {
+    console.error(project.formatDiagnosticsWithColorAndContext(diagnostics))
+    const err = new Error('Failed to generate dts.')
+    console.error(err)
+    throw err
+  }
+
   await project.emit({
     // 默认是放到内存中的
     emitOnlyDtsFiles: true,
