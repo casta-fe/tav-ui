@@ -2,9 +2,9 @@ import type { NamePath, RuleObject } from 'ant-design-vue/lib/form/interface'
 import type { RowProps } from 'ant-design-vue/lib/grid/Row'
 import type { CSSProperties, VNode } from 'vue'
 import type { ButtonProps as AntdButtonProps } from '../../../button/src/types'
+import type { TableActionType } from '../../../table/src/types/table'
 import type { FormItem } from './formItem'
 import type { ColEx, ComponentType } from './index'
-// import type { TableActionType } from "@casta-fe-playground/components/Table";
 
 export type FieldMapToTime = [string, [string, string], string?][]
 
@@ -150,7 +150,7 @@ export interface FormSchema {
   componentProps?:
   | ((opt: {
     schema: FormSchema
-    // tableAction: TableActionType;
+    tableAction: TableActionType
     formActionType: FormActionType
     formModel: Recordable
   }) => Recordable)

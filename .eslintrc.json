@@ -3,6 +3,7 @@
     "@zgsgs"
   ],
   "rules": {
-    "react/no-unknown-property": 0
+    "react/no-unknown-property": 0,
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }
