@@ -450,6 +450,7 @@ export type CellFormat =
   | ((text: string, record: Recordable, index: number) => string | number)
   | Map<string | number, any>
 
+// @ts-ignore
 export interface BasicColumn extends ColumnProps {
   children?: BasicColumn[];
   filters?: {

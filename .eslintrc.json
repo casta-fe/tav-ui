@@ -4,6 +4,7 @@
   ],
   "rules": {
     "react/no-unknown-property": 0,
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/prefer-ts-expect-error": "off"
   }
 }

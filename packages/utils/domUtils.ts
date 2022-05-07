@@ -173,7 +173,7 @@ export function useRafThrottle<T extends FunctionArgs>(fn: T): any {
       return
     locked = true
     window.requestAnimationFrame(() => {
-      // @ts-expect-error
+      // @ts-ignore
       fn.apply(this, args)
       locked = false
     })
