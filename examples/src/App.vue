@@ -2,22 +2,44 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import { defineComponent } from '@vue/runtime-core'
-import { TaLoadingCreate } from '../../dist/index.esm.js'
+import { ref } from 'vue'
+// import { TaLoadingCreate } from '../../dist/index.esm.js'
 import * as HelloWorld from './components/HelloWorld.vue'
+// import TimeLineList from './components/TimeLineList.vue'
+
 export default defineComponent({
   components: {
     HelloWorld,
+    // TimeLineList
   },
   setup() {
-    TaLoadingCreate({
-      tip: '正在加载页面 😉',
-      size: 'large',
-      loading: true,
-      absolute: false,
-    },
-    document.body,
-    )
-    return {}
+    // 函数方式调用loading
+    // TaLoadingCreate(
+    //   {
+    //     tip: '正在加载页面 😉',
+    //     size: 'large',
+    //     loading: true,
+    //     absolute: false,
+    //   },
+    //   document.body,
+    // )
+    const visible = ref(false)
+    const modalOk = () => {
+      alert('ok callback')
+      visible.value = false
+    }
+    const modalCancel = () => {
+      alert('cancel callback')
+    }
+    const modelOpen = () => {
+      visible.value = true
+    }
+    return {
+      modalOk,
+      modalCancel,
+      modelOpen,
+      visible,
+    }
   },
 })
 </script>
@@ -38,6 +60,18 @@ export default defineComponent({
     basic title
   </TaBasicTitle>
   <!-- <TaLoading  :loading="true"></TaLoading> -->
+  <TaButton type="danger" @click="modelOpen">
+    打开弹窗
+  </TaButton>
+  <TaModal
+    v-model:visible="visible"
+    title="sksksk"
+    @ok="modalOk"
+    @cancel="modalCancel"
+  >
+    <div>ddkdkkdkd</div>
+  </TaModal>
+  <TimeLineList />
 </template>
 
 <style>

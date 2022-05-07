@@ -10,3 +10,6 @@ export * from './basic-arrow'
 export * from './basic-help'
 export * from './basic-title'
 export * from './loading'
+export * from './modal'
+
+// export * from './timeline';
