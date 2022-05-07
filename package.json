@@ -10,7 +10,7 @@
     "docs:build": "pnpm -C docs build",
     "docs:serve": "pnpm -C docs serve",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.json --max-warnings 0 --fix",
-    "lint:fix": "lint-staged",
+    "lint:staged": "lint-staged",
     "plop:cmp": "pnpm -C internal/plop component",
     "plop:api": "pnpm -C internal/plop api",
     "prepare": "husky install"
