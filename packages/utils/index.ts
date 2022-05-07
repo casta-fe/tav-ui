@@ -1,5 +1,6 @@
 export * from './basic'
 export * from './dateUtil'
+export * from './domUtils'
 export * from './with-install'
 export * from './with-name'
 export * from './propTypes'

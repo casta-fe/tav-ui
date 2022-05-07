@@ -16,6 +16,7 @@ importers:
       '@tav-ui/components': workspace:*
       '@tav-ui/enums': workspace:*
       '@tav-ui/hooks': workspace:*
+      '@tav-ui/settings': workspace:*
       '@tav-ui/theme-chalk': workspace:*
       '@tav-ui/utils': workspace:*
       '@types/gulp': ^4.0.9
@@ -47,6 +48,7 @@ importers:
       husky: ^7.0.4
       lint-staged: ^12.4.1
       lodash-es: ^4.17.21
+      resize-observer-polyfill: ^1.5.1
       rimraf: ^3.0.2
       rollup: ^2.70.1
       rollup-plugin-typescript2: ^0.31.2
@@ -66,11 +68,13 @@ importers:
       '@tav-ui/components': link:packages/components
       '@tav-ui/enums': link:packages/enums
       '@tav-ui/hooks': link:packages/hooks
+      '@tav-ui/settings': link:packages/settings
       '@tav-ui/theme-chalk': link:packages/theme-chalk
       '@tav-ui/utils': link:packages/utils
       '@vueuse/core': 8.4.0_vue@3.2.31
       '@vueuse/shared': 6.9.2_vue@3.2.31
       lodash-es: 4.17.21
+      resize-observer-polyfill: 1.5.1
     devDependencies:
       '@commitlint/cli': 16.2.4
       '@commitlint/config-conventional': 16.2.4
@@ -206,6 +210,9 @@ importers:
     specifiers: {}
 
   packages/hooks:
+    specifiers: {}
+
+  packages/settings:
     specifiers: {}
 
   packages/tav-ui:
@@ -6846,7 +6853,6 @@ packages:
 
   /resize-observer-polyfill/1.5.1:
     resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}
-    dev: true
 
   /resolve-dir/1.0.1:
     resolution: {integrity: sha1-eaQGRMNivoLybv/nOcm7U4IEb0M=}

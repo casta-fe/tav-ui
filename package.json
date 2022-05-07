@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -C examples dev",
-    "build": "gulp --require sucrase/register/ts -f internal/build/gulpfile.ts --max_old_space_size=8192",
+    "build": "gulp --require sucrase/register/ts -f internal/build/gulpfile.ts --max_old_space_size=6144",
     "preview": "vite preview",
     "docs:dev": "pnpm -C docs dev",
     "docs:build": "pnpm -C docs build",
@@ -23,11 +23,13 @@
     "@tav-ui/components": "workspace:*",
     "@tav-ui/enums": "workspace:*",
     "@tav-ui/hooks": "workspace:*",
+    "@tav-ui/settings": "workspace:*",
     "@tav-ui/theme-chalk": "workspace:*",
     "@tav-ui/utils": "workspace:*",
     "@vueuse/core": "^8.2.5",
     "@vueuse/shared": "^6.8.0",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
