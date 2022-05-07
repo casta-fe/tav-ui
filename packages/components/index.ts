@@ -12,4 +12,4 @@ export * from './basic-title'
 export * from './loading'
 export * from './modal'
 
-// export * from './timeline';
+export * from './timeline'
