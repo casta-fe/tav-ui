@@ -1,7 +1,7 @@
 // import { WIcon,WButton } from "@tav-ui/components";
 import * as components from '@tav-ui/components'
 import type { App } from 'vue'
-
+import TaLoadingCreate from '@tav-ui/components/loading/src/loading-methods'
 // const components = [WIcon,WButton];
 
 const install = (app: App) => {
@@ -19,6 +19,6 @@ const install = (app: App) => {
 export default {
   install,
 }
-
+export { TaLoadingCreate }
 // use: import { WIcon } from 'tav-ui
 export * from '@tav-ui/components'

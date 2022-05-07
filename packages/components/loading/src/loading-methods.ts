@@ -2,7 +2,7 @@ import { createVNode, defineComponent, h, reactive, render } from 'vue'
 import LoadingConstructor from './loading.vue'
 import type { LoadingCreateProps } from './types'
 
-function createLoading(props?: Partial<LoadingCreateProps>, target?: HTMLElement, wait = false) {
+function TaLoadingCreate(props?: Partial<LoadingCreateProps>, target?: HTMLElement, wait = false) {
   const data = reactive({
     tip: '',
     loading: true,
@@ -60,5 +60,4 @@ function createLoading(props?: Partial<LoadingCreateProps>, target?: HTMLElement
     },
   }
 }
-export { createLoading }
-export default createLoading
+export default TaLoadingCreate
