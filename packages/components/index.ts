@@ -22,3 +22,5 @@ export * from './timeLine'
 export * from './time'
 // export * from './tree';
 export * from './context-menu'
+
+export * from './input-number-range'
