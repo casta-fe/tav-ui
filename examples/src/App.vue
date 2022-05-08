@@ -5,12 +5,14 @@ import { defineComponent } from '@vue/runtime-core'
 import { ref } from 'vue'
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import * as HelloWorld from './components/HelloWorld.vue'
-import TimeLineList from './components/TimeLineList.vue'
+import TimeLineListPage from './components/timeLineList/index.vue'
+import TimePage from './components/time/index.vue'
 
 export default defineComponent({
   components: {
     HelloWorld,
-    TimeLineList,
+    TimeLineListPage,
+    TimePage,
   },
   setup() {
     // 函数方式调用loading
@@ -71,7 +73,8 @@ export default defineComponent({
   >
     <div>ddkdkkdkd</div>
   </TaModal>
-  <TimeLineList />
+  <TimeLineListPage />
+  <TimePage />
 </template>
 
 <style>

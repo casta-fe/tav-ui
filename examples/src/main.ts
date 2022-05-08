@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import TaIcon from '@tav-ui/components/test-icon'
-import { TaBasicArrow, TaBasicHelp, TaBasicTitle, TaButton, TaLoading, TaModal, TaTimeLine } from '../../dist/index.esm.js'
+import { TaBasicArrow, TaBasicHelp, TaBasicTitle, TaButton, TaLoading, TaModal, TaTime, TaTimeLine } from '../../dist/index.esm.js'
 import App from './App.vue'
 import 'ant-design-vue/dist/antd.less'
 import '@tav-ui/theme-chalk/src/index.less'
@@ -14,5 +14,6 @@ app.use(TaBasicHelp)
 app.use(TaLoading)
 app.use(TaModal)
 app.use(TaTimeLine)
+app.use(TaTime)
 
 app.mount('#app')

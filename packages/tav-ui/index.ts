@@ -2,6 +2,7 @@
 import * as components from '@tav-ui/components'
 import type { App } from 'vue'
 import TaLoadingCreate from '@tav-ui/components/loading/src/loading-methods'
+
 // const components = [WIcon,WButton];
 
 const install = (app: App) => {
