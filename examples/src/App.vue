@@ -5,12 +5,12 @@ import { defineComponent } from '@vue/runtime-core'
 import { ref } from 'vue'
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import * as HelloWorld from './components/HelloWorld.vue'
-// import TimeLineList from './components/TimeLineList.vue'
+import TimeLineList from './components/TimeLineList.vue'
 
 export default defineComponent({
   components: {
     HelloWorld,
-    // TimeLineList
+    TimeLineList,
   },
   setup() {
     // 函数方式调用loading

@@ -17,3 +17,4 @@ export * from './table'
 export * from './test-icon'
 export * from './modal'
 
+export * from './timeLine'

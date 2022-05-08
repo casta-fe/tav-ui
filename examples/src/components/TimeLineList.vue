@@ -2,7 +2,7 @@
 // import {TimeLinePropsType } from '../../dist/types/'
 
 import { defineComponent, h, reactive } from 'vue'
-import type { TimeLinePropsType } from '~/packages/components/timeline/src/types'
+import type { TimeLinePropsType } from '../../../dist/types/components/timeLine/src/types'
 
 export default defineComponent({
   name: 'TimeLineListTest',
