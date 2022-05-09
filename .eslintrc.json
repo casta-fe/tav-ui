@@ -9,6 +9,8 @@
     "eslint-disable-next-line":"off",
     "symbol-description":"off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/prefer-ts-expect-error": "off"
+    "@typescript-eslint/prefer-ts-expect-error": "off",
+    "eqeqeq": "off"
+
   }
 }

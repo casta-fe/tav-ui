@@ -24,3 +24,5 @@ export * from './time'
 export * from './context-menu'
 
 export * from './input-number-range'
+
+export * from './file-view'

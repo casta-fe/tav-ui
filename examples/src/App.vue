@@ -8,6 +8,7 @@ import * as HelloWorld from './components/HelloWorld.vue'
 import TimeLineListPage from './components/timeLineList/index.vue'
 import TimePage from './components/time/index.vue'
 import InputNumberRangePage from './components/InputNumberRange/index.vue'
+import FileViewPage from './components/FileView/index.vue'
 
 export default defineComponent({
   components: {
@@ -15,6 +16,7 @@ export default defineComponent({
     TimeLineListPage,
     TimePage,
     InputNumberRangePage,
+    FileViewPage,
   },
   setup() {
     // 函数方式调用loading
@@ -78,6 +80,7 @@ export default defineComponent({
   <TimeLineListPage />
   <TimePage />
   <InputNumberRangePage />
+  <FileViewPage />
 </template>
 
 <style>

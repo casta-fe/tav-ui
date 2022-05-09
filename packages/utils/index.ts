@@ -8,3 +8,8 @@ export * from './is'
 export * from './log'
 export * from './helper/treeHelper'
 export * from './helper/tsxHelper'
+export * from './file/TaDownload'
+export * from './file/TaFileTypeCode'
+export * from './file/base64Conver'
+export * from './file/download'
+
