@@ -1,6 +1,7 @@
 <script lang="tsx">
 /* eslint-disable dot-notation */
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
+// import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
 import { formatToDate, getMomentFormatString } from '@tav-ui/utils/dateUtil'
 import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
 import {
@@ -419,7 +420,9 @@ export default defineComponent({
       const joinLabel = Reflect.has(props.schema, 'rulesMessageJoinLabel')
         ? rulesMessageJoinLabel
         : props.formProps['rulesMessageJoinLabel']
-      const defaultMsg = component ? `${createPlaceholderMessage(component)}${joinLabel ? label : ''}` : ''
+      const defaultMsg = component
+        ? `${createPlaceholderMessage(component)}${joinLabel ? label : ''}`
+        : ''
 
       function validator(rule: any, value: any) {
         const msg = rule.message || defaultMsg
@@ -512,7 +515,7 @@ export default defineComponent({
           const [e] = args
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[eventKey])
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[eventKey](...args)
 
           const target = e ? e.target : null
@@ -525,7 +528,7 @@ export default defineComponent({
         },
       }
 
-      const Comp = component && componentMap.get(component) as ReturnType<typeof defineComponent>
+      const Comp = component && (componentMap.get(component) as ReturnType<typeof defineComponent>)
       const size = props.formProps['size']
       const propsData: Recordable = {
         // allowClear: unref(hasEditable) ? false : true, // i7eo：添加避免触发clickoutside
@@ -589,7 +592,14 @@ export default defineComponent({
         }
       }
       if (!renderComponentContent)
-        return unref(hasEditable) ? <Comp vAutoFocus {...compAttr} /> : <Comp {...compAttr} />
+        return <Comp {...compAttr} />
+        // return unref(hasEditable)
+        //   ? (
+        //       withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])
+        //     )
+        //   : (
+        //   <Comp {...compAttr} />
+        //     )
 
       const compSlot = isFunction(renderComponentContent)
         ? { ...renderComponentContent(unref(getValues)) }
@@ -597,15 +607,14 @@ export default defineComponent({
             default: () => renderComponentContent,
           }
 
-      return unref(hasEditable)
-        ? (
-        <Comp vAutoFocus {...compAttr}>
-          {compSlot}
-        </Comp>
-          )
-        : (
-        <Comp {...compAttr}>{compSlot}</Comp>
-          )
+      return <Comp {...compAttr}>{compSlot}</Comp>
+      // return unref(hasEditable)
+      //   ? (
+      //       withDirectives(h(Comp, { ...compAttr }, compSlot), [[AutoFocusDirective]])
+      //     )
+      //   : (
+      //   <Comp {...compAttr}>{compSlot}</Comp>
+      //     )
       // ::==================== i7eo：更新 ///// end   ///// ====================:: //
     }
 

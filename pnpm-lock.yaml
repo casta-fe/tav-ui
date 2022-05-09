@@ -14,6 +14,7 @@ importers:
       '@rollup/plugin-node-resolve': ^13.2.0
       '@tav-ui/build': workspace:*
       '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
       '@tav-ui/enums': workspace:*
       '@tav-ui/hooks': workspace:*
       '@tav-ui/settings': workspace:*
@@ -66,6 +67,7 @@ importers:
       '@purge-icons/generated': 0.7.0
       '@tav-ui/build': link:internal/build2
       '@tav-ui/components': link:packages/components
+      '@tav-ui/directives': link:packages/directives
       '@tav-ui/enums': link:packages/enums
       '@tav-ui/hooks': link:packages/hooks
       '@tav-ui/settings': link:packages/settings
@@ -204,6 +206,9 @@ importers:
       plop: 3.1.0
 
   packages/components:
+    specifiers: {}
+
+  packages/directives:
     specifiers: {}
 
   packages/enums:

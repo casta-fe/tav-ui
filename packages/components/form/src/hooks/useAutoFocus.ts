@@ -28,7 +28,7 @@ export async function useAutoFocus({
 
     const firstItem = schemas[0]
     // Only open when the first form item is input type
-    if (!firstItem.component.includes('Input'))
+    if (!(firstItem.component as any).includes('Input'))
       return
 
     const inputEl = el.querySelector('.ant-row:first-child input') as Nullable<HTMLInputElement>

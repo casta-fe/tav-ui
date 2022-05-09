@@ -1,9 +1,9 @@
 import { isNumber } from '@tav-ui/utils/is'
 import type { Ref } from 'vue'
 import { computed, unref } from 'vue'
-import type { FormProps, FormSchema } from '../types/form'
+// import type { FormProps, FormSchema } from '../types/form'
 
-export function useItemLabelWidth(schemaItemRef: Ref<FormSchema>, propsRef: Ref<FormProps>) {
+export function useItemLabelWidth(schemaItemRef: Ref<any>, propsRef: Ref<any>) {
   return computed(() => {
     const schemaItem = unref(schemaItemRef)
     const { labelCol = {}, wrapperCol = {} } = schemaItem.itemProps || {}
