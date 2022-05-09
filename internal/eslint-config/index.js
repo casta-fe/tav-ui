@@ -206,7 +206,7 @@ module.exports = defineConfig({
 
     // import
     'import/first': 'error',
-    'import/no-duplicates': 'error',
+    'import/no-duplicates': 'warn',
     'import/order': [
       'error',
       {
@@ -237,7 +237,6 @@ module.exports = defineConfig({
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
     'import/named': 'off',
-
     // eslint-plugin-eslint-comments
     'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: true }],
   },
