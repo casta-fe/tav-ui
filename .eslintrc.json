@@ -1,16 +1,21 @@
-{
-  "extends": [
-    "@zgsgs"
-  ],
-  "rules": {
-    "react/no-unknown-property": 0,
-    "react/display-name": "off",
-    "react/prop-types":"off",
-    "eslint-disable-next-line":"off",
-    "symbol-description":"off",
-    "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/prefer-ts-expect-error": "off",
-    "eqeqeq": "off"
+// {
+//   "extends": [
+//     "@zgsgs"
+//   ],
+//   "rules": {
+//     "react/no-unknown-property": 0,
+//     "react/display-name": "off",
+//     "react/prop-types":"off",
+//     "eslint-disable-next-line":"off",
+//     "symbol-description":"off",
+//     "@typescript-eslint/ban-ts-comment": "off",
+//     "@typescript-eslint/prefer-ts-expect-error": "off",
+//     "eqeqeq": "off"
 
-  }
+//   }
+// }
+
+{
+  "root": true,
+  "extends": ["@tav-ui/eslint-config"]
 }
