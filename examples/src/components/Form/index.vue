@@ -53,9 +53,9 @@
     </TaButton>
     <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton>
   </div>
-  <TaCollapseContainer title="useForm示例">
+  <TaContainerCollapse title="useForm示例">
     <TaForm @register="register" @submit="handleSubmit" />
-  </TaCollapseContainer>
+  </TaContainerCollapse>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';

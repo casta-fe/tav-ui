@@ -10,6 +10,7 @@ import TimePage from './components/time/index.vue';
 import InputNumberRangePage from './components/InputNumberRange/index.vue';
 import FileViewPage from './components/FileView/index.vue';
 import FormPage from './components/Form/index.vue';
+import TreePage from './components/Tree/index.vue';
 
 export default defineComponent({
   components: {
@@ -19,6 +20,7 @@ export default defineComponent({
     InputNumberRangePage,
     FileViewPage,
     FormPage,
+    TreePage,
   },
   setup() {
     // 函数方式调用loading
@@ -74,6 +76,7 @@ export default defineComponent({
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />
+  <TreePage />
   <FormPage />
 </template>
 

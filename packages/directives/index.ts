@@ -17,6 +17,6 @@
 // export {default as rippleDirective} from "./src/ripple"
 export { default as autoFocusDirective } from './src/autoFocus';
 export { default as clickOutside } from './src/clickOutside';
-// export {default as loadingDirective} from "./src/loading"
+export { default as loadingDirective } from './src/loading';
 // export {default as authDirective} from "./src/permission"
 // export {default as repeatDirective} from "./src/repeatClick"

@@ -1,8 +1,8 @@
 // import { WIcon,WButton } from "@tav-ui/components";
 import * as components from '@tav-ui/components';
-import loadingCreate from '@tav-ui/components/loading/src/loading-methods';
-import { useMessage } from '@tav-ui/components/useMessage';
-import { useForm } from '@tav-ui/components/form/src/hooks/useForm';
+// import loadingCreate from '@tav-ui/components/loading/src/loading-methods';
+// import { useMessage } from '@tav-ui/components/useMessage';
+// import { useForm } from '@tav-ui/components/form/src/hooks/useForm';
 import type { App } from 'vue';
 
 // const components = [WIcon,WButton];
@@ -22,6 +22,5 @@ const install = (app: App) => {
 export default {
   install,
 };
-export { loadingCreate, useMessage, useForm };
-// use: import { WIcon } from 'tav-ui
+
 export * from '@tav-ui/components';
