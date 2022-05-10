@@ -17,6 +17,7 @@ export const basicArrowProps = {
    * Cancel padding/margin for inline
    */
   inset: { type: Boolean },
+  iconStyle: { type: String },
 };
 
 export type BasicArrowProps = ExtractPropTypes<typeof basicArrowProps>;

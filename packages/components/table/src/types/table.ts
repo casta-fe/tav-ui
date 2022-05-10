@@ -8,6 +8,7 @@ import type {
 } from 'ant-design-vue/lib/table/interface';
 import type { VNodeChild } from 'vue';
 import type { FormProps, FormSchema } from '../../../form/src/types/form';
+import type { PermissionButton, useAction } from '../props';
 import type { ComponentType } from './componentType';
 import type { PaginationProps } from './pagination';
 
@@ -23,21 +24,6 @@ export interface TableCurrentDataSource<T = Recordable> {
 export interface FilterForms {
   inputForm?: Omit<FormSchema, 'label' | 'component'> | FormSchema;
   pannelForm?: FormSchema[];
-}
-
-interface useAction {
-  ifShow: boolean;
-  handleBeforeAction?: () => void;
-  handleAction?: () => void;
-  handleAfterAction?: () => void;
-}
-
-interface PermissionButton {
-  add: string;
-  delete: string;
-  import: string;
-  export: string;
-  refresh: string;
 }
 
 export interface TableRowSelection<T = any> extends ITableRowSelection {
@@ -105,7 +91,7 @@ export interface GetColumnsParams {
 export type SizeType = 'default' | 'middle' | 'small' | 'large';
 
 export interface TableActionType {
-  reload: (opt?: FetchParams) => Promise<void>;
+  reload: (opt?: FetchParams) => Promise<Recordable<any>[] | undefined>;
   getSelectRows: <T = Recordable>() => T[];
   clearSelectedRowKeys: () => void;
   expandAll: () => void;

@@ -24,7 +24,8 @@
     "paths": {
       "~/*": ["./*"],
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["unplugin-vue-define-options"]
   },
   "include": [
     "examples/**/*.ts",
@@ -46,3 +47,7 @@
     "tav-ui/**"
   ]
 }
+
+// {
+//   "references": [{ "path": "./tsconfig.web.json" }]
+// }

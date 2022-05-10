@@ -7,22 +7,19 @@ export * from './button-modal';
 export * from './button-popconfirm';
 export * from './container-collapse';
 export * from './container-scroll';
+export * from './context-menu';
+export * from './dropdown';
+export * from './file-view';
 export * from './form';
 export * from './icon';
 export * from './icon-picker';
 export * from './icon-svg';
+export * from './input-number-range';
 export * from './loading';
+export * from './modal';
 export * from './scrollbar';
 export * from './table';
 export * from './test-icon';
-export * from './modal';
-
-export * from './timeLine';
-
 export * from './time';
+export * from './timeLine';
 export * from './tree';
-export * from './context-menu';
-
-export * from './input-number-range';
-
-export * from './file-view';

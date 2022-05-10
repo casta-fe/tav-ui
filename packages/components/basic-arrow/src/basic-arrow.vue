@@ -7,7 +7,7 @@ export default defineComponent({
   name: 'TaBasicArrow',
   components: { Icon },
   props: basicArrowProps,
-  setup(props, { attrs }) {
+  setup(props) {
     const prefixCls = 'ta-basic-arrow';
     // get component class
     const getClass = computed(() => {
