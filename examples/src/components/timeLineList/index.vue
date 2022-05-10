@@ -61,7 +61,6 @@ export default defineComponent({
       <TaTimeline :list="state.list" :use-loading-more="true" @loadingMore="loadingMore" />
     </div>
     <h2>TimeLineList 自定义渲染内容使用</h2>
-    <Button>sss</Button>
     <div class="components">
       <TaTimeline :list="state.list" :use-loading-more="true" :render-list-item="renderListItem">
         <template #loadMore>
