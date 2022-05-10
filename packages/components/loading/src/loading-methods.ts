@@ -60,3 +60,4 @@ export function loadingCreate(
     },
   };
 }
+export default loadingCreate;
