@@ -10,21 +10,29 @@ import {
   watch,
   watchEffect,
 } from 'vue';
-import { Empty, Tree } from 'ant-design-vue';
-import ScrollContainer from '@tav-ui/components/scrollbar/src/scrollbar.vue';
-import { difference, get, omit } from 'lodash-es';
-import { isArray, isBoolean, isEmpty, isFunction } from '@tav-ui/utils/is';
-import { extendSlots, getSlot } from '@tav-ui/utils/helper/tsxHelper';
-import { filter, treeToList } from '@tav-ui/utils/helper/treeHelper';
 import { useContextMenu } from '@tav-ui/hooks/web/useContextMenu';
-import { useTree } from './useTree';
+import { filter, treeToList } from '@tav-ui/utils/helper/treeHelper';
+import { extendSlots, getSlot } from '@tav-ui/utils/helper/tsxHelper';
+import { isArray, isBoolean, isEmpty, isFunction } from '@tav-ui/utils/is';
+import { Empty, Tree } from 'ant-design-vue';
+import { difference, get, omit } from 'lodash-es';
+import ScrollContainer from '../../container-scroll';
+import { basicProps } from './props';
 import TreeHeader from './TreeHeader.vue';
 import { TreeIcon } from './TreeIcon';
-import { basicProps } from './props';
+import { useTree } from './useTree';
+import type {
+  CheckEvent,
+  CheckKeys,
+  ContextMenuItem,
+  Keys,
+  Recordable,
+  ReplaceFields,
+  TreeActionType,
+  TreeItem,
+} from './types';
 import type { CSSProperties } from 'vue';
-import type { CheckKeys, Keys, ReplaceFields, TreeActionType, TreeItem } from './types';
 // import { CreateContextOptions } from "@casta-fe-playground/components/ContextMenu";
-import type { CheckEvent, ContextMenuItem, Recordable } from './types';
 type contextMenuOptions = {
   event: any;
   items?: ContextMenuItem[];

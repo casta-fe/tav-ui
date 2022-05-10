@@ -1,9 +1,9 @@
 <script lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import { ref } from 'vue';
-import { defineComponent, reactive } from '@vue/runtime-core';
+import { defineComponent } from '@vue/runtime-core';
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
+import * as components from '@tav-ui/components';
 import TimeLineListPage from './components/timeLineList/index.vue';
 import TimePage from './components/time/index.vue';
 import InputNumberRangePage from './components/InputNumberRange/index.vue';
@@ -33,6 +33,7 @@ export default defineComponent({
     //   },
     //   document.body,
     // )
+    console.log(components);
     return {};
   },
 });
