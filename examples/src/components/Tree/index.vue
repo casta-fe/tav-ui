@@ -3,7 +3,7 @@
     v-model:expandedKeys="expandedKeys"
     v-model:selectedKeys="selectedKeys"
     v-model:checkedKeys="checkedKeys"
-    checkable
+    :checkable="false"
     :tree-data="treeData"
     :replace-fields="replaceFields"
   />

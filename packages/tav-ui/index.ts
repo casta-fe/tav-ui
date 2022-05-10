@@ -1,6 +1,9 @@
 import * as components from '@tav-ui/components';
+import { useMessage } from '../components/useMessage';
+import { useForm } from '../components/form/src/hooks/useForm';
+import { useModal } from '../components/modal/src/hooks/useModal';
+import { loadingCreate } from '../components/loading/src/loading-methods';
 import type { App } from 'vue';
-
 const install = (app: App) => {
   // 每个组件在写的时候都提供了install方法
 
@@ -15,5 +18,5 @@ const install = (app: App) => {
 export default {
   install,
 };
-
+export { useMessage, useForm, useModal, loadingCreate };
 export * from '@tav-ui/components';
