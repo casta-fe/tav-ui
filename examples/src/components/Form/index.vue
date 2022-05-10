@@ -17,20 +17,44 @@
     <TaButton class="mr-2" @click="setProps({ showActionTaButtonGroup: false })">
       隐藏操作按钮
     </TaButton>
-    <TaButton class="mr-2" @click="setProps({ showActionTaButtonGroup: true })">
+    <TaButton class="mr-2" @click="setProps({ showActionButtonGroup: true })">
       显示操作按钮
     </TaButton>
-    <TaButton class="mr-2" @click="setProps({ showResetTaButton: false })"> 隐藏重置按钮 </TaButton>
-    <TaButton class="mr-2" @click="setProps({ showResetTaButton: true })"> 显示重置按钮 </TaButton>
-    <TaButton class="mr-2" @click="setProps({ showSubmitTaButton: false })">
-      隐藏查询按钮
-    </TaButton>
-    <TaButton class="mr-2" @click="setProps({ showSubmitTaButton: true })"> 显示查询按钮 </TaButton>
+    <TaButton class="mr-2" @click="setProps({ showResetButton: false })"> 隐藏重置按钮 </TaButton>
+    <TaButton class="mr-2" @click="setProps({ showResetButton: true })"> 显示重置按钮 </TaButton>
+    <TaButton class="mr-2" @click="setProps({ showSubmitButton: false })"> 隐藏查询按钮 </TaButton>
+    <TaButton class="mr-2" @click="setProps({ showSubmitButton: true })"> 显示查询按钮 </TaButton>
     <TaButton
       class="mr-2"
       @click="
         setProps({
-          resetTaButtonOptions: {
+          submitButtonOptions: {
+            text: 'slslsl',
+            disabled: true,
+          },
+        })
+      "
+    >
+      修改查询按钮文字
+    </TaButton>
+    <TaButton
+      class="mr-2"
+      @click="
+        setProps({
+          submitButtonOptions: {
+            text: '查询',
+            disabled: false,
+          },
+        })
+      "
+    >
+      还原查询按钮文字
+    </TaButton>
+    <TaButton
+      class="mr-2"
+      @click="
+        setProps({
+          resetButtonOptions: {
             disabled: true,
             text: '重置New',
           },
@@ -43,7 +67,7 @@
       class="mr-2"
       @click="
         setProps({
-          submitTaButtonOptions: {
+          submitButtonOptions: {
             disabled: true,
             loading: true,
           },
@@ -52,7 +76,7 @@
     >
       修改查询按钮
     </TaButton>
-    <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton>
+    <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
   <TaContainerCollapse title="useForm示例">
     <TaForm @register="register" @submit="handleSubmit" />
@@ -165,52 +189,52 @@ const schemas: FormSchema[] = [
       ],
     },
   },
-  {
-    field: 'field8',
-    component: 'ApiCascader',
-    label: '联动',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      api: () => {
-        console.log(1);
-      },
-      apiParamKey: 'parentCode',
-      dataField: 'data',
-      labelField: 'name',
-      valueField: 'code',
-      initFetchParams: {
-        parentCode: '',
-      },
-      isLeaf: (record) => {
-        return !(record.levelType < 3);
-      },
-    },
-  },
-  {
-    field: 'field9',
-    component: 'ApiCascader',
-    label: '联动回显',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      api: () => {
-        console.log('1');
-      },
-      apiParamKey: 'parentCode',
-      dataField: 'data',
-      labelField: 'name',
-      valueField: 'code',
-      initFetchParams: {
-        parentCode: '',
-      },
-      isLeaf: (record) => {
-        return !(record.levelType < 3);
-      },
-    },
-  },
+  // {
+  //   field: 'field8',
+  //   component: 'ApiCascader',
+  //   label: '联动',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     api: () => {
+  //       console.log(1);
+  //     },
+  //     apiParamKey: 'parentCode',
+  //     dataField: 'data',
+  //     labelField: 'name',
+  //     valueField: 'code',
+  //     initFetchParams: {
+  //       parentCode: '',
+  //     },
+  //     isLeaf: (record) => {
+  //       return !(record.levelType < 3);
+  //     },
+  //   },
+  // },
+  // {
+  //   field: 'field9',
+  //   component: 'ApiCascader',
+  //   label: '联动回显',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     api: () => {
+  //       console.log('1');
+  //     },
+  //     apiParamKey: 'parentCode',
+  //     dataField: 'data',
+  //     labelField: 'name',
+  //     valueField: 'code',
+  //     initFetchParams: {
+  //       parentCode: '',
+  //     },
+  //     isLeaf: (record) => {
+  //       return !(record.levelType < 3);
+  //     },
+  //   },
+  // },
 ];
 
 export default defineComponent({

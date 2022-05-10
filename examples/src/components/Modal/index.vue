@@ -1,7 +1,13 @@
 <template>
   <div>
     <h2>modal test example</h2>
-    <TaModal title="新增" width="864px" :destroy-on-close="true" @register="ModalRegister">
+    <TaModal
+      :height="500"
+      title="新增"
+      :width="864"
+      :destroy-on-close="true"
+      @register="ModalRegister"
+    >
       <TaForm @register="registerForm" />
       <template #footer>
         <TaButton :loading="state.loading" type="primary" @click="SubmitModal">确定</TaButton>
