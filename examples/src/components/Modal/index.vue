@@ -8,11 +8,11 @@
         <TaButton type="default" @click="CloseModal">取消</TaButton>
       </template>
     </TaModal>
-    <TaButton type="default" @click="OpenModal">测试modalForm</TaButton>
+    <TaButton type="default" @click="showModal">测试modalForm</TaButton>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, nextTick, reactive } from 'vue';
 import { useForm, useModal } from '../../../../dist/index.esm.js';
 import type { FormSchema } from '../../../../dist/types/components/form/src/types/form.js';
 export default defineComponent({
@@ -164,13 +164,22 @@ export default defineComponent({
         }, 3000);
       });
     };
+    const showModal = () => {
+      OpenModal();
+      nextTick(() => {
+        setFieldsValue({
+          businessAddress: 'slslslslslls',
+        });
+      });
+    };
     return {
       ModalRegister,
-      OpenModal,
+
       CloseModal,
       registerForm,
       SubmitModal,
       state,
+      showModal,
     };
   },
 });
