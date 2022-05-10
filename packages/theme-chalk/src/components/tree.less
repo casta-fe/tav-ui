@@ -1,49 +1,48 @@
 @import "../var/index.less";
 @prefix-cls: ~"@{namespace}-basic-tree";
+.@{prefix-cls} {
+  background-color: @component-background;
 
-  .@{prefix-cls} {
-    background-color: @component-background;
+  .ant-tree-node-content-wrapper {
+    position: relative;
 
-    .ant-tree-node-content-wrapper {
-      position: relative;
-
-      .ant-tree-title {
-        position: absolute;
-        left: 0;
-        width: 100%;
-      }
-    }
-
-    &-title {
-      position: relative;
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding-right: 10px;
-
-      &:hover {
-        .@{prefix-cls}__action {
-          visibility: visible;
-        }
-      }
-    }
-
-    &__content {
-      overflow: hidden;
-    }
-
-    &__actions {
+    .ant-tree-title {
       position: absolute;
-      top: 2px;
-      right: 3px;
-      display: flex;
-    }
-
-    &__action {
-      margin-left: 4px;
-      visibility: hidden;
+      left: 0;
+      width: 100%;
     }
   }
+
+  &-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-right: 10px;
+
+    &:hover {
+      .@{prefix-cls}__action {
+        visibility: visible;
+      }
+    }
+  }
+
+  &__content {
+    overflow: hidden;
+  }
+
+  &__actions {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    display: flex;
+  }
+
+  &__action {
+    margin-left: 4px;
+    visibility: hidden;
+  }
+}
 .basic-tree-header {
-border-bottom: 1px solid @border-color-base;
+  border-bottom: 1px solid @border-color-base;
 }

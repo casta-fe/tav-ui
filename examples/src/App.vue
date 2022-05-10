@@ -2,7 +2,7 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import { ref } from 'vue';
-import { defineComponent } from '@vue/runtime-core';
+import { defineComponent, reactive } from '@vue/runtime-core';
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import * as HelloWorld from './components/HelloWorld.vue';
 import TimeLineListPage from './components/timeLineList/index.vue';
@@ -11,6 +11,7 @@ import InputNumberRangePage from './components/InputNumberRange/index.vue';
 import FileViewPage from './components/FileView/index.vue';
 import FormPage from './components/Form/index.vue';
 import TreePage from './components/Tree/index.vue';
+import ModalPage from './components/Modal/index.vue';
 
 export default defineComponent({
   components: {
@@ -21,6 +22,7 @@ export default defineComponent({
     FileViewPage,
     FormPage,
     TreePage,
+    ModalPage,
   },
   setup() {
     // 函数方式调用loading
@@ -33,23 +35,7 @@ export default defineComponent({
     //   },
     //   document.body,
     // )
-    const visible = ref(false);
-    const modalOk = () => {
-      alert('ok callback');
-      visible.value = false;
-    };
-    const modalCancel = () => {
-      alert('cancel callback');
-    };
-    const modelOpen = () => {
-      visible.value = true;
-    };
-    return {
-      modalOk,
-      modalCancel,
-      modelOpen,
-      visible,
-    };
+    return {};
   },
 });
 </script>
@@ -68,15 +54,13 @@ export default defineComponent({
     basic title
   </TaBasicTitle>
   <!-- <TaLoading  :loading="true"></TaLoading> -->
-  <TaButton type="danger" @click="modelOpen"> 打开弹窗 </TaButton>
-  <TaModal v-model:visible="visible" title="sksksk" @ok="modalOk" @cancel="modalCancel">
-    <div>ddkdkkdkd</div>
-  </TaModal>
+
   <TimeLineListPage />
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />
   <TreePage />
+  <ModalPage />
   <FormPage />
 </template>
 

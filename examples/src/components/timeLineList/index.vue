@@ -1,13 +1,10 @@
 <script lang="ts">
-// import {TimeLinePropsType } from '../../dist/types/'
-
-import { defineComponent, h, reactive } from 'vue'
-import type { TimeLinePropsType } from '../../../../dist/types/components/timeLine/src/types'
+import { defineComponent, h, reactive } from 'vue';
+import type { TimeLinePropsType } from '../../../../dist/types/components/timeLine/src/types';
 
 export default defineComponent({
   name: 'TimeLineListTest',
-  components: {
-  },
+  components: {},
   setup() {
     const state = reactive<TimeLinePropsType>({
       list: [
@@ -40,21 +37,21 @@ export default defineComponent({
           description: ['dkdkdkd', 'sdkdkdiddi'],
         },
       ],
-    })
+    });
     const renderListItem = ({ item, index }) => {
-      console.log(item, index)
-      return h('div', {}, 'sksksk')
-    }
+      console.log(item, index);
+      return h('div', {}, 'sksksk');
+    };
     const loadingMore = () => {
-      console.log('loadingMoreloadingMore')
-    }
+      console.log('loadingMoreloadingMore');
+    };
     return {
       state,
       renderListItem,
       loadingMore,
-    }
+    };
   },
-})
+});
 </script>
 
 <template>
@@ -74,4 +71,3 @@ export default defineComponent({
     </div>
   </section>
 </template>
-

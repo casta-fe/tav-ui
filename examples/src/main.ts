@@ -13,7 +13,6 @@ import {
   TaModal,
   TaTime,
   TaTimeLine,
-  TaTree,
 } from '../../dist/index.esm.js';
 import App from './App.vue';
 import 'ant-design-vue/dist/antd.less';
@@ -33,5 +32,4 @@ app.use(TaInputNumberRange);
 app.use(TaFileView);
 app.use(TaForm);
 app.use(TaContainerCollapse);
-app.use(TaTree);
 app.mount('#app');
