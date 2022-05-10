@@ -1,22 +1,20 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/member-delimiter-style */
-import type { RoleEnum } from '@tav-ui/enums/roleEnum'
-import type { VueNode } from '@tav-ui/utils/propTypes'
+import type { RoleEnum } from '@tav-ui/enums/roleEnum';
+import type { VueNode } from '@tav-ui/utils/propTypes';
 import type {
   ColumnProps,
   TableRowSelection as ITableRowSelection,
-} from 'ant-design-vue/lib/table/interface'
-import type { VNodeChild } from 'vue'
-import type { FormProps, FormSchema } from '../../../form/src/types/form'
-import type { ComponentType } from './componentType'
-import type { PaginationProps } from './pagination'
+} from 'ant-design-vue/lib/table/interface';
+import type { VNodeChild } from 'vue';
+import type { FormProps, FormSchema } from '../../../form/src/types/form';
+import type { ComponentType } from './componentType';
+import type { PaginationProps } from './pagination';
 
-type Recordable<T = any> = Record<string, T>
-type EmitType = (event: string, ...args: any[]) => void
-interface Fn<T = any, R = T> {
-  (...arg: T[]): R;
-}
+type Recordable<T = any> = Record<string, T>;
+type EmitType = (event: string, ...args: any[]) => void;
 
-export declare type SortOrder = 'ascend' | 'descend'
+export declare type SortOrder = 'ascend' | 'descend';
 
 export interface TableCurrentDataSource<T = Recordable> {
   currentDataSource: T[];
@@ -104,7 +102,7 @@ export interface GetColumnsParams {
   sort?: boolean;
 }
 
-export type SizeType = 'default' | 'middle' | 'small' | 'large'
+export type SizeType = 'default' | 'middle' | 'small' | 'large';
 
 export interface TableActionType {
   reload: (opt?: FetchParams) => Promise<void>;
@@ -188,11 +186,11 @@ export interface BasicTableProps<T = any> {
   // 接口请求对象
   api?: (...arg: any) => Promise<any>;
   // 请求之前处理参数
-  beforeFetch?: Fn;
+  beforeFetch?: (...arg: any[]) => any;
   // 自定义处理接口返回参数
-  afterFetch?: Fn;
+  afterFetch?: (...arg: any[]) => any;
   // 查询条件请求之前处理
-  handleSearchInfoFn?: Fn;
+  handleSearchInfoFn?: (...arg: any[]) => any;
   // 请求接口配置
   fetchSetting?: Partial<FetchSetting>;
   // 立即请求接口
@@ -448,8 +446,9 @@ export interface BasicTableProps<T = any> {
 export type CellFormat =
   | string
   | ((text: string, record: Recordable, index: number) => string | number)
-  | Map<string | number, any>
+  | Map<string | number, any>;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export interface BasicColumn extends ColumnProps {
   children?: BasicColumn[];
@@ -457,8 +456,8 @@ export interface BasicColumn extends ColumnProps {
     text: string;
     value: string;
     children?:
-    | unknown[]
-    | (((props: Record<string, unknown>) => unknown[]) & (() => unknown[]) & (() => unknown[]));
+      | unknown[]
+      | (((props: Record<string, unknown>) => unknown[]) & (() => unknown[]) & (() => unknown[]));
   }[];
 
   //

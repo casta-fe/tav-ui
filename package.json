@@ -30,7 +30,8 @@
     "@vueuse/core": "^8.2.5",
     "@vueuse/shared": "^6.8.0",
     "lodash-es": "^4.17.21",
-    "resize-observer-polyfill": "^1.5.1"
+    "resize-observer-polyfill": "^1.5.1",
+    "sortablejs": "^1.15.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
