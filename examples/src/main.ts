@@ -12,13 +12,17 @@ import {
   TaInputNumberRange,
   TaLoading,
   TaModal,
+  TaTable,
   TaTime,
   TaTimeLine,
 } from '../../dist/index.esm.js';
 import App from './App.vue';
 import 'ant-design-vue/dist/antd.less';
 import '@tav-ui/theme-chalk/src/index.less';
-
+// import "virtual:svg-icons-register";
+import 'virtual:windi-base.css';
+import 'virtual:windi-components.css';
+import 'virtual:windi-utilities.css';
 const app = createApp(App);
 app.use(TgIcon);
 app.use(TaIcon);
@@ -34,4 +38,6 @@ app.use(TaInputNumberRange);
 app.use(TaFileView);
 app.use(TaForm);
 app.use(TaContainerCollapse);
+app.use(TaTable);
+
 app.mount('#app');

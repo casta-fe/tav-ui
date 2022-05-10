@@ -11,7 +11,7 @@ import FileViewPage from './components/FileView/index.vue';
 import FormPage from './components/Form/index.vue';
 import TreePage from './components/Tree/index.vue';
 import ModalPage from './components/Modal/index.vue';
-
+import BasicTablePage from './components/table/Basic.vue';
 export default defineComponent({
   components: {
     TimeLineListPage,
@@ -21,6 +21,7 @@ export default defineComponent({
     FormPage,
     TreePage,
     ModalPage,
+    BasicTablePage,
   },
   setup() {
     // 函数方式调用loading
@@ -59,6 +60,7 @@ export default defineComponent({
   <TreePage />
   <ModalPage />
   <FormPage />
+  <BasicTablePage />
 </template>
 
 <style>
