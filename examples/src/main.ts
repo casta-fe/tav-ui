@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import TaIcon from '@tav-ui/components/test-icon';
+import TgIcon from '@tav-ui/components/test-icon';
 import {
   TaBasicArrow,
   TaBasicHelp,
@@ -8,6 +8,7 @@ import {
   TaContainerCollapse,
   TaFileView,
   TaForm,
+  TaIcon,
   TaInputNumberRange,
   TaLoading,
   TaModal,
@@ -19,6 +20,7 @@ import 'ant-design-vue/dist/antd.less';
 import '@tav-ui/theme-chalk/src/index.less';
 
 const app = createApp(App);
+app.use(TgIcon);
 app.use(TaIcon);
 app.use(TaButton);
 app.use(TaBasicTitle);
