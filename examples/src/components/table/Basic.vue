@@ -32,7 +32,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, toRefs } from 'vue';
-import { BasicTable } from '../../../../dist/types/components/table/src/types';
 import { getBasicColumns, getBasicData } from './tableData';
 import type { ColumnChangeParam } from '../../../../dist/types/components/table/src/types';
 
