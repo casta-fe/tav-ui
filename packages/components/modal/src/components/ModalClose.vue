@@ -17,10 +17,10 @@ export default defineComponent({
     const getClass = computed(() => {
       return [
         prefixCls,
-          `${prefixCls}--custom`,
-          {
-            [`${prefixCls}--can-full`]: props.canFullscreen,
-          },
+        `${prefixCls}--custom`,
+        {
+          [`${prefixCls}--can-full`]: props.canFullscreen,
+        },
       ]
     })
 

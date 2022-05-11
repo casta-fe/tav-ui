@@ -1,6 +1,6 @@
-import type { Ref } from 'vue'
 import { unref, watchEffect } from 'vue'
 import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
+import type { Ref } from 'vue'
 
 export interface UseModalDragMoveContext {
   draggable: Ref<boolean>
@@ -13,20 +13,17 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
     return getComputedStyle(dom)[attr]
   }
   const drag = (wrap: any) => {
-    if (!wrap)
-      return
+    if (!wrap) return
     wrap.setAttribute('data-drag', unref(context.draggable))
     const dialogHeaderEl = wrap.querySelector('.ant-modal-header')
     const dragDom = wrap.querySelector('.ant-modal')
 
-    if (!dialogHeaderEl || !dragDom || !unref(context.draggable))
-      return
+    if (!dialogHeaderEl || !dragDom || !unref(context.draggable)) return
 
     dialogHeaderEl.style.cursor = 'move'
 
     dialogHeaderEl.onmousedown = (e: any) => {
-      if (!e)
-        return
+      if (!e) return
       // 鼠标按下，计算当前元素距离可视区的距离
       const disX = e.clientX
       const disY = e.clientY
@@ -51,8 +48,7 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
       if (domLeft.includes('%')) {
         styL = +document.body.clientWidth * (+domLeft.replace(/%/g, '') / 100)
         styT = +document.body.clientHeight * (+domTop.replace(/%/g, '') / 100)
-      }
-      else {
+      } else {
         styL = +domLeft.replace(/px/g, '')
         styT = +domTop.replace(/px/g, '')
       }
@@ -63,15 +59,11 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
         let top = e.clientY - disY
 
         // 边界处理
-        if (-left > minDragDomLeft)
-          left = -minDragDomLeft
-        else if (left > maxDragDomLeft)
-          left = maxDragDomLeft
+        if (-left > minDragDomLeft) left = -minDragDomLeft
+        else if (left > maxDragDomLeft) left = maxDragDomLeft
 
-        if (-top > minDragDomTop)
-          top = -minDragDomTop
-        else if (top > maxDragDomTop)
-          top = maxDragDomTop
+        if (-top > minDragDomTop) top = -minDragDomTop
+        else if (top > maxDragDomTop) top = maxDragDomTop
 
         // 移动当前元素
         dragDom.style.cssText += `;left:${left + styL}px;top:${top + styT}px;`
@@ -87,21 +79,18 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
   const handleDrag = () => {
     const dragWraps = document.querySelectorAll('.ant-modal-wrap')
     for (const wrap of Array.from(dragWraps)) {
-      if (!wrap)
-        continue
+      if (!wrap) continue
       const display = getStyle(wrap, 'display')
       const draggable = wrap.getAttribute('data-drag')
       if (display !== 'none') {
         // 拖拽位置
-        if (draggable === null || unref(context.destroyOnClose))
-          drag(wrap)
+        if (draggable === null || unref(context.destroyOnClose)) drag(wrap)
       }
     }
   }
 
   watchEffect(() => {
-    if (!unref(context.visible) || !unref(context.draggable))
-      return
+    if (!unref(context.visible) || !unref(context.draggable)) return
 
     useTimeoutFn(() => {
       handleDrag()

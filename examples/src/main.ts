@@ -1,5 +1,5 @@
-import { createApp } from 'vue';
-import TgIcon from '@tav-ui/components/test-icon';
+import { createApp } from 'vue'
+import TgIcon from '@tav-ui/components/test-icon'
 import {
   TaBasicArrow,
   TaBasicHelp,
@@ -15,29 +15,24 @@ import {
   TaTable,
   TaTime,
   TaTimeLine,
-} from '../../dist/index.esm.js';
-import App from './App.vue';
-import 'ant-design-vue/dist/antd.less';
-import '@tav-ui/theme-chalk/src/index.less';
-// import "virtual:svg-icons-register";
-import 'virtual:windi-base.css';
-import 'virtual:windi-components.css';
-import 'virtual:windi-utilities.css';
-const app = createApp(App);
-app.use(TgIcon);
-app.use(TaIcon);
-app.use(TaButton);
-app.use(TaBasicTitle);
-app.use(TaBasicArrow);
-app.use(TaBasicHelp);
-app.use(TaLoading);
-app.use(TaModal);
-app.use(TaTimeLine);
-app.use(TaTime);
-app.use(TaInputNumberRange);
-app.use(TaFileView);
-app.use(TaForm);
-app.use(TaContainerCollapse);
-app.use(TaTable);
+} from '../../dist/index.esm.js'
+import App from './App.vue'
+import 'ant-design-vue/dist/antd.less'
+import '@tav-ui/theme-chalk/src/index.less'
 
-app.mount('#app');
+const app = createApp(App)
+app.use(TgIcon)
+app.use(TaIcon)
+app.use(TaButton)
+app.use(TaBasicTitle)
+app.use(TaBasicArrow)
+app.use(TaBasicHelp)
+app.use(TaLoading)
+app.use(TaModal)
+app.use(TaTimeLine)
+app.use(TaTime)
+app.use(TaInputNumberRange)
+app.use(TaFileView)
+app.use(TaForm)
+app.use(TaContainerCollapse)
+app.mount('#app')

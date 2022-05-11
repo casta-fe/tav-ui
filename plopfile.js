@@ -8,8 +8,8 @@
  *
  */
 
-const setComponent = require('./internal/plop/component/config');
+const setComponent = require('./internal/plop/component/config')
 
 module.exports = function (plop) {
-  setComponent(plop);
-};
+  setComponent(plop)
+}

@@ -1,6 +1,6 @@
 // Used to configure the general configuration of some components without modifying the components
 
-import type { SorterResult } from '@tav-ui/components/table/src/types/table'
+// import type { SorterResult } from '@tav-ui/components/table/src/types/table'
 type Recordable<T = any> = Record<string, T>
 export default {
   // basic-table setting
@@ -27,7 +27,7 @@ export default {
     // Default Size
     defaultSize: 'small',
     // Custom general sort function
-    defaultSortFn: (sortInfo: SorterResult) => {
+    defaultSortFn: (sortInfo: any) => {
       const { field: sort, order } = sortInfo
 
       const sotrStrategies = {

@@ -1,5 +1,3 @@
-import { isEqual } from 'lodash-es'
-import type { DeepReadonly, Ref, UnwrapRef, WritableComputedRef } from 'vue'
 import {
   computed,
   getCurrentInstance,
@@ -10,6 +8,8 @@ import {
   unref,
   watchEffect,
 } from 'vue'
+import { isEqual } from 'lodash-es'
+import type { DeepReadonly, Ref, UnwrapRef, WritableComputedRef } from 'vue'
 
 type Recordable<T = any> = Record<string, T>
 
@@ -24,7 +24,7 @@ export function useRuleFormItem<T extends Recordable>(
   props: T,
   key: keyof T = 'value',
   changeEvent = 'change',
-  emitData?: Ref<any[]>,
+  emitData?: Ref<any[]>
 ) {
   const instance = getCurrentInstance()
   const emit = instance?.emit
@@ -48,8 +48,7 @@ export function useRuleFormItem<T extends Recordable>(
       return innerState.value
     },
     set(value) {
-      if (isEqual(value, defaultState.value))
-        return
+      if (isEqual(value, defaultState.value)) return
 
       innerState.value = value as T[keyof T]
       nextTick(() => {

@@ -8,11 +8,11 @@ import {
   toRaw,
   unref,
   watchEffect,
-} from 'vue';
-import { isFunction } from '@tav-ui/utils/is';
-import { error } from '@tav-ui/utils/log';
-import { tryOnUnmounted } from '@vueuse/core';
-import { isEqual } from 'lodash-es';
+} from 'vue'
+import { tryOnUnmounted } from '@vueuse/core'
+import { isEqual } from 'lodash-es'
+import { isFunction } from '@tav-ui/utils/is'
+import { error } from '@tav-ui/utils/log'
 import type {
   Fn,
   ModalMethods,
@@ -21,141 +21,141 @@ import type {
   Nullable,
   UseModalInnerReturnType,
   UseModalReturnType,
-} from '../types';
+} from '../types'
 
-const dataTransfer = reactive<any>({});
-const isProdMode = () => true;
+const dataTransfer = reactive<any>({})
+const isProdMode = () => true
 
-const visibleData = reactive<Record<number, boolean>>({});
+const visibleData = reactive<Record<number, boolean>>({})
 
 /**
  * @description: Applicable to independent modal and call outside
  */
 export function useModal(): UseModalReturnType {
-  const modal = ref<Nullable<ModalMethods>>(null);
-  const loaded = ref<Nullable<boolean>>(false);
-  const uid = ref<string>('');
+  const modal = ref<Nullable<ModalMethods>>(null)
+  const loaded = ref<Nullable<boolean>>(false)
+  const uid = ref<string>('')
 
   function register(modalMethod: ModalMethods, uuid?: string) {
     if (!getCurrentInstance())
-      throw new Error('useModal() can only be used inside setup() or functional components!');
+      throw new Error('useModal() can only be used inside setup() or functional components!')
 
-    uid.value = uuid!;
+    uid.value = uuid!
     isProdMode() &&
       onUnmounted(() => {
-        modal.value = null;
-        loaded.value = false;
-        dataTransfer[unref(uid)] = null;
-      });
-    if (unref(loaded) && isProdMode() && modalMethod === unref(modal)) return;
+        modal.value = null
+        loaded.value = false
+        dataTransfer[unref(uid)] = null
+      })
+    if (unref(loaded) && isProdMode() && modalMethod === unref(modal)) return
 
-    modal.value = modalMethod;
-    loaded.value = true;
+    modal.value = modalMethod
+    loaded.value = true
     modalMethod.emitVisible = (visible: boolean, uid: number) => {
-      visibleData[uid] = visible;
-    };
+      visibleData[uid] = visible
+    }
   }
 
   const getInstance = () => {
-    const instance = unref(modal);
-    if (!instance) error('useModal instance is undefined!');
+    const instance = unref(modal)
+    if (!instance) error('useModal instance is undefined!')
 
-    return instance;
-  };
+    return instance
+  }
 
   const methods: ModalReturnMethods = {
     setModalProps: (props: Partial<ModalProps>): void => {
-      getInstance()?.setModalProps(props);
+      getInstance()?.setModalProps(props)
     },
 
     getVisible: computed((): boolean => {
-      return visibleData[~~unref(uid)];
+      return visibleData[~~unref(uid)]
     }),
 
     redoModalHeight: () => {
-      getInstance()?.redoModalHeight?.();
+      getInstance()?.redoModalHeight?.()
     },
 
     openModal: <T = any>(visible = true, data?: T, openOnSet = true): void => {
       getInstance()?.setModalProps({
         visible,
-      });
+      })
 
-      if (!data) return;
-      const id = unref(uid);
+      if (!data) return
+      const id = unref(uid)
       if (openOnSet) {
-        dataTransfer[id] = null;
-        dataTransfer[id] = toRaw(data);
-        return;
+        dataTransfer[id] = null
+        dataTransfer[id] = toRaw(data)
+        return
       }
-      const equal = isEqual(toRaw(dataTransfer[id]), toRaw(data));
-      if (!equal) dataTransfer[id] = toRaw(data);
+      const equal = isEqual(toRaw(dataTransfer[id]), toRaw(data))
+      if (!equal) dataTransfer[id] = toRaw(data)
     },
 
     closeModal: () => {
-      getInstance()?.setModalProps({ visible: false });
+      getInstance()?.setModalProps({ visible: false })
     },
-  };
-  return [register, methods];
+  }
+  return [register, methods]
 }
 
 export const useModalInner = (callbackFn?: Fn): UseModalInnerReturnType => {
-  const modalInstanceRef = ref<Nullable<ModalMethods>>(null);
-  const currentInstance = getCurrentInstance();
-  const uidRef = ref<string>('');
+  const modalInstanceRef = ref<Nullable<ModalMethods>>(null)
+  const currentInstance = getCurrentInstance()
+  const uidRef = ref<string>('')
 
   const getInstance = () => {
-    const instance = unref(modalInstanceRef);
-    if (!instance) error('useModalInner instance is undefined!');
+    const instance = unref(modalInstanceRef)
+    if (!instance) error('useModalInner instance is undefined!')
 
-    return instance;
-  };
+    return instance
+  }
 
   const register = (modalInstance: ModalMethods, uuid?: string) => {
     isProdMode() &&
       tryOnUnmounted(() => {
-        modalInstanceRef.value = null;
-      });
-    uidRef.value = uuid!;
-    modalInstanceRef.value = modalInstance;
-    currentInstance?.emit('register', modalInstance, uuid);
-  };
+        modalInstanceRef.value = null
+      })
+    uidRef.value = uuid!
+    modalInstanceRef.value = modalInstance
+    currentInstance?.emit('register', modalInstance, uuid)
+  }
 
   watchEffect(() => {
-    const data = dataTransfer[unref(uidRef)];
-    if (!data) return;
-    if (!callbackFn || !isFunction(callbackFn)) return;
+    const data = dataTransfer[unref(uidRef)]
+    if (!data) return
+    if (!callbackFn || !isFunction(callbackFn)) return
     nextTick(() => {
-      callbackFn(data);
-    });
-  });
+      callbackFn(data)
+    })
+  })
 
   return [
     register,
     {
       changeLoading: (loading = true) => {
-        getInstance()?.setModalProps({ loading });
+        getInstance()?.setModalProps({ loading })
       },
       getVisible: computed((): boolean => {
-        return visibleData[~~unref(uidRef)];
+        return visibleData[~~unref(uidRef)]
       }),
 
       changeOkLoading: (loading = true) => {
-        getInstance()?.setModalProps({ confirmLoading: loading });
+        getInstance()?.setModalProps({ confirmLoading: loading })
       },
 
       closeModal: () => {
-        getInstance()?.setModalProps({ visible: false });
+        getInstance()?.setModalProps({ visible: false })
       },
 
       setModalProps: (props: Partial<ModalProps>) => {
-        getInstance()?.setModalProps(props);
+        getInstance()?.setModalProps(props)
       },
 
       redoModalHeight: () => {
-        const callRedo = getInstance()?.redoModalHeight;
-        callRedo && callRedo();
+        const callRedo = getInstance()?.redoModalHeight
+        callRedo && callRedo()
       },
     },
-  ];
-};
+  ]
+}

@@ -1,42 +1,42 @@
-import type { Config } from "@vue/theme";
-import baseConfig from "@vue/theme/config";
-import { resolve } from "path";
-import Components from "unplugin-vue-components/vite";
-import type { UserConfig } from "vitepress";
-import { defineConfigWithTheme } from "vitepress";
-import { NavbarFix } from "./plugins/navbar";
+import { resolve } from 'path'
+import baseConfig from '@vue/theme/config'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfigWithTheme } from 'vitepress'
+import { NavbarFix } from './plugins/navbar'
+import type { UserConfig } from 'vitepress'
+import type { Config } from '@vue/theme'
 
 export default defineConfigWithTheme<Config>({
   extends: baseConfig as () => UserConfig<Config>,
 
-  lang: "zh-CN",
-  title: "tav-ui组件库文档",
-  description: "提供现成的开箱解决方案及丰富的示例，提高开发效率。",
-  base: "/",
-  srcDir: "src",
+  lang: 'zh-CN',
+  title: 'tav-ui组件库文档',
+  description: '提供现成的开箱解决方案及丰富的示例，提高开发效率。',
+  base: '/',
+  srcDir: 'src',
 
-  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
 
   themeConfig: {
     socialLinks: [
-      { icon: "github", link: "https://github.com/zgsgs/tav-ui.git" },
+      { icon: 'github', link: 'https://github.com/zgsgs/tav-ui.git' },
     ],
 
     editLink: {
-      repo: "zgsgs/tav-ui/docs",
-      text: "Edit this page on GitHub",
+      repo: 'zgsgs/tav-ui/docs',
+      text: 'Edit this page on GitHub',
     },
 
     nav: [
-      { text: "教程", link: "/" },
-      { text: "组件", link: "/components/" },
-      { text: "在线预览", link: "https://zgsgs.netlify.app" },
+      { text: '教程', link: '/' },
+      { text: '组件', link: '/components/' },
+      { text: '在线预览', link: 'https://zgsgs.netlify.app' },
     ],
 
     sidebar: {
-      "/guide/": getGuideSidebar(),
-      "/components/": getComponentsSidebar(),
-      "/": getGuideSidebar(),
+      '/guide/': getGuideSidebar(),
+      '/components/': getComponentsSidebar(),
+      '/': getGuideSidebar(),
     },
   },
 
@@ -47,10 +47,10 @@ export default defineConfigWithTheme<Config>({
     plugins: [
       NavbarFix(),
       Components({
-        dirs: resolve(__dirname, "theme/components"),
+        dirs: resolve(__dirname, 'theme/components'),
         include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-        dts: "../.vitepress/components.d.ts",
-        transformer: "vue3",
+        dts: '../.vitepress/components.d.ts',
+        transformer: 'vue3',
       }),
     ],
   },
@@ -58,43 +58,43 @@ export default defineConfigWithTheme<Config>({
   vue: {
     reactivityTransform: true,
   },
-});
+})
 
 function getGuideSidebar() {
   return [
     {
-      text: "指南",
+      text: '指南',
       items: [
-        { text: "介绍", link: "/" },
-        { text: "贡献指南", link: "/guide/" },
+        { text: '介绍', link: '/' },
+        { text: '贡献指南', link: '/guide/' },
       ],
     },
     {
-      text: "开发指南",
+      text: '开发指南',
       items: [
-        { text: "新增路由", link: "/guide/add-route" },
-        { text: "组件开发规范", link: "/guide/component" },
+        { text: '新增路由', link: '/guide/add-route' },
+        { text: '组件开发规范', link: '/guide/component' },
       ],
     },
-  ];
+  ]
 }
 
 function getComponentsSidebar() {
   return [
     {
-      text: "组件",
+      text: '组件',
       items: [
-        { text: "介绍", link: "/components/" },
-        { text: "文档模版", link: "/components/example" },
+        { text: '介绍', link: '/components/' },
+        { text: '文档模版', link: '/components/example' },
       ],
     },
     {
-      text: "常用组件",
+      text: '常用组件',
       items: [
-        { text: "Excel", link: "/components/excel" },
-        { text: "水印", link: "/components/watermark" },
-        { text: "图片裁剪", link: "/components/cropper" },
+        { text: 'Excel', link: '/components/excel' },
+        { text: '水印', link: '/components/watermark' },
+        { text: '图片裁剪', link: '/components/cropper' },
       ],
     },
-  ];
+  ]
 }

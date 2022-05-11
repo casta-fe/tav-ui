@@ -9,8 +9,7 @@ export default defineComponent({
       on: {
         beforeEnter(el) {
           addClass(el, 'collapse-transition')
-          if (!el.dataset)
-            el.dataset = {}
+          if (!el.dataset) el.dataset = {}
 
           el.dataset.oldPaddingTop = el.style.paddingTop
           el.dataset.oldPaddingBottom = el.style.paddingBottom
@@ -26,8 +25,7 @@ export default defineComponent({
             el.style.height = `${el.scrollHeight}px`
             el.style.paddingTop = el.dataset.oldPaddingTop
             el.style.paddingBottom = el.dataset.oldPaddingBottom
-          }
-          else {
+          } else {
             el.style.height = ''
             el.style.paddingTop = el.dataset.oldPaddingTop
             el.style.paddingBottom = el.dataset.oldPaddingBottom
@@ -43,8 +41,7 @@ export default defineComponent({
         },
 
         beforeLeave(el) {
-          if (!el.dataset)
-            el.dataset = {}
+          if (!el.dataset) el.dataset = {}
           el.dataset.oldPaddingTop = el.style.paddingTop
           el.dataset.oldPaddingBottom = el.style.paddingBottom
           el.dataset.oldOverflow = el.style.overflow

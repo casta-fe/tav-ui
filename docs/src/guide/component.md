@@ -19,13 +19,13 @@
 
 ```ts
 // Example/index.ts
-import { withInstall } from "@tav-ui/utils/with-install";
-import Example from "./src/example.vue";
+import { withInstall } from '@tav-ui/utils/with-install'
+import Example from './src/example.vue'
 
-const TgExample = withInstall(Example);
+const TgExample = withInstall(Example)
 
-export { TgExample };
-export default TgExample;
+export { TgExample }
+export default TgExample
 ```
 
 ## 组件示例、文档

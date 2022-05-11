@@ -1,12 +1,12 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
-export interface ButtonItem {
-  value: string | number;
-  label: string;
-  url?: string;
-  number?: number | null | undefined;
-  disabled?: boolean;
-  permission?: string;
+export interface ButtonGroupItem {
+  value: string | number
+  label: string
+  url?: string
+  number?: number | null | undefined
+  disabled?: boolean
+  permission?: string
 }
 
 export const buttonGroupProps = {
@@ -19,8 +19,8 @@ export const buttonGroupProps = {
     default: false,
   },
   buttons: {
-    type: Array as PropType<ButtonItem[]>,
-    default: () => [] as ButtonItem[],
+    type: Array as PropType<ButtonGroupItem[]>,
+    default: () => [] as ButtonGroupItem[],
   },
 }
 

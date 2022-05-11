@@ -2,16 +2,63 @@
   "name": "tav-ui",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "typings": "index.d.ts",
-  "output": {
-    "exports": "named"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
+  "license": "ISC",
   "author": "i7eo",
-  "license": "ISC"
+  "main": "lib/index.js",
+  "module": "es/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./es/index.mjs"
+    },
+    "./es": "./es/index.mjs",
+    "./lib": "./lib/index.js",
+    "./es/*.mjs": "./es/*.mjs",
+    "./es/*": "./es/*.mjs",
+    "./lib/*.js": "./lib/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": "./*"
+  },
+  "unpkg": "dist/index.full.js",
+  "jsdelivr": "dist/index.full.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "style": "dist/index.css",
+  "sideEffects": [
+    "dist/*",
+    "theme-chalk/*.css",
+    "theme-chalk/src/*.less",
+    "es/components/*/style/*",
+    "lib/components/*/style/*"
+  ],
+  "scripts": {
+    "rmnm": "rimraf node_modules"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.21"
+  },
+  "dependencies": {
+    "@ant-design/colors": "^6.0.0",
+    "@ant-design/icons-vue": "^6.0.1",
+    "@iconify/iconify": "^2.2.1",
+    "@purge-icons/generated": "^0.7.0",
+    "@vueuse/core": "^8.2.5",
+    "@vueuse/shared": "^6.8.0",
+    "ant-design-vue": "2.2.8",
+    "lodash-es": "^4.17.21",
+    "moment": "^2.29.3",
+    "resize-observer-polyfill": "^1.5.1",
+    "sortablejs": "^1.15.0",
+    "vue-types": "^4.1.1"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "browserslist": [
+    "> 1%",
+    "not ie 11",
+    "not op_mini all"
+  ]
 }

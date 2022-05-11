@@ -1,5 +1,5 @@
-import { isFunction, isUnDef } from '@tav-ui/utils/is'
 import { ref, unref } from 'vue'
+import { isFunction, isUnDef } from '@tav-ui/utils/is'
 export type DirectionType = 'scrollTop' | 'scrollLeft'
 
 export interface ScrollToParams {
@@ -12,8 +12,7 @@ export interface ScrollToParams {
 
 const easeInOutQuad = (t: number, b: number, c: number, d: number) => {
   t /= d / 2
-  if (t < 1)
-    return (c / 2) * t * t + b
+  if (t < 1) return (c / 2) * t * t + b
 
   t--
   return (-c / 2) * (t * (t - 2) - 1) + b
@@ -40,17 +39,13 @@ export function useScrollTo({
   duration = isUnDef(duration) ? 500 : duration
 
   const animateScroll = function () {
-    if (!unref(isActiveRef))
-      return
+    if (!unref(isActiveRef)) return
 
     currentTime += increment
     const val = easeInOutQuad(currentTime, start, change, duration)
     move(el, val, direction)
-    if (currentTime < duration && unref(isActiveRef))
-      requestAnimationFrame(animateScroll)
-    else
-    if (callback && isFunction(callback))
-      callback()
+    if (currentTime < duration && unref(isActiveRef)) requestAnimationFrame(animateScroll)
+    else if (callback && isFunction(callback)) callback()
   }
   const run = () => {
     isActiveRef.value = true

@@ -26,11 +26,10 @@ const importSuccess = (excelDataList: ExcelData[]) => {
     const {
       header,
       results,
-      meta: { sheetName }
+      meta: { sheetName },
     } = excelData
     const columns = []
-    for (const title of header)
-      columns.push({ title, dataIndex: title })
+    for (const title of header) columns.push({ title, dataIndex: title })
 
     tableList.value.push({ title: sheetName, dataSource: results, columns })
   }
@@ -72,7 +71,7 @@ import { aoaToSheetXlsx } from '~/components/Excel'
 aoaToSheetXlsx({
   data: [],
   header: [],
-  filename: '二维数组方式导出excel.xlsx'
+  filename: '二维数组方式导出excel.xlsx',
 })
 ```
 
@@ -86,8 +85,8 @@ jsonToSheetXlsx({
   filename,
   write2excelOpts: {
     // 可以是 xlsx/html/csv/txt
-    bookType
-  }
+    bookType,
+  },
 })
 ```
 
@@ -110,13 +109,13 @@ jsonToSheetXlsx({
     no: '编号',
     address: '地址',
     beginTime: '开始时间',
-    endTime: '结束时间'
+    endTime: '结束时间',
   },
   filename: '自定义头部.xlsx',
   json2sheetOpts: {
     // 指定顺序
-    header: ['name', 'id']
-  }
+    header: ['name', 'id'],
+  },
 })
 ```
 

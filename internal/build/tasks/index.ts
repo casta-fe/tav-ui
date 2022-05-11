@@ -1,4 +1,3 @@
-export * from './component'
-export * from './full-component'
-export * from './gen-types'
-export * from './utils'
+export * from './full-bundle'
+export * from './modules'
+export * from './types-definitions'

@@ -17,5 +17,9 @@
 
 {
   "root": true,
-  "extends": ["@tav-ui/eslint-config"]
+  "extends": ["@tav-ui/eslint-config"],
+  "rules": {
+    "no-console": "off",
+    "@typescript-eslint/ban-ts-comment": 0
+  }
 }

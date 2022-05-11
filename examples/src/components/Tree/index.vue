@@ -10,21 +10,21 @@
 </template>
 <script lang="ts">
 // import { Tree } from 'ant-design-vue';
-import { defineComponent, ref, watch } from 'vue';
-import { TaTree } from '../../../../dist/index.esm';
-import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
+import { defineComponent, ref, watch } from 'vue'
+import { TaTree } from '../../../../dist/index.esm'
+import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree'
 
 export default defineComponent({
   components: { TaTree },
   setup() {
-    const expandedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-    const selectedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-    const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
+    const expandedKeys = ref<string[]>(['0-0-0', '0-0-1'])
+    const selectedKeys = ref<string[]>(['0-0-0', '0-0-1'])
+    const checkedKeys = ref<string[]>(['0-0-0', '0-0-1'])
 
     const replaceFields = {
       children: 'child',
       title: 'name',
-    };
+    }
 
     const treeData: TreeDataItem[] = [
       {
@@ -47,23 +47,23 @@ export default defineComponent({
           },
         ],
       },
-    ];
+    ]
     watch(expandedKeys, () => {
-      console.log('expandedKeys', expandedKeys);
-    });
+      console.log('expandedKeys', expandedKeys)
+    })
     watch(selectedKeys, () => {
-      console.log('selectedKeys', selectedKeys);
-    });
+      console.log('selectedKeys', selectedKeys)
+    })
     watch(checkedKeys, () => {
-      console.log('checkedKeys', checkedKeys);
-    });
+      console.log('checkedKeys', checkedKeys)
+    })
     return {
       expandedKeys,
       selectedKeys,
       checkedKeys,
       replaceFields,
       treeData: ref(treeData),
-    };
+    }
   },
-});
+})
 </script>

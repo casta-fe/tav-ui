@@ -57,46 +57,46 @@
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue';
-import { isFunction } from '@tav-ui/utils/is';
-import { warn } from '@tav-ui/utils/log';
-import mitt from '@tav-ui/utils/mitt';
-import { Table } from 'ant-design-vue';
-import { omit } from 'lodash-es';
-import { useForm } from '../../form/src/hooks/useForm';
-import BasicForm from '../../form';
-import CustomAction from './components/CustomAction.vue';
-import expandIcon from './components/ExpandIcon';
-import Filter from './components/Filter.vue';
-import HeaderCell from './components/HeaderCell.vue';
-import { useColumns } from './hooks/useColumns';
-import { useCustomRow } from './hooks/useCustomRow';
-import { useDataSource } from './hooks/useDataSource';
-import { useLoading } from './hooks/useLoading';
-import { useMasking } from './hooks/useMasking';
-import { usePagination } from './hooks/usePagination';
-import { useRowSelection } from './hooks/useRowSelection';
-import { createTableContext } from './hooks/useTableContext';
-import { useTableExpand } from './hooks/useTableExpand';
-import { useTableFooter } from './hooks/useTableFooter';
-import { useTableForm } from './hooks/useTableForm';
-import { useTableHeader } from './hooks/useTableHeader';
-import { useTableScroll } from './hooks/useTableScroll';
-import { useTableScrollTo } from './hooks/useTableScrollTo';
-import { useTableStyle } from './hooks/useTableStyle';
-import { tableProps } from './props';
+import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
+import { Table } from 'ant-design-vue'
+import { omit } from 'lodash-es'
+import { isFunction } from '@tav-ui/utils/is'
+import { warn } from '@tav-ui/utils/log'
+import mitt from '@tav-ui/utils/mitt'
+import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
+import BasicForm from '@tav-ui/components/form'
+import CustomAction from './components/CustomAction.vue'
+import expandIcon from './components/ExpandIcon'
+import Filter from './components/Filter.vue'
+import HeaderCell from './components/HeaderCell.vue'
+import { useColumns } from './hooks/useColumns'
+import { useCustomRow } from './hooks/useCustomRow'
+import { useDataSource } from './hooks/useDataSource'
+import { useLoading } from './hooks/useLoading'
+import { useMasking } from './hooks/useMasking'
+import { usePagination } from './hooks/usePagination'
+import { useRowSelection } from './hooks/useRowSelection'
+import { createTableContext } from './hooks/useTableContext'
+import { useTableExpand } from './hooks/useTableExpand'
+import { useTableFooter } from './hooks/useTableFooter'
+import { useTableForm } from './hooks/useTableForm'
+import { useTableHeader } from './hooks/useTableHeader'
+import { useTableScroll } from './hooks/useTableScroll'
+import { useTableScrollTo } from './hooks/useTableScrollTo'
+import { useTableStyle } from './hooks/useTableStyle'
+import { tableProps } from './props'
 import type {
   BasicTableProps,
   ColumnChangeParam,
   InnerHandlers,
   SizeType,
   TableActionType,
-} from './types/table';
+} from './types/table'
 // import emitter from "@tav-ui/hooks/web/useEmiiter";
 // import { usePermission } from "@tav-ui/hooks/web/usePermission";
 
-const PageWrapperFixedHeightKey = 'PageWrapperFixedHeight';
-type Recordable<T = any> = Record<string, T>;
+const PageWrapperFixedHeightKey = 'PageWrapperFixedHeight'
+type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
   name: 'TaTable',
@@ -127,58 +127,58 @@ export default defineComponent({
     'columns-change',
   ],
   setup(props, { attrs, emit, slots, expose }) {
-    const tableEmitter = mitt();
-    provide('tableEmitter', tableEmitter);
-    const tableElRef = ref(null);
-    const tableData = ref<Recordable[]>([]);
+    const tableEmitter = mitt()
+    provide('tableEmitter', tableEmitter)
+    const tableElRef = ref(null)
+    const tableData = ref<Recordable[]>([])
 
-    const wrapRef = ref(null);
-    const innerPropsRef = ref<Partial<BasicTableProps>>();
+    const wrapRef = ref(null)
+    const innerPropsRef = ref<Partial<BasicTableProps>>()
 
-    const prefixCls = 'ta-basic-table';
-    const [registerForm, formActions] = useForm();
+    const prefixCls = 'ta-basic-table'
+    const [registerForm, formActions] = useForm()
 
     const getProps = computed(() => {
-      return { ...props, ...unref(innerPropsRef) } as BasicTableProps;
-    });
+      return { ...props, ...unref(innerPropsRef) } as BasicTableProps
+    })
 
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
-    const filterElRef = ref(null);
+    const filterElRef = ref(null)
     const useFilter = computed(() => {
-      const { filter } = unref(getProps);
+      const { filter } = unref(getProps)
       const result = {
         isVisible: false,
         isInputFormVisible: false,
         isPannelFormVisible: false,
-      };
+      }
       if (!filter) {
-        result.isVisible = false;
+        result.isVisible = false
       } else {
-        const { inputForm, pannelForm } = filter;
+        const { inputForm, pannelForm } = filter
         if (inputForm && Object.keys(inputForm).length > 0) {
-          result.isInputFormVisible = true;
+          result.isInputFormVisible = true
         } else {
-          result.isInputFormVisible = false;
+          result.isInputFormVisible = false
         }
 
         if (pannelForm && pannelForm.length > 0) {
-          result.isPannelFormVisible = true;
+          result.isPannelFormVisible = true
         } else {
-          result.isPannelFormVisible = false;
+          result.isPannelFormVisible = false
         }
 
         if (result.isInputFormVisible || result.isPannelFormVisible) {
-          result.isVisible = true;
+          result.isVisible = true
         } else {
-          result.isVisible = false;
+          result.isVisible = false
         }
       }
-      return result;
-    });
+      return result
+    })
 
     const getFilterProps = computed(() => {
-      return getProps.value.filter;
-    });
+      return getProps.value.filter
+    })
 
     // const { getPermissions } = usePermission();
     // const Permissions = getPermissions();
@@ -232,28 +232,28 @@ export default defineComponent({
         importHandle: () => {},
         isExportVisible: true,
         isRefreshVisible: true,
-      };
-    });
+      }
+    })
     // ::==================== i7eo：添加 ///// end  ///// ====================:: //
 
-    const isFixedHeightPage = inject(PageWrapperFixedHeightKey, false);
+    const isFixedHeightPage = inject(PageWrapperFixedHeightKey, false)
     watchEffect(() => {
       unref(isFixedHeightPage) &&
         props.canResize &&
         warn(
           "'canResize' of BasicTable may not work in PageWrapper with 'fixedHeight' (especially in hot updates)"
-        );
-    });
+        )
+    })
 
-    const { getLoading, setLoading } = useLoading(getProps);
-    const { getMasking, setMasking } = useMasking(getProps);
+    const { getLoading, setLoading } = useLoading(getProps)
+    const { getMasking, setMasking } = useMasking(getProps)
     const {
       getPaginationInfo,
       getPagination,
       setPagination,
       setShowPagination,
       getShowPagination,
-    } = usePagination(getProps);
+    } = usePagination(getProps)
 
     const {
       getRowSelection,
@@ -263,7 +263,7 @@ export default defineComponent({
       getSelectRowKeys,
       deleteSelectRowByKey,
       setSelectedRowKeys,
-    } = useRowSelection(getProps, tableData, emit);
+    } = useRowSelection(getProps, tableData, emit)
 
     const {
       handleTableChange: onTableChange,
@@ -293,14 +293,16 @@ export default defineComponent({
       },
       emit,
       filterElRef
-    );
+    )
 
-    function handleTableChange(...args) {
-      onTableChange.call(undefined, ...args);
-      emit('change', ...args);
+    function handleTableChange(...args: any[]) {
+      // @ts-ignore
+      onTableChange.call(undefined, ...args)
+      emit('change', ...args)
       // 解决通过useTable注册onChange时不起作用的问题
-      const { onChange } = unref(getProps);
-      onChange && isFunction(onChange) && onChange.call(undefined, ...args);
+      const { onChange } = unref(getProps)
+      // @ts-ignore
+      onChange && isFunction(onChange) && onChange.call(undefined, ...args)
     }
 
     const {
@@ -310,7 +312,7 @@ export default defineComponent({
       setColumns,
       getColumnsRef,
       getCacheColumns,
-    } = useColumns(getProps, getPaginationInfo);
+    } = useColumns(getProps, getPaginationInfo)
 
     const { getScrollRef, redoHeight } = useTableScroll(
       getProps,
@@ -319,9 +321,9 @@ export default defineComponent({
       getRowSelectionRef,
       getDataSourceRef,
       slots
-    );
+    )
 
-    const { scrollTo } = useTableScrollTo(tableElRef, getDataSourceRef);
+    const { scrollTo } = useTableScrollTo(tableElRef, getDataSourceRef)
 
     const { customRow } = useCustomRow(getProps, {
       setSelectedRowKeys,
@@ -329,33 +331,33 @@ export default defineComponent({
       clearSelectedRowKeys,
       getAutoCreateKey,
       emit,
-    });
+    })
 
-    const { getRowClassName } = useTableStyle(getProps, prefixCls);
+    const { getRowClassName } = useTableStyle(getProps, prefixCls)
 
     const { getExpandOption, expandAll, expandRows, collapseAll } = useTableExpand(
       getProps,
       tableData,
       emit
-    );
+    )
 
     const handlers: InnerHandlers = {
       onColumnsChange: (data: ColumnChangeParam[]) => {
-        emit('columns-change', data);
+        emit('columns-change', data)
         // support useTable
-        unref(getProps).onColumnsChange?.(data);
+        unref(getProps).onColumnsChange?.(data)
       },
-    };
+    }
 
-    const { getHeaderProps } = useTableHeader(getProps, slots, handlers);
+    const { getHeaderProps } = useTableHeader(getProps, slots, handlers)
 
-    const { getFooterProps } = useTableFooter(getProps, getScrollRef, tableElRef, getDataSourceRef);
+    const { getFooterProps } = useTableFooter(getProps, getScrollRef, tableElRef, getDataSourceRef)
 
     const { getFormProps, replaceFormSlotKey, getFormSlotKeys, handleSearchInfoChange } =
-      useTableForm(getProps, slots, fetch, getLoading);
+      useTableForm(getProps, slots, fetch, getLoading)
 
     const getBindValues = computed(() => {
-      const dataSource = unref(getDataSourceRef);
+      const dataSource = unref(getDataSourceRef)
       let propsData: Recordable = {
         // ...(dataSource.length === 0 ? { getPopupContainer: () => document.body } : {}),
         ...attrs,
@@ -374,17 +376,17 @@ export default defineComponent({
         dataSource,
         footer: unref(getFooterProps),
         ...unref(getExpandOption),
-      };
+      }
       if (slots.expandedRowRender) {
-        propsData = omit(propsData, 'scroll');
+        propsData = omit(propsData, 'scroll')
       }
 
-      propsData = omit(propsData, ['class', 'onChange']);
-      return propsData;
-    });
+      propsData = omit(propsData, ['class', 'onChange'])
+      return propsData
+    })
 
     const getWrapperClass = computed(() => {
-      const values = unref(getBindValues);
+      const values = unref(getBindValues)
       return [
         prefixCls,
         attrs.class,
@@ -393,19 +395,19 @@ export default defineComponent({
           [`${prefixCls}--inset`]: values.inset,
           [`${prefixCls}--full-height`]: values.fullHeight,
         },
-      ];
-    });
+      ]
+    })
 
     const getEmptyDataIsShowTable = computed(() => {
-      const { emptyDataIsShowTable, useSearchForm } = unref(getProps);
+      const { emptyDataIsShowTable, useSearchForm } = unref(getProps)
       if (emptyDataIsShowTable || !useSearchForm) {
-        return true;
+        return true
       }
-      return !!unref(getDataSourceRef).length;
-    });
+      return !!unref(getDataSourceRef).length
+    })
 
     function setProps(props: Partial<BasicTableProps>) {
-      innerPropsRef.value = { ...unref(innerPropsRef), ...props };
+      innerPropsRef.value = { ...unref(innerPropsRef), ...props }
     }
 
     const tableAction: TableActionType = {
@@ -442,10 +444,10 @@ export default defineComponent({
       scrollTo,
       collapseAll,
       getSize: () => {
-        return unref(getBindValues).size as SizeType;
+        return unref(getBindValues).size as SizeType
       },
-    };
-    createTableContext({ ...tableAction, wrapRef, getBindValues });
+    }
+    createTableContext({ ...tableAction, wrapRef, getBindValues })
 
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
     watchEffect(() => {
@@ -454,14 +456,14 @@ export default defineComponent({
       if (tableElRef.value) {
         tableEmitter.emit('table:fetch-refs', {
           table: (tableElRef.value as any).$el,
-        });
+        })
       }
-    });
+    })
     // ::==================== i7eo：添加 ///// end  ///// ====================:: //
 
-    expose(tableAction);
+    expose(tableAction)
 
-    emit('register', tableAction, formActions);
+    emit('register', tableAction, formActions)
 
     return {
       tableData,
@@ -485,7 +487,7 @@ export default defineComponent({
       getFormSlotKeys,
       getWrapperClass,
       columns: getViewColumns,
-    };
+    }
   },
-});
+})
 </script>

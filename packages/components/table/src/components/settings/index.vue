@@ -11,13 +11,13 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, unref } from 'vue';
-import { useTableContext } from '../../hooks/useTableContext';
-import SizeSetting from './SizeSetting.vue';
-import RedoSetting from './RedoSetting.vue';
-import FullScreenSetting from './FullScreenSetting.vue';
-import type { PropType } from 'vue';
-import type { ColumnChangeParam, TableSetting } from '../../types/table';
+import { computed, defineComponent, unref } from 'vue'
+import { useTableContext } from '../../hooks/useTableContext'
+import SizeSetting from './SizeSetting.vue'
+import RedoSetting from './RedoSetting.vue'
+import FullScreenSetting from './FullScreenSetting.vue'
+import type { PropType } from 'vue'
+import type { ColumnChangeParam, TableSetting } from '../../types/table'
 // import ColumnSetting from "./ColumnSetting.vue";
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
   },
   emits: ['columns-change'],
   setup(props, { emit }) {
-    const table = useTableContext();
+    const table = useTableContext()
 
     const getSetting = computed((): TableSetting => {
       return {
@@ -45,18 +45,18 @@ export default defineComponent({
         setting: true,
         fullScreen: false,
         ...props.setting,
-      };
-    });
+      }
+    })
 
     function handleColumnChange(data: ColumnChangeParam[]) {
-      emit('columns-change', data);
+      emit('columns-change', data)
     }
 
     function getTableContainer() {
-      return table ? unref(table.wrapRef) : document.body;
+      return table ? unref(table.wrapRef) : document.body
     }
 
-    return { getSetting, handleColumnChange, getTableContainer };
+    return { getSetting, handleColumnChange, getTableContainer }
   },
-});
+})
 </script>

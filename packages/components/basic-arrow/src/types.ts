@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes } from 'vue'
 
 export const basicArrowProps = {
   /**
@@ -18,6 +18,6 @@ export const basicArrowProps = {
    */
   inset: { type: Boolean },
   iconStyle: { type: String },
-};
+}
 
-export type BasicArrowProps = ExtractPropTypes<typeof basicArrowProps>;
+export type BasicArrowProps = ExtractPropTypes<typeof basicArrowProps>

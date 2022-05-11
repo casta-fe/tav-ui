@@ -1,10 +1,10 @@
 <script lang="ts">
+import { computed, defineComponent, nextTick, onMounted, ref, unref, watch } from 'vue'
+import Iconify from '@iconify/iconify'
 import { isString } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
-import Iconify from '@iconify/iconify'
+import SvgIcon from '@tav-ui/components/icon-svg'
 import type { CSSProperties, PropType } from 'vue'
-import { computed, defineComponent, nextTick, onMounted, ref, unref, watch } from 'vue'
-import SvgIcon from '../../icon-svg'
 
 const SVG_END_WITH_FLAG = '|svg'
 declare type Nullable<T> = T | null
@@ -33,24 +33,20 @@ export default defineComponent({
     const getIconRef = computed(() => `${props.prefix ? `${props.prefix}:` : ''}${props.icon}`)
 
     const update = async () => {
-      if (unref(isSvgIcon))
-        return
+      if (unref(isSvgIcon)) return
 
       const el = unref(elRef)
-      if (!el)
-        return
+      if (!el) return
 
       await nextTick()
       const icon = unref(getIconRef)
-      if (!icon)
-        return
+      if (!icon) return
 
       const svg = Iconify.renderSVG(icon, {})
       if (svg) {
         el.textContent = ''
         el.appendChild(svg)
-      }
-      else {
+      } else {
         const span = document.createElement('span')
         span.className = 'iconify'
         span.dataset.icon = icon
@@ -62,8 +58,7 @@ export default defineComponent({
     const getWrapStyle = computed((): CSSProperties => {
       const { size, color } = props
       let fs = size
-      if (isString(size))
-        fs = parseInt(size, 10)
+      if (isString(size)) fs = parseInt(size, 10)
 
       return {
         fontSize: `${fs}px`,

@@ -6,11 +6,11 @@
   <BasicHelp v-if="getHelpMessage" :text="getHelpMessage" :class="`${prefixCls}__help`" />
 </template>
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import BasicHelp from '../../../basic-help';
-import EditTableHeaderCell from './EditTableHeaderIcon.vue';
-import type { BasicColumn } from '../types/table';
-import type { PropType } from 'vue';
+import { computed, defineComponent } from 'vue'
+import BasicHelp from '@tav-ui/components/basic-help'
+import EditTableHeaderCell from './EditTableHeaderIcon.vue'
+import type { BasicColumn } from '../types/table'
+import type { PropType } from 'vue'
 
 export default defineComponent({
   name: 'TableHeaderCell',
@@ -25,13 +25,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const prefixCls = 'ta-basic-table-header-cell';
+    const prefixCls = 'ta-basic-table-header-cell'
 
-    const getIsEdit = computed(() => !!props.column?.edit);
-    const getTitle = computed(() => props.column?.customTitle);
-    const getHelpMessage = computed(() => props.column?.helpMessage);
+    const getIsEdit = computed(() => !!props.column?.edit)
+    const getTitle = computed(() => props.column?.customTitle)
+    const getHelpMessage = computed(() => props.column?.helpMessage)
 
-    return { prefixCls, getIsEdit, getTitle, getHelpMessage };
+    return { prefixCls, getIsEdit, getTitle, getHelpMessage }
   },
-});
+})
 </script>

@@ -1,13 +1,13 @@
-import type { ExtractPropTypes, PropType } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue'
 
 export interface DropdownMenu {
-  onClick?: (...arg: any[]) => any;
-  to?: string;
-  icon?: string;
-  event: string | number;
-  text: string;
-  disabled?: boolean;
-  divider?: boolean;
+  onClick?: (...arg: any[]) => any
+  to?: string
+  icon?: string
+  event: string | number
+  text: string
+  disabled?: boolean
+  divider?: boolean
 }
 
 export const dropdownProps = {
@@ -20,7 +20,7 @@ export const dropdownProps = {
   trigger: {
     type: [Array] as PropType<('contextmenu' | 'click' | 'hover')[]>,
     default: () => {
-      return ['contextmenu'];
+      return ['contextmenu']
     },
   },
   DropdownMenuList: {
@@ -31,6 +31,6 @@ export const dropdownProps = {
     type: Array as PropType<string[]>,
     default: () => [],
   },
-};
+}
 
-export type DropdownProps = ExtractPropTypes<typeof dropdownProps>;
+export type DropdownProps = ExtractPropTypes<typeof dropdownProps>

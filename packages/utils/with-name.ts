@@ -25,11 +25,9 @@ export function capitalize(event: string) {
  * @return {*}
  */
 export function validateKebabCase(event: string) {
-  if (!event || event.trim() === '')
-    return '组件名称不能为空'
+  if (!event || event.trim() === '') return '组件名称不能为空'
 
-  if (/[A-Z]/.test(event))
-    return '组件名称请遵守 kebab-case'
+  if (/[A-Z]/.test(event)) return '组件名称请遵守 kebab-case'
 
   return true
 }

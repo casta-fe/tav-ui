@@ -1,5 +1,5 @@
-import type { InjectionKey } from 'vue'
 import { createContext, useContext } from '@tav-ui/hooks/core/useContext'
+import type { InjectionKey } from 'vue'
 
 export interface ModalContextProps {
   redoModalHeight: () => void

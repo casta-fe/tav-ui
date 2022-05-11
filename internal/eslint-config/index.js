@@ -1,4 +1,4 @@
-const { defineConfig } = require('eslint-define-config');
+const { defineConfig } = require('eslint-define-config')
 
 module.exports = defineConfig({
   env: {
@@ -224,7 +224,7 @@ module.exports = defineConfig({
             position: 'before',
           },
           {
-            pattern: '@element-plus/**',
+            pattern: '@tav-ui/**',
             group: 'internal',
           },
         ],
@@ -241,4 +241,4 @@ module.exports = defineConfig({
     // eslint-plugin-eslint-comments
     'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: true }],
   },
-});
+})

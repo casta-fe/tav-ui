@@ -1,12 +1,12 @@
 <script lang="tsx">
-import type { CSSProperties, PropType } from 'vue'
 import { computed, defineComponent, unref } from 'vue'
-import { Tooltip } from 'ant-design-vue'
 import { InfoCircleOutlined } from '@ant-design/icons-vue'
-import { isArray, isString } from '@tav-ui/utils/is'
-import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
+import { Tooltip } from 'ant-design-vue'
 import { getPopupContainer } from '@tav-ui/utils/basic'
+import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
+import { isArray, isString } from '@tav-ui/utils/is'
 import { basicHelpProps } from './types'
+import type { CSSProperties } from 'vue'
 export default defineComponent({
   name: 'TaBasicHelp',
   components: { Tooltip },
@@ -15,7 +15,7 @@ export default defineComponent({
     const prefixCls = 'ta-basic-help'
 
     const getTooltipStyle = computed(
-      (): CSSProperties => ({ color: props.color, fontSize: props.fontSize }),
+      (): CSSProperties => ({ color: props.color, fontSize: props.fontSize })
     )
 
     const getOverlayStyle = computed((): CSSProperties => ({ maxWidth: props.maxWidth }))
@@ -23,8 +23,7 @@ export default defineComponent({
     function renderTitle() {
       const textList = props.text
 
-      if (isString(textList))
-        return <p>{textList}</p>
+      if (isString(textList)) return <p>{textList}</p>
 
       if (isArray(textList)) {
         return textList.map((text, index) => {
@@ -41,7 +40,6 @@ export default defineComponent({
       return null
     }
 
-    // eslint-disable-next-line react/display-name
     return () => {
       return (
         <Tooltip
@@ -49,7 +47,6 @@ export default defineComponent({
           title={<div style={unref(getTooltipStyle)}>{renderTitle()}</div>}
           autoAdjustOverflow={true}
           overlayStyle={unref(getOverlayStyle)}
-          // eslint-disable-next-line react/prop-types
           placement={props.placement as 'right'}
           getPopupContainer={() => getPopupContainer()}
         >

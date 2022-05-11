@@ -6,9 +6,9 @@
 
 ```vue
 <script setup lang="ts">
-import { useWatermark } from "~/components/Watermark";
+import { useWatermark } from '~/components/Watermark'
 
-const { setWatermark, clear } = useWatermark();
+const { setWatermark, clear } = useWatermark()
 </script>
 
 <template>
@@ -38,24 +38,24 @@ const { setWatermark, clear } = useWatermark();
 
 ```ts
 // 引入
-import { useWatermark } from "~/components/Watermark";
+import { useWatermark } from '~/components/Watermark'
 
-const { setWatermark, clear } = useWatermark();
+const { setWatermark, clear } = useWatermark()
 
 // 有默认值，不传参数，就按照默认设置
 const options = {
-  str: "防伪 ☆ 加密",
-  str2: "",
-  font: "15px Vedana",
-  fillStyle: "rgba(0, 0, 0, 0.3)",
-  textAlign: "center",
-  textBaseline: "middle",
-};
+  str: '防伪 ☆ 加密',
+  str2: '',
+  font: '15px Vedana',
+  fillStyle: 'rgba(0, 0, 0, 0.3)',
+  textAlign: 'center',
+  textBaseline: 'middle',
+}
 
 // 创建水印
-setWatermark(options);
+setWatermark(options)
 // 清除水印
-clear();
+clear()
 ```
 
 ## Events

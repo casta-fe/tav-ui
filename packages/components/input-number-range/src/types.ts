@@ -1,7 +1,7 @@
-import type { PropType } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
 
 import type { InputNumberProps } from 'ant-design-vue'
-export interface InputNumberRangeProps {
+export interface IInputNumberRangeProps {
   value: Array<number>
   disabled?: InputNumberProps['disabled']
   minPlaceHolder?: InputNumberProps['placeholder']
@@ -12,35 +12,35 @@ export interface InputNumberRangeProps {
 }
 export const inputNumberRangeProps = {
   value: {
-    type: Array as PropType<InputNumberRangeProps['value']>,
+    type: Array as PropType<IInputNumberRangeProps['value']>,
     default: () => [],
   },
   disabled: {
-    type: Boolean as PropType<InputNumberRangeProps['disabled']>,
+    type: Boolean as PropType<IInputNumberRangeProps['disabled']>,
     default: false,
   },
   minPlaceHolder: {
-    type: String as PropType<InputNumberRangeProps['minPlaceHolder']>,
+    type: String as PropType<IInputNumberRangeProps['minPlaceHolder']>,
     default: '请输入数值',
   },
   maxPlaceHolder: {
-    type: String as PropType<InputNumberRangeProps['maxPlaceHolder']>,
+    type: String as PropType<IInputNumberRangeProps['maxPlaceHolder']>,
     default: '请输入数值',
   },
   size: {
-    type: String as PropType<InputNumberRangeProps['size']>,
+    type: String as PropType<IInputNumberRangeProps['size']>,
     default: 'default',
   },
   prefixCenter: {
-    type: String as PropType<InputNumberRangeProps['prefixCenter']>,
+    type: String as PropType<IInputNumberRangeProps['prefixCenter']>,
     default: '~',
   },
   precision: {
-    type: Number as PropType<InputNumberRangeProps['precision']>,
+    type: Number as PropType<IInputNumberRangeProps['precision']>,
     default: 4,
   },
 }
 
 export const inputNumberRangeEmits = ['change', 'blur']
 
-// export type InputNumberRangeProps = ExtractPropTypes<typeof inputNumberRangeProps>
+export type InputNumberRangeProps = ExtractPropTypes<typeof inputNumberRangeProps>

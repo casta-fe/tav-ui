@@ -18,15 +18,15 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, nextTick, reactive } from 'vue';
-import { useForm, useModal } from '../../../../dist/index.esm.js';
-import type { FormSchema } from '../../../../dist/types/components/form/src/types/form.js';
+import { defineComponent, nextTick, reactive } from 'vue'
+import { useForm, useModal } from '../../../../dist/index.esm.js'
+import type { FormSchema } from '../../../../dist/types/components/form/src/types/form.js'
 export default defineComponent({
   setup() {
     const state = reactive({
       loading: false,
-    });
-    const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal();
+    })
+    const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
     const schemas: FormSchema[] = [
       {
         field: 'fundManagerName',
@@ -154,30 +154,30 @@ export default defineComponent({
           placeholder: '请选择风控负责人',
         },
       },
-    ];
+    ]
     const [registerForm, { validateFields, setFieldsValue }] = useForm({
       rowProps: { gutter: 16 },
       schemas,
       disabled: false,
       showActionButtonGroup: false,
-    });
+    })
     const SubmitModal = () => {
       validateFields().then((res) => {
-        console.log(res);
-        state.loading = true;
+        console.log(res)
+        state.loading = true
         setTimeout(() => {
-          state.loading = false;
-        }, 3000);
-      });
-    };
+          state.loading = false
+        }, 3000)
+      })
+    }
     const showModal = () => {
-      OpenModal();
+      OpenModal()
       nextTick(() => {
         setFieldsValue({
           businessAddress: 'slslslslslls',
-        });
-      });
-    };
+        })
+      })
+    }
     return {
       ModalRegister,
 
@@ -186,7 +186,7 @@ export default defineComponent({
       SubmitModal,
       state,
       showModal,
-    };
+    }
   },
-});
+})
 </script>

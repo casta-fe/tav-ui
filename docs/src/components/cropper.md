@@ -15,6 +15,7 @@ import img from '~/assets/images/test.jpeg'
 const info = ref({})
 const cropperImg = ref('')
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function handleCropped({ imgBase64, imgInfo }: CroppedResult) {
   info.value = imgInfo
   cropperImg.value = imgBase64
@@ -22,7 +23,7 @@ function handleCropped({ imgBase64, imgInfo }: CroppedResult) {
 </script>
 
 <template>
-  <Cropper :src="img" style="width: 40vw;" @cropend="handleCropend" />
+  <Cropper :src="img" style="width: 40vw" @cropend="handleCropend" />
 </template>
 ```
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { PropType } from 'vue'
 import { defineComponent } from 'vue'
-import BasicArrow from '../../basic-arrow'
-import BasicTitle from '../../basic-title'
+import BasicArrow from '@tav-ui/components/basic-arrow'
+import BasicTitle from '@tav-ui/components/basic-title'
+import type { PropType } from 'vue'
 
 const props = {
   prefixCls: { type: String },

@@ -2,7 +2,7 @@ import { propTypes } from '@tav-ui/utils/propTypes'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { RowProps } from 'ant-design-vue/lib/grid/Row'
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue'
-import type { TableActionType } from '../../table/src/types/table'
+import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FieldMapToTime, FormSchema } from './types/form'
 import type { ColEx } from './types/index'
 

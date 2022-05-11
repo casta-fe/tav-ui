@@ -1,14 +1,14 @@
+import { toRaw, unref } from 'vue'
+import { cloneDeep, uniqBy } from 'lodash-es'
 import { deepMerge } from '@tav-ui/utils/basic'
 import { dateUtil } from '@tav-ui/utils/dateUtil'
 import { isArray, isFunction, isObject, isString } from '@tav-ui/utils/is'
 import { error } from '@tav-ui/utils/log'
-import type { NamePath } from 'ant-design-vue/lib/form/interface'
-import { cloneDeep, uniqBy } from 'lodash-es'
-import type { ComputedRef, Ref } from 'vue'
-import { toRaw, unref } from 'vue'
 import { dateItemType, handleInputNumberValue } from '../helper'
-import type { FormActionType, FormProps, FormSchema } from '../types/form'
-type EmitType = (event: string, ...args: any[]) => void
+import type { NamePath } from 'ant-design-vue/lib/form/interface'
+import type { ComputedRef, Ref } from 'vue'
+import type { EmitType, FormActionType, FormProps, FormSchema } from '../types/form'
+
 type Recordable<T = any> = Record<string, T>
 interface Fn<T = any, R = T> {
   (...arg: T[]): R
@@ -38,8 +38,7 @@ export function useFormEvents({
     resetFunc && isFunction(resetFunc) && (await resetFunc())
 
     const formEl = unref(formElRef)
-    if (!formEl)
-      return
+    if (!formEl) return
 
     Object.keys(formModel).forEach((key) => {
       formModel[key] = defaultValueRef.value[key]
@@ -54,12 +53,12 @@ export function useFormEvents({
    */
   async function setFieldsValue(values: Recordable, useValidate = true): Promise<void> {
     const fields = unref(getSchema)
-      .map(item => item.field)
+      .map((item) => item.field)
       .filter(Boolean)
 
     const validKeys: string[] = []
     Object.keys(values).forEach((key) => {
-      const schema = unref(getSchema).find(item => item.field === key)
+      const schema = unref(getSchema).find((item) => item.field === key)
       let value = values[key]
 
       const hasKey = Reflect.has(values, key)
@@ -74,35 +73,33 @@ export function useFormEvents({
             for (const ele of value) arr.push(ele ? dateUtil(ele) : null)
 
             formModel[key] = arr
-          }
-          else {
+          } else {
             const { componentProps } = schema || {}
             let _props = componentProps as any
-            if (typeof componentProps === 'function')
-              _props = _props({ formModel })
+            if (typeof componentProps === 'function') _props = _props({ formModel })
 
             formModel[key] = value ? (_props?.valueFormat ? value : dateUtil(value)) : null
           }
-        }
-        else {
+        } else {
           formModel[key] = value
         }
         validKeys.push(key)
       }
     })
-    useValidate && validateFields(validKeys).catch((_) => {})
+    useValidate &&
+      validateFields(validKeys).catch((_) => {
+        console.log(_)
+      })
   }
   /**
    * @description: Delete based on field name
    */
   async function removeSchemaByFiled(fields: string | string[]): Promise<void> {
     const schemaList: FormSchema[] = cloneDeep(unref(getSchema))
-    if (!fields)
-      return
+    if (!fields) return
 
     let fieldList: string[] = isString(fields) ? [fields] : fields
-    if (isString(fields))
-      fieldList = [fields]
+    if (isString(fields)) fieldList = [fields]
 
     for (const field of fieldList) _removeSchemaByFiled(field, schemaList)
 
@@ -114,7 +111,7 @@ export function useFormEvents({
    */
   function _removeSchemaByFiled(field: string, schemaList: FormSchema[]): void {
     if (isString(field)) {
-      const index = schemaList.findIndex(schema => schema.field === field)
+      const index = schemaList.findIndex((schema) => schema.field === field)
       if (index !== -1) {
         delete formModel[field]
         schemaList.splice(index, 1)
@@ -128,34 +125,31 @@ export function useFormEvents({
   async function appendSchemaByField(schema: FormSchema, prefixField?: string, first = false) {
     const schemaList: FormSchema[] = cloneDeep(unref(getSchema))
 
-    const index = schemaList.findIndex(schema => schema.field === prefixField)
+    const index = schemaList.findIndex((schema) => schema.field === prefixField)
 
     if (!prefixField || index === -1 || first) {
       first ? schemaList.unshift(schema) : schemaList.push(schema)
       schemaRef.value = schemaList
       return
     }
-    if (index !== -1)
-      schemaList.splice(index + 1, 0, schema)
+    if (index !== -1) schemaList.splice(index + 1, 0, schema)
 
     schemaRef.value = schemaList
   }
 
   async function resetSchema(data: Partial<FormSchema> | Partial<FormSchema>[]) {
     let updateData: Partial<FormSchema>[] = []
-    if (isObject(data))
-      updateData.push(data as FormSchema)
+    if (isObject(data)) updateData.push(data as FormSchema)
 
-    if (isArray(data))
-      updateData = [...data]
+    if (isArray(data)) updateData = [...data]
 
     const hasField = updateData.every(
-      item => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field),
+      (item) => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field)
     )
 
     if (!hasField) {
       error(
-        'All children of the form Schema array that need to be updated must contain the `field` field',
+        'All children of the form Schema array that need to be updated must contain the `field` field'
       )
       return
     }
@@ -164,19 +158,17 @@ export function useFormEvents({
 
   async function updateSchema(data: Partial<FormSchema> | Partial<FormSchema>[]) {
     let updateData: Partial<FormSchema>[] = []
-    if (isObject(data))
-      updateData.push(data as FormSchema)
+    if (isObject(data)) updateData.push(data as FormSchema)
 
-    if (isArray(data))
-      updateData = [...data]
+    if (isArray(data)) updateData = [...data]
 
     const hasField = updateData.every(
-      item => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field),
+      (item) => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field)
     )
 
     if (!hasField) {
       error(
-        'All children of the form Schema array that need to be updated must contain the `field` field',
+        'All children of the form Schema array that need to be updated must contain the `field` field'
       )
       return
     }
@@ -184,15 +176,13 @@ export function useFormEvents({
     // 如果初始化时给了空数组，此时调用 updateSchema 应该直接覆盖schema
     if (unref(getSchema).length === 0) {
       schema = updateData as any[]
-    }
-    else {
+    } else {
       updateData.forEach((item) => {
         unref(getSchema).forEach((val) => {
           if (val.field === item.field) {
             const newSchema = deepMerge(val, item)
             schema.push(newSchema as FormSchema)
-          }
-          else {
+          } else {
             schema.push(val)
           }
         })
@@ -203,8 +193,7 @@ export function useFormEvents({
 
   function getFieldsValue(): Recordable {
     const formEl = unref(formElRef)
-    if (!formEl)
-      return {}
+    if (!formEl) return {}
     return handleFormValues(toRaw(unref(formModel)))
   }
 
@@ -213,7 +202,7 @@ export function useFormEvents({
    */
   function itemIsDateType(key: string) {
     return unref(getSchema).some((item) => {
-      return item.field === key ? dateItemType.includes((item.component) as any) : false
+      return item.field === key ? dateItemType.includes(item.component as any) : false
     })
   }
 
@@ -222,6 +211,7 @@ export function useFormEvents({
   }
 
   async function validate(nameList?: NamePath[] | undefined) {
+    // eslint-disable-next-line no-return-await
     return await unref(formElRef)?.validate(nameList)
   }
 
@@ -244,14 +234,12 @@ export function useFormEvents({
       return
     }
     const formEl = unref(formElRef)
-    if (!formEl)
-      return
+    if (!formEl) return
     try {
       const values = await validate()
       const res = handleFormValues(values)
       emit('submit', res)
-    }
-    catch (error: any) {
+    } catch (error: any) {
       throw new Error(error)
     }
   }

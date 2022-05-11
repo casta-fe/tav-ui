@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
 import { ref, watchEffect } from 'vue'
+import type { Ref } from 'vue'
 
 interface IntersectionObserverProps {
   target: Ref<Element | null | undefined>
@@ -18,6 +18,7 @@ export function useIntersectionObserver({
   rootMargin = '0px',
   threshold = 0.1,
 }: IntersectionObserverProps) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   let cleanup = () => {}
   const observer: Ref<Nullable<IntersectionObserver>> = ref(null)
   const stopEffect = watchEffect(() => {

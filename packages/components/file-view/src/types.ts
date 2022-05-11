@@ -9,7 +9,7 @@ export const fileViewProps = {
     default: 0,
   },
   list: {
-    type: Array as PropType<FileItemType[]>,
+    type: Array as PropType<FileViewItemType[]>,
     required: true,
     default: [],
   },
@@ -21,7 +21,7 @@ export const fileViewProps = {
 
 export type FileViewProps = ExtractPropTypes<typeof fileViewProps>
 
-export interface FileItemType {
+export interface FileViewItemType {
   // 文件真实id
   actualId: string
   address: string
@@ -42,8 +42,7 @@ export interface FileItemType {
   suffix: string
   type: number
   version: number
-  moduleCode: String
+  moduleCode: string
   typeCode: string
   fileId: any
 }
-

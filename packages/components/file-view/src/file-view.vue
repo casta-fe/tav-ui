@@ -1,16 +1,11 @@
-<!--
- * @Author: huyb
- * @Descripttion: Think & Action
- * @Date: 2021-12-09 14:13:36
--->
 <script lang="ts">
+import { computed, defineComponent, nextTick, reactive, toRefs, watch } from 'vue'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Modal, Spin } from 'ant-design-vue'
-import { computed, defineComponent, nextTick, reactive, toRefs, watch } from 'vue'
 import download from '@tav-ui/utils/file/TaDownload'
-import { useMessage } from '../../useMessage'
-import type { FileItemType } from './types'
+// import { useMessage } from '../../useMessage'
 import { fileViewProps } from './types'
+import type { FileViewItemType } from './types'
 export default defineComponent({
   name: 'TaFileView',
   components: {
@@ -22,14 +17,14 @@ export default defineComponent({
   props: fileViewProps,
   emits: ['update:show'],
   setup(props, { emit }) {
-    const { createMessage } = useMessage()
+    // const { createMessage } = useMessage()
     const state = reactive({
       index: props.index,
       filePath: '',
       showModal: props.show,
       pageLoading: false,
     })
-    const ignoreList = ['zip', 'tar', '7z']
+    // const ignoreList = ['zip', 'tar', '7z']
     const loadFileTypes = {
       office: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'],
       audio: ['mp3', 'mp3', 'wav', 'rm', 'rpm'],
@@ -37,13 +32,13 @@ export default defineComponent({
       video: ['mpeg', 'mpg', 'avi', 'movie'],
       text: ['txt'],
     }
-    const currentFile = computed((): FileItemType => props.list[state.index])
+    const currentFile = computed((): FileViewItemType => props.list[state.index])
     const fileType = computed(() => {
       let type = ''
       const suffix = currentFile.value?.suffix
       if (suffix) {
         for (const item in loadFileTypes) {
-          if (loadFileTypes[item].some(v => suffix == v)) {
+          if (loadFileTypes[item].some((v) => suffix == v)) {
             type = item
             break
           }
@@ -68,8 +63,7 @@ export default defineComponent({
     const getFile = () => {
       // 防止多次请求
       const id = currentFile.value?.fileId || currentFile.value?.id
-      if (state.pageLoading || !id || fileType.value == '')
-        return
+      if (state.pageLoading || !id || fileType.value == '') return
 
       state.filePath = ''
       state.pageLoading = true
@@ -120,11 +114,10 @@ export default defineComponent({
           nextTick(() => {
             getFile()
           })
-        }
-        else {
+        } else {
           state.filePath = ''
         }
-      },
+      }
     )
     watch(
       () => currentFile.value,
@@ -133,7 +126,7 @@ export default defineComponent({
           getFile()
         })
         // console.log("文件改变");
-      },
+      }
     )
     return {
       ...toRefs(state),
@@ -162,7 +155,9 @@ export default defineComponent({
         <Button type="text" @click="downloadFile">下载</Button>
       </div>
       <span class="file-view-num">{{ index + 1 }}/{{ list.length }}</span> -->
-      <span class="file-view-title">{{ filePath }}{{ currentFile.name + "." + currentFile.suffix }}</span>
+      <span class="file-view-title"
+        >{{ filePath }}{{ currentFile.name + '.' + currentFile.suffix }}</span
+      >
     </template>
     <template v-if="list.length > 1">
       <div class="file-view-modal-prev" @click="goPrev">
@@ -186,21 +181,16 @@ export default defineComponent({
         <template v-if="fileType === 'mpeg'">
           <iframe id="fileIframe" :src="filePath" frameborder="0" />
         </template>
-        <template v-if="fileType === 'pic'">
-          <img :src="filePath" alt="">
-        </template>
+        <template v-if="fileType === 'pic'"> <img :src="filePath" alt="" /> </template>
         <template v-if="fileType === 'text'">
           <div class="text-page">
             <iframe id="fileIframe" :src="filePath" frameborder="0" />
           </div>
         </template>
         <template v-if="fileType === ''">
-          <div class="empty">
-            暂不支持该格式预览 {{ fileType }}
-          </div>
+          <div class="empty">暂不支持该格式预览 {{ fileType }}</div>
         </template>
       </div>
     </Spin>
   </Modal>
 </template>
-

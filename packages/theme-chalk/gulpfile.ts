@@ -7,27 +7,28 @@
 /**
  * gulp是类似一个管道的方式执行，从入口开始到出口，中间一步步执行
  */
-import { dest, series, src } from 'gulp';
-import autoprefixer from 'gulp-autoprefixer';
-import cleanCss from 'gulp-clean-css';
-import less from 'gulp-less';
-import path from 'path';
-/**
- * 对sass文件做处理
- */
+import path from 'path'
+import chalk from 'chalk'
+import consola from 'consola'
+import { dest, series, src } from 'gulp'
+import autoprefixer from 'gulp-autoprefixer'
+import cleanCSS from 'gulp-clean-css'
+import less from 'gulp-less'
 
 function compileLess() {
-  console.log('compileLess');
   return src(path.resolve(__dirname, './src/*.less'))
     .pipe(less())
     .pipe(autoprefixer())
-    .on('data', (data) => {
-      let content = data.contents.toString();
-      content = content.replaceAll('./fonts', 'tav-ui/theme-chalk/fonts');
-      data.contents = new Buffer(content);
-    })
-    .pipe(cleanCss())
-    .pipe(dest('./dist'));
+    .pipe(
+      cleanCSS({}, (details) => {
+        consola.success(
+          `${chalk.cyan(details.name)}: ${chalk.yellow(
+            details.stats.originalSize / 1000
+          )} KB -> ${chalk.green(details.stats.minifiedSize / 1000)} KB`
+        )
+      })
+    )
+    .pipe(dest('./dist'))
 }
 
 /**
@@ -45,15 +46,15 @@ function compileLess() {
  * 把打包好的css输出到根目录的dist
  */
 function copyCss() {
-  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk');
-  return src(path.resolve(__dirname, './dist/**')).pipe(dest(rootDistPath));
+  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk')
+  return src(path.resolve(__dirname, './dist/**')).pipe(dest(rootDistPath))
 }
 
 function copyLess() {
-  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk/src');
-  return src(path.resolve(__dirname, './src/**')).pipe(dest(rootDistPath));
+  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk/src')
+  return src(path.resolve(__dirname, './src/**')).pipe(dest(rootDistPath))
 }
 
 // export default series(compileLess, copyFonts, copyCss);
 // copyLess,
-export default series(compileLess, copyCss, copyLess);
+export default series(compileLess, copyCss, copyLess)

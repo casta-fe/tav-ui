@@ -1,19 +1,19 @@
-import { computed, nextTick, ref, unref, watch } from 'vue';
-import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated';
-import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn';
-import { getViewportOffset } from '@tav-ui/utils/domUtils';
-import { isBoolean } from '@tav-ui/utils/is';
-import { useDebounceFn } from '@vueuse/core';
-import { useModalContext } from '../../../modal/src/hooks/useModalContext';
-import type { ComputedRef, Ref } from 'vue';
-import type { BasicColumn, BasicTableProps, TableRowSelection } from '../types/table';
+import { computed, nextTick, ref, unref, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
+import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
+import { getViewportOffset } from '@tav-ui/utils/domUtils'
+import { isBoolean } from '@tav-ui/utils/is'
+import { useModalContext } from '@tav-ui/components/modal/src/hooks/useModalContext'
+import type { ComputedRef, Ref } from 'vue'
+import type { BasicColumn, BasicTableProps, TableRowSelection } from '../types/table'
 
-type Nullable<T> = T | null;
-type Recordable<T = any> = Record<string, T>;
+type Nullable<T> = T | null
+type Recordable<T = any> = Record<string, T>
 interface ComponentElRef<T extends HTMLElement = HTMLDivElement> {
-  $el: T;
+  $el: T
 }
-type ComponentRef<T extends HTMLElement = HTMLDivElement> = ComponentElRef<T> | null;
+type ComponentRef<T extends HTMLElement = HTMLDivElement> = ComponentElRef<T> | null
 
 export function useTableScroll(
   propsRef: ComputedRef<BasicTableProps>,
@@ -23,116 +23,114 @@ export function useTableScroll(
   getDataSourceRef: ComputedRef<Recordable[]>,
   slots
 ) {
-  const tableHeightRef: Ref<Nullable<number>> = ref(null);
+  const tableHeightRef: Ref<Nullable<number>> = ref(null)
 
-  const modalFn = useModalContext();
+  const modalFn = useModalContext()
 
   // Greater than animation time 280
-  const debounceRedoHeight = useDebounceFn(redoHeight, 100);
+  const debounceRedoHeight = useDebounceFn(redoHeight, 100)
 
   const getCanResize = computed(() => {
-    const { canResize, scroll } = unref(propsRef);
-    return canResize && !(scroll || {}).y;
-  });
+    const { canResize, scroll } = unref(propsRef)
+    return canResize && !(scroll || {}).y
+  })
 
   watch(
     () => [unref(getCanResize), unref(getDataSourceRef)?.length],
     () => {
-      debounceRedoHeight();
+      debounceRedoHeight()
     },
     {
       flush: 'post',
     }
-  );
+  )
 
   function redoHeight() {
     nextTick(() => {
-      calcTableHeight();
-    });
+      calcTableHeight()
+    })
   }
 
   function setHeight(height: number) {
-    tableHeightRef.value = height;
+    tableHeightRef.value = height
     //  Solve the problem of modal adaptive height calculation when the form is placed in the modal
-    modalFn?.redoModalHeight?.();
+    modalFn?.redoModalHeight?.()
   }
 
   // No need to repeat queries
-  let paginationEl: HTMLElement | null;
-  let footerEl: HTMLElement | null;
-  let bodyEl: HTMLElement | null;
+  let paginationEl: HTMLElement | null
+  let footerEl: HTMLElement | null
+  let bodyEl: HTMLElement | null
 
   async function calcTableHeight() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { resizeHeightOffset, pagination, maxHeight, fullHeight } = unref(propsRef);
-    const tableData = unref(getDataSourceRef);
+    const { resizeHeightOffset, pagination, maxHeight, fullHeight } = unref(propsRef)
+    const tableData = unref(getDataSourceRef)
     //处理设置fullheight为false 不生效的问题
-    const table = unref(tableElRef);
-    if (!table) return;
+    const table = unref(tableElRef)
+    if (!table) return
 
-    const tableEl: Element = table.$el;
-    if (!tableEl) return;
+    const tableEl: Element = table.$el
+    if (!tableEl) return
 
     if (!bodyEl) {
-      bodyEl = tableEl.querySelector('.ant-table-body');
-      if (!bodyEl) return;
+      bodyEl = tableEl.querySelector('.ant-table-body')
+      if (!bodyEl) return
     }
 
-    const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight;
-    const hasScrollBarX = bodyEl.scrollWidth > bodyEl.clientWidth;
+    const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight
+    const hasScrollBarX = bodyEl.scrollWidth > bodyEl.clientWidth
 
     if (hasScrollBarY) {
-      tableEl.classList.contains('hide-scrollbar-y') &&
-        tableEl.classList.remove('hide-scrollbar-y');
+      tableEl.classList.contains('hide-scrollbar-y') && tableEl.classList.remove('hide-scrollbar-y')
     } else {
-      !tableEl.classList.contains('hide-scrollbar-y') && tableEl.classList.add('hide-scrollbar-y');
+      !tableEl.classList.contains('hide-scrollbar-y') && tableEl.classList.add('hide-scrollbar-y')
     }
 
     if (hasScrollBarX) {
-      tableEl.classList.contains('hide-scrollbar-x') &&
-        tableEl.classList.remove('hide-scrollbar-x');
+      tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.remove('hide-scrollbar-x')
     } else {
-      !tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.add('hide-scrollbar-x');
+      !tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.add('hide-scrollbar-x')
     }
 
-    bodyEl!.style.height = 'unset';
+    bodyEl!.style.height = 'unset'
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    if (!unref(getCanResize)) return;
+    if (!unref(getCanResize)) return
 
-    await nextTick();
+    await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
 
-    const headEl = tableEl.querySelector('.ant-table-thead ');
-    if (!headEl) return;
+    const headEl = tableEl.querySelector('.ant-table-thead ')
+    if (!headEl) return
 
     // Table height from bottom
-    const { bottomIncludeBody } = getViewportOffset(headEl);
+    const { bottomIncludeBody } = getViewportOffset(headEl)
     // hack:底部padding + table底部padding
-    const paddingHeight = 32;
+    const paddingHeight = 32
     // Pager height
-    let paginationHeight = 32; // 默认高度？
+    let paginationHeight = 32 // 默认高度？
     if (!isBoolean(pagination)) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      paginationEl = tableEl.querySelector('.ant-pagination') as HTMLElement;
-      paginationHeight = 32;
+      paginationEl = tableEl.querySelector('.ant-pagination') as HTMLElement
+      paginationHeight = 32
     } else {
-      paginationHeight = 0;
+      paginationHeight = 0
     }
 
-    let footerHeight = 0;
+    let footerHeight = 0
     if (!isBoolean(pagination)) {
       if (!footerEl) {
-        footerEl = tableEl.querySelector('.ant-table-footer') as HTMLElement;
+        footerEl = tableEl.querySelector('.ant-table-footer') as HTMLElement
       } else {
-        const offsetHeight = footerEl.offsetHeight;
-        footerHeight += offsetHeight || 0;
+        const offsetHeight = footerEl.offsetHeight
+        footerHeight += offsetHeight || 0
       }
     }
 
-    let headerHeight = 0;
+    let headerHeight = 0
     if (headEl) {
-      headerHeight = (headEl as HTMLElement).offsetHeight;
+      headerHeight = (headEl as HTMLElement).offsetHeight
     }
     let height =
       bottomIncludeBody -
@@ -140,62 +138,62 @@ export function useTableScroll(
       paddingHeight -
       paginationHeight -
       footerHeight -
-      headerHeight;
+      headerHeight
 
-    height = (height > maxHeight! ? (maxHeight as number) : height) ?? height;
-    setHeight(height);
+    height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
+    setHeight(height)
     if (!slots.footer) {
       if (tableData.length === 0) {
         //处理空数据时滚动条消失问题
-        const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement;
-        TbodyEl!.style.height = `1px`;
+        const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
+        TbodyEl!.style.height = `1px`
       }
-      bodyEl!.style.height = `${height}px`;
+      bodyEl!.style.height = `${height}px`
     }
   }
-  useWindowSizeFn(calcTableHeight, 280);
+  useWindowSizeFn(calcTableHeight, 280)
   onMountedOrActivated(() => {
-    calcTableHeight();
+    calcTableHeight()
     nextTick(() => {
-      debounceRedoHeight();
-    });
-  });
+      debounceRedoHeight()
+    })
+  })
 
   const getScrollX = computed(() => {
-    let width = 0;
+    let width = 0
     if (unref(rowSelectionRef)) {
-      width += 60;
+      width += 60
     }
 
     // TODO props ?? 0;
-    const NORMAL_WIDTH = 150;
+    const NORMAL_WIDTH = 150
 
-    const columns = unref(columnsRef).filter((item) => !item.defaultHidden);
+    const columns = unref(columnsRef).filter((item) => !item.defaultHidden)
     columns.forEach((item) => {
-      width += Number.parseInt(item.width as string) || 0;
-    });
-    const unsetWidthColumns = columns.filter((item) => !Reflect.has(item, 'width'));
+      width += Number.parseInt(item.width as string) || 0
+    })
+    const unsetWidthColumns = columns.filter((item) => !Reflect.has(item, 'width'))
 
-    const len = unsetWidthColumns.length;
+    const len = unsetWidthColumns.length
     if (len !== 0) {
-      width += len * NORMAL_WIDTH;
+      width += len * NORMAL_WIDTH
     }
 
-    const table = unref(tableElRef);
-    const tableWidth = table?.$el?.offsetWidth ?? 0;
-    return tableWidth > width ? '100%' : width;
-  });
+    const table = unref(tableElRef)
+    const tableWidth = table?.$el?.offsetWidth ?? 0
+    return tableWidth > width ? '100%' : width
+  })
 
   const getScrollRef = computed(() => {
-    const tableHeight = unref(tableHeightRef);
-    const { canResize, scroll } = unref(propsRef);
+    const tableHeight = unref(tableHeightRef)
+    const { canResize, scroll } = unref(propsRef)
     return {
       x: unref(getScrollX),
       y: canResize ? tableHeight : null,
       scrollToFirstRowOnChange: true,
       ...scroll,
-    };
-  });
+    }
+  })
 
-  return { getScrollRef, redoHeight };
+  return { getScrollRef, redoHeight }
 }

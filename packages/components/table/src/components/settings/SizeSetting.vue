@@ -27,12 +27,12 @@
   </Tooltip>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { Dropdown, Menu, Tooltip } from 'ant-design-vue';
-import { ColumnHeightOutlined } from '@ant-design/icons-vue';
-import { getPopupContainer } from '@tav-ui/utils/basic';
-import { useTableContext } from '../../hooks/useTableContext';
-import type { SizeType } from '../../types/table';
+import { defineComponent, ref } from 'vue'
+import { Dropdown, Menu, Tooltip } from 'ant-design-vue'
+import { ColumnHeightOutlined } from '@ant-design/icons-vue'
+import { getPopupContainer } from '@tav-ui/utils/basic'
+import { useTableContext } from '../../hooks/useTableContext'
+import type { SizeType } from '../../types/table'
 
 export default defineComponent({
   name: 'SizeSetting',
@@ -44,22 +44,22 @@ export default defineComponent({
     MenuItem: Menu.Item,
   },
   setup() {
-    const table = useTableContext();
+    const table = useTableContext()
 
-    const selectedKeysRef = ref<SizeType[]>([table.getSize()]);
+    const selectedKeysRef = ref<SizeType[]>([table.getSize()])
 
     function handleTitleClick({ key }: { key: SizeType }) {
-      selectedKeysRef.value = [key];
+      selectedKeysRef.value = [key]
       table.setProps({
         size: key,
-      });
+      })
     }
 
     return {
       handleTitleClick,
       selectedKeysRef,
       getPopupContainer,
-    };
+    }
   },
-});
+})
 </script>

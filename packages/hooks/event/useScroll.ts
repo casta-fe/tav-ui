@@ -1,7 +1,7 @@
-import { isObject, isWindow } from '@tav-ui/utils/is'
-import { useThrottleFn } from '@vueuse/core'
-import type { Ref } from 'vue'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { useThrottleFn } from '@vueuse/core'
+import { isObject, isWindow } from '@tav-ui/utils/is'
+import type { Ref } from 'vue'
 
 export function useScroll(
   refEl: Ref<Element | Window | null>,
@@ -9,7 +9,7 @@ export function useScroll(
     wait?: number
     leading?: boolean
     trailing?: boolean
-  },
+  }
 ) {
   const refX = ref(0)
   const refY = ref(0)
@@ -17,8 +17,7 @@ export function useScroll(
     if (isWindow(refEl.value)) {
       refX.value = refEl.value.scrollX
       refY.value = refEl.value.scrollY
-    }
-    else if (refEl.value) {
+    } else if (refEl.value) {
       refX.value = (refEl.value as Element).scrollLeft
       refY.value = (refEl.value as Element).scrollTop
     }
@@ -39,17 +38,15 @@ export function useScroll(
     stopWatch = watch(
       refEl,
       (el, prevEl, onCleanup) => {
-        if (el)
-          el.addEventListener('scroll', handler)
-        else if (prevEl)
-          prevEl.removeEventListener('scroll', handler)
+        if (el) el.addEventListener('scroll', handler)
+        else if (prevEl) prevEl.removeEventListener('scroll', handler)
 
         onCleanup(() => {
           refX.value = refY.value = 0
           el && el.removeEventListener('scroll', handler)
         })
       },
-      { immediate: true },
+      { immediate: true }
     )
   })
 

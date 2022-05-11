@@ -12,8 +12,7 @@
  * @return {*}
  */
 function camelize(str) {
-  if (!str.trim())
-    return ''
+  if (!str.trim()) return ''
   const result = str.replace(/-(\w)/g, (_, char) => {
     return char.toUpperCase()
   })
@@ -28,8 +27,7 @@ function camelize(str) {
  * @return {*}
  */
 function getPascal(str) {
-  if (!str.trim())
-    return ''
+  if (!str.trim()) return ''
   const result = str.replace(/-(\w)/g, (_, char) => {
     return char.toUpperCase()
   })
@@ -44,13 +42,11 @@ function getPascal(str) {
  * @return {*}
  */
 function getKebabCase(str) {
-  if (!str.trim())
-    return ''
+  if (!str.trim()) return ''
   const result = str.replace(/([A-Z])/g, (char) => {
     return `-${char.toLowerCase()}`
   })
-  if (result.indexOf('-') === 0)
-    return result.substr(1)
+  if (result.indexOf('-') === 0) return result.substr(1)
 
   return result
 }

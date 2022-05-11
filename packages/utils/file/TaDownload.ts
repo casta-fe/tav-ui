@@ -29,7 +29,7 @@ export interface FileItemType {
   suffix: string
   type: number
   version: number
-  moduleCode: String
+  moduleCode: string
   typeCode: string
   fileId: any
 }
@@ -76,8 +76,7 @@ const typeDic = {
 }
 
 export function downLoadCallBack(res, name, suffix) {
-  if (!res)
-    return
+  if (!res) return
 
   const fileReader = new FileReader()
   fileReader.readAsText(res, 'utf-8')
@@ -91,19 +90,16 @@ export function downLoadCallBack(res, name, suffix) {
       // } else {
       //   // createMessage.warning("请求出错，请稍候重试");
       // }
-    }
-    catch (err) {
+    } catch (err) {
       if ((window.navigator as any).msSaveBlob) {
         // IE以及IE内核的浏览器
         try {
-          (window.navigator as any).msSaveBlob(res, name) // res为接口返回数据，这里请求的时候已经处理了，如果没处理需要在此之前自行处理var data = new Blob([res.data]) 注意这里需要是数组形式的,fileName就是下载之后的文件名
+          ;(window.navigator as any).msSaveBlob(res, name) // res为接口返回数据，这里请求的时候已经处理了，如果没处理需要在此之前自行处理var data = new Blob([res.data]) 注意这里需要是数组形式的,fileName就是下载之后的文件名
           // window.navigator.msSaveOrOpenBlob(res, fileName); //此方法类似上面的方法，区别可自行百度
-        }
-        catch (e) {
+        } catch (e) {
           // console.log(e);
         }
-      }
-      else {
+      } else {
         const url = window.URL.createObjectURL(new Blob([res], { type: typeDic[suffix] }))
         const link = document.createElement('a')
         link.style.display = 'none'
@@ -130,11 +126,9 @@ const download = (data) => {
     // multiDownLoad(ids).then((res) => {
     //   downLoadCallBack(res, fileName || "批量下载", "zip");
     // });
-  }
-  else {
+  } else {
     if (!data || !data.id) {
       // createMessage.warning("请选择要下载的文件");
-
     }
     // const file: FileItemType = { ...data };
     // console.log(fileName,file);

@@ -1,11 +1,14 @@
 {
   "name": "@tav-ui/components",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "all components are settled here",
+  "main": "index.ts",
   "module": "index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "unpkg": "index.js",
+  "jsdelivr": "index.js",
+  "peerDependencies": {
+    "vue": "^3.2.21"
   },
-  "author": "i7eo",
-  "license": "ISC"
+  "types": "index.d.ts",
+  "sideEffects": false
 }

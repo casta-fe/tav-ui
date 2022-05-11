@@ -1,14 +1,14 @@
 <script lang="ts">
+import { toRefs, watch } from 'vue'
 import { Input, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
-import { toRefs, watch } from 'vue'
 import { defineComponent, reactive } from 'vue-demi'
-import { useMessage } from '../../useMessage'
+import { useMessage } from '@tav-ui/components/useMessage'
 import { inputNumberRangeEmits, inputNumberRangeProps } from './types'
 const { createMessage } = useMessage()
 export interface InputNumberRangeState {
-  min: number|string
-  max: number|string
+  min: number | string
+  max: number | string
 }
 export default defineComponent({
   name: 'TaInputNumberRange',
@@ -31,8 +31,7 @@ export default defineComponent({
       if (value && state.max && value > state.max) {
         createMessage.warning('最小范围不得大于最大范围')
         emit('change', [null, state.max])
-      }
-      else {
+      } else {
         emit('change', [value, state.max])
       }
     }
@@ -42,8 +41,7 @@ export default defineComponent({
       if (state.min && value && state.min > value) {
         createMessage.warning('最大范围不得小于最小范围')
         emit('change', [state.min, null])
-      }
-      else {
+      } else {
         emit('change', [state.min, value])
       }
     }
@@ -56,7 +54,7 @@ export default defineComponent({
       },
       {
         deep: true,
-      },
+      }
     )
 
     return {

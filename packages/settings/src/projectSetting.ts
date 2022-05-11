@@ -180,3 +180,5 @@
 // };
 
 // export default setting;
+
+export default {}

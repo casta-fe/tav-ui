@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { PropType } from 'vue'
 import { defineComponent } from 'vue'
 import TaBasicTitle from '@tav-ui/components/basic-title'
+import type { PropType } from 'vue'
 
 export default defineComponent({
   name: 'BasicModalHeader',

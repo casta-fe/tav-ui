@@ -1,9 +1,6 @@
 /* eslint-disable symbol-description */
-import type {
-  InjectionKey,
-  UnwrapRef,
-} from 'vue'
 import { readonly as defineReadonly, inject, provide, reactive } from 'vue'
+import type { InjectionKey, UnwrapRef } from 'vue'
 
 export interface CreateContextOptions {
   readonly?: boolean
@@ -12,13 +9,13 @@ export interface CreateContextOptions {
 }
 
 type ShallowUnwrap<T> = {
-  [P in keyof T]: UnwrapRef<T[P]>;
+  [P in keyof T]: UnwrapRef<T[P]>
 }
 
 export function createContext<T>(
   context: any,
   key: InjectionKey<T> = Symbol(),
-  options: CreateContextOptions = {},
+  options: CreateContextOptions = {}
 ) {
   const { readonly = true, createProvider = false, native = false } = options
 
@@ -36,7 +33,7 @@ export function useContext<T>(key: InjectionKey<T>, defaultValue?: any, native?:
 
 export function useContext<T>(
   key: InjectionKey<T> = Symbol(),
-  defaultValue?: any,
+  defaultValue?: any
 ): ShallowUnwrap<T> {
   return inject(key, defaultValue || {})
 }

@@ -1,28 +1,26 @@
-import { isFunction } from '@tav-ui/utils/is'
-import { tryOnUnmounted } from '@vueuse/core'
 import { ref, watch } from 'vue'
+import { tryOnUnmounted } from '@vueuse/core'
+import { isFunction } from '@tav-ui/utils/is'
 
 declare interface Fn<T = any, R = T> {
-  (...arg: T[]): R;
+  (...arg: T[]): R
 }
 
-declare type TimeoutHandle = ReturnType<typeof setTimeout>;
+declare type TimeoutHandle = ReturnType<typeof setTimeout>
 
 export function useTimeoutFn(handle: Fn<any>, wait: number, native = false) {
-  if (!isFunction(handle))
-    throw new Error('handle is not Function!')
+  if (!isFunction(handle)) throw new Error('handle is not Function!')
 
   const { readyRef, stop, start } = useTimeoutRef(wait)
   if (native) {
     handle()
-  }
-  else {
+  } else {
     watch(
       readyRef,
       (maturity) => {
         maturity && handle()
       },
-      { immediate: false },
+      { immediate: false }
     )
   }
   return { readyRef, stop, start }

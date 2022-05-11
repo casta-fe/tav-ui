@@ -8,8 +8,7 @@ export function dataURLtoBlob(base64Buf: string): Blob {
   const bstr = window.atob(arr[1])
   let n = bstr.length
   const u8arr = new Uint8Array(n)
-  while (n--)
-    u8arr[n] = bstr.charCodeAt(n)
+  while (n--) u8arr[n] = bstr.charCodeAt(n)
 
   return new Blob([u8arr], { type: mime })
 }
@@ -18,7 +17,7 @@ export function dataURLtoBlob(base64Buf: string): Blob {
  * img url to base64
  * @param url
  */
- type Nullable<T> = T | null
+type Nullable<T> = T | null
 export function urlToBase64(url: string, mineType?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     let canvas = document.createElement('CANVAS') as Nullable<HTMLCanvasElement>
@@ -27,8 +26,7 @@ export function urlToBase64(url: string, mineType?: string): Promise<string> {
     const img = new Image()
     img.crossOrigin = ''
     img.onload = function () {
-      if (!canvas || !ctx)
-        return reject(new Error('img onload error'))
+      if (!canvas || !ctx) return reject(new Error('img onload error'))
 
       canvas.height = img.height
       canvas.width = img.width

@@ -23,14 +23,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { Divider } from 'ant-design-vue';
-import TableSettingComponent from './settings/index.vue';
-import TableTitle from './TableTitle.vue';
-import type { PropType } from 'vue';
-import type { ColumnChangeParam, TableSetting } from '../types/table';
+import { defineComponent } from 'vue'
+import { Divider } from 'ant-design-vue'
+import TableSettingComponent from './settings/index.vue'
+import TableTitle from './TableTitle.vue'
+import type { PropType } from 'vue'
+import type { ColumnChangeParam, TableSetting } from '../types/table'
 
-type Recordable<T = any> = Record<string, T>;
+type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
   name: 'BasicTableHeader',
@@ -56,11 +56,11 @@ export default defineComponent({
   },
   emits: ['columns-change'],
   setup(_, { emit }) {
-    const prefixCls = 'ta-basic-table-header';
+    const prefixCls = 'ta-basic-table-header'
     function handleColumnChange(data: ColumnChangeParam[]) {
-      emit('columns-change', data);
+      emit('columns-change', data)
     }
-    return { prefixCls, handleColumnChange };
+    return { prefixCls, handleColumnChange }
   },
-});
+})
 </script>

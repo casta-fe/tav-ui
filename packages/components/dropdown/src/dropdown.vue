@@ -50,46 +50,50 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { isFunction } from '@tav-ui/utils/is';
-import { Dropdown, Menu, Popconfirm } from 'ant-design-vue';
-import { omit } from 'lodash-es';
-import Icon from '../../icon';
-import ModalButton from '../../button-modal';
-import { dropdownProps } from './types';
-import type { DropdownMenu } from './types';
+import { computed } from 'vue'
+import { Dropdown, Menu, Popconfirm } from 'ant-design-vue'
+import { omit } from 'lodash-es'
+import { isFunction } from '@tav-ui/utils/is'
+import Icon from '@tav-ui/components/icon'
+import ModalButton from '@tav-ui/components/button-modal'
+import { dropdownProps } from './types'
+import type { DropdownMenu } from './types'
 
-const ADropdown = Dropdown;
-const AMenu = Menu;
-const AMenuItem = Menu.Item;
-const AMenuDivider = Menu.Divider;
-const APopconfirm = Popconfirm;
+const ADropdown = Dropdown
+const AMenu = Menu
+const AMenuItem = Menu.Item
+const AMenuDivider = Menu.Divider
+const APopconfirm = Popconfirm
 
-const props = defineProps(dropdownProps);
+const props = defineProps(dropdownProps)
 
-const emit = defineEmits(['menuEvent', 'menuItemPopConfirmVisible']);
+defineOptions({
+  name: 'TaDropDown',
+})
+
+const emit = defineEmits(['menuEvent', 'menuItemPopConfirmVisible'])
 
 function handleClickMenu(item: DropdownMenu) {
-  const { event } = item;
-  const menu = props.DropdownMenuList.find((item) => `${item.event}` === `${event}`);
-  emit('menuEvent', menu);
-  item.onClick?.();
+  const { event } = item
+  const menu = props.DropdownMenuList.find((item) => `${item.event}` === `${event}`)
+  emit('menuEvent', menu)
+  item.onClick?.()
 }
 
 function handlePopConfirmVisible(visible: boolean) {
-  emit('menuItemPopConfirmVisible', visible);
+  emit('menuItemPopConfirmVisible', visible)
 }
 
 const getPopConfirmAttrs = computed(() => {
   return (attrs) => {
-    const originAttrs = omit(attrs, ['confirm', 'cancel', 'icon']);
+    const originAttrs = omit(attrs, ['confirm', 'cancel', 'icon'])
     if (!attrs.onConfirm && attrs.confirm && isFunction(attrs.confirm))
-      originAttrs['onConfirm'] = attrs.confirm;
+      originAttrs['onConfirm'] = attrs.confirm
     if (!attrs.onCancel && attrs.cancel && isFunction(attrs.cancel))
-      originAttrs['onCancel'] = attrs.cancel;
-    return originAttrs;
-  };
-});
+      originAttrs['onCancel'] = attrs.cancel
+    return originAttrs
+  }
+})
 
-const getAttr = (key: string | number) => ({ key });
+const getAttr = (key: string | number) => ({ key })
 </script>

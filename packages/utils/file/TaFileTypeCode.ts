@@ -120,7 +120,7 @@ type ModuleCodePrefixType = typeof moduleCodePrefix
 type ModuleCodePrefixKeyType = ModuleCodePrefixType[number]
 const getOptionsByModuleCode = (moduleCode: ModuleCodeType | ModuleCodeType[]) =>
   Array.isArray(moduleCode)
-    ? [...new Set(moduleCode)].map(el => fileTypeCode[el]).reduce((x, y) => x.concat(y), [])
+    ? [...new Set(moduleCode)].map((el) => fileTypeCode[el]).reduce((x, y) => x.concat(y), [])
     : fileTypeCode[moduleCode]
 const getOptionsByTypeCodes = (typeCodeArray: string[]) =>
   computed(() => {
@@ -128,22 +128,21 @@ const getOptionsByTypeCodes = (typeCodeArray: string[]) =>
     const typeCodeArraySet = [...new Set(typeCodeArray)]
     for (const key in fileTypeCode) {
       options.push(
-        ...fileTypeCode[key as ModuleCodeType].filter(el => typeCodeArraySet.includes(el.value)),
+        ...fileTypeCode[key as ModuleCodeType].filter((el) => typeCodeArraySet.includes(el.value))
       )
     }
     return options
   })
 
 const getOptionsByModuleCodePrefix = (
-  prefix: ModuleCodePrefixKeyType | ModuleCodePrefixKeyType[],
+  prefix: ModuleCodePrefixKeyType | ModuleCodePrefixKeyType[]
 ) => {
-  if (!Array.isArray(prefix))
-    prefix = [prefix]
+  if (!Array.isArray(prefix)) prefix = [prefix]
 
   const onlyPrefix = [...new Set(prefix)]
   const moduleCodes: string[] = []
   onlyPrefix.forEach((prefix) => {
-    moduleCodes.push(...Object.keys(fileTypeCode).filter(el => el.startsWith(prefix)))
+    moduleCodes.push(...Object.keys(fileTypeCode).filter((el) => el.startsWith(prefix)))
   })
   return getOptionsByModuleCode(moduleCodes as ModuleCodeType[])
 }
@@ -151,17 +150,16 @@ const getOptionsByModuleCodePrefix = (
 const mergeOptions = (
   moduleCode?: ModuleCodeType | ModuleCodeType[],
   typeCodeArray?: string[],
-  moduleCodePrefix?: ModuleCodePrefixKeyType | ModuleCodePrefixKeyType[],
+  moduleCodePrefix?: ModuleCodePrefixKeyType | ModuleCodePrefixKeyType[]
 ) => {
   const options = ((moduleCode && getOptionsByModuleCode(moduleCode)) || ([] as any[]))
     .concat(undefined !== typeCodeArray ? getOptionsByTypeCodes(typeCodeArray).value : [])
     .concat(undefined !== moduleCodePrefix ? getOptionsByModuleCodePrefix(moduleCodePrefix) : [])
-  if (!(options && options.length))
-    return []
+  if (!(options && options.length)) return []
 
   const result: LabelValueOptions<string> = []
   options.forEach((el) => {
-    if (!result.some(resItem => resItem.value === el.value && resItem.label === el.label))
+    if (!result.some((resItem) => resItem.value === el.value && resItem.label === el.label))
       result.push(el)
   })
 

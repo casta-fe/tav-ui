@@ -32,10 +32,10 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { Badge, Image } from 'ant-design-vue';
-import { propTypes } from '@tav-ui/utils/propTypes';
-import type { CSSProperties } from 'vue';
+import { computed, defineComponent } from 'vue'
+import { Badge, Image } from 'ant-design-vue'
+import { propTypes } from '@tav-ui/utils/propTypes'
+import type { CSSProperties } from 'vue'
 
 export default defineComponent({
   name: 'TableImage',
@@ -54,13 +54,13 @@ export default defineComponent({
   },
   setup(props) {
     const getWrapStyle = computed((): CSSProperties => {
-      const { size } = props;
-      const s = `${size}px`;
-      return { height: s, width: s };
-    });
+      const { size } = props
+      const s = `${size}px`
+      return { height: s, width: s }
+    })
 
-    const prefixCls = 'ta-basic-table-img';
-    return { prefixCls, getWrapStyle };
+    const prefixCls = 'ta-basic-table-img'
+    return { prefixCls, getWrapStyle }
   },
-});
+})
 </script>

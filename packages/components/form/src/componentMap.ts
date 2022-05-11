@@ -17,13 +17,13 @@ import {
   TimePicker,
   TreeSelect,
 } from 'ant-design-vue'
-import type { Component } from 'vue'
 // import ApiCascader from "./components/ApiCascader.vue";
 // import ApiRadioGroup from "./components/ApiRadioGroup.vue";
-import IconPicker from '../../icon-picker'
+import IconPicker from '@tav-ui/components/icon-picker'
 import ApiSelect from './components/ApiSelect.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
+import type { Component } from 'vue'
 // import { CountdownInput } from "/@/components/CountDown";
 // import { MemberSelect } from "/@/components/MemberSelect";
 // import { StrengthMeter } from "/@/components/StrengthMeter";

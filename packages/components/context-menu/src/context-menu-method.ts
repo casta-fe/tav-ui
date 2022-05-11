@@ -1,5 +1,5 @@
-import { isClient } from '@tav-ui/utils/is'
 import { createVNode, render } from 'vue'
+import { isClient } from '@tav-ui/utils/is'
 import TaContextMenu from './context-menu.vue'
 import type { ContextMenuProps, CreateContextOptions, Fn } from './types'
 
@@ -8,6 +8,7 @@ const menuManager: {
   resolve: Fn
 } = {
   domList: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   resolve: () => {},
 }
 
@@ -16,19 +17,16 @@ export const createContextMenu = function (options: CreateContextOptions) {
 
   event && event?.preventDefault()
 
-  if (!isClient)
-    return
+  if (!isClient) return
 
   return new Promise((resolve) => {
     const body = document.body
 
     const container = document.createElement('div')
     const propsData: Partial<ContextMenuProps> = {}
-    if (options.styles)
-      propsData.styles = options.styles
+    if (options.styles) propsData.styles = options.styles
 
-    if (options.items)
-      propsData.items = options.items
+    if (options.items) propsData.items = options.items
 
     if (options.event) {
       propsData.customEvent = event
@@ -48,8 +46,7 @@ export const createContextMenu = function (options: CreateContextOptions) {
       menuManager.domList.forEach((dom: Element) => {
         try {
           dom && body.removeChild(dom)
-        }
-        catch (error) {}
+        } catch (error) {}
       })
       body.removeEventListener('click', handleClick)
       body.removeEventListener('scroll', handleClick)

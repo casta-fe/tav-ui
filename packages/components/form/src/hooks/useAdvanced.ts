@@ -1,14 +1,14 @@
+import { computed, unref, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import { useBreakpoint } from '@tav-ui/hooks/event/useBreakpoint'
 import { isBoolean, isFunction, isNumber, isObject } from '@tav-ui/utils/is'
-import { useDebounceFn } from '@vueuse/core'
 import type { ComputedRef, Ref } from 'vue'
-import { computed, unref, watch } from 'vue'
 import type { ColEx } from '../types/index'
-import type { FormProps, FormSchema } from '../types/form'
+import type { EmitType, FormProps, FormSchema } from '../types/form'
 import type { AdvanceState } from '../types/hooks'
 
 const BASIC_COL_LEN = 24
-type EmitType = (event: string, ...args: any[]) => void
+
 type Recordable<T = any> = Record<string, T>
 interface UseAdvancedContext {
   advanceState: AdvanceState
@@ -30,14 +30,12 @@ export default function ({
   const { realWidthRef, screenEnum, screenRef } = useBreakpoint()
 
   const getEmptySpan = computed((): number => {
-    if (!advanceState.isAdvanced)
-      return 0
+    if (!advanceState.isAdvanced) return 0
 
     // For some special cases, you need to manually specify additional blank lines
     const emptySpan = unref(getProps).emptySpan || 0
 
-    if (isNumber(emptySpan))
-      return emptySpan
+    if (isNumber(emptySpan)) return emptySpan
 
     if (isObject(emptySpan)) {
       const { span = 0 } = emptySpan
@@ -55,31 +53,27 @@ export default function ({
     [() => unref(getSchema), () => advanceState.isAdvanced, () => unref(realWidthRef)],
     () => {
       const { showAdvancedButton } = unref(getProps)
-      if (showAdvancedButton)
-        debounceUpdateAdvanced()
+      if (showAdvancedButton) debounceUpdateAdvanced()
     },
-    { immediate: true },
+    { immediate: true }
   )
 
   function getAdvanced(itemCol: Partial<ColEx>, itemColSum = 0, isLastAction = false) {
     const width = unref(realWidthRef)
 
-    const mdWidth
-      = parseInt(itemCol.md as string)
-      || parseInt(itemCol.xs as string)
-      || parseInt(itemCol.sm as string)
-      || (itemCol.span as number)
-      || BASIC_COL_LEN
+    const mdWidth =
+      parseInt(itemCol.md as string) ||
+      parseInt(itemCol.xs as string) ||
+      parseInt(itemCol.sm as string) ||
+      (itemCol.span as number) ||
+      BASIC_COL_LEN
 
     const lgWidth = parseInt(itemCol.lg as string) || mdWidth
     const xlWidth = parseInt(itemCol.xl as string) || lgWidth
     const xxlWidth = parseInt(itemCol.xxl as string) || xlWidth
-    if (width <= screenEnum.LG)
-      itemColSum += mdWidth
-    else if (width < screenEnum.XL)
-      itemColSum += lgWidth
-    else if (width < screenEnum.XXL)
-      itemColSum += xlWidth
+    if (width <= screenEnum.LG) itemColSum += mdWidth
+    else if (width < screenEnum.XL) itemColSum += lgWidth
+    else if (width < screenEnum.XXL) itemColSum += xlWidth
     else itemColSum += xxlWidth
 
     if (isLastAction) {
@@ -88,16 +82,14 @@ export default function ({
         // When less than or equal to 2 lines, the collapse and expand buttons are not displayed
         advanceState.hideAdvanceBtn = true
         advanceState.isAdvanced = true
-      }
-      else if (
-        itemColSum > BASIC_COL_LEN * 2
-        && itemColSum <= BASIC_COL_LEN * (unref(getProps).autoAdvancedLine || 3)
+      } else if (
+        itemColSum > BASIC_COL_LEN * 2 &&
+        itemColSum <= BASIC_COL_LEN * (unref(getProps).autoAdvancedLine || 3)
       ) {
         advanceState.hideAdvanceBtn = false
 
         // More than 3 lines collapsed by default
-      }
-      else if (!advanceState.isLoad) {
+      } else if (!advanceState.isLoad) {
         advanceState.isLoad = true
         advanceState.isAdvanced = !advanceState.isAdvanced
       }
@@ -105,8 +97,7 @@ export default function ({
     }
     if (itemColSum > BASIC_COL_LEN * (unref(getProps).alwaysShowLines || 1)) {
       return { isAdvanced: advanceState.isAdvanced, itemColSum }
-    }
-    else {
+    } else {
       // The first line is always displayed
       return { isAdvanced: true, itemColSum }
     }
@@ -121,8 +112,7 @@ export default function ({
       const { show, colProps } = schema
       let isShow = true
 
-      if (isBoolean(show))
-        isShow = show
+      if (isBoolean(show)) isShow = show
 
       if (isFunction(show)) {
         isShow = show({
@@ -139,12 +129,11 @@ export default function ({
       if (isShow && (colProps || baseColProps)) {
         const { itemColSum: sum, isAdvanced } = getAdvanced(
           { ...baseColProps, ...colProps },
-          itemColSum,
+          itemColSum
         )
 
         itemColSum = sum || 0
-        if (isAdvanced)
-          realItemColSum = itemColSum
+        if (isAdvanced) realItemColSum = itemColSum
 
         schema.isAdvanced = isAdvanced
       }

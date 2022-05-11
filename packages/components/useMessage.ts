@@ -1,9 +1,9 @@
+import { h } from 'vue'
 import { CheckCircleFilled, CloseCircleFilled, InfoCircleFilled } from '@ant-design/icons-vue'
-import { isString } from '@tav-ui/utils/is'
 import { message as Message, Modal, notification } from 'ant-design-vue'
+import { isString } from '@tav-ui/utils/is'
 import type { ModalFunc, ModalFuncProps } from 'ant-design-vue/lib/modal/Modal'
 import type { ConfigProps, NotificationArgsProps } from 'ant-design-vue/lib/notification'
-import { h } from 'vue'
 
 export interface NotifyApi {
   info(config: NotificationArgsProps): void
@@ -12,7 +12,7 @@ export interface NotifyApi {
   warn(config: NotificationArgsProps): void
   warning(config: NotificationArgsProps): void
   open(args: NotificationArgsProps): void
-  close(key: String): void
+  close(key: string): void
   config(options: ConfigProps): void
   destroy(): void
 }
@@ -33,18 +33,14 @@ interface ConfirmOptions {
 }
 
 function getIcon(iconType: string) {
-  if (iconType === 'warning')
-    return h(InfoCircleFilled, { class: ['modal-icon-warning'] })
-  else if (iconType === 'success')
-    return h(CheckCircleFilled, { class: ['modal-icon-success'] })
-  else if (iconType === 'info')
-    return h(InfoCircleFilled, { class: ['modal-icon-info'] })
+  if (iconType === 'warning') return h(InfoCircleFilled, { class: ['modal-icon-warning'] })
+  else if (iconType === 'success') return h(CheckCircleFilled, { class: ['modal-icon-success'] })
+  else if (iconType === 'info') return h(InfoCircleFilled, { class: ['modal-icon-info'] })
   else return h(CloseCircleFilled, { class: ['modal-icon-error'] })
 }
 
 function renderContent({ content }: Pick<ModalOptionsEx, 'content'>): any {
-  if (isString(content))
-    return h('div', {}, `${content as string}`)
+  if (isString(content)) return h('div', {}, `${content as string}`)
   else return content
 }
 

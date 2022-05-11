@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite"
   },
+  "dependencies": {},
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.0",
     "typescript": "^4.5.4",

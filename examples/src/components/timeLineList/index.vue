@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent, h, reactive } from 'vue';
-import type { TimeLinePropsType } from '../../../../dist/types/components/timeLine/src/types';
+import { defineComponent, h, reactive } from 'vue'
+import type { TimeLinePropsType } from '../../../../dist/types/components/timeLine/src/types'
 
 export default defineComponent({
   name: 'TimeLineListTest',
@@ -37,28 +37,28 @@ export default defineComponent({
           description: ['dkdkdkd', 'sdkdkdiddi'],
         },
       ],
-    });
+    })
     const renderListItem = ({ item, index }) => {
-      console.log(item, index);
-      return h('div', {}, 'sksksk');
-    };
+      console.log(item, index)
+      return h('div', {}, 'sksksk')
+    }
     const loadingMore = () => {
-      console.log('loadingMoreloadingMore');
-    };
+      console.log('loadingMoreloadingMore')
+    }
     return {
       state,
       renderListItem,
       loadingMore,
-    };
+    }
   },
-});
+})
 </script>
 
 <template>
   <section class="test">
     <h2>TimeLineList默认使用</h2>
     <div class="components">
-      <TaTimeline :list="state.list" :use-loading-more="true" @loadingMore="loadingMore" />
+      <TaTimeline :list="state.list" :use-loading-more="true" @loading-more="loadingMore" />
     </div>
     <h2>TimeLineList 自定义渲染内容使用</h2>
     <div class="components">

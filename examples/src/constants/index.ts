@@ -7,8 +7,8 @@
  * @FilePath     : \tg-ui\examples\src\constants\index.ts
  *
  */
-export const PREFIX = 'tav-';
+export const PREFIX = 'tav-'
 
 export default {
   PREFIX,
-};
+}

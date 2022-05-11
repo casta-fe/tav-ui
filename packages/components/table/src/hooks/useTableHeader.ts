@@ -1,11 +1,11 @@
-import { computed, h, unref } from 'vue';
-import { isString } from '@tav-ui/utils/is';
-import { getSlot } from '@tav-ui/utils/helper/tsxHelper';
-import TableHeader from '../components/TableHeader.vue';
-import type { ComputedRef, Slots } from 'vue';
-import type { BasicTableProps, InnerHandlers } from '../types/table';
+import { computed, h, unref } from 'vue'
+import { isString } from '@tav-ui/utils/is'
+import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
+import TableHeader from '../components/TableHeader.vue'
+import type { ComputedRef, Slots } from 'vue'
+import type { BasicTableProps, InnerHandlers } from '../types/table'
 
-type Recordable<T = any> = Record<string, T>;
+type Recordable<T = any> = Record<string, T>
 
 export function useTableHeader(
   propsRef: ComputedRef<BasicTableProps>,
@@ -13,10 +13,10 @@ export function useTableHeader(
   handlers: InnerHandlers
 ) {
   const getHeaderProps = computed((): Recordable => {
-    const { title, showTableSetting, titleHelpMessage, tableSetting } = unref(propsRef);
-    const hideTitle = !slots.tableTitle && !title && !slots.toolbar && !showTableSetting;
+    const { title, showTableSetting, titleHelpMessage, tableSetting } = unref(propsRef)
+    const hideTitle = !slots.tableTitle && !title && !slots.toolbar && !showTableSetting
     if (hideTitle && !isString(title)) {
-      return {};
+      return {}
     }
 
     return {
@@ -50,7 +50,7 @@ export function useTableHeader(
                   : {}),
               }
             ),
-    };
-  });
-  return { getHeaderProps };
+    }
+  })
+  return { getHeaderProps }
 }

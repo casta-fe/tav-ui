@@ -1,29 +1,29 @@
-import { computed, ref, unref, watch } from 'vue';
-import { isBoolean } from '@tav-ui/utils/is';
-import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../const';
-import type { ComputedRef } from 'vue';
-import type { PaginationProps } from '../types/pagination';
-import type { BasicTableProps } from '../types/table';
+import { computed, ref, unref, watch } from 'vue'
+import { isBoolean } from '@tav-ui/utils/is'
+import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../const'
+import type { ComputedRef } from 'vue'
+import type { PaginationProps } from '../types/pagination'
+import type { BasicTableProps } from '../types/table'
 
 interface ItemRender {
-  page: number;
-  type: 'page' | 'prev' | 'next';
-  originalElement: any;
+  page: number
+  type: 'page' | 'prev' | 'next'
+  originalElement: any
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function itemRender({ page, type, originalElement }: ItemRender) {
   if (type === 'prev') {
-    return '上一页';
+    return '上一页'
   } else if (type === 'next') {
-    return '下一页';
+    return '下一页'
   }
-  return originalElement;
+  return originalElement
 }
 
 export function usePagination(refProps: ComputedRef<BasicTableProps>) {
-  const configRef = ref<PaginationProps>({});
-  const show = ref(true);
+  const configRef = ref<PaginationProps>({})
+  const show = ref(true)
 
   watch(
     () => unref(refProps).pagination,
@@ -32,16 +32,16 @@ export function usePagination(refProps: ComputedRef<BasicTableProps>) {
         configRef.value = {
           ...unref(configRef),
           ...(pagination ?? {}),
-        };
+        }
       }
     }
-  );
+  )
 
   const getPaginationInfo = computed((): PaginationProps | boolean => {
-    const { pagination } = unref(refProps);
+    const { pagination } = unref(refProps)
 
     if (!unref(show) || (isBoolean(pagination) && !pagination)) {
-      return false;
+      return false
     }
 
     return {
@@ -56,28 +56,28 @@ export function usePagination(refProps: ComputedRef<BasicTableProps>) {
       // showQuickJumper: true,
       ...(isBoolean(pagination) ? {} : pagination),
       ...unref(configRef),
-    };
-  });
+    }
+  })
 
   function setPagination(info: Partial<PaginationProps>) {
-    const paginationInfo = unref(getPaginationInfo);
+    const paginationInfo = unref(getPaginationInfo)
     configRef.value = {
       ...(!isBoolean(paginationInfo) ? paginationInfo : {}),
       ...info,
-    };
+    }
   }
 
   function getPagination() {
-    return unref(getPaginationInfo);
+    return unref(getPaginationInfo)
   }
 
   function getShowPagination() {
-    return unref(show);
+    return unref(show)
   }
 
   async function setShowPagination(flag: boolean) {
-    show.value = flag;
+    show.value = flag
   }
 
-  return { getPagination, getPaginationInfo, setShowPagination, getShowPagination, setPagination };
+  return { getPagination, getPaginationInfo, setShowPagination, getShowPagination, setPagination }
 }

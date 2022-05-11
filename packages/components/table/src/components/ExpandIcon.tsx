@@ -1,18 +1,18 @@
-import BasicArrow from '../../../basic-arrow';
+import BasicArrow from '@tav-ui/components/basic-arrow'
 
 export default () => {
   return (props: Record<string, any>) => {
     if (!props.expandable) {
       if (props.needIndentSpaced) {
-        return <span class="ant-table-row-expand-icon ant-table-row-spaced" />;
+        return <span class="ant-table-row-expand-icon ant-table-row-spaced" />
       } else {
-        return <span />;
+        return <span />
       }
     }
     return (
       <div
         onClick={(e: Event) => {
-          props.onExpand(props.record, e);
+          props.onExpand(props.record, e)
         }}
       >
         <BasicArrow
@@ -21,6 +21,6 @@ export default () => {
           expand={props.expanded}
         />
       </div>
-    );
-  };
-};
+    )
+  }
+}

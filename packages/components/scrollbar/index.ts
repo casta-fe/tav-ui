@@ -3,3 +3,4 @@ import Scrollbar from './src/scrollbar.vue'
 const TaScrollbar = withInstall(Scrollbar)
 export { TaScrollbar }
 export default TaScrollbar
+export * from './src/types'

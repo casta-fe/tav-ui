@@ -1,9 +1,10 @@
 import { unref } from 'vue'
 import { isObject } from './is'
 
-declare type TargetContext = '_self' | '_blank';
-declare type Recordable<T = any> = Record<string, T>;
+declare type TargetContext = '_self' | '_blank'
+declare type Recordable<T = any> = Record<string, T>
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {}
 
 /**
@@ -41,7 +42,7 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
 
 export function openWindow(
   url: string,
-  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean },
+  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean }
 ) {
   const { target = '__blank', noopener = true, noreferrer = true } = opt || {}
   const feature: string[] = []
@@ -56,7 +57,7 @@ export function openWindow(
 export function getDynamicProps<T, U>(props: T): Partial<U> {
   const ret: Recordable = {}
 
-  Object.keys(props).map((key) => {
+  Object.keys(props).forEach((key) => {
     ret[key] = unref((props as Recordable)[key])
   })
 
@@ -107,11 +108,9 @@ export function getPropByPath(obj, path, returnType = 'all') {
   const keyArr = path.split('.')
   let i = 0
   for (let len = keyArr.length; i < len - 1; ++i) {
-    if (!tempObj)
-      break
+    if (!tempObj) break
     const key = keyArr[i]
-    if (key in tempObj)
-      tempObj = tempObj[key]
+    if (key in tempObj) tempObj = tempObj[key]
     else break
   }
 
@@ -121,7 +120,6 @@ export function getPropByPath(obj, path, returnType = 'all') {
     v: tempObj && tempObj[keyArr[i]] ? tempObj[keyArr[i]] : null,
   }
 
-  if (returnType === 'value')
-    return result.v
+  if (returnType === 'value') return result.v
   else return result
 }

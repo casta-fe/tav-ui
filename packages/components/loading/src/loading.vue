@@ -1,6 +1,6 @@
 <script lang="ts">
-import { Spin } from 'ant-design-vue'
 import { defineComponent } from 'vue'
+import { Spin } from 'ant-design-vue'
 import { loadingProps } from './types'
 
 export default defineComponent({
@@ -19,4 +19,3 @@ export default defineComponent({
     <Spin v-bind="$attrs" :tip="tip" :size="size" :spinning="loading" />
   </section>
 </template>
-

@@ -28,4 +28,3 @@ export default defineComponent({
     <TaTime :value="state.value" mode="datetime" />
   </section>
 </template>
-

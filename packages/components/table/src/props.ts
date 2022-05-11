@@ -1,8 +1,8 @@
-import { propTypes } from '@tav-ui/utils/propTypes';
-import { DEFAULT_FILTER_FN, DEFAULT_SIZE, DEFAULT_SORT_FN, FETCH_SETTING } from './const';
-import type { ExtractPropTypes, PropType } from 'vue';
-import type { FormProps, FormSchema } from '../../form/src/types/form';
-import type { PaginationProps } from './types/pagination';
+import { propTypes } from '@tav-ui/utils/propTypes'
+import { DEFAULT_FILTER_FN, DEFAULT_SIZE, DEFAULT_SORT_FN, FETCH_SETTING } from './const'
+import type { ExtractPropTypes, PropType } from 'vue'
+import type { FormProps, FormSchema } from '@tav-ui/components/form/src/types/form'
+import type { PaginationProps } from './types/pagination'
 import type {
   BasicColumn,
   FetchSetting,
@@ -11,28 +11,28 @@ import type {
   TableCustomRecord,
   TableRowSelection,
   TableSetting,
-} from './types/table';
+} from './types/table'
 
-type Recordable<T = any> = Record<string, T>;
+type Recordable<T = any> = Record<string, T>
 
 export interface FilterForms {
-  inputForm?: Omit<FormSchema, 'label' | 'component'> | FormSchema;
-  pannelForm?: FormSchema[];
+  inputForm?: Omit<FormSchema, 'label' | 'component'> | FormSchema
+  pannelForm?: FormSchema[]
 }
 
 export interface useAction {
-  ifShow?: boolean;
-  handleBeforeAction?: () => void;
-  handleAction?: () => void;
-  handleAfterAction?: () => void;
+  ifShow?: boolean
+  handleBeforeAction?: () => void
+  handleAction?: () => void
+  handleAfterAction?: () => void
 }
 
 export interface PermissionButton {
-  add: string;
-  delete: string;
-  import: string;
-  export: string;
-  refresh: string;
+  add: string
+  delete: string
+  import: string
+  export: string
+  refresh: string
 }
 
 export const tableProps = {
@@ -81,7 +81,7 @@ export const tableProps = {
   fetchSetting: {
     type: Object as PropType<FetchSetting>,
     default: () => {
-      return FETCH_SETTING;
+      return FETCH_SETTING
     },
   },
   // 立即请求接口
@@ -116,7 +116,7 @@ export const tableProps = {
     default() {
       return {
         ifShow: true,
-      };
+      }
     },
   },
   useDelete: {
@@ -124,7 +124,7 @@ export const tableProps = {
     default() {
       return {
         ifShow: true,
-      };
+      }
     },
   },
   useImport: {
@@ -132,7 +132,7 @@ export const tableProps = {
     default() {
       return {
         ifShow: true,
-      };
+      }
     },
   },
   useExport: {
@@ -140,7 +140,7 @@ export const tableProps = {
     default() {
       return {
         ifShow: true,
-      };
+      }
     },
   },
   useRefresh: {
@@ -148,7 +148,7 @@ export const tableProps = {
     default() {
       return {
         ifShow: true,
-      };
+      }
     },
   },
   // ::==================== i7eo：添加 ///// end  ///// ====================:: //
@@ -214,10 +214,10 @@ export const tableProps = {
   beforeEditSubmit: {
     type: Function as PropType<
       (data: {
-        record: Recordable;
-        index: number;
-        key: string | number;
-        value: any;
+        record: Recordable
+        index: number
+        key: string | number
+        value: any
       }) => Promise<any>
     >,
   },
@@ -235,9 +235,9 @@ export const tableProps = {
         import: undefined,
         export: undefined,
         refresh: undefined,
-      };
+      }
     },
   },
-};
+}
 
-export type TableProps = ExtractPropTypes<typeof tableProps>;
+export type TableProps = ExtractPropTypes<typeof tableProps>

@@ -1,10 +1,10 @@
 <script lang="ts">
+import { computed, defineComponent } from 'vue'
+import { Radio } from 'ant-design-vue'
 import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isString } from '@tav-ui/utils/is'
-import { Radio } from 'ant-design-vue'
 import type { PropType } from 'vue'
-import { computed, defineComponent } from 'vue'
 
 interface OptionsItem {
   label: string
@@ -36,14 +36,12 @@ export default defineComponent({
     // Processing options value
     const getOptions = computed((): OptionsItem[] => {
       const { options } = props
-      if (!options || options?.length === 0)
-        return []
+      if (!options || options?.length === 0) return []
 
-      const isStringArr = options.some(item => isString(item))
-      if (!isStringArr)
-        return options as OptionsItem[]
+      const isStringArr = options.some((item) => isString(item))
+      if (!isStringArr) return options as OptionsItem[]
 
-      return options.map(item => ({ label: item, value: item })) as OptionsItem[]
+      return options.map((item) => ({ label: item, value: item })) as OptionsItem[]
     })
 
     return { state, getOptions, attrs }

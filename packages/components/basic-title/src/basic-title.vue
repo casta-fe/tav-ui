@@ -1,7 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import BasicHelp from '../../basic-help'
-import Icon from '../../icon'
+import BasicHelp from '@tav-ui/components/basic-help'
+import Icon from '@tav-ui/components/icon'
 import { basicTitleProps } from './types'
 export default defineComponent({
   name: 'TaBasicTitle',

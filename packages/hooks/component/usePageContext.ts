@@ -1,6 +1,6 @@
 /* eslint-disable symbol-description */
-import type { ComputedRef, InjectionKey, Ref } from 'vue'
 import { createContext, useContext } from '../core/useContext'
+import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
 export interface PageContextProps {
   contentHeight: ComputedRef<number>

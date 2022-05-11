@@ -1,12 +1,12 @@
 <script lang="ts">
-import { propTypes } from '@tav-ui/utils/propTypes'
-import { Col, Form } from 'ant-design-vue'
-import type { PropType } from 'vue'
 import { computed, defineComponent } from 'vue'
-import BasicArrow from '../../../basic-arrow'
-import Button from '../../../button'
-import type { ButtonProps } from '../../../button/src/types'
+import { Col, Form } from 'ant-design-vue'
+import { propTypes } from '@tav-ui/utils/propTypes'
+import BasicArrow from '@tav-ui/components/basic-arrow'
+import Button from '@tav-ui/components/button'
 import { useFormContext } from '../hooks/useFormContext'
+import type { ButtonProps } from '@tav-ui/components/button/src/types'
+import type { PropType } from 'vue'
 import type { ColEx } from '../types/index'
 
 type ButtonOptions = Partial<ButtonProps> & { text: string }
@@ -60,7 +60,7 @@ export default defineComponent({
         {
           text: '重置',
         },
-        props.resetButtonOptions,
+        props.resetButtonOptions
       )
     })
 
@@ -69,7 +69,7 @@ export default defineComponent({
         {
           text: '查询',
         },
-        props.submitButtonOptions,
+        props.submitButtonOptions
       )
     })
 

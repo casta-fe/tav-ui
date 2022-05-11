@@ -1,11 +1,11 @@
 <script lang="ts">
+import { computed, defineComponent, h, unref } from 'vue'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
-import { computed, defineComponent, h, unref } from 'vue'
-import { useAttrs } from '@tav-ui/hooks'
-import Icon from '../../icon'
-import Button from '../../button'
-import {buttonModalProps} from "./types"
+import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
+import Button from '@tav-ui/components/button'
+import Icon from '@tav-ui/components/icon'
+import { buttonModalProps } from './types'
 
 declare type Recordable<T = any> = Record<string, T>
 
@@ -14,7 +14,7 @@ export default defineComponent({
   components: { Button },
   inheritAttrs: false,
   props: buttonModalProps,
-  setup(props, { slots }) {
+  setup(props) {
     const attrs = useAttrs()
 
     // get inherit binding value
@@ -27,7 +27,7 @@ export default defineComponent({
         {
           ...props,
           ...unref(attrs),
-        },
+        }
       )
     })
 
@@ -36,15 +36,13 @@ export default defineComponent({
 
       if (_getBindValues.onClick) {
         _getBindValues.onClick()
-      }
-      else {
+      } else {
         const confirmProps = {
           class: 'modal-button-confirm',
           icon: h(ExclamationCircleOutlined),
           ..._getBindValues.popConfirm,
         }
-        if (_getBindValues.icon)
-          confirmProps.icon = h(Icon, { icon: unref(getBindValues).icon })
+        if (_getBindValues.icon) confirmProps.icon = h(Icon, { icon: unref(getBindValues).icon })
 
         if (_getBindValues.popConfirm && _getBindValues.popConfirm.confirm)
           confirmProps.onOk = _getBindValues.popConfirm.confirm

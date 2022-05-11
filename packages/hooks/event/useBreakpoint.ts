@@ -1,7 +1,7 @@
-import { screenEnum, screenMap, sizeEnum } from '@tav-ui/enums/breakpointEnum'
-import type { ComputedRef } from 'vue'
 import { computed, ref, unref } from 'vue'
+import { screenEnum, screenMap, sizeEnum } from '@tav-ui/enums/breakpointEnum'
 import { useEventListener } from './useEventListener'
+import type { ComputedRef } from 'vue'
 
 let globalScreenRef: ComputedRef<sizeEnum | undefined>
 let globalWidthRef: ComputedRef<number>
@@ -37,16 +37,11 @@ export function createBreakpointListen(fn?: (opt: CreateCallbackParams) => void)
     const md = screenMap.get(sizeEnum.MD)!
     const lg = screenMap.get(sizeEnum.LG)!
     const xl = screenMap.get(sizeEnum.XL)!
-    if (width < xs)
-      screenRef.value = sizeEnum.XS
-    else if (width < sm)
-      screenRef.value = sizeEnum.SM
-    else if (width < md)
-      screenRef.value = sizeEnum.MD
-    else if (width < lg)
-      screenRef.value = sizeEnum.LG
-    else if (width < xl)
-      screenRef.value = sizeEnum.XL
+    if (width < xs) screenRef.value = sizeEnum.XS
+    else if (width < sm) screenRef.value = sizeEnum.SM
+    else if (width < md) screenRef.value = sizeEnum.MD
+    else if (width < lg) screenRef.value = sizeEnum.LG
+    else if (width < xl) screenRef.value = sizeEnum.XL
     else screenRef.value = sizeEnum.XXL
 
     realWidthRef.value = width

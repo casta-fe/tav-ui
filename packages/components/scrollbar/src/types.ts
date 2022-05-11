@@ -1,26 +1,26 @@
-import componentSetting from '@tav-ui/settings/src/componentSetting';
-import type { ExtractPropTypes } from 'vue';
+import componentSetting from '@tav-ui/settings/src/componentSetting'
+import type { ExtractPropTypes } from 'vue'
 
-type Nullable<T> = T | null;
-type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>;
+type Nullable<T> = T | null
+type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
 
 export interface BarMapItem {
-  offset: string;
-  scroll: string;
-  scrollSize: string;
-  size: string;
-  key: string;
-  axis: string;
-  client: string;
-  direction: string;
+  offset: string
+  scroll: string
+  scrollSize: string
+  size: string
+  key: string
+  axis: string
+  client: string
+  direction: string
 }
 export interface BarMap {
-  vertical: BarMapItem;
-  horizontal: BarMapItem;
+  vertical: BarMapItem
+  horizontal: BarMapItem
 }
 
 export interface ScrollbarType {
-  wrap: ElRef;
+  wrap: ElRef
 }
 
 export const scrollbarProps = {
@@ -53,6 +53,6 @@ export const scrollbarProps = {
     type: String,
     default: 'div',
   },
-};
+}
 
-export type ScrollbarProps = ExtractPropTypes<typeof scrollbarProps>;
+export type ScrollbarProps = ExtractPropTypes<typeof scrollbarProps>

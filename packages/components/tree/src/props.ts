@@ -1,6 +1,6 @@
-import { propTypes } from '@tav-ui/utils/propTypes';
-import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
-import type { PropType } from 'vue';
+import { propTypes } from '@tav-ui/utils/propTypes'
+import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree'
+import type { ExtractPropTypes, PropType } from 'vue'
 import type {
   CheckKeys,
   ContextMenuItem,
@@ -10,9 +10,9 @@ import type {
   ReplaceFields,
   TreeActionItem,
   TreeItem,
-} from './types';
+} from './types'
 
-export const basicProps = {
+export const treeProps = {
   value: {
     type: [Object, Array] as PropType<Keys | CheckKeys>,
   },
@@ -93,7 +93,9 @@ export const basicProps = {
   checkOnSearch: propTypes.bool.def(false),
   // 搜索完成自动select所有结果
   selectedOnSearch: propTypes.bool.def(false),
-};
+}
+
+export type TreeProps = ExtractPropTypes<typeof treeProps>
 
 export const treeNodeProps = {
   actionList: {
@@ -107,4 +109,5 @@ export const treeNodeProps = {
     type: Array as PropType<TreeDataItem[]>,
     default: () => [],
   },
-};
+}
+export type TreeNodeProps = ExtractPropTypes<typeof treeNodeProps>

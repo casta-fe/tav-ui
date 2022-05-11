@@ -1,11 +1,14 @@
 {
   "name": "@tav-ui/directives",
   "version": "1.0.0",
-  "license": "ISC",
-  "author": "i7eo",
-  "main": "index.js",
+  "description": "Tav UI directives",
+  "license": "MIT",
+  "main": "index.ts",
   "module": "index.ts",
-  "scripts": {
-    "build": "gulp --require sucrase/register/ts -f ./gulpfile.ts"
+  "unpkg": "index.js",
+  "jsdelivr": "index.js",
+  "types": "index.d.ts",
+  "peerDependencies": {
+    "vue": "^3.2.21"
   }
 }

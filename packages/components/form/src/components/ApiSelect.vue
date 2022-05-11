@@ -1,13 +1,13 @@
 <script lang="ts">
+import { computed, defineComponent, ref, unref, watch, watchEffect } from 'vue'
 import { LoadingOutlined } from '@ant-design/icons-vue'
+import { Select } from 'ant-design-vue'
+import { get, omit } from 'lodash-es'
 import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isFunction } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
-import { Select } from 'ant-design-vue'
-import { get, omit } from 'lodash-es'
 import type { PropType } from 'vue'
-import { computed, defineComponent, ref, unref, watch, watchEffect } from 'vue'
 
 interface OptionsItem {
   label: string
@@ -78,13 +78,12 @@ export default defineComponent({
       () => {
         !unref(isFirstLoad) && fetch()
       },
-      { deep: true },
+      { deep: true }
     )
 
     async function fetch() {
       const api = props.api
-      if (!api || !isFunction(api))
-        return
+      if (!api || !isFunction(api)) return
       options.value = []
       try {
         loading.value = true
@@ -94,15 +93,13 @@ export default defineComponent({
           emitChange()
           return
         }
-        if (props.resultField)
-          options.value = get(res, props.resultField) || []
+        if (props.resultField) options.value = get(res, props.resultField) || []
 
         emitChange()
-      }
-      catch (error) {
+      } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn(error)
-      }
-      finally {
+      } finally {
         loading.value = false
       }
     }

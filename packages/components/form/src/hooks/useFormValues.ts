@@ -1,8 +1,8 @@
+import { unref } from 'vue'
+import { set } from 'lodash-es'
 import { dateUtil } from '@tav-ui/utils/dateUtil'
 import { isArray, isFunction, isNullOrUnDef, isObject, isString } from '@tav-ui/utils/is'
-import { set } from 'lodash-es'
 import type { ComputedRef, Ref } from 'vue'
-import { unref } from 'vue'
 import type { FormProps, FormSchema } from '../types/form'
 type Recordable<T = any> = Record<string, T>
 interface UseFormValuesContext {
@@ -19,26 +19,22 @@ export function useFormValues({
 }: UseFormValuesContext) {
   // Processing form values
   function handleFormValues(values: Recordable) {
-    if (!isObject(values))
-      return {}
+    if (!isObject(values)) return {}
 
     const res: Recordable = {}
     for (const item of Object.entries(values)) {
       let [, value] = item
       const [key] = item
-      if (!key || (isArray(value) && value.length === 0) || isFunction(value))
-        continue
+      if (!key || (isArray(value) && value.length === 0) || isFunction(value)) continue
 
       const transformDateFunc = unref(getProps).transformDateFunc
-      if (isObject(value))
-        value = transformDateFunc?.(value)
+      if (isObject(value)) value = transformDateFunc?.(value)
 
       if (isArray(value) && value[0]?._isAMomentObject && value[1]?._isAMomentObject)
-        value = value.map(item => transformDateFunc?.(item))
+        value = value.map((item) => transformDateFunc?.(item))
 
       // Remove spaces
-      if (isString(value))
-        value = value.trim()
+      if (isString(value)) value = value.trim()
 
       set(res, key, value)
     }
@@ -51,12 +47,10 @@ export function useFormValues({
   function handleRangeTimeValue(values: Recordable) {
     const fieldMapToTime = unref(getProps).fieldMapToTime
 
-    if (!fieldMapToTime || !Array.isArray(fieldMapToTime))
-      return values
+    if (!fieldMapToTime || !Array.isArray(fieldMapToTime)) return values
 
     for (const [field, [startTimeKey, endTimeKey], format = 'YYYY-MM-DD'] of fieldMapToTime) {
-      if (!field || !startTimeKey || !endTimeKey || !values[field])
-        continue
+      if (!field || !startTimeKey || !endTimeKey || !values[field]) continue
 
       const [startTime, endTime]: string[] = values[field]
 

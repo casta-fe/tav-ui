@@ -1,6 +1,6 @@
+import { computed, unref } from 'vue'
 import { isNumber } from '@tav-ui/utils/is'
 import type { Ref } from 'vue'
-import { computed, unref } from 'vue'
 // import type { FormProps, FormSchema } from '../types/form'
 
 export function useItemLabelWidth(schemaItemRef: Ref<any>, propsRef: Ref<any>) {
@@ -27,8 +27,7 @@ export function useItemLabelWidth(schemaItemRef: Ref<any>, propsRef: Ref<any>) {
     const col = { ...globalLabelCol, ...labelCol }
     const wrapCol = { ...globWrapperCol, ...wrapperCol }
 
-    if (width)
-      width = isNumber(width) ? `${width}px` : width
+    if (width) width = isNumber(width) ? `${width}px` : width
 
     return {
       labelCol: { style: { width }, ...col },

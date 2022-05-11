@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  link: string;
-}>();
+  link: string
+}>()
 </script>
 
 <template>
@@ -20,7 +20,7 @@ defineProps<{
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color .5s, color .5s;
+  transition: background-color 0.5s, color 0.5s;
 }
 
 .dark .link-button {
@@ -29,11 +29,10 @@ defineProps<{
 
 .link-button:hover {
   background-color: var(--vt-c-green-dark);
-  transition-duration: .2s;
+  transition-duration: 0.2s;
 }
 
 .dark .link-button:hover {
   background-color: var(--vt-c-green-light);
 }
-
 </style>

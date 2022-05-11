@@ -7,10 +7,10 @@
   </Tooltip>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { Tooltip } from 'ant-design-vue';
-import { RedoOutlined } from '@ant-design/icons-vue';
-import { useTableContext } from '../../hooks/useTableContext';
+import { defineComponent } from 'vue'
+import { Tooltip } from 'ant-design-vue'
+import { RedoOutlined } from '@ant-design/icons-vue'
+import { useTableContext } from '../../hooks/useTableContext'
 
 export default defineComponent({
   name: 'RedoSetting',
@@ -19,13 +19,13 @@ export default defineComponent({
     Tooltip,
   },
   setup() {
-    const table = useTableContext();
+    const table = useTableContext()
 
     function redo() {
-      table.reload();
+      table.reload()
     }
 
-    return { redo };
+    return { redo }
   },
-});
+})
 </script>

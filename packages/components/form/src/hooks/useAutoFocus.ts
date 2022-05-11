@@ -1,5 +1,5 @@
-import type { ComputedRef, Ref } from 'vue'
 import { nextTick, unref, watchEffect } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import type { FormActionType, FormProps, FormSchema } from '../types/form'
 
 interface UseAutoFocusContext {
@@ -16,24 +16,20 @@ export async function useAutoFocus({
   isInitedDefault,
 }: UseAutoFocusContext) {
   watchEffect(async () => {
-    if (unref(isInitedDefault) || !unref(getProps).autoFocusFirstItem)
-      return
+    if (unref(isInitedDefault) || !unref(getProps).autoFocusFirstItem) return
 
     await nextTick()
     const schemas = unref(getSchema)
     const formEl = unref(formElRef)
     const el = (formEl as any)?.$el as HTMLElement
-    if (!formEl || !el || !schemas || schemas.length === 0)
-      return
+    if (!formEl || !el || !schemas || schemas.length === 0) return
 
     const firstItem = schemas[0]
     // Only open when the first form item is input type
-    if (!(firstItem.component as any).includes('Input'))
-      return
+    if (!(firstItem.component as any).includes('Input')) return
 
     const inputEl = el.querySelector('.ant-row:first-child input') as Nullable<HTMLInputElement>
-    if (!inputEl)
-      return
+    if (!inputEl) return
     inputEl?.focus()
   })
 }

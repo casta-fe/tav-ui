@@ -1,69 +1,69 @@
-import { h } from 'vue';
-import { isArray } from '@tav-ui/utils/is';
-import EditableCell from './EditableCell.vue';
-import type { Ref } from 'vue';
-import type { BasicColumn } from '../../types/table';
+import { h } from 'vue'
+import { isArray } from '@tav-ui/utils/is'
+import EditableCell from './EditableCell.vue'
+import type { Ref } from 'vue'
+import type { BasicColumn } from '../../types/table'
 
-type Recordable<T = any> = Record<string, T>;
+type Recordable<T = any> = Record<string, T>
 
 interface Params {
-  text: string;
-  record: Recordable;
-  index: number;
+  text: string
+  record: Recordable
+  index: number
 }
 
 export function renderEditCell(column: BasicColumn) {
   return ({ text: value, record, index }: Params) => {
     record.onValid = async () => {
       if (isArray(record?.validCbs)) {
-        const validFns = (record?.validCbs || []).map((fn) => fn());
-        const res = await Promise.all(validFns);
-        return res.every((item) => !!item);
+        const validFns = (record?.validCbs || []).map((fn) => fn())
+        const res = await Promise.all(validFns)
+        return res.every((item) => !!item)
       } else {
-        return false;
+        return false
       }
-    };
+    }
 
     record.onEdit = async (edit: boolean, submit = false) => {
       if (!submit) {
-        record.editable = edit;
+        record.editable = edit
       }
 
       if (!edit && submit) {
-        if (!(await record.onValid())) return false;
-        const res = await record.onSubmitEdit?.();
+        if (!(await record.onValid())) return false
+        const res = await record.onSubmitEdit?.()
         if (res) {
-          record.editable = false;
-          return true;
+          record.editable = false
+          return true
         }
-        return false;
+        return false
       }
       // cancel
       if (!edit && !submit) {
-        record.onCancelEdit?.();
+        record.onCancelEdit?.()
       }
-      return true;
-    };
+      return true
+    }
 
     return h(EditableCell, {
       value,
       record,
       column,
       index,
-    });
-  };
+    })
+  }
 }
 
 export type EditRecordRow<T = Recordable> = Partial<
   {
-    onEdit: (editable: boolean, submit?: boolean) => Promise<boolean>;
-    onValid: () => Promise<boolean>;
-    editable: boolean;
-    onCancel: (...arg: any[]) => any;
-    onSubmit: (...arg: any[]) => any;
-    submitCbs: ((...arg: any[]) => any)[];
-    cancelCbs: ((...arg: any[]) => any)[];
-    validCbs: ((...arg: any[]) => any)[];
-    editValueRefs: Recordable<Ref>;
+    onEdit: (editable: boolean, submit?: boolean) => Promise<boolean>
+    onValid: () => Promise<boolean>
+    editable: boolean
+    onCancel: (...arg: any[]) => any
+    onSubmit: (...arg: any[]) => any
+    submitCbs: ((...arg: any[]) => any)[]
+    cancelCbs: ((...arg: any[]) => any)[]
+    validCbs: ((...arg: any[]) => any)[]
+    editValueRefs: Recordable<Ref>
   } & T
->;
+>

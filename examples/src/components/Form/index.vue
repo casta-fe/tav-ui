@@ -83,10 +83,10 @@
   </TaContainerCollapse>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useForm, useMessage } from '../../../../dist/index.esm.js';
+import { defineComponent } from 'vue'
+import { useForm, useMessage } from '../../../../dist/index.esm.js'
 
-import type { FormSchema } from '../../../../dist/types/components/form/src/types/form';
+import type { FormSchema } from '../../../../dist/types/components/form/src/types/form'
 
 const schemas: FormSchema[] = [
   {
@@ -99,7 +99,7 @@ const schemas: FormSchema[] = [
     componentProps: {
       placeholder: '自定义placeholder',
       onChange: (e: any) => {
-        console.log(e);
+        console.log(e)
       },
     },
   },
@@ -189,58 +189,58 @@ const schemas: FormSchema[] = [
       ],
     },
   },
-  // {
-  //   field: 'field8',
-  //   component: 'ApiCascader',
-  //   label: '联动',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   componentProps: {
-  //     api: () => {
-  //       console.log(1);
-  //     },
-  //     apiParamKey: 'parentCode',
-  //     dataField: 'data',
-  //     labelField: 'name',
-  //     valueField: 'code',
-  //     initFetchParams: {
-  //       parentCode: '',
-  //     },
-  //     isLeaf: (record) => {
-  //       return !(record.levelType < 3);
-  //     },
-  //   },
-  // },
-  // {
-  //   field: 'field9',
-  //   component: 'ApiCascader',
-  //   label: '联动回显',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   componentProps: {
-  //     api: () => {
-  //       console.log('1');
-  //     },
-  //     apiParamKey: 'parentCode',
-  //     dataField: 'data',
-  //     labelField: 'name',
-  //     valueField: 'code',
-  //     initFetchParams: {
-  //       parentCode: '',
-  //     },
-  //     isLeaf: (record) => {
-  //       return !(record.levelType < 3);
-  //     },
-  //   },
-  // },
-];
+  {
+    field: 'field8',
+    component: 'ApiCascader',
+    label: '联动',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      api: () => {
+        console.log(1)
+      },
+      apiParamKey: 'parentCode',
+      dataField: 'data',
+      labelField: 'name',
+      valueField: 'code',
+      initFetchParams: {
+        parentCode: '',
+      },
+      isLeaf: (record) => {
+        return !(record.levelType < 3)
+      },
+    },
+  },
+  {
+    field: 'field9',
+    component: 'ApiCascader',
+    label: '联动回显',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      api: () => {
+        console.log('1')
+      },
+      apiParamKey: 'parentCode',
+      dataField: 'data',
+      labelField: 'name',
+      valueField: 'code',
+      initFetchParams: {
+        parentCode: '',
+      },
+      isLeaf: (record) => {
+        return !(record.levelType < 3)
+      },
+    },
+  },
+]
 
 export default defineComponent({
   components: {},
   setup() {
-    const { createMessage } = useMessage();
+    const { createMessage } = useMessage()
 
     const [register, { setProps, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 120,
@@ -249,7 +249,7 @@ export default defineComponent({
         span: 24,
       },
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
-    });
+    })
 
     async function handleLoad() {
       const promiseFn = function () {
@@ -260,34 +260,34 @@ export default defineComponent({
               province: '湖南省',
               city: '长沙市',
               district: '岳麓区',
-            });
-          }, 1000);
-        });
-      };
+            })
+          }, 1000)
+        })
+      }
 
-      const item = await promiseFn();
+      const item = await promiseFn()
 
-      const { field9, province, city, district } = item as any;
+      const { field9, province, city, district } = item as any
       await updateSchema({
         field: 'field9',
         componentProps: {
           displayRenderArray: [province, city, district],
         },
-      });
+      })
       await setFieldsValue({
         field9,
-      });
+      })
     }
 
     return {
       register,
       schemas,
       handleSubmit: (values) => {
-        createMessage.success(`click search,values:${JSON.stringify(values)}`);
+        createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
       setProps,
       handleLoad,
-    };
+    }
   },
-});
+})
 </script>

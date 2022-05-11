@@ -3,3 +3,4 @@ import ContainerCollapse from './src/container-collapse.vue'
 const TaContainerCollapse = withInstall(ContainerCollapse)
 export { TaContainerCollapse }
 export default TaContainerCollapse
+export * from './src/types'

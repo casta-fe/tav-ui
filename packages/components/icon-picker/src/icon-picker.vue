@@ -1,15 +1,15 @@
 <script lang="ts">
-import { useDebounceFn } from '@vueuse/core'
-import { Empty, Input, Pagination, Popover } from 'ant-design-vue'
 // import svgIcons from "virtual:svg-icons-names";
 import { defineComponent, ref, unref, watch, watchEffect } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { Empty, Input, Pagination, Popover } from 'ant-design-vue'
 import { useCopyToClipboard } from '@tav-ui/hooks/web/useCopyToClipboard'
 import { usePagination } from '@tav-ui/hooks/web/usePagination'
-import ScrollContainer from '../../container-scroll'
-import { useMessage } from '../../useMessage'
+import ScrollContainer from '@tav-ui/components/container-scroll'
+import Icon from '@tav-ui/components/icon'
+import SvgIcon from '@tav-ui/components/icon-svg'
+import { useMessage } from '@tav-ui/components/useMessage'
 import iconsData from '../data/icons.data'
-import SvgIcon from '../../icon-svg'
-import Icon from '../../icon'
 import { iconPickerProps } from './types'
 import type { ChangeEvent } from './types'
 
@@ -30,10 +30,8 @@ export default defineComponent({
       const data = iconsData as any
       const prefix: string = data?.prefix ?? ''
       let result: string[] = []
-      if (prefix)
-        result = (data?.icons ?? []).map(item => `${prefix}:${item}`)
-      else if (Array.isArray(iconsData))
-        result = iconsData as string[]
+      if (prefix) result = (data?.icons ?? []).map((item) => `${prefix}:${item}`)
+      else if (Array.isArray(iconsData)) result = iconsData as string[]
 
       return result
     }
@@ -52,7 +50,7 @@ export default defineComponent({
 
     const { getPaginationList, getTotal, setCurrentPage } = usePagination(
       currentList,
-      props.pageSize,
+      props.pageSize
     )
 
     watchEffect(() => {
@@ -64,7 +62,7 @@ export default defineComponent({
       (v) => {
         emit('update:value', v)
         return emit('change', v)
-      },
+      }
     )
 
     function handlePageChange(page: number) {
@@ -75,8 +73,7 @@ export default defineComponent({
       currentSelect.value = icon
       if (props.copy) {
         clipboardRef.value = icon
-        if (unref(isSuccessRef))
-          createMessage.success('复制图标成功')
+        if (unref(isSuccessRef)) createMessage.success('复制图标成功')
       }
     }
 
@@ -87,7 +84,7 @@ export default defineComponent({
         currentList.value = icons
         return
       }
-      currentList.value = icons.filter(item => item.includes(value))
+      currentList.value = icons.filter((item) => item.includes(value))
     }
     return {
       isSvgMode,

@@ -1,40 +1,40 @@
-import { nextTick, unref } from 'vue';
-import type { ComputedRef, Ref } from 'vue';
-import type { BasicTableProps } from '../types/table';
+import { nextTick, unref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
+import type { BasicTableProps } from '../types/table'
 
 interface ComponentElRef<T extends HTMLElement = HTMLDivElement> {
-  $el: T;
+  $el: T
 }
-type ComponentRef<T extends HTMLElement = HTMLDivElement> = ComponentElRef<T> | null;
+type ComponentRef<T extends HTMLElement = HTMLDivElement> = ComponentElRef<T> | null
 
 export function useTableFullHeight(
   propsRef: ComputedRef<BasicTableProps>,
   tableElRef: Ref<ComponentRef>
 ) {
-  const { fullHeight } = unref(propsRef);
-  if (!fullHeight) return;
+  const { fullHeight } = unref(propsRef)
+  if (!fullHeight) return
 
-  let headEl: HTMLElement | null;
-  let bodyEl: HTMLElement | null;
-  let contentEl: HTMLElement | null;
+  let headEl: HTMLElement | null
+  let bodyEl: HTMLElement | null
+  let contentEl: HTMLElement | null
   async function calcTableHeight() {
-    await nextTick();
-    const table = unref(tableElRef);
-    if (!table) return;
+    await nextTick()
+    const table = unref(tableElRef)
+    if (!table) return
 
-    const tableEl: HTMLElement = table.$el;
-    if (!tableEl) return;
+    const tableEl: HTMLElement = table.$el
+    if (!tableEl) return
 
     if (!bodyEl) {
-      bodyEl = tableEl.querySelector('.ant-table-body');
-      if (!bodyEl) return;
+      bodyEl = tableEl.querySelector('.ant-table-body')
+      if (!bodyEl) return
     }
 
-    contentEl = tableEl.querySelector('.ant-table-content');
-    headEl = tableEl.querySelector('.ant-table-thead');
+    contentEl = tableEl.querySelector('.ant-table-content')
+    headEl = tableEl.querySelector('.ant-table-thead')
 
-    if (!headEl) return;
-    if (!contentEl) return;
+    if (!headEl) return
+    if (!contentEl) return
     // const { height: headHeight } = headEl.getBoundingClientRect();
     // const { height: bodyHeight } = bodyEl.getBoundingClientRect();
     // const { height: contentHeight } = contentEl.getBoundingClientRect();
@@ -50,8 +50,8 @@ export function useTableFullHeight(
     //     contentHeight - headHeight > 170 ? contentHeight - headHeight : 170
     //   }px`;
     // }
-    bodyEl.style.minHeight = `${170}px`;
+    bodyEl.style.minHeight = `${170}px`
   }
 
-  calcTableHeight();
+  calcTableHeight()
 }

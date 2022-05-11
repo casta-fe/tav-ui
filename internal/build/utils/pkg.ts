@@ -1,20 +1,14 @@
-// import { PKG_PREFIX } from '../config/constants'
-// import { bundleConfig } from '../config/bundle'
-// import type { Module } from '../config/bundle'
+import { PKG_NAME, PKG_PREFIX } from '../constants'
+import { buildConfig } from '../info'
+import type { Module } from '../info'
 
-// // 重写打包后的包 处理路径 @tav-ui/es => tav-ui/es
-// export const pathRewriter = (module: Module) => {
-//   const { bundle: { path } } = bundleConfig[module]
-//   return (id: string) => {
-//     id = id.replaceAll(`${PKG_PREFIX}/`, `${path}/`)
-//     return id
-//   }
-// }
+/** used for type generator */
+export const pathRewriter = (module: Module) => {
+  const config = buildConfig[module]
 
-// 重写打包后的@tav-ui 路径
-export const pathRewriter = (format: string) => {
   return (id: string) => {
-    id = id.replaceAll('@tav-ui', `tav-ui/${format}`)
+    id = id.replaceAll(`${PKG_PREFIX}/theme-chalk`, `${PKG_NAME}/theme-chalk`)
+    id = id.replaceAll(`${PKG_PREFIX}/`, `${config.bundle.path}/`)
     return id
   }
 }

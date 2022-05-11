@@ -1,17 +1,17 @@
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import Icon from '../../icon';
-import { basicArrowProps } from './types';
+import { computed, defineComponent } from 'vue'
+import Icon from '@tav-ui/components/icon'
+import { basicArrowProps } from './types'
 
 export default defineComponent({
   name: 'TaBasicArrow',
   components: { Icon },
   props: basicArrowProps,
   setup(props) {
-    const prefixCls = 'ta-basic-arrow';
+    const prefixCls = 'ta-basic-arrow'
     // get component class
     const getClass = computed(() => {
-      const { expand, up, down, inset } = props;
+      const { expand, up, down, inset } = props
       return [
         prefixCls,
         {
@@ -20,14 +20,14 @@ export default defineComponent({
           inset,
           down,
         },
-      ];
-    });
+      ]
+    })
     return {
       prefixCls,
       getClass,
-    };
+    }
   },
-});
+})
 </script>
 
 <template>

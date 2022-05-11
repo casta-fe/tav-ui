@@ -3,8 +3,7 @@ import { defineComponent, reactive } from 'vue'
 import type { InputNumberRangeProps } from '../../../../dist/types/components/input-number-range/src/types'
 export default defineComponent({
   name: 'InputNumberRangeTest',
-  components: {
-  },
+  components: {},
   setup() {
     const inputNumberRangeState = reactive<InputNumberRangeProps>({
       value: [],

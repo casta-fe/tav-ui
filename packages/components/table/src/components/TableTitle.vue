@@ -4,12 +4,12 @@
   </BasicTitle>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { isFunction } from '@tav-ui/utils/is';
-import BasicTitle from '../../../basic-title';
-import type { PropType } from 'vue';
+import { computed, defineComponent } from 'vue'
+import { isFunction } from '@tav-ui/utils/is'
+import BasicTitle from '@tav-ui/components/basic-title'
+import type { PropType } from 'vue'
 
-type Recordable<T = any> = Record<string, T>;
+type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
   name: 'BasicTableTitle',
@@ -26,22 +26,22 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const prefixCls = 'ta-basic-table-title';
+    const prefixCls = 'ta-basic-table-title'
 
     const getTitle = computed(() => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const { title, getSelectRows = () => {} } = props;
-      let tit = title;
+      const { title, getSelectRows = () => {} } = props
+      let tit = title
 
       if (isFunction(title)) {
         tit = title({
           selectRows: getSelectRows(),
-        });
+        })
       }
-      return tit;
-    });
+      return tit
+    })
 
-    return { getTitle, prefixCls };
+    return { getTitle, prefixCls }
   },
-});
+})
 </script>

@@ -1,5 +1,5 @@
-import type { Ref } from 'vue'
 import { getCurrentInstance, reactive, shallowRef, watchEffect } from 'vue'
+import type { Ref, ShallowRef } from 'vue'
 
 interface Params {
   excludeListeners?: boolean
@@ -16,10 +16,10 @@ export function entries<T>(obj: Recordable<T>): [string, T][] {
   return Object.keys(obj).map((key: string) => [key, obj[key]])
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function useAttrs(params: Params = {}): Ref<Recordable> | {} {
   const instance = getCurrentInstance()
-  if (!instance)
-    return {}
+  if (!instance) return {}
 
   const { excludeListeners = false, excludeKeys = [], excludeDefaultKeys = true } = params
   const attrs = shallowRef({})

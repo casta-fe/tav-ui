@@ -19,7 +19,7 @@ module.exports = (plop) => {
         type: 'input',
         name: 'name',
         message: '提供你的组件名称(使用 kebab-case)',
-        validate: v => validateKebabCase(v),
+        validate: (v) => validateKebabCase(v),
       },
     ],
     actions: (data) => {

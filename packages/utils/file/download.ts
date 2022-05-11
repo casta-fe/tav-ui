@@ -3,7 +3,7 @@ import { dataURLtoBlob, urlToBase64 } from './base64Conver'
 
 function openWindow(
   url: string,
-  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean },
+  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean }
 ) {
   const { target = '__blank', noopener = true, noreferrer = true } = opt || {}
   const feature: string[] = []
@@ -55,8 +55,7 @@ export function downloadByData(data: BlobPart, filename: string, mime?: string, 
   tempLink.style.display = 'none'
   tempLink.href = blobURL
   tempLink.setAttribute('download', filename)
-  if (typeof tempLink.download === 'undefined')
-    tempLink.setAttribute('target', '_blank')
+  if (typeof tempLink.download === 'undefined') tempLink.setAttribute('target', '_blank')
 
   document.body.appendChild(tempLink)
   tempLink.click()
@@ -100,8 +99,7 @@ export function downloadByUrl({
       return true
     }
   }
-  if (!url.includes('?'))
-    url += '?download'
+  if (!url.includes('?')) url += '?download'
 
   openWindow(url, { target })
   return true

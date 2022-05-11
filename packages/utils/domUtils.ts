@@ -1,5 +1,5 @@
-import type { FunctionArgs } from '@vueuse/core'
 import { upperFirst } from 'lodash-es'
+import type { FunctionArgs } from '@vueuse/core'
 
 export interface ViewportOffsetResult {
   left: number
@@ -15,8 +15,7 @@ interface Fn<T = any, R = T> {
 }
 
 export function getBoundingClientRect(element: Element): DOMRect | number {
-  if (!element || !element.getBoundingClientRect)
-    return 0
+  if (!element || !element.getBoundingClientRect) return 0
 
   return element.getBoundingClientRect()
 }
@@ -27,55 +26,42 @@ function trim(string: string) {
 
 /* istanbul ignore next */
 export function hasClass(el: Element, cls: string) {
-  if (!el || !cls)
-    return false
-  if (cls.includes(' '))
-    throw new Error('className should not contain space.')
-  if (el.classList)
-    return el.classList.contains(cls)
+  if (!el || !cls) return false
+  if (cls.includes(' ')) throw new Error('className should not contain space.')
+  if (el.classList) return el.classList.contains(cls)
   else return ` ${el.className} `.includes(` ${cls} `)
 }
 
 /* istanbul ignore next */
 export function addClass(el: Element, cls: string) {
-  if (!el)
-    return
+  if (!el) return
   let curClass = el.className
   const classes = (cls || '').split(' ')
 
   for (let i = 0, j = classes.length; i < j; i++) {
     const clsName = classes[i]
-    if (!clsName)
-      continue
+    if (!clsName) continue
 
-    if (el.classList)
-      el.classList.add(clsName)
-    else if (!hasClass(el, clsName))
-      curClass += ` ${clsName}`
+    if (el.classList) el.classList.add(clsName)
+    else if (!hasClass(el, clsName)) curClass += ` ${clsName}`
   }
-  if (!el.classList)
-    el.className = curClass
+  if (!el.classList) el.className = curClass
 }
 
 /* istanbul ignore next */
 export function removeClass(el: Element, cls: string) {
-  if (!el || !cls)
-    return
+  if (!el || !cls) return
   const classes = cls.split(' ')
   let curClass = ` ${el.className} `
 
   for (let i = 0, j = classes.length; i < j; i++) {
     const clsName = classes[i]
-    if (!clsName)
-      continue
+    if (!clsName) continue
 
-    if (el.classList)
-      el.classList.remove(clsName)
-    else if (hasClass(el, clsName))
-      curClass = curClass.replace(` ${clsName} `, ' ')
+    if (el.classList) el.classList.remove(clsName)
+    else if (hasClass(el, clsName)) curClass = curClass.replace(` ${clsName} `, ' ')
   }
-  if (!el.classList)
-    el.className = trim(curClass)
+  if (!el.classList) el.className = trim(curClass)
 }
 /**
  * Get the left and top offset of the current element
@@ -139,27 +125,24 @@ export function hackCss(attr: string, value: string) {
 export function on(
   element: Element | HTMLElement | Document | Window,
   event: string,
-  handler: EventListenerOrEventListenerObject,
+  handler: EventListenerOrEventListenerObject
 ): void {
-  if (element && event && handler)
-    element.addEventListener(event, handler, false)
+  if (element && event && handler) element.addEventListener(event, handler, false)
 }
 
 /* istanbul ignore next */
 export function off(
   element: Element | HTMLElement | Document | Window,
   event: string,
-  handler: Fn,
+  handler: Fn
 ): void {
-  if (element && event && handler)
-    element.removeEventListener(event, handler, false)
+  if (element && event && handler) element.removeEventListener(event, handler, false)
 }
 
 /* istanbul ignore next */
 export function once(el: HTMLElement, event: string, fn: EventListener): void {
   const listener = function (this: any, ...args: any) {
-    if (fn)
-      fn.apply(this, args)
+    if (fn) fn.apply(this, args)
 
     off(el, event, listener)
   }
@@ -169,8 +152,7 @@ export function once(el: HTMLElement, event: string, fn: EventListener): void {
 export function useRafThrottle<T extends FunctionArgs>(fn: T): any {
   let locked = false
   return function (...args: any) {
-    if (locked)
-      return
+    if (locked) return
     locked = true
     window.requestAnimationFrame(() => {
       // @ts-ignore
@@ -182,16 +164,14 @@ export function useRafThrottle<T extends FunctionArgs>(fn: T): any {
 
 export function parentsUntil(el, selector, filter): HTMLDivElement[] {
   const result: HTMLDivElement[] = []
-  const matchesSelector
-    = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
+  const matchesSelector =
+    el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
 
   // match start from parent
   el = el.parentElement
   while (el && !matchesSelector.call(el, selector)) {
-    if (!filter)
-      result.push(el)
-    else if (matchesSelector.call(el, filter))
-      result.push(el)
+    if (!filter) result.push(el)
+    else if (matchesSelector.call(el, filter)) result.push(el)
 
     el = el.parentElement
   }
@@ -199,12 +179,11 @@ export function parentsUntil(el, selector, filter): HTMLDivElement[] {
 }
 
 export function closest(el, selector): HTMLDivElement | null {
-  const matchesSelector
-    = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
+  const matchesSelector =
+    el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
 
   while (el) {
-    if (matchesSelector.call(el, selector))
-      return el
+    if (matchesSelector.call(el, selector)) return el
     else el = el.parentElement
   }
   return null

@@ -1,22 +1,22 @@
-import { nextTick, onActivated, onMounted } from 'vue';
+import { nextTick, onActivated, onMounted } from 'vue'
 
 interface Fn<T = any, R = T> {
-  (...arg: T[]): R;
+  (...arg: T[]): R
 }
 
 export function onMountedOrActivated(hook: Fn) {
-  let mounted: boolean;
+  let mounted: boolean
 
   onMounted(() => {
-    hook();
+    hook()
     nextTick(() => {
-      mounted = true;
-    });
-  });
+      mounted = true
+    })
+  })
 
   onActivated(() => {
     if (mounted) {
-      hook();
+      hook()
     }
-  });
+  })
 }
