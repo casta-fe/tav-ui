@@ -1,4 +1,3 @@
-<script lang="tsx">
 import { defineComponent } from 'vue'
 import { Tag, Tooltip } from 'ant-design-vue'
 import { timeLineTagProps } from '../types'
@@ -23,4 +22,3 @@ export default defineComponent({
       )
   },
 })
-</script>

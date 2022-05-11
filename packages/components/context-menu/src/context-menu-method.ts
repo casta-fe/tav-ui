@@ -1,6 +1,6 @@
 import { createVNode, render } from 'vue'
 import { isClient } from '@tav-ui/utils/is'
-import TaContextMenu from './context-menu.vue'
+import TaContextMenu from './context-menu'
 import type { ContextMenuProps, CreateContextOptions, Fn } from './types'
 
 const menuManager: {

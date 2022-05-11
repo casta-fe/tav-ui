@@ -5,6 +5,7 @@ import type { OutputOptions, RollupBuild, RollupWarning } from 'rollup'
 
 export const generateExternal = async (options: { full: boolean }) => {
   const { dependencies, peerDependencies } = getPackageDependencies(uiPackage)
+  // const shadowDependencies = ['vue-demi']
 
   return (id: string) => {
     const packages: string[] = peerDependencies

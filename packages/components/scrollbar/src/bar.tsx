@@ -1,4 +1,3 @@
-<script lang="tsx">
 import { computed, defineComponent, getCurrentInstance, h, inject, onUnmounted, ref } from 'vue'
 import { off, on } from '@tav-ui/utils/domUtils'
 import { BAR_MAP, renderThumbStyle } from './util'
@@ -100,4 +99,3 @@ export default defineComponent({
       )
   },
 })
-</script>

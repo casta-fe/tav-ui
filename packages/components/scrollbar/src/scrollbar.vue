@@ -10,7 +10,7 @@ import {
   unref,
 } from 'vue'
 import { addResizeListener, removeResizeListener } from '@tav-ui/utils/event/index'
-import Bar from './bar.vue'
+import Bar from './bar'
 import { scrollbarProps } from './types'
 import { toObject } from './util'
 

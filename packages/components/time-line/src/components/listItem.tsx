@@ -1,8 +1,7 @@
-<script lang="tsx">
 import { defineComponent } from 'vue'
 import { ListItem } from 'ant-design-vue'
 import { timeLineItemProps } from '../types'
-import TagLabel from './tag.vue'
+import TagLabel from './tag'
 export default defineComponent({
   name: 'TimeLineItemDefault',
   components: {
@@ -51,4 +50,3 @@ export default defineComponent({
     )
   },
 })
-</script>

@@ -1,4 +1,3 @@
-<script lang="tsx">
 import { computed, defineComponent, unref } from 'vue'
 import { InfoCircleOutlined } from '@ant-design/icons-vue'
 import { Tooltip } from 'ant-design-vue'
@@ -56,4 +55,3 @@ export default defineComponent({
     }
   },
 })
-</script>

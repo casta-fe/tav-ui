@@ -1,4 +1,3 @@
-<script lang="tsx">
 /* eslint-disable dot-notation */
 import { computed, defineComponent, h, ref, toRefs, unref, watch, withDirectives } from 'vue'
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
@@ -729,4 +728,3 @@ export default defineComponent({
     }
   },
 })
-</script>

@@ -1,7 +1,6 @@
-<script lang="tsx">
 import { defineComponent } from 'vue'
 import { Button, List, ListItem, Tag, Tooltip } from 'ant-design-vue'
-import TimeLineItemDefault from './components/listItem.vue'
+import TimeLineItemDefault from './components/listItem'
 import { timeLineListEmits, timeLineProps } from './types'
 // import { timeLineProps } from "./types";
 
@@ -44,4 +43,3 @@ export default defineComponent({
     )
   },
 })
-</script>

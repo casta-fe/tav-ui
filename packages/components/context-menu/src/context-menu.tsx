@@ -1,4 +1,3 @@
-<script lang="tsx">
 import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, unref } from 'vue'
 import { Divider, Menu } from 'ant-design-vue'
 import Icon from '@tav-ui/components/icon'
@@ -113,4 +112,3 @@ export default defineComponent({
     }
   },
 })
-</script>

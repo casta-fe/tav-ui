@@ -1,5 +1,5 @@
 import { withInstall } from '@tav-ui/utils/with-install'
-import ContextMenu from './src/context-menu.vue'
+import ContextMenu from './src/context-menu'
 const TaContextMenu = withInstall(ContextMenu)
 export { TaContextMenu }
 export default TaContextMenu

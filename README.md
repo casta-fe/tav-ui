@@ -16,4 +16,17 @@
 
 - utils/hooks/components中如果用到utils/hooks/components的情况，不能直接通过入口导入，要找到确定的文件再导入，避免循环依赖
 
-- 组件必须有name，格式：TaXx 驼峰命名， script setup 添加name的方式把setup去掉，转换文件为非setup的形式或者tsx文件，否则生成类型文件报错
+- 组件必须有name，格式：TaXx 驼峰命名
+
+- script setup 添加name的方式: 
+```javascript
+defineOptions({
+  name: 'TaDropDown',
+})
+```
+
+- 禁止在 vue sfc 中出现 script lang="tsx" 的写法，rollup 解析不完整可能会报错。建议：只有用到了template或style才写Vue SFC，否则直接写ts、tsx文件即可
+
+- refactor(build): element-plus kevin fixed up
+=> 
+1. theme-chalk/gulpfile.ts error, downgrade chalk5.0 to chalk4.1.2; 2. not file or dir [.vue?xxxx&lang.tsx], change lang=tsx to .tsx or .ts

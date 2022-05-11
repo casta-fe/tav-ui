@@ -1,8 +1,7 @@
 <script lang="ts">
-import { toRefs, watch } from 'vue'
+import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { Input, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
-import { defineComponent, reactive } from 'vue-demi'
 import { useMessage } from '@tav-ui/components/useMessage'
 import { inputNumberRangeEmits, inputNumberRangeProps } from './types'
 const { createMessage } = useMessage()
