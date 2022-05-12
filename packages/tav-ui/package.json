@@ -26,6 +26,10 @@
   },
   "unpkg": "dist/index.full.js",
   "jsdelivr": "dist/index.full.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/casta-fe/tav-ui.git"
+  },
   "publishConfig": {
     "access": "public"
   },

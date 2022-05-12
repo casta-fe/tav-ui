@@ -23,12 +23,12 @@ function compileLess() {
 }
 
 function copyCss() {
-  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk')
+  const rootDistPath = path.resolve(__dirname, '../../dist/tav-ui/theme-chalk')
   return src(path.resolve(__dirname, './dist/**')).pipe(dest(rootDistPath))
 }
 
 function copyLess() {
-  const rootDistPath = path.resolve(__dirname, '../../dist/theme-chalk/src')
+  const rootDistPath = path.resolve(__dirname, '../../dist/tav-ui/theme-chalk/src')
   return src(path.resolve(__dirname, './src/**')).pipe(dest(rootDistPath))
 }
 
