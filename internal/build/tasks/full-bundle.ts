@@ -9,7 +9,7 @@ import { rollup } from 'rollup'
 import esbuild from 'rollup-plugin-esbuild'
 import DefineOptions from 'unplugin-vue-define-options/rollup'
 import { version } from '../../../packages/tav-ui/version'
-import { PKG_BRAND_NAME } from '../constants'
+import { PKG_BRAND_NAME, PKG_CAMELCASE_NAME } from '../constants'
 import { uiOutput, uiRoot } from '../helper'
 import { target } from '../info'
 import AliasPlugin from '../plugins/alias'
@@ -60,7 +60,7 @@ async function buildFullEntry(minify: boolean) {
       format: 'umd',
       file: path.resolve(uiOutput, 'dist', formatBundleFilename('index.full', minify, 'js')),
       exports: 'named',
-      name: 'TavUI',
+      name: `${PKG_CAMELCASE_NAME}`,
       globals: {
         vue: 'Vue',
       },

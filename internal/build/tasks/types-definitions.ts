@@ -25,7 +25,7 @@ export const generateTypesDefinitions = async () => {
       outDir,
       baseUrl: projRoot,
       paths: {
-        '@tav-ui/*': ['packages/*'],
+        [`@${PKG_NAME}/*`]: ['packages/*'],
       },
       preserveSymlinks: true,
       types: [path.resolve(projRoot, 'typings/env'), 'unplugin-vue-define-options'],
