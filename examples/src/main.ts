@@ -17,7 +17,7 @@ import { createApp } from 'vue'
 import TaUi from '../../dist/tav-ui/es/index.mjs'
 import App from './App.vue'
 import 'ant-design-vue/dist/antd.less'
-import '../../dist/theme-chalk/src/index.less'
+import '../../dist/tav-ui/theme-chalk/src/index.less'
 
 const app = createApp(App)
 app.use(TaUi)

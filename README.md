@@ -30,3 +30,11 @@ defineOptions({
 - refactor(build): element-plus kevin fixed up
 => 
 1. theme-chalk/gulpfile.ts error, downgrade chalk5.0 to chalk4.1.2; 2. not file or dir [.vue?xxxx&lang.tsx], change lang=tsx to .tsx or .ts
+
+# 打包发布
+
+需要先
+
+1. git tag v0.0.1 
+2. git push --tag
+3. github action 自动发布

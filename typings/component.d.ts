@@ -20,6 +20,7 @@ declare module 'vue' {
     TaInputNumberRange: typeof import('../packages/tav-ui')['TaInputNumberRange']
     TaLoading: typeof import('../packages/tav-ui')['TaLoading']
     TaModal: typeof import('../packages/tav-ui')['TaModal']
+    TaScrollbar: typeof import('../packages/tav-ui')['TaScrollbar']
     TaTable: typeof import('../packages/tav-ui')['TaTable']
     TaTime: typeof import('../packages/tav-ui')['TaTime']
     TaTimeline: typeof import('../packages/tav-ui')['TaTimeline']

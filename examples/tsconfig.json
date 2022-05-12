@@ -1,0 +1,13 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["node", "vite/client"],
+    "paths": {
+      "tav-ui": ["../packages/tav-ui"]
+    },
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["**/*"]
+}
