@@ -5,6 +5,11 @@ name: Publish to NPM registry
 #     branches: [main]
 
 on:
+  push:
+    tags:
+    - "v*"
+
+on:
   label:
     types: [created, deleted]
 
