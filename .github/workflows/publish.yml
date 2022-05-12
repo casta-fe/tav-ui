@@ -9,10 +9,6 @@ on:
     tags:
     - "v*"
 
-on:
-  label:
-    types: [created, deleted]
-
 jobs:
   # test:
   #   runs-on: ubuntu-latest
