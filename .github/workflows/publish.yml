@@ -5,6 +5,33 @@ on:
     branches: [main]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.com/
+          cache: 'pnpm'
+
+      # - name: Install dependencies
+      #   run: pnpm i --frozen-lockfile
+      # - name: Lint
+      #   run: pnpm lint
+
   publish:
     needs: test
     runs-on: ubuntu-latest
