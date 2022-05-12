@@ -1,14 +1,14 @@
 #!/bin/sh
 
-# set -e
+set -e
 
-# pnpm i --frozen-lockfile
+pnpm i --frozen-lockfile
 # pnpm update:version
 
-# pnpm build
+pnpm build
 
-# cd dist/tav-ui
-# npm publish
-# cd -
+cd dist/tav-ui
+npm publish
+cd -
 
 echo "✅ Publish completed"
