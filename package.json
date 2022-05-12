@@ -1,6 +1,6 @@
 {
   "name": "tav-ui",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "pnpm -C examples dev",
@@ -10,6 +10,8 @@
     "clean:dist": "rimraf dist",
     "reinstall": "pnpm rmnm && pnpm install --force",
     "rmnm": "pnpm run -r --parallel rmnm && rimraf node_modules",
+    "gen:version": "sucrase-node scripts/gen-version.ts",
+    "update:version": "sucrase-node scripts/update-version.ts",
     "preview": "vite preview",
     "docs:dev": "pnpm -C docs dev",
     "docs:build": "pnpm -C docs build",
@@ -48,6 +50,9 @@
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
+    "@pnpm/find-workspace-packages": "^4.0.0",
+    "@pnpm/logger": "^4.0.0",
+    "@pnpm/types": "^8.0.0",
     "@tav-ui/eslint-config": "workspace:*",
     "@types/fs-extra": "^9.0.13",
     "@types/gulp": "^4.0.9",

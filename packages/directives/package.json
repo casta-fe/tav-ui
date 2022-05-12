@@ -1,6 +1,6 @@
 {
   "name": "@tav-ui/directives",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Tav UI directives",
   "license": "MIT",
   "main": "index.ts",

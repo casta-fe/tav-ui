@@ -1,8 +1,12 @@
 {
   "name": "tav-ui",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "version": "0.0.0",
+  "description": "Tav UI",
+  "keywords": [
+    "monorepo",
+    "vue3",
+    "ant-design-vue"
+  ],
   "license": "ISC",
   "author": "i7eo",
   "main": "lib/index.js",

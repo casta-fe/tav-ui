@@ -1,6 +1,6 @@
 {
   "name": "@tav-ui/build",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Build Toolchain for Tav UI",
   "main": "./dist/index.cjs",
@@ -11,6 +11,7 @@
     "rmnm": "rimraf node_modules"
   },
   "dependencies": {
+    "@pnpm/find-workspace-packages": "^4.0.0",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.2.1",
@@ -28,5 +29,8 @@
     "ts-morph": "^14.0.0",
     "unplugin-vue-define-options": "^0.6.0",
     "vue": "^3.2.21"
+  },
+  "devDependencies": {
+    "@pnpm/types": "^8.0.0"
   }
 }

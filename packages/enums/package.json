@@ -1,6 +1,6 @@
 {
   "name": "@tav-ui/enums",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Tav UI enums",
   "license": "MIT",
   "main": "index.ts",

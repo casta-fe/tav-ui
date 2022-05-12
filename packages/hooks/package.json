@@ -1,6 +1,6 @@
 {
   "name": "@tav-ui/hooks",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Tav UI hooks",
   "license": "MIT",
   "main": "index.ts",
