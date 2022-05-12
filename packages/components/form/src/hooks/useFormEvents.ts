@@ -7,14 +7,14 @@ import { error } from '@tav-ui/utils/log'
 import { dateItemType, handleInputNumberValue } from '../helper'
 import type { NamePath } from 'ant-design-vue/lib/form/interface'
 import type { ComputedRef, Ref } from 'vue'
-import type { EmitType, FormActionType, FormProps, FormSchema } from '../types/form'
+import type { FormActionType, FormEmitType, FormProps, FormSchema } from '../types/form'
 
 type Recordable<T = any> = Record<string, T>
 interface Fn<T = any, R = T> {
   (...arg: T[]): R
 }
 interface UseFormActionContext {
-  emit: EmitType
+  emit: FormEmitType
   getProps: ComputedRef<FormProps>
   getSchema: ComputedRef<FormSchema[]>
   formModel: Recordable

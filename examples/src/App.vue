@@ -4,24 +4,24 @@
 import { defineComponent } from '@vue/runtime-core'
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import * as components from '@tav-ui/components'
-import TimeLineListPage from './components/timeLineList/index.vue'
-import TimePage from './components/time/index.vue'
-import InputNumberRangePage from './components/InputNumberRange/index.vue'
-import FileViewPage from './components/FileView/index.vue'
-import FormPage from './components/Form/index.vue'
-import TreePage from './components/Tree/index.vue'
-import ModalPage from './components/Modal/index.vue'
+// import TimeLineListPage from './components/timeLineList/index.vue'
+// import TimePage from './components/time/index.vue'
+// import InputNumberRangePage from './components/InputNumberRange/index.vue'
+// import FileViewPage from './components/FileView/index.vue'
+// import FormPage from './components/Form/index.vue'
+// import TreePage from './components/Tree/index.vue'
+// import ModalPage from './components/Modal/index.vue'
 
 export default defineComponent({
   components: {
-    TimeLineListPage,
-    TimePage,
-    InputNumberRangePage,
-    FileViewPage,
-    FormPage,
-    TreePage,
-    ModalPage,
-    BasicTablePage,
+    // TimeLineListPage,
+    // TimePage,
+    // InputNumberRangePage,
+    // FileViewPage,
+    // FormPage,
+    // TreePage,
+    // ModalPage,
+    // BasicTablePage,
   },
   setup() {
     // 函数方式调用loading
@@ -41,8 +41,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <TaIcon color="red" :size="30" class="tg-icon-dropbox"> Icon Test </TaIcon>
-  <TaButton type="text" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
+  <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
     aaa
   </TaButton>
   <TaBasicArrow />
@@ -53,14 +52,14 @@ export default defineComponent({
   </TaBasicTitle>
   <!-- <TaLoading  :loading="true"></TaLoading> -->
 
-  <TimeLineListPage />
+  <!-- <TimeLineListPage />
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />
   <TreePage />
   <ModalPage />
   <FormPage />
-  <BasicTablePage />
+  <BasicTablePage /> -->
 </template>
 
 <style>

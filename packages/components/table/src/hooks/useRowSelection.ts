@@ -1,17 +1,17 @@
 import { computed, nextTick, ref, toRaw, unref, watch } from 'vue'
 import { omit } from 'lodash-es'
-import { isFunction } from '@tav-ui/utils/is'
 import { findNodeAll } from '@tav-ui/utils/helper/treeHelper'
+import { isFunction } from '@tav-ui/utils/is'
 import { ROW_KEY } from '../const'
 import type { ComputedRef, Ref } from 'vue'
-import type { BasicTableProps, EmitType, TableRowSelection } from '../types/table'
+import type { BasicTableProps, TableEmitType, TableRowSelection } from '../types/table'
 
 type Recordable<T = any> = Record<string, T>
 
 export function useRowSelection(
   propsRef: ComputedRef<BasicTableProps>,
   tableData: Ref<Recordable[]>,
-  emit: EmitType
+  emit: TableEmitType
 ) {
   const selectedRowKeysRef = ref<string[]>([])
   const selectedRowRef = ref<Recordable[]>([])

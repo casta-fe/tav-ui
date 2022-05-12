@@ -2,14 +2,14 @@ import { unref } from 'vue'
 import { isFunction, isString } from '@tav-ui/utils/is'
 import { ROW_KEY } from '../const'
 import type { ComputedRef } from 'vue'
-import type { BasicTableProps, EmitType } from '../types/table'
+import type { BasicTableProps, TableEmitType } from '../types/table'
 
 type Recordable<T = any> = Record<string, T>
 interface Options {
   setSelectedRowKeys: (keys: string[]) => void
   getSelectRowKeys: () => string[]
   clearSelectedRowKeys: () => void
-  emit: EmitType
+  emit: TableEmitType
   getAutoCreateKey: ComputedRef<boolean | undefined>
 }
 

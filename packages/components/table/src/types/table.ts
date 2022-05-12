@@ -13,7 +13,7 @@ import type { ComponentType } from './componentType'
 import type { PaginationProps } from './pagination'
 
 type Recordable<T = any> = Record<string, T>
-export type EmitType = (
+export type TableEmitType = (
   event:
     | 'register'
     | 'fetch-success'
@@ -138,7 +138,7 @@ export interface TableActionType {
   getSize: () => SizeType
   getRowSelection: () => TableRowSelection<Recordable>
   getCacheColumns: () => BasicColumn[]
-  emit?: EmitType
+  emit?: TableEmitType
   updateTableData: (index: number, key: string, value: any) => Recordable
   setShowPagination: (show: boolean) => Promise<void>
   getShowPagination: () => boolean

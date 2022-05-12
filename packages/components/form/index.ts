@@ -1,9 +1,11 @@
 import { withInstall } from '@tav-ui/utils/with-install'
 import Form from './src/form.vue'
+import apiSelect from './src/components/ApiSelect.vue'
+import radioButtonGroup from './src/components/RadioButtonGroup.vue'
 const TaForm = withInstall(Form)
-export { default as ApiSelect } from './src/components/ApiSelect.vue'
-export { default as RadioButtonGroup } from './src/components/RadioButtonGroup.vue'
-export { TaForm }
+const ApiSelect = withInstall(apiSelect)
+const RadioButtonGroup = withInstall(radioButtonGroup)
+export { TaForm, ApiSelect, RadioButtonGroup }
 export default TaForm
 export { useForm } from './src/hooks/useForm'
 // export * from './src/props'

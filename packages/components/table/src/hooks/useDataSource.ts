@@ -7,7 +7,7 @@ import { FETCH_SETTING, PAGE_SIZE, ROW_KEY } from '../const'
 import { useTableFullHeight } from './useTableFullHeight'
 import type { ComputedRef, Ref } from 'vue'
 import type { PaginationProps } from '../types/pagination'
-import type { BasicTableProps, EmitType, FetchParams, SorterResult } from '../types/table'
+import type { BasicTableProps, FetchParams, SorterResult, TableEmitType } from '../types/table'
 
 type Recordable<T = any> = Record<string, T>
 interface ComponentElRef<T extends HTMLElement = HTMLDivElement> {
@@ -44,7 +44,7 @@ export function useDataSource(
     clearSelectedRowKeys,
     tableData,
   }: ActionType,
-  emit: EmitType,
+  emit: TableEmitType,
   filterRef
 ) {
   const searchState = reactive<SearchState>({

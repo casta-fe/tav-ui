@@ -31,37 +31,37 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs } from 'vue';
-import { getBasicColumns, getBasicData } from './tableData';
-import type { ColumnChangeParam } from '../../../../dist/types/components/table/src/types';
+import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { getBasicColumns, getBasicData } from './tableData'
+import type { ColumnChangeParam } from '../../../../dist/types/components/table/src/types'
 
 export default defineComponent({
   components: {},
   setup() {
-    const canResize = ref(false);
-    const loading = ref(false);
-    const striped = ref(true);
-    const border = ref(true);
-    const pagination = ref<any>(false);
+    const canResize = ref(false)
+    const loading = ref(false)
+    const striped = ref(true)
+    const border = ref(true)
+    const pagination = ref<any>(false)
     function toggleCanResize() {
-      canResize.value = !canResize.value;
+      canResize.value = !canResize.value
     }
     function toggleStriped() {
-      striped.value = !striped.value;
+      striped.value = !striped.value
     }
     function toggleLoading() {
-      loading.value = true;
+      loading.value = true
       setTimeout(() => {
-        loading.value = false;
-        pagination.value = { pageSize: 20 };
-      }, 3000);
+        loading.value = false
+        pagination.value = { pageSize: 20 }
+      }, 3000)
     }
     function toggleBorder() {
-      border.value = !border.value;
+      border.value = !border.value
     }
 
     function handleColumnChange(data: ColumnChangeParam[]) {
-      console.log('ColumnChanged', data);
+      console.log('ColumnChanged', data)
     }
     const inputForm = {
       field: 'institutionName',
@@ -69,7 +69,7 @@ export default defineComponent({
       componentProps: {
         placeholder: '请输入机构名称',
       },
-    };
+    }
 
     const pannelForm = [
       {
@@ -134,15 +134,15 @@ export default defineComponent({
           ], //INVEST_FIELD_LIST
         },
       },
-    ];
+    ]
 
     const filterForms = {
       inputForm,
       pannelForm,
-    };
+    }
     const state = reactive({
       filterForms,
-    });
+    })
     return {
       columns: getBasicColumns(),
       data: getBasicData(),
@@ -157,7 +157,7 @@ export default defineComponent({
       pagination,
       handleColumnChange,
       ...toRefs(state),
-    };
+    }
   },
-});
+})
 </script>

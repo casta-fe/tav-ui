@@ -8,14 +8,7 @@ import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isFunction } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
 import type { PropType } from 'vue'
-
-interface OptionsItem {
-  label: string
-  value: string
-  disabled?: boolean
-}
-
-type Recordable<T = any> = Record<string, T>
+import type { ApiSelectOptionsItem } from './types'
 
 export default defineComponent({
   name: 'ApiSelect',
@@ -28,12 +21,12 @@ export default defineComponent({
     value: [Array, Object, String, Number],
     numberToString: propTypes.bool,
     api: {
-      type: Function as PropType<(arg?: Recordable) => Promise<OptionsItem[]>>,
+      type: Function as PropType<(arg?: Record<string, any>) => Promise<ApiSelectOptionsItem[]>>,
       default: null,
     },
     // api params
     params: {
-      type: Object as PropType<Recordable>,
+      type: Object as PropType<Record<string, any>>,
       default: () => ({}),
     },
     // support xxx.xxx.xx
@@ -44,7 +37,7 @@ export default defineComponent({
   },
   emits: ['options-change', 'change'],
   setup(props, { emit }) {
-    const options = ref<OptionsItem[]>([])
+    const options = ref<ApiSelectOptionsItem[]>([])
     const loading = ref(false)
     const isFirstLoad = ref(true)
     const emitData = ref<any[]>([])
@@ -56,7 +49,7 @@ export default defineComponent({
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props
 
-      return unref(options).reduce((prev, next: Recordable) => {
+      return unref(options).reduce((prev, next: Record<string, any>) => {
         if (next) {
           const value = next[valueField]
           prev.push({
@@ -66,7 +59,7 @@ export default defineComponent({
           })
         }
         return prev
-      }, [] as OptionsItem[])
+      }, [] as ApiSelectOptionsItem[])
     })
 
     watchEffect(() => {

@@ -3,16 +3,16 @@ import { useDebounceFn } from '@vueuse/core'
 import { useBreakpoint } from '@tav-ui/hooks/event/useBreakpoint'
 import { isBoolean, isFunction, isNumber, isObject } from '@tav-ui/utils/is'
 import type { ComputedRef, Ref } from 'vue'
-import type { ColEx } from '../types/index'
-import type { EmitType, FormProps, FormSchema } from '../types/form'
+import type { FormEmitType, FormProps, FormSchema } from '../types/form'
 import type { AdvanceState } from '../types/hooks'
+import type { ColEx } from '../types/index'
 
 const BASIC_COL_LEN = 24
 
 type Recordable<T = any> = Record<string, T>
 interface UseAdvancedContext {
   advanceState: AdvanceState
-  emit: EmitType
+  emit: FormEmitType
   getProps: ComputedRef<FormProps>
   getSchema: ComputedRef<FormSchema[]>
   formModel: Recordable

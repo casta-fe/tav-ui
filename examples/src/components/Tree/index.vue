@@ -11,7 +11,7 @@
 <script lang="ts">
 // import { Tree } from 'ant-design-vue';
 import { defineComponent, ref, watch } from 'vue'
-import { TaTree } from '../../../../dist/index.esm'
+import { TaTree } from '../../../../dist/tav-ui/dist/index.full.mjs'
 import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree'
 
 export default defineComponent({

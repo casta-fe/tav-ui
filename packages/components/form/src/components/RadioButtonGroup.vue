@@ -5,13 +5,7 @@ import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isString } from '@tav-ui/utils/is'
 import type { PropType } from 'vue'
-
-interface OptionsItem {
-  label: string
-  value: string | number | boolean
-  disabled?: boolean
-}
-type RadioItem = string | OptionsItem
+import type { RadioButtonGroupOptionItem, RadioButtonGroupOptionsItem } from './types'
 
 export default defineComponent({
   name: 'RadioButtonGroup',
@@ -24,7 +18,7 @@ export default defineComponent({
       type: [String, Number, Boolean] as PropType<string | number | boolean>,
     },
     options: {
-      type: Array as PropType<RadioItem[]>,
+      type: Array as PropType<RadioButtonGroupOptionItem[]>,
       default: () => [],
     },
   },
@@ -34,14 +28,14 @@ export default defineComponent({
     const [state] = useRuleFormItem(props)
 
     // Processing options value
-    const getOptions = computed((): OptionsItem[] => {
+    const getOptions = computed((): RadioButtonGroupOptionsItem[] => {
       const { options } = props
       if (!options || options?.length === 0) return []
 
       const isStringArr = options.some((item) => isString(item))
-      if (!isStringArr) return options as OptionsItem[]
+      if (!isStringArr) return options as RadioButtonGroupOptionsItem[]
 
-      return options.map((item) => ({ label: item, value: item })) as OptionsItem[]
+      return options.map((item) => ({ label: item, value: item })) as RadioButtonGroupOptionsItem[]
     })
 
     return { state, getOptions, attrs }

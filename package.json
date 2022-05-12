@@ -21,8 +21,8 @@
     "docs:dev": "pnpm -C docs dev",
     "docs:build": "pnpm -C docs build",
     "docs:serve": "pnpm -C docs serve",
-    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json --max-warnings 0",
-    "lint:fix": "eslint --fix . --ext .vue,.js,.ts,.jsx,.tsx,.md,.json",
+    "lint": "eslint . --ext .vue,.js,.jsx,.ts,.tsx,.md,.json --max-warnings 0",
+    "lint:fix": "eslint --fix . --ext .vue,.js,.jsx,.ts,.tsx,.md,.json",
     "lint:lint-staged": "lint-staged",
     "plop:cmp": "pnpm -C internal/plop component",
     "plop:api": "pnpm -C internal/plop api",
@@ -96,7 +96,7 @@
     }
   },
   "lint-staged": {
-    "*.{vue,js,jsx,ts,tsx,json}": "eslint --fix"
+    "*.{vue,js,jsx,ts,tsx,md,json}": "eslint --fix"
   },
   "browserslist": [
     "> 1%",
