@@ -50,6 +50,14 @@ jobs:
         run: echo "GIT_HEAD=${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Gen npmrc
         run: echo "//registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+      - name: Echo NPM_TOKEN
+        run: echo "${{secrets.NPM_TOKEN}}"
+      - name: Echo TAG_VERSION
+        run: echo "${{env.TAG_VERSION}}"
+      - name: Echo GIT_HEAD
+        run: echo "${{env.GIT_HEAD}}"
+      - name: Echo GITHUB_TOKEN
+        run: echo "${{secrets.SELF_TOKEN}}"
       - name: Build&publish
         run: sh ./scripts/publish.sh
         env:
