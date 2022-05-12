@@ -1,7 +1,12 @@
 {
-  "name": "tav-ui",
-  "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@7.0.0",
+  "workspaces": [
+    "packages/*",
+    "internal/*",
+    "examples",
+    "docs"
+  ],
   "scripts": {
     "dev": "pnpm -C examples dev",
     "build": "pnpm run -C internal/build build",
