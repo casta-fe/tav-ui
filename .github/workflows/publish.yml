@@ -1,8 +1,8 @@
 name: Publish to NPM registry
 
 on:
-  release:
-    types: [published]
+  label:
+    types: [created]
 
 jobs:
   test:
