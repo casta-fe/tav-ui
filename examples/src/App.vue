@@ -1,8 +1,8 @@
 <script lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import { defineComponent } from '@vue/runtime-core'
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
+import { defineComponent, reactive } from 'vue'
 import * as components from '@tav-ui/components'
 // import TimeLineListPage from './components/timeLineList/index.vue'
 // import TimePage from './components/time/index.vue'
@@ -35,24 +35,45 @@ export default defineComponent({
     //   document.body,
     // )
     console.log(components)
-    return {}
+    const state = reactive({
+      permissions: {},
+      components: {},
+    })
+    setTimeout(() => {
+      state.permissions = {
+        aa: {
+          ifShow: true,
+          apiUrl: 'xxx',
+        },
+      }
+      state.components = {
+        TaUpload: {
+          defaultApi: '123',
+        },
+      }
+      console.log(state)
+    }, 1000)
+    return {
+      state,
+    }
   },
 })
 </script>
 
 <template>
-  <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
-    aaa
-  </TaButton>
-  <TaBasicArrow />
-  <TaBasicHelp :text="['1', '2']" />
-  <br />
-  <TaBasicTitle icon="ant-design:setting-filled" :help-message="['3', '4']">
-    basic title
-  </TaBasicTitle>
-  <!-- <TaLoading  :loading="true"></TaLoading> -->
+  <TaConfigProvider :permissions="state.permissions" :components="state.components">
+    <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
+      aaa
+    </TaButton>
+    <TaBasicArrow />
+    <TaBasicHelp :text="['1', '2']" />
+    <br />
+    <TaBasicTitle icon="ant-design:setting-filled" :help-message="['3', '4']">
+      basic title
+    </TaBasicTitle>
+    <!-- <TaLoading  :loading="true"></TaLoading> -->
 
-  <!-- <TimeLineListPage />
+    <!-- <TimeLineListPage />
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />
@@ -60,6 +81,7 @@ export default defineComponent({
   <ModalPage />
   <FormPage />
   <BasicTablePage /> -->
+  </TaConfigProvider>
 </template>
 
 <style>
