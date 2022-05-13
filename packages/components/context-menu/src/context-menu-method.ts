@@ -1,7 +1,7 @@
 import { createVNode, render } from 'vue'
 import { isClient } from '@tav-ui/utils/is'
 import TaContextMenu from './context-menu'
-import type { ContextMenuProps, CreateContextOptions, Fn } from './types'
+import type { ContextMenuOptions, ContextMenuProps, Fn } from './types'
 
 const menuManager: {
   domList: Element[]
@@ -12,7 +12,7 @@ const menuManager: {
   resolve: () => {},
 }
 
-export const createContextMenu = function (options: CreateContextOptions) {
+export const createContextMenu = function (options: ContextMenuOptions) {
   const { event } = options || {}
 
   event && event?.preventDefault()

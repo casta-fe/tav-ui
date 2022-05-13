@@ -14,7 +14,7 @@ export interface ContextMenuItem {
   divider?: boolean
   children?: ContextMenuItem[]
 }
-export interface CreateContextOptions {
+export interface ContextMenuOptions {
   event: MouseEvent
   icon?: string
   styles?: any

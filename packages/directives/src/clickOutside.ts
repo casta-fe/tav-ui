@@ -65,7 +65,7 @@ function createDocumentHandler(el: HTMLElement, binding: DirectiveBinding): Docu
   }
 }
 
-const ClickOutside: ObjectDirective = {
+const ClickOutsideDirective: ObjectDirective = {
   beforeMount(el, binding) {
     nodeList.set(el, {
       documentHandler: createDocumentHandler(el, binding),
@@ -84,7 +84,7 @@ const ClickOutside: ObjectDirective = {
 }
 
 export function setupClickOutsideDirective(app: App) {
-  app.directive('clickOutside', ClickOutside)
+  app.directive('clickOutside', ClickOutsideDirective)
 }
 
-export default ClickOutside
+export default ClickOutsideDirective

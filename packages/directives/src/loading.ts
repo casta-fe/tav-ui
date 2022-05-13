@@ -1,13 +1,13 @@
-import { loadingCreate } from '@tav-ui/components/loading/src/loading-methods'
+import { createLoading } from '@tav-ui/components/loading/src/createLoading'
 import type { App, Directive } from 'vue'
 
-const loadingDirective: Directive = {
+const LoadingDirective: Directive = {
   mounted(el, binding) {
     const tip = el.getAttribute('loading-tip')
     const background = el.getAttribute('loading-background')
     const size = el.getAttribute('loading-size')
     const fullscreen = !!binding.modifiers.fullscreen
-    const instance = loadingCreate(
+    const instance = createLoading(
       {
         tip: tip || '正在加载页面 😉',
         background,
@@ -35,7 +35,7 @@ const loadingDirective: Directive = {
 }
 
 export function setupLoadingDirective(app: App) {
-  app.directive('loading', loadingDirective)
+  app.directive('loading', LoadingDirective)
 }
 
-export default loadingDirective
+export default LoadingDirective

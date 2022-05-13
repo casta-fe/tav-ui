@@ -1,7 +1,6 @@
 // Used to configure the general configuration of some components without modifying the components
-
 import type { SorterResult } from '@tav-ui/components/table/src/types/table'
-type Recordable<T = any> = Record<string, T>
+
 export default {
   // basic-table setting
   table: {
@@ -54,7 +53,7 @@ export default {
       return !order ? sotrStrategies.undefined() : sotrStrategies[order]()
     },
     // Custom general filter function
-    defaultFilterFn: (data: Partial<Recordable<string[]>>) => {
+    defaultFilterFn: (data: Partial<Record<string, string[]>>) => {
       return data
     },
   },

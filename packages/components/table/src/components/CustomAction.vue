@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-// import { useMessage } from '@tav-ui/components/useMessage';
+// import { useMessage } from '@tav-ui/hooks/web/useMessage';
 import { inject, reactive } from 'vue'
 import Button from '@tav-ui/components/button'
 import type { Emitter } from '@tav-ui/utils/mitt'
