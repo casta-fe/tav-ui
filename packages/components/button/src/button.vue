@@ -3,6 +3,7 @@ import { computed, defineComponent, unref } from 'vue'
 import { Button } from 'ant-design-vue'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Icon from '@tav-ui/components/icon'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { buttonProps } from './types'
 export default defineComponent({
   name: 'TaButton',
@@ -25,13 +26,10 @@ export default defineComponent({
     // get inherit binding value
     const getBindValue = computed(() => ({ ...unref(attrs), ...props }))
 
-    // const { getPermissions } = usePermission();
-    // const Permissions = getPermissions();
     const IfShow = computed(() => (code) => {
-      // eslint-disable-next-line no-console
-      console.log(code)
-      // return code ? unref(Permissions)[code]?.ifShow && props.ifShow : props.ifShow;
-      return true
+      const global = useGlobalConfig()
+      console.log(unref(global), code)
+      return code ? unref(global)[code]?.ifShow && props.ifShow : props.ifShow
     })
     return { getButtonClass, getBindValue, IfShow }
   },

@@ -1,9 +1,8 @@
-const projectName = 'ta-ui'
-
+const NAME = 'TavUI'
 export function warn(message: string) {
-  console.warn(`[${projectName} warn]:${message}`)
+  console.warn(`[${NAME} warn]:${message}`)
 }
 
 export function error(message: string) {
-  throw new Error(`[${projectName} error]:${message}`)
+  throw new Error(`[${NAME} error]:${message}`)
 }

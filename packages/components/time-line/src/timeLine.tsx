@@ -5,7 +5,7 @@ import { timeLineListEmits, timeLineProps } from './types'
 // import { timeLineProps } from "./types";
 
 export default defineComponent({
-  name: 'TaTimeline',
+  name: 'TaTimeLine',
   components: { List, ListItem, Button, Tag, Tooltip },
   inheritAttrs: false,
   props: timeLineProps,
