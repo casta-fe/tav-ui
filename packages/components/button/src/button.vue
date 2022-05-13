@@ -5,6 +5,8 @@ import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { buttonProps } from './types'
+import type { Ref } from 'vue'
+
 export default defineComponent({
   name: 'TaButton',
   components: { Button, Icon },
@@ -27,9 +29,8 @@ export default defineComponent({
     const getBindValue = computed(() => ({ ...unref(attrs), ...props }))
 
     const IfShow = computed(() => (code) => {
-      const global = useGlobalConfig()
-      console.log(unref(global), code)
-      return code ? unref(global)[code]?.ifShow && props.ifShow : props.ifShow
+      const permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+      return code ? unref(permissions)[code]?.ifShow && props.ifShow : props.ifShow
     })
     return { getButtonClass, getBindValue, IfShow }
   },
