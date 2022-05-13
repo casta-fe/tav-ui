@@ -2,8 +2,9 @@
   <div ref="wrapRef" :class="getWrapperClass">
     <BasicForm
       v-if="getBindValues.useSearchForm"
-      submit-on-reset
       v-bind="getFormProps"
+      ref="formRef"
+      submit-on-reset
       :table-action="tableAction"
       @register="registerForm"
       @submit="handleSearchInfoChange"
@@ -15,7 +16,10 @@
     </BasicForm>
 
     <!-- ::==================== i7eo：添加 ///// start ///// ====================:: -->
-    <div class="ta-basic-table-operations flex flex-wrap align-center justify-between">
+    <div
+      ref="actionRef"
+      class="ta-basic-table-operations flex flex-wrap align-center justify-between"
+    >
       <template v-if="useFilter.isVisible">
         <Filter ref="filterElRef" :forms="getFilterProps" :table-action="tableAction" />
       </template>
@@ -133,6 +137,8 @@ export default defineComponent({
     const tableData = ref<Recordable[]>([])
 
     const wrapRef = ref(null)
+    const formRef = ref(null)
+    const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
 
     const prefixCls = 'ta-basic-table'
@@ -320,8 +326,20 @@ export default defineComponent({
       getColumnsRef,
       getRowSelectionRef,
       getDataSourceRef,
-      slots
+      slots as any,
+      wrapRef,
+      formRef,
+      actionRef
     )
+
+    // propsRef: ComputedRef<BasicTableProps>,
+    // tableElRef: Ref<ComponentRef>,
+    // columnsRef: ComputedRef<BasicColumn[]>,
+    // rowSelectionRef: ComputedRef<TableRowSelection | null>,
+    // getDataSourceRef: ComputedRef<Recordable[]>,
+    // wrapRef: Ref<HTMLElement | null>,
+    // formRef: Ref<HTMLElement | null>,
+    // actionRef: Ref<HTMLElement | null>
 
     const { scrollTo } = useTableScrollTo(tableElRef, getDataSourceRef)
 
@@ -487,6 +505,8 @@ export default defineComponent({
       getFormSlotKeys,
       getWrapperClass,
       columns: getViewColumns,
+      formRef,
+      actionRef,
     }
   },
 })

@@ -85,7 +85,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useForm } from '../../../../dist/tav-ui/es/index.mjs'
-import { useMessage } from '../../../../dist/tav-ui/es/hooks/web'
+import { useMessage } from '../../../../dist/tav-ui/es/hooks/web/useMessage'
 
 import type { FormSchema } from '../../../../dist/types/components/form/src/types/form'
 

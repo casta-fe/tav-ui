@@ -15,10 +15,10 @@ import { createApp } from 'vue'
 //   TaTimeLine,
 // } from '../../dist/tav-ui/dist/index.full.mjs'
 import TaUi from '../../dist/tav-ui/es/index.mjs'
-import App from './App.vue'
 import 'ant-design-vue/dist/antd.less'
 import '../../dist/tav-ui/theme-chalk/src/index.less'
-
+import 'virtual:windi.css'
+import App from './App.vue'
 const app = createApp(App)
 app.use(TaUi)
 // app.use(TaIcon)

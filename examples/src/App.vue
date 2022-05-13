@@ -12,7 +12,7 @@ import FormPage from './components/Form/index.vue'
 import TreePage from './components/Tree/index.vue'
 import ModalPage from './components/Modal/index.vue'
 import FollewPage from './components/Follow/index.vue'
-import TableTagsPage from './components/TableTags/index.vue'
+import BasicTablePage from './components/table/Basic.vue'
 export default defineComponent({
   components: {
     TimeLineListPage,
@@ -22,7 +22,6 @@ export default defineComponent({
     FormPage,
     TreePage,
     ModalPage,
-    TableTagsPage,
     BasicTablePage,
     FollewPage,
   },
@@ -63,7 +62,6 @@ export default defineComponent({
   <FormPage />
   <BasicTablePage />
   <FollewPage />
-  <TableTagsPage />
 </template>
 
 <style>

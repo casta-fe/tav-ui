@@ -15,8 +15,8 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, watch } from 'vue'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { TaButton } from '../../button'
-import { useMessage } from '../../useMessage'
 import { followProps } from './types'
 //  1 企业 2投资项目 3退出项目 4基金 5 投资人
 export default defineComponent({

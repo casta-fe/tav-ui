@@ -166,6 +166,11 @@ export const tableProps = {
     default: null,
   },
   ellipsis: propTypes.bool.def(true),
+  isCanResizeParent: { type: Boolean, default: true },
+  //内表格padding 12+16(目前框架默认为padding:16 16 12) 用户补丁计算 样式设置为padding-top:0 的表格
+  tablePaddingDistance: { type: Number, default: 28 },
+  //formRefWarpper 表格顶部筛选 刷新按钮  区域 的marginTop值 样式设置为margin-top:0 的表格 用户补丁计算
+  formRefMarginTopDistance: { type: Number, default: 16 },
   canResize: propTypes.bool.def(true),
   clearSelectOnPageChange: propTypes.bool,
   resizeHeightOffset: propTypes.number.def(0),

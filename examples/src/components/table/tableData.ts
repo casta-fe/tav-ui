@@ -1,6 +1,7 @@
+import { createVNode } from 'vue'
+import { TaTableTags } from '../../../../dist/tav-ui/es/index.mjs'
 import type { FormProps, FormSchema } from '../../../../dist/types/components/src/table'
 import type { BasicColumn } from '../../../../dist/types/components/src/table/types/table'
-
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
@@ -21,6 +22,8 @@ export function getBasicColumns(): BasicColumn[] {
     {
       title: '地址',
       dataIndex: 'address',
+      customRender: ({ text }) =>
+        createVNode(TaTableTags, { tags: text?.replace(/(null,)|(,null)|(null)/g, ``) }),
     },
     {
       title: '编号',
