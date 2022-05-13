@@ -23,3 +23,6 @@ export * from './time-line'
 export * from './transition'
 export * from './table'
 export * from './tree'
+
+export * from './follow'
+export * from './table-tags'

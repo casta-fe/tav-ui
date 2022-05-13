@@ -2,26 +2,29 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import { defineComponent } from '@vue/runtime-core'
-// import { TaLoadingCreate } from '../../dist/index.esm.js'
+// import { TaLoadingCreate } from '../../dist/tav-ui/es/index.mjs'
 import * as components from '@tav-ui/components'
-// import TimeLineListPage from './components/timeLineList/index.vue'
-// import TimePage from './components/time/index.vue'
-// import InputNumberRangePage from './components/InputNumberRange/index.vue'
-// import FileViewPage from './components/FileView/index.vue'
-// import FormPage from './components/Form/index.vue'
-// import TreePage from './components/Tree/index.vue'
-// import ModalPage from './components/Modal/index.vue'
-
+import TimeLineListPage from './components/timeLineList/index.vue'
+import TimePage from './components/time/index.vue'
+import InputNumberRangePage from './components/InputNumberRange/index.vue'
+import FileViewPage from './components/FileView/index.vue'
+import FormPage from './components/Form/index.vue'
+import TreePage from './components/Tree/index.vue'
+import ModalPage from './components/Modal/index.vue'
+import FollewPage from './components/Follow/index.vue'
+import TableTagsPage from './components/TableTags/index.vue'
 export default defineComponent({
   components: {
-    // TimeLineListPage,
-    // TimePage,
-    // InputNumberRangePage,
-    // FileViewPage,
-    // FormPage,
-    // TreePage,
-    // ModalPage,
-    // BasicTablePage,
+    TimeLineListPage,
+    TimePage,
+    InputNumberRangePage,
+    FileViewPage,
+    FormPage,
+    TreePage,
+    ModalPage,
+    TableTagsPage,
+    BasicTablePage,
+    FollewPage,
   },
   setup() {
     // 函数方式调用loading
@@ -51,15 +54,16 @@ export default defineComponent({
     basic title
   </TaBasicTitle>
   <!-- <TaLoading  :loading="true"></TaLoading> -->
-
-  <!-- <TimeLineListPage />
+  <TimeLineListPage />
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />
   <TreePage />
   <ModalPage />
   <FormPage />
-  <BasicTablePage /> -->
+  <BasicTablePage />
+  <FollewPage />
+  <TableTagsPage />
 </template>
 
 <style>
