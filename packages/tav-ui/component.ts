@@ -16,6 +16,7 @@ import { TaIconPicker } from '@tav-ui/components/icon-picker'
 import { TaIconSvg } from '@tav-ui/components/icon-svg'
 import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
 import { TaLoading } from '@tav-ui/components/loading'
+import { TaModal } from '@tav-ui/components/modal'
 import { TaScrollbar } from '@tav-ui/components/scrollbar'
 import { TaTable, TableAction, TableImg } from '@tav-ui/components/table'
 import { TaTime } from '@tav-ui/components/time'
@@ -45,6 +46,7 @@ export default [
   TaIconSvg,
   TaInputNumberRange,
   TaLoading,
+  TaModal,
   TaScrollbar,
   TaTable,
   TableAction,

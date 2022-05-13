@@ -1,12 +1,12 @@
 import { createVNode, defineComponent, h, reactive, render } from 'vue'
-import LoadingConstructor from './loading.vue'
-import type { LoadingCreateProps } from './types'
+import Loading from './loading.vue'
+import type { VNode } from 'vue'
+import type { LoadingProps } from './types'
 
-export function loadingCreate(
-  props?: Partial<LoadingCreateProps>,
-  target?: HTMLElement,
-  wait = false
-) {
+type Nullable<T> = T | null
+
+export function createLoading(props?: Partial<LoadingProps>, target?: HTMLElement, wait = false) {
+  let vm: Nullable<VNode> = null
   const data = reactive({
     tip: '',
     loading: true,
@@ -15,11 +15,11 @@ export function loadingCreate(
 
   const LoadingWrap = defineComponent({
     render() {
-      return h(LoadingConstructor, { ...data })
+      return h(Loading, { ...data })
     },
   })
 
-  const vm = createVNode(LoadingWrap)
+  vm = createVNode(LoadingWrap)
 
   if (wait) {
     // TODO fix https://github.com/anncwb/vue-Castianta-admin/issues/438
@@ -31,17 +31,21 @@ export function loadingCreate(
   }
 
   function close() {
-    if (vm?.el && vm.el.parentNode) vm.el.parentNode.removeChild(vm.el)
+    if (vm?.el && vm.el.parentNode) {
+      vm.el.parentNode.removeChild(vm.el)
+    }
   }
 
   function open(target: HTMLElement = document.body) {
-    if (!vm || !vm.el) return
-
+    if (!vm || !vm.el) {
+      return
+    }
     target.appendChild(vm.el as HTMLElement)
   }
 
-  if (target) open(target)
-
+  if (target) {
+    open(target)
+  }
   return {
     vm,
     close,
@@ -60,4 +64,3 @@ export function loadingCreate(
     },
   }
 }
-export default loadingCreate

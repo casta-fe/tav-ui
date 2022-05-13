@@ -2,8 +2,8 @@
 import { computed, defineComponent, nextTick, reactive, toRefs, watch } from 'vue'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Modal, Spin } from 'ant-design-vue'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import download from '@tav-ui/utils/file/TaDownload'
-// import { useMessage } from '../../useMessage'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
 export default defineComponent({
@@ -17,14 +17,14 @@ export default defineComponent({
   props: fileViewProps,
   emits: ['update:show'],
   setup(props, { emit }) {
-    // const { createMessage } = useMessage()
+    const { createMessage } = useMessage()
     const state = reactive({
       index: props.index,
       filePath: '',
       showModal: props.show,
       pageLoading: false,
     })
-    // const ignoreList = ['zip', 'tar', '7z']
+    const ignoreList = ['zip', 'tar', '7z']
     const loadFileTypes = {
       office: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'],
       audio: ['mp3', 'mp3', 'wav', 'rm', 'rpm'],
@@ -104,10 +104,10 @@ export default defineComponent({
     watch(
       () => props.show,
       (newData) => {
-        // if (ignoreList.includes(currentFile.value.suffix)) {
-        //   createMessage.warning("暂不支持该文件预览");
-        //   return;
-        // }
+        if (ignoreList.includes(currentFile.value.suffix)) {
+          createMessage.warning('暂不支持该文件预览')
+          return
+        }
         state.showModal = newData
         state.index = props.index
         if (newData) {

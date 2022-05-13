@@ -2,7 +2,7 @@
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { Input, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
-import { useMessage } from '@tav-ui/components/useMessage'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { inputNumberRangeEmits, inputNumberRangeProps } from './types'
 const { createMessage } = useMessage()
 export interface InputNumberRangeState {
