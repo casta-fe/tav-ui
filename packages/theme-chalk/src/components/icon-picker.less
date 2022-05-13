@@ -1,20 +1,20 @@
 @import "../var/index.less";
-@prefix-cls: ~"@{namespace}-icon-picker";
+@prefix-cls-icon-picker: ~"@{namespace}-icon-picker";
 
-  .@{prefix-cls} {
-    .ant-input-group-addon {
+.@{prefix-cls-icon-picker} {
+  .ant-input-group-addon {
+    padding: 0;
+  }
+
+  &-popover {
+    width: 300px;
+
+    .ant-popover-inner-content {
       padding: 0;
     }
 
-    &-popover {
-      width: 300px;
-
-      .ant-popover-inner-content {
-        padding: 0;
-      }
-
-      .scrollbar {
-        height: 220px;
-      }
+    .scrollbar {
+      height: 220px;
     }
   }
+}

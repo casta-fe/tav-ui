@@ -27,6 +27,7 @@ import { TagsOutlined } from '@ant-design/icons-vue'
 import { Tag, Tooltip } from 'ant-design-vue'
 import { type Tags, tableTagsProps } from './types'
 export default defineComponent({
+  name: 'TaTableTags',
   components: { Tag, Tooltip, TagsOutlined },
   props: tableTagsProps,
   setup(props) {

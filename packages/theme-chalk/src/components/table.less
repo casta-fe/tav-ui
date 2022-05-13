@@ -1,15 +1,17 @@
 @import "../var/index.less";
 
 @border-color: #cecece4d;
-@prefix-cls: ~'@{namespace}-basic-table';
+@prefix-cls-basic-table: ~'@{namespace}-basic-table';
+
 [data-theme='dark'] {
-  .ant-table-tbody > tr:hover.ant-table-row-selected > td,
-  .ant-table-tbody > tr.ant-table-row-selected td {
+
+  .ant-table-tbody>tr:hover.ant-table-row-selected>td,
+  .ant-table-tbody>tr.ant-table-row-selected td {
     background-color: #262626;
   }
 }
 
-.@{prefix-cls} {
+.@{prefix-cls-basic-table} {
   max-width: 100%;
 
   .ant-popover {
@@ -118,6 +120,7 @@
 
 // header
 @prefix-cls1: ~'@{namespace}-basic-table-header';
+
 .@{prefix-cls1} {
   &__toolbar {
     flex: 1;
@@ -125,7 +128,7 @@
     align-items: center;
     justify-content: flex-end;
 
-    > * {
+    >* {
       margin-right: 8px;
     }
   }
@@ -133,7 +136,7 @@
 
 // table setting
 .table-settings {
-  & > * {
+  &>* {
     margin-right: 12px;
   }
 
@@ -144,6 +147,7 @@
 }
 
 @prefix-cls2: ~'@{namespace}-basic-column-setting';
+
 .table-column-drag-icon {
   margin: 0 5px;
   cursor: move;
@@ -219,6 +223,7 @@
 
 // table edit cell
 @prefix-cls3: ~'@{namespace}-editable-cell';
+
 .edit-cell-align-left {
   text-align: left;
 
@@ -251,6 +256,7 @@
     border-radius: 2px;
   }
 }
+
 .@{prefix-cls3} {
   position: relative;
 
@@ -259,7 +265,7 @@
     align-items: center;
     justify-content: center;
 
-    > .ant-select {
+    >.ant-select {
       min-width: calc(100% - 50px);
     }
   }
@@ -304,6 +310,7 @@
 
 // table title
 @prefix-cls4: ~'@{namespace}-basic-table-title';
+
 .@{prefix-cls4} {
   display: flex;
   justify-content: space-between;
@@ -312,6 +319,7 @@
 
 // table custom action
 @prefix-cls5: ~'@{namespace}-basic-table-custom-action';
+
 .@{prefix-cls5} {
   .refresh-btn {
     min-width: auto !important;
@@ -322,9 +330,11 @@
 
 // table filter
 @prefix-cls6: ~'@{namespace}-basic-table-filter';
+
 .filter-pannel-form .ant-form-item-label label {
   color: #999 !important;
 }
+
 .@{prefix-cls6} {
   flex: 1 1 50%;
 
@@ -352,6 +362,7 @@
 
 // table header cell
 @prefix-cls7: ~'@{namespace}-basic-table-header-cell';
+
 .@{prefix-cls7} {
   &__help {
     margin-left: 8px;
@@ -361,6 +372,7 @@
 
 // table action
 @prefix-cls8: ~'@{namespace}-basic-table-action';
+
 .@{prefix-cls8} {
   display: flex;
   align-items: center;
@@ -431,6 +443,7 @@
 
 // table img
 @prefix-cls9: ~'@{namespace}-basic-table-img';
+
 .@{prefix-cls9} {
   .ant-image {
     margin-right: 4px;
