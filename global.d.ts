@@ -8,6 +8,7 @@ declare module 'vue' {
     TaButtonGroup: typeof import('tav-ui')['TaButtonGroup']
     TaButtonModal: typeof import('tav-ui')['TaButtonModal']
     TaButtonPopconfirm: typeof import('tav-ui')['TaButtonPopconfirm']
+    TaConfigProvider: typeof import('tav-ui')['TaConfigProvider']
     TaContainerCollapse: typeof import('tav-ui')['TaContainerCollapse']
     TaContainerScroll: typeof import('tav-ui')['TaContainerScroll']
     TaContextMenu: typeof import('tav-ui')['TaContextMenu']

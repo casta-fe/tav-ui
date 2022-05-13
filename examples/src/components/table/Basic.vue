@@ -1,33 +1,33 @@
 <template>
   <div>
     <h2>table Example</h2>
-    <TaTable
-      title="基础示例"
-      title-help-message="温馨提醒"
-      :columns="columns"
-      :data-source="data"
-      :can-resize="canResize"
-      :loading="loading"
-      :striped="striped"
-      :bordered="border"
-      show-table-setting
-      :pagination="pagination"
-      :filter="filterForms"
-      @columns-change="handleColumnChange"
-    >
-      <template #toolbar>
-        <a-button type="primary" @click="toggleCanResize">
-          {{ !canResize ? '自适应高度' : '取消自适应' }}
-        </a-button>
-        <a-button type="primary" @click="toggleBorder">
-          {{ !border ? '显示边框' : '隐藏边框' }}
-        </a-button>
-        <a-button type="primary" @click="toggleLoading"> 开启loading </a-button>
-        <a-button type="primary" @click="toggleStriped">
-          {{ !striped ? '显示斑马纹' : '隐藏斑马纹' }}
-        </a-button>
-      </template>
-    </TaTable>
+    <div style="height: 300px">
+      <TaTable
+        :columns="columns"
+        :data-source="data"
+        :can-resize="canResize"
+        :loading="loading"
+        :bordered="border"
+        :pagination="pagination"
+        :filter="filterForms"
+        @columns-change="handleColumnChange"
+      >
+        <!-- <template #toolbar>
+          <a-button type="primary" @click="toggleCanResize">
+            {{ !canResize ? '自适应高度' : '取消自适应' }}
+          </a-button>
+          <a-button type="primary" @click="toggleBorder">
+            {{ !border ? '显示边框' : '隐藏边框' }}
+          </a-button>
+          <a-button type="primary" @click="toggleLoading">
+            开启loading
+          </a-button>
+          <a-button type="primary" @click="toggleStriped">
+            {{ !striped ? '显示斑马纹' : '隐藏斑马纹' }}
+          </a-button>
+        </template> -->
+      </TaTable>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -38,11 +38,11 @@ import type { ColumnChangeParam } from '../../../../dist/types/components/table/
 export default defineComponent({
   components: {},
   setup() {
-    const canResize = ref(false)
+    const canResize = ref(true)
     const loading = ref(false)
     const striped = ref(true)
     const border = ref(true)
-    const pagination = ref<any>(false)
+    const pagination = ref<any>(true)
     function toggleCanResize() {
       canResize.value = !canResize.value
     }

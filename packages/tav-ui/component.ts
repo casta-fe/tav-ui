@@ -5,6 +5,7 @@ import { TaButton } from '@tav-ui/components/button'
 import { TaButtonGroup } from '@tav-ui/components/button-group'
 import { TaButtonModal } from '@tav-ui/components/button-modal'
 import { TaButtonPopconfirm } from '@tav-ui/components/button-popconfirm'
+import { TaConfigProvider } from '@tav-ui/components/config-provider'
 import { TaContainerCollapse } from '@tav-ui/components/container-collapse'
 import { TaContainerScroll } from '@tav-ui/components/container-scroll'
 import { TaContextMenu } from '@tav-ui/components/context-menu'
@@ -33,6 +34,7 @@ export default [
   TaButtonGroup,
   TaButtonModal,
   TaButtonPopconfirm,
+  TaConfigProvider,
   TaContainerCollapse,
   TaContainerScroll,
   TaContextMenu,

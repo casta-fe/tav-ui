@@ -19,7 +19,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, nextTick, reactive } from 'vue'
-import { useForm, useModal } from '../../../../dist/index.esm.js'
+import { useForm, useModal } from '../../../../dist/tav-ui/es/index.mjs'
 import type { FormSchema } from '../../../../dist/types/components/form/src/types/form.js'
 export default defineComponent({
   setup() {

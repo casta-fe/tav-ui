@@ -21,8 +21,12 @@ export function useTableScroll(
   columnsRef: ComputedRef<BasicColumn[]>,
   rowSelectionRef: ComputedRef<TableRowSelection | null>,
   getDataSourceRef: ComputedRef<Recordable[]>,
-  slots
+  slots: any,
+  wrapRef: Ref<HTMLElement | null>,
+  formRef: Ref<HTMLElement | null>,
+  actionRef: Ref<HTMLElement | null>
 ) {
+  debugger
   const tableHeightRef: Ref<Nullable<number>> = ref(null)
 
   const modalFn = useModalContext()
@@ -63,13 +67,18 @@ export function useTableScroll(
   let bodyEl: HTMLElement | null
 
   async function calcTableHeight() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { resizeHeightOffset, pagination, maxHeight, fullHeight } = unref(propsRef)
+    const {
+      resizeHeightOffset,
+      pagination,
+      maxHeight,
+      isCanResizeParent,
+      formRefMarginTopDistance,
+      tablePaddingDistance,
+    } = unref(propsRef)
     const tableData = unref(getDataSourceRef)
-    //处理设置fullheight为false 不生效的问题
     const table = unref(tableElRef)
     if (!table) return
-
+    // debugger;
     const tableEl: Element = table.$el
     if (!tableEl) return
 
@@ -93,10 +102,14 @@ export function useTableScroll(
       !tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.add('hide-scrollbar-x')
     }
 
-    bodyEl!.style.height = 'unset'
+    // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    if (!unref(getCanResize)) return
+    bodyEl!.style.height = '100%'
+    if (!unref(getCanResize)) {
+      bodyEl!.style.height = '100%'
+      return
+    }
 
     await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
@@ -105,13 +118,11 @@ export function useTableScroll(
     if (!headEl) return
 
     // Table height from bottom
-    const { bottomIncludeBody } = getViewportOffset(headEl)
     // hack:底部padding + table底部padding
-    const paddingHeight = 32
+
     // Pager height
     let paginationHeight = 32 // 默认高度？
     if (!isBoolean(pagination)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       paginationEl = tableEl.querySelector('.ant-pagination') as HTMLElement
       paginationHeight = 32
     } else {
@@ -132,16 +143,50 @@ export function useTableScroll(
     if (headEl) {
       headerHeight = (headEl as HTMLElement).offsetHeight
     }
-    let height =
+
+    let bottomIncludeBody = 0
+    let height = 0
+    if (unref(wrapRef) && isCanResizeParent) {
+      const tablePadding = tablePaddingDistance
+      const formMargin = formRefMarginTopDistance
+      const TableMargin = 0
+
+      const wrapHeight = unref(wrapRef)?.offsetHeight ?? 0
+      let formHeight = unref(formRef)?.offsetHeight ?? 0
+      const actionHeight = unref(actionRef)?.offsetHeight ?? 0
+      formHeight = formHeight > actionHeight ? formHeight : actionHeight
+      if (formHeight && formMargin) {
+        formHeight += formMargin
+      }
+      let paginationMargin = 0
+      if (isBoolean(pagination) && !pagination) {
+        paginationMargin = 0
+      }
+      const headerCellHeight =
+        (tableEl.querySelector('.ant-table-title') as HTMLElement)?.offsetHeight ?? 0
+      //表格高度 - formHeight (搜素或者自定义的slots) - 0 - TableMargin(外间距) - 内间距
+      bottomIncludeBody =
+        wrapHeight -
+        formHeight -
+        headerCellHeight -
+        (tablePadding ? tablePadding : 0) -
+        paginationMargin -
+        TableMargin
+      height = bottomIncludeBody - paginationHeight - footerHeight - headerHeight
+    } else {
+      // Table height from bottom
+      bottomIncludeBody = getViewportOffset(headEl).bottomIncludeBody
       bottomIncludeBody -
-      (resizeHeightOffset || 0) -
-      paddingHeight -
-      paginationHeight -
-      footerHeight -
-      headerHeight
+        (resizeHeightOffset || 0) -
+        // paddingHeight -
+        paginationHeight -
+        footerHeight -
+        headerHeight
+    }
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
+    bodyEl!.style.height = `${height}px`
     if (!slots.footer) {
       if (tableData.length === 0) {
         //处理空数据时滚动条消失问题

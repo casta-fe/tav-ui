@@ -22,3 +22,6 @@ export * from './web/usePagination'
 export * from './web/useScript'
 export * from './web/useSortable'
 export * from './web/useWatermark'
+
+export * from './global/useGlobalConfig'
+export * from './global/useGlobalProvider'

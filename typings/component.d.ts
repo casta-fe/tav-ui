@@ -23,7 +23,7 @@ declare module 'vue' {
     TaScrollbar: typeof import('../packages/tav-ui')['TaScrollbar']
     TaTable: typeof import('../packages/tav-ui')['TaTable']
     TaTime: typeof import('../packages/tav-ui')['TaTime']
-    TaTimeline: typeof import('../packages/tav-ui')['TaTimeline']
+    TaTimeLine: typeof import('../packages/tav-ui')['TaTimeLine']
     TaTree: typeof import('../packages/tav-ui')['TaTree']
   }
 }
