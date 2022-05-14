@@ -1,5 +1,9 @@
 @import '../var/index.less';
 .ta-member-select {
+  .ant-select {
+    min-width: 100%;
+  }
+
   &-option {
     min-width: 260px !important;
 
@@ -65,6 +69,11 @@
     border: 1px solid @border-color-light;
     display: flex;
     margin: 8px 0;
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
     .member-box {
       flex: 1;
 
@@ -143,7 +152,7 @@
       .select-bd {
         padding: 3px 8px;
 
-        span {
+        .tag {
           display: inline-block;
           line-height: 26px;
           min-width: 100px;
@@ -154,7 +163,7 @@
           margin: 7px;
         }
 
-        .icon-remove {
+        .anticon {
           cursor: pointer;
           float: right;
           margin-top: 6px;

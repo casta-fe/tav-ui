@@ -1,5 +1,5 @@
 <template>
-  <span class="name-letter" :class="'letter-' + ((index % 4) + 1)">
+  <span class="ta-member-select-letter" :class="'ta-member-select-letter-' + ((index % 4) + 1)">
     {{ letter }}
   </span>
 </template>

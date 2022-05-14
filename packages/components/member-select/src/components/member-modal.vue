@@ -1,5 +1,5 @@
 <template>
-  <div class="member-select">
+  <div class="ta-member-select-modal">
     <div class="member-box">
       <Tabs v-model:activeKey="tabActive">
         <TabPane v-if="!hideOrgTabs" key="0" tab="部门">
@@ -110,12 +110,12 @@
     <div v-if="propsData.multiple" class="selected-box">
       <div class="select-hd">
         <div class="num">已选中 {{ tagList.length }} 个</div>
-        <div class="ctrl"><TaButton type="primary" @click="clearTag">清空选择</TaButton></div>
+        <div class="ctrl"><Button type="primary" @click="clearTag">清空选择</Button></div>
       </div>
       <div class="select-bd">
         <span v-for="item in tagList" :key="item.id" class="tag">
           {{ item.name }}
-          <i class="icon-remove" @click="removeTag(item.id)" />
+          <CloseCircleOutlined @click="removeTag" />
         </span>
       </div>
     </div>
@@ -126,7 +126,8 @@
 import { computed, defineComponent, inject, onMounted, reactive, toRefs, watch } from 'vue'
 import { Checkbox, CheckboxGroup, Radio, RadioGroup, TabPane, Tabs, Tree } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
-import { TaButton } from '@tav-ui/components/Button'
+import { CloseCircleOutlined } from '@ant-design/icons-vue'
+import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import FirstLetter from './first-letter.vue'
 import type { LetterItemList, letterItem } from '../types'
@@ -135,7 +136,7 @@ const { createConfirm } = useMessage()
 export default defineComponent({
   components: {
     Tree,
-    TaButton,
+    Button,
     Tabs,
     TabPane,
     CheckboxGroup,
@@ -143,6 +144,7 @@ export default defineComponent({
     RadioGroup,
     Radio,
     FirstLetter,
+    CloseCircleOutlined,
   },
   props: {
     selectedData: {
@@ -291,7 +293,7 @@ export default defineComponent({
         userListRef.addEventListener('scroll', () => {
           console.log(state.listenScroll)
           if (state.listenScroll) {
-            const ulList = userListRef?.childNodes[0].childNodes as NodeListOf<ChildNode>
+            const ulList = userListRef?.childNodes[0].childNodes as NodeListOf<HTMLElement>
             if (ulList) {
               ulList.forEach((v: HTMLElement) => {
                 // if(v.offsetTop>0&&)

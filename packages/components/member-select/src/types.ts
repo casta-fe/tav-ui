@@ -3,19 +3,20 @@ export interface Options {
   label: string
   value: string
   phone: string
-  status: string
-  sex: string
+  status: number
+  sex: number
   disabled: boolean
 }
-// export interface UserItem {
-//   id: number
-//   name: string
-//   organizationId: number
-//   organizationName: string
-//   phone: string
-//   sex: number
-//   status: number
-// }
+export interface UserItem {
+  id: string
+  name: string
+  organizationId: string
+  organizationName: string
+  phone: string
+  sex: number
+  status: number
+  disabled: boolean
+}
 export type TypeItems = 'user' | 'org'
 export interface LetterItemList {
   id: string
@@ -49,7 +50,7 @@ export const memberSelectProps = {
     default: null,
   },
   options: {
-    type: Array as PropType<Options[]>,
+    type: Array as PropType<UserItem[]>,
   },
   autofocus: {
     type: Boolean,
@@ -80,14 +81,18 @@ export const memberSelectProps = {
     default: [],
   },
   // 是否忽略已冻结用户
-  isIgnoreFrozen: {
+  ignoreFrozenUser: {
     type: Boolean,
     default: true,
   },
   // 请求用户列表的api，某些情况下不是使用所有用户,暂时不用
   userListApi: {
-    type: Function as PropType<(...arg: any[]) => Promise<any>>,
-    // default: API__SYSTEM_USER_LIST_ALL,
+    type: Function as PropType<(...arg) => Promise<any>>,
+    // default: TaMemberSelectApi.value.userListApi,
+  },
+  orgApi: {
+    type: Function as PropType<(...arg) => Promise<any>>,
+    // default: TaMemberSelectApi.value.orgApi,
   },
   userListParams: {
     type: Object,

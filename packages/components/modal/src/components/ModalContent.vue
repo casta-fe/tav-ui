@@ -1,3 +1,4 @@
+<script lang="tsx">
 import { defineComponent, toRefs, unref } from 'vue'
 import { Modal } from 'ant-design-vue'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
@@ -33,3 +34,4 @@ export default defineComponent({
     }
   },
 })
+</script>

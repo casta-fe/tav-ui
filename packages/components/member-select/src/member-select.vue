@@ -6,7 +6,7 @@
           ref="userSelectRef"
           v-model:value="selectedData[0]"
           show-search
-          dropdown-class-name="ta-member-option"
+          dropdown-class-name="ta-member-select-option"
           option-filter-prop="label"
           :allow-clear="allowClear"
           :options="userOptions"
@@ -22,7 +22,7 @@
           @change="emitHandle"
         >
           <template #option="item">
-            <div class="ta-member-option-item">
+            <div class="ta-member-select-option-item">
               <span>{{ item.label }} <template v-if="item.status === 0"> (已冻结) </template></span>
               <span>{{ item.sex == 1 ? '男' : '女' }}</span>
               <span>{{ item.phone }}</span>
@@ -32,7 +32,7 @@
             <v-nodes :vnodes="menu" />
             <div
               v-if="userList.length > 0"
-              class="ta-member-option-more"
+              class="ta-member-select-option-more"
               @mousedown="(e) => e.preventDefault()"
               @click="showModal"
             >
@@ -73,7 +73,6 @@
     <BasicModal
       :title="title"
       :width="850"
-      wrap-class-name="ta-member-modal"
       :destroy-on-close="true"
       :get-container="getPopupContainer"
       @register="registerMemberModal"
@@ -91,12 +90,12 @@
 import { computed, defineComponent, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
 import Button from '@tav-ui/components/button'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { memberSelectProps } from './types'
 import MemberModal from './components/member-modal.vue'
-import type { Options } from './types'
-
+import type { Options, UserItem } from './types'
 export default defineComponent({
   name: 'TaMemberSelect',
   components: {
@@ -116,7 +115,7 @@ export default defineComponent({
     const state = reactive({
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
-      userList: [] as Options[],
+      userList: [] as UserItem[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
       orgFileds: {
@@ -138,17 +137,19 @@ export default defineComponent({
       'orgList',
       computed(() => state.orgList)
     )
+    const TaMemberSelectApi = useGlobalConfig('components')
+    const orgApi = TaMemberSelectApi.value?.TaMemberSelect?.orgApi || props.orgApi
+    const userListApi = TaMemberSelectApi.value?.TaMemberSelect?.userListApi || props.userListApi
     const userOptions = computed(() => {
       const list: Options[] = []
       state.userList.forEach((v) => {
-        const value = v.id || v.value
         // 非ignoreUser的用户才能选择
         list.push({
-          label: (v.name as string) || v.label,
-          value,
+          label: v.name,
+          value: v.id,
           phone: v.phone,
           status: v.status,
-          disabled: v.disabled as boolean, //已冻结（离职）的不能选
+          disabled: v.disabled, //已冻结（离职）的不能选
           sex: v.sex,
         })
       })
@@ -188,18 +189,16 @@ export default defineComponent({
         // 将其处理成 人员的数据格式
         state.userList = getTrueUserList(props.options)
       } else {
-        props
-          .userListApi({
-            ...props.userListParams,
-          })
-          .then((res) => {
-            state.userList = getTrueUserList(res.data)
-          })
+        userListApi({
+          ...props.userListParams,
+        }).then((res) => {
+          state.userList = getTrueUserList(res.data)
+        })
       }
     }
     // 获取组织数据
     const getOrgList = (): void => {
-      API__SYSTEM_ORGANIZATION_LIST().then((res) => {
+      orgApi({}).then((res) => {
         state.orgList = res.data
       })
     }
@@ -234,9 +233,9 @@ export default defineComponent({
     }
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = state.userList) => {
-      const list: Options[] = []
+      const list: UserItem[] = []
       userList.forEach((v) => {
-        const value = v.id || v.value
+        const value = v.id
         // 非ignoreUser的用户才能选择
         if (!props.ignoreUser.includes(value)) {
           v.disabled = props.ignoreFrozenUser ? v.status === 0 : false
