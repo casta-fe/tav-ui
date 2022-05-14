@@ -23,12 +23,12 @@ import IconPicker from '@tav-ui/components/icon-picker'
 import ApiSelect from './components/ApiSelect.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
+import SearchableApiSelect from './components/SearchableApiSelect'
 import type { Component } from 'vue'
 // import { CountdownInput } from "/@/components/CountDown";
 // import { MemberSelect } from "/@/components/MemberSelect";
 // import { StrengthMeter } from "/@/components/StrengthMeter";
 // import { BasicUpload } from "/@/components/Upload";
-// import SearchableApiSelect from './components/SearchableApiSelect.vue'
 import type { ComponentType, EditableComponentType } from './types/index'
 
 const componentMap = new Map<ComponentType, Component>()
@@ -70,7 +70,7 @@ componentMap.set('Divider', Divider)
 
 // customadd
 // add('MemberSelect', MemberSelect);
-// add('SearchableApiSelect', SearchableApiSelect)
+add('SearchableApiSelect', SearchableApiSelect)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)

@@ -1,0 +1,357 @@
+import type { Ref } from 'vue'
+import type { Handler } from './main'
+
+type Recordable<T = any> = Record<string, T>
+type LabelValueOption<T = any, K = any> = { label: string; value: T } & Recordable<K>
+type LabelValueOptions<T = any, K = any> = LabelValueOption<T, K>[]
+type RequestFilterType = Recordable
+type Fn<T = any, R = void> = (...args: T[]) => R
+type PromiseFn<T = any, R = void> = Fn<T, Promise<R>>
+type Result<T = any> = { data: T } & Recordable
+type FileItemType = {
+  /** @description 文件的实际id，根据此id和版本定位最新文件，非必传 */
+  actualId?: string
+  /** @description 文件地址，根据业务实际情况指定，必传不能为空 */
+  address: string
+  /**
+   * Format: int32
+   * @description 应用id，非必传
+   */
+  appId?: number
+  /** @description 业务表实际id，非必传 */
+  businessId?: string
+  /** @description 业务key，由业务端拼接而成，如果不为空的话businessId一定也不饿能为空，非必传 */
+  businessKey?: string
+  createBy?: string
+  /** @description 上传人 */
+  createByName?: string
+  /**
+   * Format: date-time
+   * @description 创建时间
+   */
+  createTime?: string
+  /**
+   * Format: int32
+   * @description 0:未删除，1:已删除，必传不能为空
+   */
+  deleted: number
+  /** @description 文件大小 */
+  fileSize?: string
+  /** @description 文件全称，包含后缀，必传不能为空 */
+  fullName: string
+  /** Format: int32 */
+  hyperlink?: number
+  /**
+   * Format: int64
+   * @description 主键主键，编辑时不能为空
+   */
+  id?: number
+  /** @description 关联的模块code */
+  moduleCode?: string
+  /**
+   * Format: int64
+   * @description 关联的模块id，必传不能为空
+   */
+  moduleId: number
+  /** @description 关联的模块名称 */
+  moduleName?: string
+  /** @description 文件名称（不包含后缀），必传不能为空 */
+  name: string
+  /**
+   * Format: int64
+   * @description 持续时间，如果为音视频文件不为空，非必传
+   */
+  runtime?: number
+  /**
+   * Format: int64
+   * @description 文件大小，必传不能为空
+   */
+  size: number
+  /**
+   * Format: int32
+   * @description 源文件下载标识 value = 1
+   */
+  sourceFileDownload?: number
+  /** @description 文件后缀，必传不能为空 */
+  suffix: string
+  /**
+   * Format: int64
+   * @description 文件类型，关联f_type-id，必传不能为空
+   */
+  type: number
+  /** @description 文件类型code */
+  typeCode?: string
+  /** @description 关联的文件类型名称 */
+  typeName?: string
+  /**
+   * Format: int64
+   * @description 版本号，默认为1，如果有更新则累加，必传不能为空
+   */
+  version: number
+  /**
+   * Format: int32
+   * @description 水印文件下载标识 value = 2
+   */
+  watermarkFileDownload?: number
+}
+
+type QueryFileParamsType = {
+  /** @description 业务businessId */
+  businessId?: string
+  /** @description 业务businessKey */
+  businessKey?: string
+  /**
+   * Format: date-time
+   * @description 结束时间
+   */
+  endTime?: string
+  /**
+   * Format: int64
+   * @description 文件id
+   */
+  id?: number
+  /** @description 模块code */
+  moduleCode?: string
+  /** @description 权限控制 0 默认不控制角色查询文件类型  1 控制角色查询文件类型 */
+  permissionControl?: boolean
+  /** @description 聚合查询框, 非必填 */
+  searchValue?: string
+  /**
+   * Format: date-time
+   * @description 开始时间
+   */
+  startTime?: string
+  /** @description 类型code */
+  typeCode?: string
+}
+
+/**
+ * 组件内默认预览表格的props
+ * @author mxs
+ * @createDate ...
+ * @updateDate 2022/01/24
+ */
+type PreviewTablePropType = {
+  dataSource: Recordable[]
+  showTableAction: BasicPropsType['showTableAction']
+  tableActionPermission: BasicPropsType['tableActionPermission']
+  loading?: boolean
+  readonly: boolean
+  showUploadBtn: boolean
+  customOptions: BasicPropsType['customOptions']
+}
+
+type NeedHideElType = {
+  hideSelect: boolean
+  hideTable: boolean
+}
+
+type TypeSelectPropType = {
+  moduleCode: string
+  selected?: string
+  typeCodeArray?: string[]
+  noDefaultValue: boolean | Ref<boolean>
+  customOptions?: BasicPropsType['customOptions']
+}
+
+interface IHandle {
+  backfill(): Promise<void>
+  realUpload(): void
+  beforeUpload(file: File): void
+  throwResponse(newRecord: Recordable[]): void
+  customRequest(): void
+  appendResultToTable(): void
+}
+
+/**
+ * @author mxs
+ * @name TaUploadBasciProps
+ * @createDate 2022/01/12
+ * @updateDate 2022/03/09
+ */
+type BasicPropsType = {
+  /**
+   * 默认加粗样式的标题
+   */
+  title?: string
+  typeCodeArray?: string[]
+  /**
+   * 文件真实id(v-model双向绑定)
+   */
+  fileActualIds?: string[]
+  /**
+   * 请求文件列表 | 上传文件的参数
+   */
+  params: RequestFilterType
+  /**
+   * 默认的select选择框
+   */
+  showSelect: boolean
+  /**
+   * 上传同时添加businessId
+   */
+  relationBusinessId: boolean
+  /**
+   * 默认的文件列表
+   */
+  showTable: boolean
+  /**
+   * 默认的文件列表的action列
+   */
+  showTableAction: {
+    preview?: boolean
+    download?: boolean
+    delete?: boolean
+  }
+  /**
+   * ".doc,.docx,.xlsx..."
+   */
+  accept: string
+  // /**
+  //  * 单个文件的最大大小
+  //  */
+  // maxSize: number;
+  /**
+   * 文件上传成功和请求已有(之前上传的)文件列表成功时触发
+   */
+  onChange?: Fn<Recordable[], void>
+  /**
+   * 不显示默认文件列表的删除功能
+   * @default false
+   */
+  readonly: boolean
+  /**
+   * 默认所有文件类型
+   */
+  noDefaultValue: boolean
+  /**
+   * 不自动回填和清空
+   * ```typescript
+   * import { TaUpload, useHandlerInOuter } from "/@/components/TaUpload";
+   * const { register: uploadRegister, getHandler } = useHandlerInOuter();
+   * ```
+   */
+  controlInOuter: boolean
+  /**
+   * emit("register")的代码提示
+   */
+  onRegister?: Fn<Handler, void>
+  /**
+   * 双向绑定文件真实id的代码提示
+   */
+  'onUpdate:fileActualIds'?: Fn<string[], void>
+  /**
+   * 假删除
+   * change会调用 文件真实id也会变
+   * 如果不点提交,数据就不变
+   * 编辑点了提交,文件真实id列表变了=>后台会执行真删除
+   * @default true
+   */
+  useFakeDelete: boolean
+  /**
+   * 回填传入列表数据就不再发起请求
+   */
+  uploadResponse?: FileItemType[]
+  /**
+   * 显示上传按钮(用于仅显示列表不上传的地方)
+   * @default true
+   */
+  showUploadBtn: boolean
+  /**
+   * 点击文件名跳转...
+   * @default undefined
+   */
+  onClickName?: Fn<Recordable, void>
+  /**
+   * 动态构建 TypeCode Options
+   * @default undefined
+   */
+  customOptions?: LabelValueOptions<any, any>
+  /**
+   * 内部表格拓展属性
+   * @default false
+   */
+  canResize: boolean
+  /**
+   * 默认的文件列表的action列配置权限
+   * @default {}
+   */
+  tableActionPermission: {
+    preview?: string
+    download?: string
+    delete?: string
+  }
+} & ProvideDataType
+
+/**
+ * 从App.vue注入的全局 数据/配置项/api接口
+ */
+type ProvideDataType = {
+  removeFile?: PromiseFn
+  queryFile?: (parame: {
+    filter: QueryFileParamsType
+    model: {
+      dir?: string
+      /** Format: int32 */
+      limit?: number
+      /** Format: int32 */
+      page?: number
+      sort?: string
+    }
+  }) => Promise<Result<{ result: FileItemType[] }>>
+  uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  uploadHyperlink?: (payload: {
+    typeCode: string
+    name: string | undefined
+    address: string | undefined
+  }) => Promise<Result<FileItemType>>
+  typeCodeRecord?: Recordable<LabelValueOptions>
+}
+
+/**
+ * 有默认值的props
+ * @author mxs
+ * @createDate  2022/01/22
+ * @updateDate  2022/03/09
+ */
+type HasDefaultPropType =
+  | 'accept'
+  // | "maxSize"
+  | 'readonly'
+  | 'readonly'
+  | 'canResize'
+  | 'showTable'
+  | 'showSelect'
+  | 'showUploadBtn'
+  | 'useFakeDelete'
+  | 'controlInOuter'
+  | 'noDefaultValue'
+  | 'showTableAction'
+  | 'relationBusinessId'
+  | 'tableActionPermission'
+
+/**
+ * 外部非必传的props
+ * @author mxs
+ * @createDate 2022/...
+ * @updateDate 2022/01/22
+ */
+type OmitHasDefaultPropType<T = HasDefaultPropType> = Partial<BasicPropsType> &
+  Omit<BasicPropsType, T extends string | number | symbol ? T : ''>
+
+export type {
+  Fn,
+  Result,
+  IHandle,
+  PromiseFn,
+  Recordable,
+  FileItemType,
+  BasicPropsType,
+  NeedHideElType,
+  ProvideDataType,
+  LabelValueOption,
+  LabelValueOptions,
+  TypeSelectPropType,
+  PreviewTablePropType,
+  OmitHasDefaultPropType,
+}

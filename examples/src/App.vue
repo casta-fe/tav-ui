@@ -13,8 +13,13 @@ import * as components from '@tav-ui/components'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
+import { TaUpload, taUploadProvideData } from './components/TaUpload'
+import SearchableApiSelect from './components/SearchableApiSelect.vue'
+
 export default defineComponent({
   components: {
+    TaUpload,
+    SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
@@ -39,18 +44,15 @@ export default defineComponent({
     console.log(components)
     const state = reactive({
       permissions: {},
-      components: {},
+      components: {
+        TaUpload: taUploadProvideData,
+      },
     })
     setTimeout(() => {
       state.permissions = {
         aa: {
           ifShow: true,
           apiUrl: 'xxx',
-        },
-      }
-      state.components = {
-        TaUpload: {
-          defaultApi: '123',
         },
       }
       console.log(state)
@@ -73,6 +75,8 @@ export default defineComponent({
     <TaBasicTitle icon="ant-design:setting-filled" :help-message="['3', '4']">
       basic title
     </TaBasicTitle>
+    <SearchableApiSelect />
+    <TaUpload />
     <!-- <TaLoading  :loading="true"></TaLoading> -->
 
     <!-- <TimeLineListPage />

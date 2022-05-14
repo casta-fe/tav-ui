@@ -1,0 +1,82 @@
+.ta-upload {
+  margin-bottom: 16px;
+  text-align: left;
+
+  &-title {
+    font-size: 14px;
+    font-family: Microsoft YaHei UI;
+    font-weight: bold;
+    line-height: 18px;
+    color: #222;
+    opacity: 0.99;
+    margin-bottom: 16px;
+  }
+
+  // form.ant-form {
+  //   border: 1px solid red;
+  //   display: block;
+  // }
+
+  &-btn {
+    display: inline-block;
+    margin-left: 16px;
+
+    &-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAALlJREFUOE/N0s0NgkAUBOAZiIk3S5ASPMjdElAroAOtwNiBJdCBlOBN44kSljqIO2bxJ7ioQU7ueb7Ney/DODlPENg9iAhdnmBggzmni6MhOe5inhnBMF6e9BO6hz9CCWuRhlBGYOR//h5KaWWHuQsPUEUK7cHHbSilDgi3YxHuGGHhYx8WADIAO0nbGpIbACsBCYHZY+QvO77A1v3+CEIwIkxzr+a8/QvQp3KSSrqSK7jkXftaIxsmV4R6YX6X/MbfAAAAAElFTkSuQmCC);
+      margin-right: 10px;
+    }
+
+    .file {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      position: relative;
+      z-index: 0;
+
+      &:hover {
+        z-index: 1;
+      }
+    }
+
+    .hyperlink {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
+      position: relative;
+      z-index: 0;
+      // top: -0.6px;
+
+      &:hover {
+        z-index: 1;
+      }
+    }
+  }
+
+  &-preview-table {
+    height: 300px;
+    // border: 1px solid red;
+    margin-top: 16px;
+
+    .ant-table-wrapper {
+      padding: 0 !important;
+    }
+
+    .ta-basic-table-operations {
+      display: none;
+    }
+
+    .ant-table-content {
+      padding: 0;
+      margin-top: 16px !important;
+
+      .ant-table-placeholder {
+        margin: 0;
+        margin-top: 3%;
+      }
+    }
+  }
+}

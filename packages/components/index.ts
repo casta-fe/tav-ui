@@ -30,3 +30,4 @@ export * from './tree'
 
 export * from './follow'
 export * from './table-tags'
+export * from './upload'
