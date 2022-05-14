@@ -14,7 +14,7 @@ import { omit } from 'lodash-es'
 import { isFunction } from '@tav-ui/utils/is'
 import { deepMerge } from '@tav-ui/utils/basic'
 
-import ModalContent from './components/ModalContent.vue'
+import ModalContent from './components/ModalContent'
 import ModalWrapper from './components/ModalWrapper.vue'
 import ModalClose from './components/ModalClose.vue'
 import ModalFooter from './components/ModalFooter.vue'
@@ -25,7 +25,13 @@ import type { ModalMethods, ModalProps, Recordable } from './types'
 
 export default defineComponent({
   name: 'TaModal',
-  components: { ModalContent, ModalWrapper, ModalClose, ModalFooter, ModalHeader },
+  components: {
+    ModalContent,
+    ModalWrapper,
+    ModalClose,
+    ModalFooter,
+    ModalHeader,
+  },
   inheritAttrs: false,
   props: basicProps,
   emits: ['visible-change', 'height-change', 'cancel', 'ok', 'register', 'update:visible'],
