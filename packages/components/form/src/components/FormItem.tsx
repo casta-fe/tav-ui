@@ -4,6 +4,7 @@ import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { Col, Divider, Form } from 'ant-design-vue'
 import { cloneDeep, upperFirst } from 'lodash-es'
 import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
+import clickOutside from '@tav-ui/directives/src/clickOutside'
 import { formatToDate, getMomentFormatString } from '@tav-ui/utils/dateUtil'
 import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
 import {
@@ -29,9 +30,9 @@ import {
 } from '../componentMap'
 import { createPlaceholderMessage, setComponentRuleType } from '../helper'
 import { useItemLabelWidth } from '../hooks/useLabelWidth'
-import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { PropType, Ref } from 'vue'
 import type { ValidationRule } from 'ant-design-vue/lib/form/Form'
+import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FormActionType, FormProps, FormSchema } from '../types/form'
 
 type Recordable<T = any> = Record<string, T>
@@ -53,6 +54,7 @@ type Nullable<T> = T | null
     - 只支持了部分组件，详情查看componentMap
   */
 
+const NUMBER_MAX = 9999999999
 export default defineComponent({
   name: 'BasicFormItem',
   inheritAttrs: false,
@@ -84,10 +86,13 @@ export default defineComponent({
       type: Object as PropType<FormActionType>,
     },
   },
+  directives: {
+    clickOutside,
+  },
   setup(props, { slots }) {
+    console.log('9999')
     // 测试 memberselect
     // 弹窗的位置，样式修改
-
     const { schema, formProps } = toRefs(props) as {
       schema: Ref<FormSchema>
       formProps: Ref<FormProps>
@@ -121,10 +126,10 @@ export default defineComponent({
             // eslint-disable-next-line eqeqeq
             if (props.schema.component == 'Select') setEditableFormItemValue(props.schema, newVal)
 
-            if (newVal && newVal !== oldVal) {
+            if (!isNullOrUnDef(newVal) && newVal !== oldVal) {
               // 表单数据更新处理，当前表单项有值
               setEditableFormItemValue(props.schema, newVal)
-            } else if (!newVal && oldVal && newVal !== oldVal) {
+            } else if (isNullOrUnDef(newVal) && oldVal && newVal !== oldVal) {
               // 表单数据更新处理，当前表单项无值
               setEditableFormItemValue(props.schema, newVal)
             } else {
@@ -146,6 +151,15 @@ export default defineComponent({
         },
         { immediate: true }
       )
+    watch(
+      () => props.formModel[props.schema.field],
+      (newVal) => {
+        setTimeout(() => {
+          getFormItemPrecision(newVal)
+        }, 50)
+      },
+      { immediate: true }
+    )
     // 修改editable updateschema在 setFieldsValue之前调用，文本更新异常的问题
     unref(hasEditable) &&
       watch(
@@ -166,9 +180,11 @@ export default defineComponent({
         } else if (editableComponentTimeTypeMap.has(schema.component)) {
           // 修复日期不能正常格式化的问题
           const valueFormat = schema.componentProps.valueFormat
-          // eslint-disable-next-line eqeqeq
-          if (value && value != '-') editableItemValue.value = formatToDate(value, valueFormat)
-          else editableItemValue.value = '-'
+          if (value && value != '-') {
+            editableItemValue.value = formatToDate(value, valueFormat)
+          } else {
+            editableItemValue.value = '-'
+          }
 
           // editableItemValue.value = value ? formatToDate(value, valueFormat) : "-";
         } else {
@@ -458,6 +474,43 @@ export default defineComponent({
       }
       return rules
     }
+    // 获取数字类型数据精度 最小为2最大为6
+    function getFormItemPrecision(_value) {
+      if (props.schema.component !== 'InputNumber') {
+        return
+      }
+      // console.log(props.schema.componentProps);
+      if (props.schema.componentProps && props.schema.componentProps['noAutoPrecision']) {
+        return
+      }
+      let precision = 0
+      let value = _value
+      if (itemRef.value) {
+        const inputEle = itemRef.value.querySelector('input')
+        if (inputEle) {
+          value = inputEle.value
+        }
+        // inputEle
+      }
+      if (!isNullOrUnDef(value)) {
+        const newValDecimal = String(value).split('.')[1]
+        if (!newValDecimal || newValDecimal.length <= 2) {
+          precision = 2
+        } else if (newValDecimal.length >= 6) {
+          precision = 6
+        } else {
+          precision = newValDecimal.length
+        }
+      }
+
+      if (!props.schema.componentProps) {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.schema.componentProps = { precision }
+      } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.schema.componentProps['precision'] = precision
+      }
+    }
 
     function renderComponent() {
       const {
@@ -473,7 +526,7 @@ export default defineComponent({
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
       const eventKey = `on${upperFirst(changeEvent)}`
-
+      console.log('eventKey')
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
@@ -485,7 +538,7 @@ export default defineComponent({
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
           props.setFormModel(field, value)
-
+          getFormItemPrecision(value)
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
@@ -534,9 +587,9 @@ export default defineComponent({
         }
       }
       if (component === 'InputNumber') {
-        compAttr.max = (componentProps as any)?.max ?? 9999999999
+        compAttr.max = (componentProps as any)?.max ?? NUMBER_MAX
         compAttr.min = (componentProps as any)?.min ?? 0
-        compAttr.precision = (componentProps as any)?.precision ?? 2
+        compAttr.precision = (componentProps as any)?.precision ?? undefined
       }
 
       if (unref(hasEditable)) {
@@ -626,28 +679,53 @@ export default defineComponent({
             <div
               ref={itemRef}
               v-click-outside={handleClickOutside}
-              style="flex: 1; position: relative;"
+              style="flex: 1;  max-width:100%; position: relative;"
             >
-              <div style="flex:1">{getContent()}</div>
+              {getContent()}
               {showSuffix && <span class="suffix">{getSuffix}</span>}
             </div>
           ) : (
             <>
-              <div style="flex:1">{getContent()}</div>
+              <div ref={itemRef} style="flex:1; max-width:100%">
+                {getContent()}
+              </div>
               {showSuffix && <span class="suffix">{getSuffix}</span>}
             </>
           )
+        const getEditableFormContent = () => {
+          // return <div>{editableItemValue.value}</div>;
+          // 暂时不强制格式化到6位
+          if (
+            props.schema.component === 'InputNumber' &&
+            typeof editableItemValue.value == 'number'
+          ) {
+            if (props.schema.componentProps) {
+              const precision = props.schema.componentProps['precision']
+              return precision
+                ? editableItemValue.value.toFixed(precision)
+                : editableItemValue.value
+            } else {
+              return editableItemValue.value
+            }
+          } else {
+            return <div>{editableItemValue.value}</div>
+          }
+        }
 
         const createEditableFormItem = () => {
           return !unref(isEditableItemClicked) ? (
             <div
-              class="ta-form-item__cell"
+              class={
+                props.schema.component === 'InputNumber'
+                  ? 'ta-form-item__cell number-cell'
+                  : 'ta-form-item__cell'
+              }
               title={editableItemValue.value}
               onClick={() => {
                 if (unref(isEditable)) isEditableItemClicked.value = true
               }}
             >
-              {editableItemValue.value}
+              {getEditableFormContent()}
 
               {unref(isEditable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />
@@ -690,11 +768,7 @@ export default defineComponent({
             labelCol={labelCol}
             wrapperCol={wrapperCol}
           >
-            {unref(hasEditable) ? (
-              <div style="display:flex;">{renderFormItem()}</div>
-            ) : (
-              <div style="display:flex">{renderFormItem()}</div>
-            )}
+            <div>{renderFormItem()}</div>
           </Form.Item>
         )
         // ::==================== i7eo：更新 ///// end   ///// ====================:: //
