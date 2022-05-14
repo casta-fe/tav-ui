@@ -14,9 +14,9 @@
         <slot :name="item" v-bind="data || {}" />
       </template>
     </BasicForm>
-
     <!-- ::==================== i7eo：添加 ///// start ///// ====================:: -->
     <div
+      v-show="showTableAction"
       ref="actionRef"
       class="ta-basic-table-operations flex flex-wrap align-center justify-between"
     >

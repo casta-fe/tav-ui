@@ -244,7 +244,7 @@ export default defineComponent({
         // 其他情况
         // 1. 没有给 defaultvalue，此时调用 resetFields，newval 为 undefined
         //  添加针对0的兼容 by hyb
-        editableItemValue.value = itemValue.value || schema.component === 'InputNumber' ? 0 : '-'
+        editableItemValue.value = isNullOrUnDef(value) ? '-' : itemValue.value
       }
     }
 

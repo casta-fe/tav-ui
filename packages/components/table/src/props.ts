@@ -1,7 +1,7 @@
 import { propTypes } from '@tav-ui/utils/propTypes'
 import { DEFAULT_FILTER_FN, DEFAULT_SIZE, DEFAULT_SORT_FN, FETCH_SETTING } from './const'
-import type { ExtractPropTypes, PropType } from 'vue'
 import type { FormProps, FormSchema } from '@tav-ui/components/form/src/types/form'
+import type { ExtractPropTypes, PropType } from 'vue'
 import type { PaginationProps } from './types/pagination'
 import type {
   BasicColumn,
@@ -104,6 +104,7 @@ export const tableProps = {
     type: Object as PropType<Partial<FormProps>>,
     default: null,
   },
+  showTableAction: propTypes.bool.def(true),
   // ::==================== i7eo：添加 ///// start ///// ====================:: //
   // 过滤&筛选表单配置
   filter: {

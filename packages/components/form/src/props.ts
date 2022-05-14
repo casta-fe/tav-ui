@@ -1,8 +1,8 @@
 import { propTypes } from '@tav-ui/utils/propTypes'
+import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { RowProps } from 'ant-design-vue/lib/grid/Row'
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue'
-import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FieldMapToTime, FormSchema } from './types/form'
 import type { ColEx } from './types/index'
 
@@ -65,7 +65,7 @@ export const formProps = {
   alwaysShowLines: propTypes.number.def(1),
 
   // 是否显示操作按钮
-  showActionButtonGroup: propTypes.bool.def(true),
+  showActionButtonGroup: propTypes.bool.def(false),
   // 操作列Col配置
   actionColOptions: Object as PropType<Partial<ColEx>>,
   // 显示重置按钮
