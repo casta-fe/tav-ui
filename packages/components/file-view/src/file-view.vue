@@ -4,6 +4,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Modal, Spin } from 'ant-design-vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import download from '@tav-ui/utils/file/TaDownload'
+import { useGlobalConfig } from '@tav-ui/hooks'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
 export default defineComponent({
@@ -17,6 +18,7 @@ export default defineComponent({
   props: fileViewProps,
   emits: ['update:show'],
   setup(props, { emit }) {
+    const globalConfig = useGlobalConfig('components')
     const { createMessage } = useMessage()
     const state = reactive({
       index: props.index,
@@ -24,6 +26,7 @@ export default defineComponent({
       showModal: props.show,
       pageLoading: false,
     })
+
     const ignoreList = ['zip', 'tar', '7z']
     const loadFileTypes = {
       office: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'],
@@ -61,14 +64,17 @@ export default defineComponent({
       emit('update:show', false)
     }
     const getFile = () => {
+      if (!globalConfig.value.TaFile) {
+        return
+      }
       // 防止多次请求
       const id = currentFile.value?.fileId || currentFile.value?.id
       if (state.pageLoading || !id || fileType.value == '') return
 
       state.filePath = ''
       state.pageLoading = true
-      props
-        .fileApi(id)
+
+      globalConfig.value.TaFile.previewFile(id)
         .then((res) => {
           state.pageLoading = false
           state.filePath = res.data
