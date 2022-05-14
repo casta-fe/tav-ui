@@ -20,6 +20,7 @@ import { TaLoading } from '@tav-ui/components/loading'
 import { TaModal } from '@tav-ui/components/modal'
 import { TaScrollbar } from '@tav-ui/components/scrollbar'
 import { TaTable, TableAction, TableImg } from '@tav-ui/components/table'
+import { TaTableTags } from '@tav-ui/components/table-tags'
 import { TaTime } from '@tav-ui/components/time'
 import { TaTimeLine } from '@tav-ui/components/time-line'
 import { TaCollapseTransition } from '@tav-ui/components/transition'
@@ -53,6 +54,7 @@ export default [
   TaTable,
   TableAction,
   TableImg,
+  TaTableTags,
   TaTime,
   TaTimeLine,
   TaCollapseTransition,

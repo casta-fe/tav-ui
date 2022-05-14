@@ -1,18 +1,18 @@
 /**
  * Configure and register global directives
  */
-// import type { App } from "vue";
-// import { setupAutoFocusDirective } from "./autoFocus";
-// import { setupClickOutsideDirective } from "./clickOutside";
-// import { setupLoadingDirective } from "./loading";
-// import { setupPermissionDirective } from "./permission";
+import { setupAutoFocusDirective } from './src/autoFocus'
+import { setupClickOutsideDirective } from './src/clickOutside'
+import { setupLoadingDirective } from './src/loading'
+import { setupPermissionDirective } from './src/permission'
+import type { App } from 'vue'
 
-// export function setupGlobDirectives(app: App) {
-//   setupAutoFocusDirective(app);
-//   setupClickOutsideDirective(app);
-//   setupPermissionDirective(app);
-//   setupLoadingDirective(app);
-// }
+export function setupGlobDirectives(app: App) {
+  setupAutoFocusDirective(app)
+  setupClickOutsideDirective(app)
+  setupPermissionDirective(app)
+  setupLoadingDirective(app)
+}
 
 export { default as AutoFocusDirective } from './src/autoFocus'
 export { default as ClickOutsideDirective } from './src/clickOutside'

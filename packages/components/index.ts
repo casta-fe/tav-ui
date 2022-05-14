@@ -24,6 +24,8 @@ export * from './table'
 export * from './time'
 export * from './time-line'
 export * from './transition'
+export * from './table'
+export * from './table-tags'
 export * from './tree'
 
 export * from './follow'
