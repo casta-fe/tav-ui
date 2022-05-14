@@ -35,17 +35,17 @@ export default defineComponent({
       isFollow: false,
     })
     const getFollwStatus = () => {
-      if (globalConfig.value.TaFollow && globalConfig.value.TaFollow === 'function') {
+      if (globalConfig.value && globalConfig.value.TaFollow) {
         globalConfig.value.TaFollow.getFollwStatus(props.id).then((res) => {
           state.isFollow = res.data ? !!res.data.status : false
         })
       } else {
-        console.log('warning!,props.initStatusApi缺少或者不是function')
+        console.log('请注入TaFollow相关接口')
       }
     }
     const changFollwStatus = () => {
       state.loading = true
-      if (globalConfig.value.TaFollow && globalConfig.value.TaFollow === 'function') {
+      if (globalConfig.value && globalConfig.value.TaFollow) {
         globalConfig.value.TaFollow.updateFollowStatus({ followId: props.id, type: props.type })
           .then(() => {
             const msg = state.isFollow ? '取消成功' : '关注成功'
@@ -56,7 +56,7 @@ export default defineComponent({
             state.loading = false
           })
       } else {
-        console.log('warning!,props.updateStatusApi缺少或者不是function')
+        console.log('请注入TaFollow相关接口')
       }
     }
     getFollwStatus()

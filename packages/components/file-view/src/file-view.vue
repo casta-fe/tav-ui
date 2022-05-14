@@ -64,7 +64,7 @@ export default defineComponent({
       emit('update:show', false)
     }
     const getFile = () => {
-      if (!globalConfig.value.TaFile) {
+      if (!globalConfig.value || !globalConfig.value.TaFile) {
         return
       }
       // 防止多次请求
