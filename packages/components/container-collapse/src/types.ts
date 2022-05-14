@@ -26,3 +26,9 @@ export const containerCollapseProps = {
 }
 
 export type ContainerCollapseProps = ExtractPropTypes<typeof containerCollapseProps>
+
+export interface ContainerCollapseOptions {
+  canExpand?: boolean
+  title?: string
+  helpMessage?: Array<any> | string
+}
