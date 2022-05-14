@@ -26,7 +26,6 @@ export function useTableScroll(
   formRef: Ref<HTMLElement | null>,
   actionRef: Ref<HTMLElement | null>
 ) {
-  debugger
   const tableHeightRef: Ref<Nullable<number>> = ref(null)
 
   const modalFn = useModalContext()

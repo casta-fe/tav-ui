@@ -161,9 +161,9 @@ export default defineComponent({
         <Button type="text" @click="downloadFile">下载</Button>
       </div>
       <span class="file-view-num">{{ index + 1 }}/{{ list.length }}</span> -->
-      <span class="file-view-title"
-        >{{ filePath }}{{ currentFile.name + '.' + currentFile.suffix }}</span
-      >
+      <span class="file-view-title">
+        {{ filePath }}{{ currentFile.name + '.' + currentFile.suffix }}
+      </span>
     </template>
     <template v-if="list.length > 1">
       <div class="file-view-modal-prev" @click="goPrev">
