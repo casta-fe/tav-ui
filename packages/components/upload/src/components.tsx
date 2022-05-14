@@ -1,6 +1,6 @@
 import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
 import { Select as TaSelect } from 'ant-design-vue'
-// import { TaFileView } from '@tav-ui/components/file-view'
+import { TaFileView } from '@tav-ui/components/file-view'
 import { TaTable, TableAction, useTable } from '@tav-ui/components/table'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
@@ -191,11 +191,11 @@ export const PreviewTable = defineComponent({
             ),
           }}
         </TaTable>
-        {/* <TaFileView
+        <TaFileView
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}
           list={previewRecord.value as any}
-        /> */}
+        />
       </div>
     )
   },

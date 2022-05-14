@@ -35,7 +35,7 @@ export default defineComponent({
       video: ['mpeg', 'mpg', 'avi', 'movie'],
       text: ['txt'],
     }
-    const currentFile = computed((): FileViewItemType => props.list[state.index])
+    const currentFile = computed((): FileViewItemType => props.list[state.index] || {})
     const fileType = computed(() => {
       let type = ''
       const suffix = currentFile.value?.suffix
