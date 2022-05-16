@@ -62,11 +62,12 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
-import { Table } from 'ant-design-vue'
 import { omit } from 'lodash-es'
-import { isFunction } from '@tav-ui/utils/is'
-import { warn } from '@tav-ui/utils/log'
+import { Table } from 'ant-design-vue'
 import mitt from '@tav-ui/utils/mitt'
+import { warn } from '@tav-ui/utils/log'
+import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
 import CustomAction from './components/CustomAction.vue'
@@ -89,6 +90,7 @@ import { useTableScroll } from './hooks/useTableScroll'
 import { useTableScrollTo } from './hooks/useTableScrollTo'
 import { useTableStyle } from './hooks/useTableStyle'
 import { tableProps } from './props'
+import type { Ref } from 'vue'
 import type {
   BasicTableProps,
   ColumnChangeParam,
@@ -96,8 +98,6 @@ import type {
   SizeType,
   TableActionType,
 } from './types/table'
-// import emitter from "@tav-ui/hooks/web/useEmiiter";
-// import { usePermission } from "@tav-ui/hooks/web/usePermission";
 
 const PageWrapperFixedHeightKey = 'PageWrapperFixedHeight'
 type Recordable<T = any> = Record<string, T>
@@ -186,59 +186,46 @@ export default defineComponent({
       return getProps.value.filter
     })
 
-    // const { getPermissions } = usePermission();
-    // const Permissions = getPermissions();
     const useInnerCustomAction = computed(() => {
-      // const { useAdd, useDelete, useImport, useExport, useRefresh, permission } = unref(getProps);
-      // // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-      // const isAddVisible = isNullOrUnDef(permission?.add)
-      //   ? useAdd?.ifShow
-      //   : unref(Permissions)[permission!.add]?.ifShow && useAdd?.ifShow;
-      // const isDeleteVisible = isNullOrUnDef(permission?.delete)
-      //   ? useDelete?.ifShow
-      //   : unref(Permissions)[permission!.delete]?.ifShow && useDelete?.ifShow;
-      // const isImportVisible = isNullOrUnDef(permission?.import)
-      //   ? useImport?.ifShow
-      //   : unref(Permissions)[permission!.import]?.ifShow && useImport?.ifShow;
-      // const isExportVisible = isNullOrUnDef(permission?.export)
-      //   ? useExport?.ifShow
-      //   : unref(Permissions)[permission!.export]?.ifShow && useExport?.ifShow;
-      // const isRefreshVisible = isNullOrUnDef(permission?.refresh)
-      //   ? useRefresh?.ifShow
-      //   : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow;
-      // const result = {
-      //   isVisible: false,
-      //   isAddVisible,
-      //   addHandle: useAdd?.handleAction,
-      //   isDeleteVisible,
-      //   deleteHandle: useDelete?.handleAction,
-      //   isImportVisible,
-      //   importHandle: useImport?.handleAction,
-      //   isExportVisible,
-      //   isRefreshVisible
-      // };
-      // if (
-      //   isAddVisible ||
-      //   isDeleteVisible ||
-      //   isImportVisible ||
-      //   isExportVisible ||
-      //   isRefreshVisible
-      // ) {
-      //   result.isVisible = true;
-      // }
-
-      // return result;
-      return {
-        isVisible: true,
-        isAddVisible: true,
-        addHandle: () => {},
-        isDeleteVisible: true,
-        deleteHandle: () => {},
-        isImportVisible: true,
-        importHandle: () => {},
-        isExportVisible: true,
-        isRefreshVisible: true,
+      const { useActions, useAdd, useDelete, useImport, useExport, useRefresh, permission } =
+        unref(getProps)
+      let isAddVisible = false
+      let isDeleteVisible = false
+      let isImportVisible = false
+      let isExportVisible = false
+      let isRefreshVisible = false
+      const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+      if (useActions) {
+        // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+        isAddVisible = isNullOrUnDef(permission?.add)
+          ? useAdd?.ifShow
+          : unref(Permissions)[permission!.add]?.ifShow && useAdd?.ifShow
+        isDeleteVisible = isNullOrUnDef(permission?.delete)
+          ? useDelete?.ifShow
+          : unref(Permissions)[permission!.delete]?.ifShow && useDelete?.ifShow
+        isImportVisible = isNullOrUnDef(permission?.import)
+          ? useImport?.ifShow
+          : unref(Permissions)[permission!.import]?.ifShow && useImport?.ifShow
+        isExportVisible = isNullOrUnDef(permission?.export)
+          ? useExport?.ifShow
+          : unref(Permissions)[permission!.export]?.ifShow && useExport?.ifShow
+        isRefreshVisible = isNullOrUnDef(permission?.refresh)
+          ? useRefresh?.ifShow
+          : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow
       }
+      const result = {
+        isVisible: useActions,
+        isAddVisible,
+        addHandle: useAdd?.handleAction,
+        isDeleteVisible,
+        deleteHandle: useDelete?.handleAction,
+        isImportVisible,
+        importHandle: useImport?.handleAction,
+        isExportVisible,
+        isRefreshVisible,
+      }
+
+      return result
     })
     // ::==================== i7eo：添加 ///// end  ///// ====================:: //
 

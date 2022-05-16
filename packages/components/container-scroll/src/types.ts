@@ -1,5 +1,15 @@
-import type { ExtractPropTypes } from 'vue'
+export type ScrollType = 'default' | 'main'
 
-export const containerScrollProps = {}
+type RefType<T> = T | null
+type Nullable<T> = T | null
 
-export type ContainerScrollProps = ExtractPropTypes<typeof containerScrollProps>
+export interface ScrollContainerOptions {
+  enableScroll?: boolean
+  type?: ScrollType
+}
+
+export type ScrollActionType = RefType<{
+  scrollBottom: () => void
+  getScrollWrap: () => Nullable<HTMLElement>
+  scrollTo: (top: number) => void
+}>

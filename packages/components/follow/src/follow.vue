@@ -16,9 +16,10 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { useGlobalConfig } from '@tav-ui/hooks'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { TaButton } from '../../button'
 import { followProps } from './types'
+import type { Ref } from 'vue'
 //  1 企业 2投资项目 3退出项目 4基金 5 投资人
 export default defineComponent({
   name: 'TaFollow',
@@ -29,7 +30,7 @@ export default defineComponent({
   emits: ['update:show'],
   setup(props) {
     const { createMessage } = useMessage()
-    const globalConfig = useGlobalConfig('components')
+    const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
     const state = reactive({
       loading: false,
       isFollow: false,
