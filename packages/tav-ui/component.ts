@@ -9,6 +9,9 @@ import { TaContainerCollapse } from '@tav-ui/components/container-collapse'
 import { TaContainerScroll } from '@tav-ui/components/container-scroll'
 import { TaConfigProvider } from '@tav-ui/components/config-provider'
 import { TaContextMenu } from '@tav-ui/components/context-menu'
+import { TaCountDown, TaCountDownButton } from '@tav-ui/components/count-down'
+import { TaCountTo } from '@tav-ui/components/count-to'
+import { TaDrawer } from '@tav-ui/components/drawer'
 import { TaDropdown } from '@tav-ui/components/dropdown'
 import { TaFileView } from '@tav-ui/components/file-view'
 import { TaFollow } from '@tav-ui/components/follow'
@@ -42,6 +45,10 @@ export default [
   TaContainerScroll,
   TaConfigProvider,
   TaContextMenu,
+  TaCountDown,
+  TaCountDownButton,
+  TaCountTo,
+  TaDrawer,
   TaDropdown,
   TaFileView,
   TaFollow,

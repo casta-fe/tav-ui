@@ -95,6 +95,7 @@ import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { memberSelectProps } from './types'
 import MemberModal from './components/member-modal.vue'
+import type { Ref } from 'vue'
 import type { Options, UserItem } from './types'
 export default defineComponent({
   name: 'TaMemberSelect',
@@ -137,9 +138,9 @@ export default defineComponent({
       'orgList',
       computed(() => state.orgList)
     )
-    const TaMemberSelectApi = useGlobalConfig('components')
-    const orgApi = TaMemberSelectApi.value?.TaMemberSelect?.orgApi || props.orgApi
-    const userListApi = TaMemberSelectApi.value?.TaMemberSelect?.userListApi || props.userListApi
+    const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+    const orgApi = globalConfig.value?.TaMemberSelect?.orgApi || props.orgApi
+    const userListApi = globalConfig.value?.TaMemberSelect?.userListApi || props.userListApi
     const userOptions = computed(() => {
       const list: Options[] = []
       state.userList.forEach((v) => {

@@ -4,9 +4,11 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Modal, Spin } from 'ant-design-vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import download from '@tav-ui/utils/file/TaDownload'
-import { useGlobalConfig } from '@tav-ui/hooks'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
+import type { Ref } from 'vue'
+
 export default defineComponent({
   name: 'TaFileView',
   components: {
@@ -18,7 +20,7 @@ export default defineComponent({
   props: fileViewProps,
   emits: ['update:show'],
   setup(props, { emit }) {
-    const globalConfig = useGlobalConfig('components')
+    const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
     const { createMessage } = useMessage()
     const state = reactive({
       index: props.index,
@@ -64,7 +66,7 @@ export default defineComponent({
       emit('update:show', false)
     }
     const getFile = () => {
-      if (!globalConfig.value || !globalConfig.value.TaFile) {
+      if (!globalConfig.value || !globalConfig.value.TaFileView) {
         return
       }
       // 防止多次请求
@@ -74,7 +76,7 @@ export default defineComponent({
       state.filePath = ''
       state.pageLoading = true
 
-      globalConfig.value.TaFile.previewFile(id)
+      globalConfig.value.TaFileView.previewFile(id)
         .then((res) => {
           state.pageLoading = false
           state.filePath = res.data

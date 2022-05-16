@@ -1,8 +1,9 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { useGlobalConfig } from '@tav-ui/hooks'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { isFunction } from '@tav-ui/utils'
 import { useHyperlinkForm } from './hooks'
+import type { Ref } from 'vue'
 import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
 
 // global variable beginRegion
@@ -17,7 +18,7 @@ class Handler {
   private _props!: BasicPropsType
 
   private _provide = computed<undefined | ProvideDataType>(
-    () => useGlobalConfig('components').value?.TaUpload
+    () => (useGlobalConfig('components') as Ref<Record<string, any>>).value?.TaUpload
   )
 
   private set props(v: BasicPropsType) {

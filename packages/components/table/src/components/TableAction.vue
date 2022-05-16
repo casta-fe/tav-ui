@@ -41,20 +41,21 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, toRaw, unref } from 'vue'
-import { Button, Divider, Tooltip } from 'ant-design-vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
-// import { usePermission } from "@tav-ui/hooks/web/usePermission";
-import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
-import { propTypes } from '@tav-ui/utils/propTypes'
+import { Button, Divider, Tooltip } from 'ant-design-vue'
+import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
-import ModalButton from '@tav-ui/components/button-modal'
+// import { usePermission } from "@tav-ui/hooks/web/usePermission";
+import { isBoolean, isFunction, isNullOrUnDef, isString } from '@tav-ui/utils/is'
+import { propTypes } from '@tav-ui/utils/propTypes'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
-import type { ActionItem } from '../types/tableAction'
-import type { TableActionType } from '../types/table'
-import type { PropType } from 'vue'
 import type { TooltipProps } from 'ant-design-vue'
+import type { PropType, Ref } from 'vue'
+import type { TableActionType } from '../types/table'
+import type { ActionItem } from '../types/tableAction'
 
 export default defineComponent({
   name: 'TableAction',
@@ -119,8 +120,7 @@ export default defineComponent({
       return actions
     })
 
-    // const { hasPermission, getPermissions } = usePermission();
-    // const Permissions = getPermissions();
+    const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
     const getActions = computed(() => {
       return (
         Actions.value
@@ -129,10 +129,9 @@ export default defineComponent({
           // })
           .filter((action) => {
             // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-            // return isNullOrUnDef(action.permission)
-            //   ? isIfShow(action)
-            //   : unref(Permissions)[action.permission]?.ifShow && isIfShow(action);
-            return isIfShow(action)
+            return isNullOrUnDef(action.permission)
+              ? isIfShow(action)
+              : unref(Permissions)[action.permission]?.ifShow && isIfShow(action)
           })
           .map((action) => {
             return {
