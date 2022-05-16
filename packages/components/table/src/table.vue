@@ -64,7 +64,7 @@
 import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
 import { omit } from 'lodash-es'
 import { Table } from 'ant-design-vue'
-import mitt from '@tav-ui/utils/mitt'
+import { mitt } from '@tav-ui/utils/mitt'
 import { warn } from '@tav-ui/utils/log'
 import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
