@@ -3,7 +3,7 @@ import { computed, defineComponent, nextTick, reactive, toRefs, watch } from 'vu
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Modal, Spin } from 'ant-design-vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import download from '@tav-ui/utils/file/TaDownload'
+import download from '@tav-ui/utils/file/_download'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'

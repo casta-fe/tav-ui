@@ -247,7 +247,6 @@ importers:
       '@ant-design/icons-vue': ^6.0.1
       '@iconify/iconify': ^2.2.1
       '@purge-icons/generated': ^0.7.0
-      '@types/qrcode': ^1.4.1
       '@vueuse/core': ^8.2.5
       '@vueuse/shared': ^6.8.0
       ant-design-vue: 2.2.8
@@ -271,8 +270,6 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-    devDependencies:
-      '@types/qrcode': 1.4.2
 
   packages/theme-chalk:
     specifiers:
@@ -1594,12 +1591,6 @@ packages:
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
-    dev: true
-
-  /@types/qrcode/1.4.2:
-    resolution: {integrity: sha512-7uNT9L4WQTNJejHTSTdaJhfBSCN73xtXaHFyBJ8TSwiLhe4PRuTue7Iph0s2nG9R/ifUaSnGhLUOZavlBEqDWQ==}
-    dependencies:
-      '@types/node': 17.0.23
     dev: true
 
   /@types/resolve/1.17.1:
