@@ -150,7 +150,7 @@ export function useTableScroll(
     let bottomIncludeBody = 0
     let height = 0
     const tablePadding = tablePaddingDistance
-    debugger
+
     if (unref(wrapRef) && isCanResizeParent) {
       const formMargin = formRefMarginTopDistance
       const TableMargin = 0
