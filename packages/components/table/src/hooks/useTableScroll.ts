@@ -145,8 +145,8 @@ export function useTableScroll(
 
     let bottomIncludeBody = 0
     let height = 0
+    const tablePadding = tablePaddingDistance
     if (unref(wrapRef) && isCanResizeParent) {
-      const tablePadding = tablePaddingDistance
       const formMargin = formRefMarginTopDistance
       const TableMargin = 0
 
@@ -175,9 +175,10 @@ export function useTableScroll(
     } else {
       // Table height from bottom
       bottomIncludeBody = getViewportOffset(headEl).bottomIncludeBody
-      bottomIncludeBody -
+      height =
+        bottomIncludeBody -
         (resizeHeightOffset || 0) -
-        // paddingHeight -
+        (tablePadding ? tablePadding : 0) -
         paginationHeight -
         footerHeight -
         headerHeight
