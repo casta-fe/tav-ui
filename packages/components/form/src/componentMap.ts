@@ -20,13 +20,13 @@ import {
 // import ApiCascader from "./components/ApiCascader.vue";
 // import ApiRadioGroup from "./components/ApiRadioGroup.vue";
 import IconPicker from '@tav-ui/components/icon-picker'
+import { TaMemberSelect } from '@tav-ui/components/member-select'
 import ApiSelect from './components/ApiSelect.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
 import type { Component } from 'vue'
 // import { CountdownInput } from "/@/components/CountDown";
-// import { MemberSelect } from "/@/components/MemberSelect";
 // import { StrengthMeter } from "/@/components/StrengthMeter";
 // import { BasicUpload } from "/@/components/Upload";
 import type { ComponentType, EditableComponentType } from './types/index'
@@ -69,7 +69,7 @@ componentMap.set('IconPicker', IconPicker)
 componentMap.set('Divider', Divider)
 
 // customadd
-// add('MemberSelect', MemberSelect);
+add('MemberSelect', TaMemberSelect)
 add('SearchableApiSelect', SearchableApiSelect)
 
 export function add(compName: ComponentType, component: Component) {
@@ -94,7 +94,7 @@ editableComponentInputTypeMap.set('InputNumber', InputNumber)
 const editableComponentSelectTypeMap = new Map<EditableComponentType, Component>()
 // onchange/clickoutside 隐藏表单项
 editableComponentSelectTypeMap.set('Select', Select)
-// editableComponentSelectTypeMap.set('MemberSelect', MemberSelect);
+editableComponentSelectTypeMap.set('MemberSelect', TaMemberSelect)
 const editableComponentCheckTypeMap = new Map<EditableComponentType, Component>()
 // onchange/clickoutside 隐藏表单项
 editableComponentCheckTypeMap.set('Switch', Switch)
