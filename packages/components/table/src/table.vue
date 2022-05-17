@@ -196,25 +196,25 @@ export default defineComponent({
       let isRefreshVisible = false
       debugger
       const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-      if (useActions) {
-        // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-        console.log(unref(Permissions), permission!.add, useAdd?.ifShow, 'useAdd?.ifShow')
-        isAddVisible = isNullOrUnDef(permission?.add)
-          ? useAdd?.ifShow
-          : unref(Permissions)[permission!.add]?.ifShow && useAdd?.ifShow
-        isDeleteVisible = isNullOrUnDef(permission?.delete)
-          ? useDelete?.ifShow
-          : unref(Permissions)[permission!.delete]?.ifShow && useDelete?.ifShow
-        isImportVisible = isNullOrUnDef(permission?.import)
-          ? useImport?.ifShow
-          : unref(Permissions)[permission!.import]?.ifShow && useImport?.ifShow
-        isExportVisible = isNullOrUnDef(permission?.export)
-          ? useExport?.ifShow
-          : unref(Permissions)[permission!.export]?.ifShow && useExport?.ifShow
-        isRefreshVisible = isNullOrUnDef(permission?.refresh)
-          ? useRefresh?.ifShow
-          : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow
-      }
+      // if (useActions) {
+      // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+      console.log(unref(Permissions), permission!.add, useAdd?.ifShow, 'useAdd?.ifShow')
+      isAddVisible = isNullOrUnDef(permission?.add)
+        ? useAdd?.ifShow
+        : unref(Permissions)[permission!.add]?.ifShow && useAdd?.ifShow
+      isDeleteVisible = isNullOrUnDef(permission?.delete)
+        ? useDelete?.ifShow
+        : unref(Permissions)[permission!.delete]?.ifShow && useDelete?.ifShow
+      isImportVisible = isNullOrUnDef(permission?.import)
+        ? useImport?.ifShow
+        : unref(Permissions)[permission!.import]?.ifShow && useImport?.ifShow
+      isExportVisible = isNullOrUnDef(permission?.export)
+        ? useExport?.ifShow
+        : unref(Permissions)[permission!.export]?.ifShow && useExport?.ifShow
+      isRefreshVisible = isNullOrUnDef(permission?.refresh)
+        ? useRefresh?.ifShow
+        : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow
+      // }
       const result = {
         isVisible:
           isAddVisible || isDeleteVisible || isImportVisible || isExportVisible || isRefreshVisible,
