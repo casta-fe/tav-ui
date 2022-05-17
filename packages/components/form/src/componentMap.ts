@@ -25,6 +25,7 @@ import ApiSelect from './components/ApiSelect.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
+import YearPicker from './components/YearPicker'
 import type { Component } from 'vue'
 // import { CountdownInput } from "/@/components/CountDown";
 // import { StrengthMeter } from "/@/components/StrengthMeter";
@@ -71,6 +72,7 @@ componentMap.set('Divider', Divider)
 // customadd
 add('MemberSelect', TaMemberSelect)
 add('SearchableApiSelect', SearchableApiSelect)
+add('YearPicker', YearPicker)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)
