@@ -194,6 +194,7 @@ export default defineComponent({
       let isImportVisible = false
       let isExportVisible = false
       let isRefreshVisible = false
+      debugger
       const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
       if (useActions) {
         // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值

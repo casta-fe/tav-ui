@@ -146,6 +146,7 @@ export function useTableScroll(
     let bottomIncludeBody = 0
     let height = 0
     const tablePadding = tablePaddingDistance
+    debugger
     if (unref(wrapRef) && isCanResizeParent) {
       const formMargin = formRefMarginTopDistance
       const TableMargin = 0
@@ -186,14 +187,22 @@ export function useTableScroll(
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
-    bodyEl!.style.height = `${height}px`
-    if (!slots.footer) {
+    if (isCanResizeParent) {
+      bodyEl!.style.height = `${height}px`
       if (tableData.length === 0) {
         //处理空数据时滚动条消失问题
         const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
         TbodyEl!.style.height = `1px`
       }
-      bodyEl!.style.height = `${height}px`
+    } else {
+      if (!slots.footer) {
+        bodyEl!.style.height = `${height}px`
+        if (tableData.length === 0) {
+          //处理空数据时滚动条消失问题
+          const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
+          TbodyEl!.style.height = `1px`
+        }
+      }
     }
   }
   useWindowSizeFn(calcTableHeight, 280)
