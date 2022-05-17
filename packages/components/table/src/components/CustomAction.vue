@@ -1,5 +1,6 @@
 <template>
   <div class="ta-basic-table-custom-action">
+    {{ visible }}
     <Button
       v-if="visible?.isAddVisible"
       class="mr-4"

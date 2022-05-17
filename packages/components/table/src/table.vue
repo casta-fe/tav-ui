@@ -198,6 +198,13 @@ export default defineComponent({
       const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
       if (useActions) {
         // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+        console.log(
+          unref(Permissions),
+          permission!.add,
+          unref(Permissions)[permission!.add],
+          useAdd?.ifShow,
+          'useAdd?.ifShow'
+        )
         isAddVisible = isNullOrUnDef(permission?.add)
           ? useAdd?.ifShow
           : unref(Permissions)[permission!.add]?.ifShow && useAdd?.ifShow
@@ -215,7 +222,8 @@ export default defineComponent({
           : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow
       }
       const result = {
-        isVisible: useActions,
+        isVisible:
+          isAddVisible || isDeleteVisible || isImportVisible || isExportVisible || isRefreshVisible,
         isAddVisible,
         addHandle: useAdd?.handleAction,
         isDeleteVisible,
@@ -225,7 +233,7 @@ export default defineComponent({
         isExportVisible,
         isRefreshVisible,
       }
-
+      console.log(result.isVisible)
       return result
     })
     // ::==================== i7eo：添加 ///// end  ///// ====================:: //
