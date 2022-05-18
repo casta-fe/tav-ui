@@ -1,4 +1,3 @@
-<script lang="tsx">
 import { computed, defineComponent, nextTick, onMounted, reactive, ref, unref, watch } from 'vue'
 import { useEventListener } from '@tav-ui/hooks/event/useEventListener'
 import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
@@ -6,7 +5,7 @@ import { virtualScrollProps } from './types'
 import type { Recordable } from './types'
 import type { CSSProperties } from 'vue'
 
-const prefixCls = 'virtual-scroll'
+const prefixCls = 'ta-virtual-scroll'
 
 function convertToUnit(str: string | number | null | undefined, unit = 'px'): string | undefined {
   if (str == null || str === '') {
@@ -19,7 +18,7 @@ function convertToUnit(str: string | number | null | undefined, unit = 'px'): st
 }
 
 export default defineComponent({
-  name: 'VirtualScroll',
+  name: 'TaVirtualScroll',
   props: virtualScrollProps,
   setup(props, { slots }) {
     const wrapElRef = ref<HTMLDivElement | null>(null)
@@ -137,4 +136,3 @@ export default defineComponent({
     )
   },
 })
-</script>

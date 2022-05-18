@@ -34,6 +34,7 @@ import { TaCollapseTransition } from '@tav-ui/components/transition'
 import { TaTree } from '@tav-ui/components/tree'
 import { TaUpload } from '@tav-ui/components/upload'
 import { TaVerify, TaVerifyRotate } from '@tav-ui/components/verify'
+import { TaVirtualScroll } from '@tav-ui/components/virtual-scroll'
 import type { Plugin } from 'vue'
 
 export default [
@@ -79,4 +80,5 @@ export default [
   TaUpload,
   TaVerify,
   TaVerifyRotate,
+  TaVirtualScroll,
 ] as Plugin[]

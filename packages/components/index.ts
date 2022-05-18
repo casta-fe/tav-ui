@@ -33,6 +33,5 @@ export * from './time-line'
 export * from './transition'
 export * from './tree'
 export * from './upload'
-
-export * from './virtual-scroll'
 export * from './verify'
+export * from './virtual-scroll'
