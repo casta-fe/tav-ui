@@ -5,9 +5,9 @@ import { TaButton } from '@tav-ui/components/button'
 import { TaButtonGroup } from '@tav-ui/components/button-group'
 import { TaButtonModal } from '@tav-ui/components/button-modal'
 import { TaButtonPopconfirm } from '@tav-ui/components/button-popconfirm'
+import { TaConfigProvider } from '@tav-ui/components/config-provider'
 import { TaContainerCollapse } from '@tav-ui/components/container-collapse'
 import { TaContainerScroll } from '@tav-ui/components/container-scroll'
-import { TaConfigProvider } from '@tav-ui/components/config-provider'
 import { TaContextMenu } from '@tav-ui/components/context-menu'
 import { TaCountDown, TaCountDownButton } from '@tav-ui/components/count-down'
 import { TaCountTo } from '@tav-ui/components/count-to'
@@ -23,7 +23,9 @@ import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
 import { TaLoading } from '@tav-ui/components/loading'
 import { TaMemberSelect } from '@tav-ui/components/member-select'
 import { TaModal } from '@tav-ui/components/modal'
+import { TaQrCode } from '@tav-ui/components/qr-code'
 import { TaScrollbar } from '@tav-ui/components/scrollbar'
+import { TaStrengthMeter } from '@tav-ui/components/strength-meter'
 import { TaTable, TableAction, TableImg } from '@tav-ui/components/table'
 import { TaTableTags } from '@tav-ui/components/table-tags'
 import { TaTime } from '@tav-ui/components/time'
@@ -31,6 +33,7 @@ import { TaTimeLine } from '@tav-ui/components/time-line'
 import { TaCollapseTransition } from '@tav-ui/components/transition'
 import { TaTree } from '@tav-ui/components/tree'
 import { TaUpload } from '@tav-ui/components/upload'
+import { TaVerify, TaVerifyRotate } from '@tav-ui/components/verify'
 import type { Plugin } from 'vue'
 
 export default [
@@ -62,7 +65,9 @@ export default [
   TaLoading,
   TaMemberSelect,
   TaModal,
+  TaQrCode,
   TaScrollbar,
+  TaStrengthMeter,
   TaTable,
   TableAction,
   TableImg,
@@ -72,4 +77,6 @@ export default [
   TaCollapseTransition,
   TaTree,
   TaUpload,
+  TaVerify,
+  TaVerifyRotate,
 ] as Plugin[]

@@ -113,6 +113,7 @@ export type ComponentType =
   | 'Divider'
   | 'MemberSelect'
   | 'SearchableApiSelect'
+  | 'YearPicker'
 
 export type EditableComponentType =
   | 'Input'
@@ -146,3 +147,4 @@ export type EditableComponentType =
   | 'Divider'
   | 'MemberSelect'
   | 'SearchableApiSelect'
+  | 'YearPicker'

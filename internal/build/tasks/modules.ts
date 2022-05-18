@@ -6,6 +6,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import glob from 'fast-glob'
 import { rollup } from 'rollup'
 import esbuild from 'rollup-plugin-esbuild'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
 import DefineOptions from 'unplugin-vue-define-options/rollup'
 import { excludeFiles, pkgRoot, uiRoot } from '../helper'
 import { buildConfigEntries, target } from '../info'
@@ -26,6 +27,7 @@ export const buildModules = async () => {
     onwarn,
     plugins: [
       AliasPlugin(),
+      nodePolyfills(),
       DefineOptions(),
       vue({
         isProduction: false,

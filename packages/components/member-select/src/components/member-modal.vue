@@ -157,7 +157,6 @@ export default defineComponent({
     const propsData = inject('propsData') as any
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
-    console.log(orgList)
     const state = reactive({
       replaceFields: {
         title: 'name',
@@ -291,7 +290,6 @@ export default defineComponent({
       const userListRef: HTMLElement | null = document.getElementById('userListRef')
       if (userListRef) {
         userListRef.addEventListener('scroll', () => {
-          console.log(state.listenScroll)
           if (state.listenScroll) {
             const ulList = userListRef?.childNodes[0].childNodes as NodeListOf<HTMLElement>
             if (ulList) {
