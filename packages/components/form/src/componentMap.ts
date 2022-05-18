@@ -17,18 +17,18 @@ import {
   TimePicker,
   TreeSelect,
 } from 'ant-design-vue'
+import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
 // import ApiCascader from "./components/ApiCascader.vue";
 // import ApiRadioGroup from "./components/ApiRadioGroup.vue";
 import IconPicker from '@tav-ui/components/icon-picker'
 import { TaMemberSelect } from '@tav-ui/components/member-select'
+import { TaStrengthMeter as StrengthMeter } from '@tav-ui/components/strength-meter'
 import ApiSelect from './components/ApiSelect.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
 import YearPicker from './components/YearPicker'
 import type { Component } from 'vue'
-// import { CountdownInput } from "/@/components/CountDown";
-// import { StrengthMeter } from "/@/components/StrengthMeter";
 // import { BasicUpload } from "/@/components/Upload";
 import type { ComponentType, EditableComponentType } from './types/index'
 
@@ -62,9 +62,9 @@ componentMap.set('MonthPicker', DatePicker.MonthPicker)
 componentMap.set('RangePicker', DatePicker.RangePicker)
 componentMap.set('WeekPicker', DatePicker.WeekPicker)
 componentMap.set('TimePicker', TimePicker)
-// componentMap.set('StrengthMeter', StrengthMeter);
+componentMap.set('StrengthMeter', StrengthMeter)
 componentMap.set('IconPicker', IconPicker)
-// componentMap.set('InputCountDown', CountdownInput);
+componentMap.set('InputCountDown', CountdownInput)
 
 // componentMap.set('Upload', BasicUpload);
 componentMap.set('Divider', Divider)
