@@ -32,3 +32,5 @@ export * from './table'
 export * from './table-tags'
 export * from './tree'
 export * from './upload'
+
+export * from './virtual-scroll'
