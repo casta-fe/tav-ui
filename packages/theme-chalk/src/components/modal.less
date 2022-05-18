@@ -16,6 +16,88 @@
   }
 }
 
+body {
+  .ant-modal {
+    top: 5%;
+
+    .ant-table-content {
+      padding: 0;
+      margin: 0;
+    }
+
+    .ant-table-body {
+      // height: auto !important;
+    }
+  }
+
+  .ant-modal-content {
+    border-radius: @primary-border-radius;
+  }
+
+  .ant-modal-header {
+    padding: 10px 24px;
+    border-radius: @primary-border-radius @primary-border-radius 0 0;
+  }
+
+  .ant-modal-title {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+    color: #0d1b42;
+  }
+
+  .ant-modal-close {
+    right: 4px;
+
+    .ant-modal-close-x {
+      width: 46px;
+      height: 46px;
+      line-height: 46px;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 16px 24px;
+    min-height: @primary-modal-min-height;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+
+    .ant-form-item-label label {
+      color: #555;
+    }
+  }
+
+  .ant-modal-footer {
+    padding: 10px 24px;
+
+    .ant-btn {
+      min-width: 80px;
+      height: 30px !important;
+      line-height: 1 !important;
+      border-radius: 10px !important;
+    }
+  }
+
+  .ant-form-item {
+    &-explain,
+    &-extra {
+      text-align: right;
+    }
+  }
+}
+
+.action__modal {
+  // &--add {
+
+  // }
+
+  .ant-form-item-label label {
+    font-size: 14px;
+    line-height: 18px;
+    color: #555;
+  }
+}
+
 .ant-modal {
   width: 650px;
   padding-bottom: 0;
@@ -73,8 +155,8 @@
   }
 
   &-close-x {
-    display: inline-block;
-    width: 96px;
+    display: inline-block !important;
+    width: 96px !important;
     height: 56px;
     line-height: 56px;
   }
