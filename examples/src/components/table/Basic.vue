@@ -33,7 +33,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { getBasicColumns, getBasicData } from './tableData'
-import type { ColumnChangeParam } from '../../../../dist/types/components/table/src/types'
+import type { ColumnChangeParam } from '../../../../dist/tav-ui/es/components/table'
 
 export default defineComponent({
   components: {},

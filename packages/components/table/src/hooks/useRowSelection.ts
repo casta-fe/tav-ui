@@ -120,10 +120,12 @@ export function useRowSelection(
   }
 
   function getSelectRowKeys() {
+    console.log('tav-ui getSelectRowKeys')
     return unref(selectedRowKeysRef)
   }
 
   function getSelectRows<T = Recordable>() {
+    console.log('tav-ui getSelectRows')
     // const ret = toRaw(unref(selectedRowRef)).map((item) => toRaw(item));
     return unref(selectedRowRef) as T[]
   }
