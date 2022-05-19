@@ -187,15 +187,14 @@ export default defineComponent({
     })
 
     const useInnerCustomAction = computed(() => {
-      const { useActions, useAdd, useDelete, useImport, useExport, useRefresh, permission } =
-        unref(getProps)
+      const { useAdd, useDelete, useImport, useExport, useRefresh, permission } = unref(getProps)
       let isAddVisible = false
       let isDeleteVisible = false
       let isImportVisible = false
       let isExportVisible = false
       let isRefreshVisible = false
       const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-      // if (useActions) {
+
       // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
       isAddVisible = isNullOrUnDef(permission?.add)
         ? useAdd?.ifShow
@@ -212,7 +211,7 @@ export default defineComponent({
       isRefreshVisible = isNullOrUnDef(permission?.refresh)
         ? useRefresh?.ifShow
         : unref(Permissions)[permission!.refresh]?.ifShow && useRefresh?.ifShow
-      // }
+
       const result = {
         isVisible:
           isAddVisible || isDeleteVisible || isImportVisible || isExportVisible || isRefreshVisible,
@@ -223,6 +222,7 @@ export default defineComponent({
         isImportVisible,
         importHandle: useImport?.handleAction,
         isExportVisible,
+        exportHandle: useExport?.handleAction,
         isRefreshVisible,
       }
       return result

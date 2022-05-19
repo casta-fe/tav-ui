@@ -213,7 +213,6 @@ export interface BasicTableProps<T = any> {
   // ::==================== i7eo：添加 ///// start ///// ====================:: //
   // 过滤&筛选表单配置
   filter?: FilterForms
-  useActions?: boolean
   // 新增、删除、导入、导出、刷新按钮配置
   useAdd?: useAction
   useDelete?: useAction

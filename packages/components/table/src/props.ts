@@ -111,13 +111,12 @@ export const tableProps = {
     type: Object as PropType<FilterForms>,
     default: null,
   },
-  useActions: propTypes.bool.def(false),
   // 新增、删除、导入、导出、刷新按钮配置
   useAdd: {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: true,
+        ifShow: false,
       }
     },
   },
@@ -125,7 +124,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: true,
+        ifShow: false,
       }
     },
   },
@@ -133,7 +132,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: true,
+        ifShow: false,
       }
     },
   },
@@ -141,7 +140,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: true,
+        ifShow: false,
       }
     },
   },
@@ -149,7 +148,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: true,
+        ifShow: false,
       }
     },
   },
