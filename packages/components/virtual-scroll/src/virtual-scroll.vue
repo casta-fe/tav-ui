@@ -19,7 +19,7 @@ function convertToUnit(str: string | number | null | undefined, unit = 'px'): st
 }
 
 export default defineComponent({
-  name: 'VirtualScroll',
+  name: 'TaVirtualScroll',
   props: virtualScrollProps,
   setup(props, { slots }) {
     const wrapElRef = ref<HTMLDivElement | null>(null)
