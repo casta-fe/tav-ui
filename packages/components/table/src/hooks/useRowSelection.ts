@@ -82,7 +82,7 @@ export function useRowSelection(
     })
   }
 
-  function setSelectedRowKeys(rowKeys: string[], syncDom = true) {
+  function setSelectedRowKeys(rowKeys: any, syncDom = true) {
     selectedRowKeysRef.value = rowKeys
     const allSelectedRows = findNodeAll(
       toRaw(unref(tableData)).concat(toRaw(unref(selectedRowRef))),
