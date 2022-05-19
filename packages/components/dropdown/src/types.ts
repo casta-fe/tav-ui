@@ -23,8 +23,8 @@ export const dropdownProps = {
       return ['contextmenu']
     },
   },
-  DropdownMenuList: {
-    type: Array as PropType<Record<string, any>[]>,
+  dropMenuList: {
+    type: Array as PropType<DropdownMenu[]>,
     default: () => [],
   },
   selectedKeys: {
