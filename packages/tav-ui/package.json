@@ -45,24 +45,24 @@
     "rmnm": "rimraf node_modules"
   },
   "peerDependencies": {
-    "vue": "^3.2.21"
+    "vue": "3.2.21"
   },
   "dependencies": {
-    "@ant-design/colors": "^6.0.0",
-    "@ant-design/icons-vue": "^6.0.1",
-    "@iconify/iconify": "^2.2.1",
-    "@purge-icons/generated": "^0.7.0",
-    "@vueuse/core": "^8.2.5",
-    "@vueuse/shared": "^6.8.0",
-    "@zxcvbn-ts/core": "^1.0.0",
+    "@ant-design/colors": "6.0.0",
+    "@ant-design/icons-vue": "6.0.1",
+    "@iconify/iconify": "2.2.1",
+    "@purge-icons/generated": "0.7.0",
+    "@vueuse/core": "8.2.5",
+    "@vueuse/shared": "6.8.0",
+    "@zxcvbn-ts/core": "1.0.0",
     "ant-design-vue": "2.2.8",
-    "js-pinyin": "^0.1.9",
-    "lodash-es": "^4.17.21",
-    "moment": "^2.29.3",
-    "qrcode": "^1.4.4",
-    "resize-observer-polyfill": "^1.5.1",
-    "sortablejs": "^1.15.0",
-    "vue-types": "^4.1.1"
+    "js-pinyin": "0.1.9",
+    "lodash-es": "4.17.21",
+    "moment": "2.29.3",
+    "qrcode": "1.4.4",
+    "resize-observer-polyfill": "1.5.1",
+    "sortablejs": "1.15.0",
+    "vue-types": "4.1.1"
   },
   "engines": {
     "node": ">= 16"

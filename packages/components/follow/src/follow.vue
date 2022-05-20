@@ -5,11 +5,9 @@
 -->
 <template>
   <TaButton class="basic-follow" type="link" :loading="loading" @click="changFollwStatus">
-    <span class="follow-comp">
-      <i :class="`ta-icon ta-icon--m ta-icon--follow${isFollow ? '-active' : ''}`" />
-      <span v-if="isFollow" class="active"> 已关注 </span>
-      <span v-else>关注</span>
-    </span>
+    <i :class="`basic-follow-icon basic-follow-icon${isFollow ? '-active' : ''}`" />
+    <span v-if="isFollow" class="active"> 已关注 </span>
+    <span v-else>关注</span>
   </TaButton>
 </template>
 

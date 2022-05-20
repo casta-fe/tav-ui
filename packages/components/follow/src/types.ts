@@ -17,11 +17,9 @@ export const followProps = {
   },
   initStatusApi: {
     type: Function,
-    required: true,
   },
   updateStatusApi: {
     type: Function,
-    required: true,
   },
 }
 
