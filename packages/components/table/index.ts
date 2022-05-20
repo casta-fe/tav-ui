@@ -13,5 +13,6 @@ export * from './src/types/tableAction'
 export { TaTable, TableAction, TableImg }
 export default TaTable
 export { useTable } from './src/hooks/useTable'
+export { useComputedHeight } from './src/hooks/useComputedHeight'
 // export * from './src/props'
 export * from './src/types/table'

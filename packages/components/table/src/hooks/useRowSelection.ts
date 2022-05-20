@@ -39,7 +39,7 @@ export function useRowSelection(
   watch(
     () => unref(propsRef).rowSelection?.selectedRowKeys,
     (v: any) => {
-      v && setSelectedRowKeys(v)
+      setSelectedRowKeys(v)
     }
   )
 
@@ -82,8 +82,7 @@ export function useRowSelection(
     })
   }
 
-  function setSelectedRowKeys(_rowKeys: string[] | number[], syncDom = true) {
-    const rowKeys = _rowKeys.map((rk: string | number) => `${rk}`)
+  function setSelectedRowKeys(rowKeys: any, syncDom = true) {
     selectedRowKeysRef.value = rowKeys
     const allSelectedRows = findNodeAll(
       toRaw(unref(tableData)).concat(toRaw(unref(selectedRowRef))),

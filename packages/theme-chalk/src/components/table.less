@@ -119,9 +119,9 @@
 }
 
 // header
-@prefix-cls1: ~'@{namespace}-basic-table-header';
+@prefix-cls-basic-table-header: ~'@{namespace}-basic-table-header';
 
-.@{prefix-cls1} {
+.@{prefix-cls-basic-table-header} {
   &__toolbar {
     flex: 1;
     display: flex;
@@ -146,14 +146,14 @@
   }
 }
 
-@prefix-cls2: ~'@{namespace}-basic-column-setting';
+@prefix-cls-basic-column-setting: ~'@{namespace}-basic-column-setting';
 
 .table-column-drag-icon {
   margin: 0 5px;
   cursor: move;
 }
 
-.@{prefix-cls2} {
+.@{prefix-cls-basic-column-setting} {
   &__popover-title {
     position: relative;
     display: flex;
@@ -222,7 +222,7 @@
 }
 
 // table edit cell
-@prefix-cls3: ~'@{namespace}-editable-cell';
+@prefix-cls-editable-cell: ~'@{namespace}-editable-cell';
 
 .edit-cell-align-left {
   text-align: left;
@@ -257,7 +257,7 @@
   }
 }
 
-.@{prefix-cls3} {
+.@{prefix-cls-editable-cell} {
   position: relative;
 
   &__wrapper {
@@ -309,18 +309,18 @@
 }
 
 // table title
-@prefix-cls4: ~'@{namespace}-basic-table-title';
+@prefix-cls-basic-table-title: ~'@{namespace}-basic-table-title';
 
-.@{prefix-cls4} {
+.@{prefix-cls-basic-table-title} {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 // table custom action
-@prefix-cls5: ~'@{namespace}-basic-table-custom-action';
+@prefix-cls-basic-table-custom-action: ~'@{namespace}-basic-table-custom-action';
 
-.@{prefix-cls5} {
+.@{prefix-cls-basic-table-custom-action} {
   .refresh-btn {
     min-width: auto !important;
     color: @primary-color;
@@ -329,13 +329,13 @@
 }
 
 // table filter
-@prefix-cls6: ~'@{namespace}-basic-table-filter';
+@prefix-cls-basic-table-filter: ~'@{namespace}-basic-table-filter';
 
 .filter-pannel-form .ant-form-item-label label {
   color: #999 !important;
 }
 
-.@{prefix-cls6} {
+.@{prefix-cls-basic-table-filter} {
   flex: 1 1 50%;
 
   .filter-input-form {
@@ -361,9 +361,9 @@
 }
 
 // table header cell
-@prefix-cls7: ~'@{namespace}-basic-table-header-cell';
+@prefix-cls-basic-table-header-cell: ~'@{namespace}-basic-table-header-cell';
 
-.@{prefix-cls7} {
+.@{prefix-cls-basic-table-header-cell} {
   &__help {
     margin-left: 8px;
     color: rgb(0 0 0 / 65%) !important;
@@ -371,9 +371,9 @@
 }
 
 // table action
-@prefix-cls8: ~'@{namespace}-basic-table-action';
+@prefix-cls-basic-table-action: ~'@{namespace}-basic-table-action';
 
-.@{prefix-cls8} {
+.@{prefix-cls-basic-table-action} {
   display: flex;
   align-items: center;
 
@@ -442,9 +442,9 @@
 }
 
 // table img
-@prefix-cls9: ~'@{namespace}-basic-table-img';
+@prefix-cls-basic-table-img: ~'@{namespace}-basic-table-img';
 
-.@{prefix-cls9} {
+.@{prefix-cls-basic-table-img} {
   .ant-image {
     margin-right: 4px;
     cursor: zoom-in;

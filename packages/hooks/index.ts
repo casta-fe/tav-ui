@@ -13,6 +13,8 @@ export * from './event/useEventListener'
 export * from './event/useIntersectionObserver'
 export * from './event/useScroll'
 export * from './event/useScrollTo'
+export * from './event/useScrollToCenter'
+
 export * from './event/useWindowSizeFn'
 
 export * from './web/useContextMenu'

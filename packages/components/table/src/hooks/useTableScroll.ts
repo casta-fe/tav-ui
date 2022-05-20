@@ -104,12 +104,16 @@ export function useTableScroll(
     // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    bodyEl!.style.height = '100%'
-    if (!unref(getCanResize)) {
+    if (isCanResizeParent) {
       bodyEl!.style.height = '100%'
-      return
+      if (!unref(getCanResize)) {
+        bodyEl!.style.height = '100%'
+        return
+      }
+    } else {
+      bodyEl!.style.height = 'unset'
+      if (!unref(getCanResize)) return
     }
-
     await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
 
@@ -145,8 +149,9 @@ export function useTableScroll(
 
     let bottomIncludeBody = 0
     let height = 0
+    const tablePadding = tablePaddingDistance
+
     if (unref(wrapRef) && isCanResizeParent) {
-      const tablePadding = tablePaddingDistance
       const formMargin = formRefMarginTopDistance
       const TableMargin = 0
 
@@ -175,9 +180,10 @@ export function useTableScroll(
     } else {
       // Table height from bottom
       bottomIncludeBody = getViewportOffset(headEl).bottomIncludeBody
-      bottomIncludeBody -
+      height =
+        bottomIncludeBody -
         (resizeHeightOffset || 0) -
-        // paddingHeight -
+        (tablePadding ? tablePadding : 0) -
         paginationHeight -
         footerHeight -
         headerHeight
@@ -185,14 +191,22 @@ export function useTableScroll(
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
-    bodyEl!.style.height = `${height}px`
-    if (!slots.footer) {
+    if (isCanResizeParent) {
+      bodyEl!.style.height = `${height}px`
       if (tableData.length === 0) {
         //处理空数据时滚动条消失问题
         const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
         TbodyEl!.style.height = `1px`
       }
-      bodyEl!.style.height = `${height}px`
+    } else {
+      if (!slots.footer) {
+        bodyEl!.style.height = `${height}px`
+        if (tableData.length === 0) {
+          //处理空数据时滚动条消失问题
+          const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
+          TbodyEl!.style.height = `1px`
+        }
+      }
     }
   }
   useWindowSizeFn(calcTableHeight, 280)

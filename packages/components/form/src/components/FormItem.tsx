@@ -90,7 +90,6 @@ export default defineComponent({
     clickOutside,
   },
   setup(props, { slots }) {
-    console.log('9999')
     // 测试 memberselect
     // 弹窗的位置，样式修改
     const { schema, formProps } = toRefs(props) as {
@@ -526,7 +525,6 @@ export default defineComponent({
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
       const eventKey = `on${upperFirst(changeEvent)}`
-      console.log('eventKey')
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args

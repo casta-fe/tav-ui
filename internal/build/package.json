@@ -26,9 +26,10 @@
     "lodash": "^4.17.21",
     "rollup": "^2.70.2",
     "rollup-plugin-esbuild": "^4.9.1",
+    "rollup-plugin-polyfill-node": "^0.9.0",
     "ts-morph": "^14.0.0",
     "unplugin-vue-define-options": "^0.6.0",
-    "vue": "^3.2.21"
+    "vue": "3.2.21"
   },
   "devDependencies": {
     "@pnpm/types": "^8.0.0"

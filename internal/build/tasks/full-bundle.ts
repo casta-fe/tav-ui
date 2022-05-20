@@ -7,6 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import { parallel } from 'gulp'
 import { rollup } from 'rollup'
 import esbuild from 'rollup-plugin-esbuild'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
 import DefineOptions from 'unplugin-vue-define-options/rollup'
 import { version } from '../../../packages/tav-ui/version'
 import { PKG_BRAND_NAME, PKG_CAMELCASE_NAME } from '../constants'
@@ -29,6 +30,7 @@ async function buildFullEntry(minify: boolean) {
     onwarn,
     plugins: [
       AliasPlugin(),
+      nodePolyfills(),
       DefineOptions(),
       vue({
         isProduction: true,
