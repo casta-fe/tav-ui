@@ -32,10 +32,10 @@
     "vue": "^3.2.21"
   },
   "dependencies": {
-    "@ant-design/colors": "^6.0.0",
-    "@ant-design/icons-vue": "^6.0.1",
-    "@iconify/iconify": "^2.2.1",
-    "@purge-icons/generated": "^0.7.0",
+    "@ant-design/colors": "6.0.0",
+    "@ant-design/icons-vue": "6.0.1",
+    "@iconify/iconify": "2.2.1",
+    "@purge-icons/generated": "0.7.0",
     "@tav-ui/build": "workspace:*",
     "@tav-ui/components": "workspace:*",
     "@tav-ui/directives": "workspace:*",
@@ -44,16 +44,17 @@
     "@tav-ui/settings": "workspace:*",
     "@tav-ui/theme-chalk": "workspace:*",
     "@tav-ui/utils": "workspace:*",
-    "@vueuse/core": "^8.2.5",
-    "@vueuse/shared": "^6.8.0",
-    "@zxcvbn-ts/core": "^1.0.0",
+    "@vueuse/core": "8.2.5",
+    "@vueuse/shared": "6.8.0",
+    "@zxcvbn-ts/core": "1.0.0",
     "ant-design-vue": "2.2.8",
-    "js-pinyin": "^0.1.9",
-    "lodash-es": "^4.17.21",
-    "qrcode": "^1.4.4",
-    "resize-observer-polyfill": "^1.5.1",
-    "sortablejs": "^1.15.0",
-    "vue-types": "^4.1.1"
+    "js-pinyin": "0.1.9",
+    "lodash-es": "4.17.21",
+    "moment": "2.29.3",
+    "qrcode": "1.4.4",
+    "resize-observer-polyfill": "1.5.1",
+    "sortablejs": "1.15.0",
+    "vue-types": "4.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
@@ -87,8 +88,8 @@
     "typescript": "^4.5.4",
     "unplugin-vue-define-options": "^0.6.1",
     "vite-plugin-windicss": "^1.8.4",
-    "vue": "^3.2.21",
-    "vue-tsc": "^0.29.8"
+    "vue": "3.2.21",
+    "vue-tsc": "0.29.3"
   },
   "engines": {
     "node": ">= 16"
