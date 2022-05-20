@@ -22,3 +22,17 @@ export const countDownProps = {
 }
 
 export type CountDownProps = ExtractPropTypes<typeof countDownProps>
+
+export const countDownInputProps = {
+  value: { type: String },
+  size: {
+    type: String,
+    validator: (v) => ['default', 'large', 'small'].includes(v),
+  },
+  count: { type: Number, default: 60 },
+  sendCodeApi: {
+    type: Function as PropType<() => Promise<boolean>>,
+    default: null,
+  },
+}
+export type CountDownInputProps = ExtractPropTypes<typeof countDownInputProps>

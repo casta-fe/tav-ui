@@ -35,6 +35,8 @@ import { TaTree } from '@tav-ui/components/tree'
 import { TaUpload } from '@tav-ui/components/upload'
 import { TaVerify, TaVerifyRotate } from '@tav-ui/components/verify'
 import { TaVirtualScroll } from '@tav-ui/components/virtual-scroll'
+import { TaCountButton } from '@tav-ui/components/count-button'
+
 import type { Plugin } from 'vue'
 
 export default [
@@ -81,4 +83,5 @@ export default [
   TaVerify,
   TaVerifyRotate,
   TaVirtualScroll,
+  TaCountButton,
 ] as Plugin[]

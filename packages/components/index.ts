@@ -35,3 +35,5 @@ export * from './tree'
 export * from './upload'
 export * from './verify'
 export * from './virtual-scroll'
+
+export * from './count-button'
