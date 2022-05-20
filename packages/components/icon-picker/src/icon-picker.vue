@@ -2,7 +2,7 @@
 // import svgIcons from "virtual:svg-icons-names";
 import { defineComponent, ref, unref, watch, watchEffect } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { Empty, Input, Pagination, Popover } from 'ant-design-vue'
+import { Input, Pagination, Popover } from 'ant-design-vue'
 import { useCopyToClipboard } from '@tav-ui/hooks/web/useCopyToClipboard'
 import { usePagination } from '@tav-ui/hooks/web/usePagination'
 import ScrollContainer from '@tav-ui/components/container-scroll'
@@ -13,24 +13,20 @@ import iconsData from '../data/icons.data'
 import { iconPickerProps } from './types'
 import type { ChangeEvent } from './types'
 
-const AInput = Input
-const APopover = Popover
-const APagination = Pagination
-const AEmpty = Empty
-
-const { createMessage } = useMessage()
-
+// @ts-ignore
 export default defineComponent({
   name: 'TaIconPicker',
-  components: { AInput, APopover, APagination, AEmpty, ScrollContainer, SvgIcon, Icon },
+  components: { Input, Popover, Pagination, ScrollContainer, SvgIcon, Icon },
   props: iconPickerProps,
   emits: ['change', 'update:value'],
   setup(props, { emit }) {
+    const { createMessage } = useMessage()
+
     function getIcons() {
       const data = iconsData as any
       const prefix: string = data?.prefix ?? ''
       let result: string[] = []
-      if (prefix) result = (data?.icons ?? []).map((item) => `${prefix}:${item}`)
+      if (prefix) result = (data?.icons ?? []).map((item: any) => `${prefix}:${item}`)
       else if (Array.isArray(iconsData)) result = iconsData as string[]
 
       return result
@@ -103,7 +99,7 @@ export default defineComponent({
 })
 </script>
 <template>
-  <a-input
+  <Input
     v-model:value="currentSelect"
     disabled
     :style="{ width }"
@@ -111,7 +107,7 @@ export default defineComponent({
     :class="prefixCls"
   >
     <template #addonAfter>
-      <a-popover
+      <Popover
         v-model="visible"
         placement="bottomLeft"
         trigger="click"
@@ -119,7 +115,7 @@ export default defineComponent({
       >
         <template #title>
           <div class="flex justify-between">
-            <a-input placeholder="搜索图标" allow-clear @change="debounceHandleSearchChange" />
+            <Input placeholder="搜索图标" allow-clear @change="debounceHandleSearchChange" />
           </div>
         </template>
 
@@ -142,7 +138,7 @@ export default defineComponent({
               </ul>
             </ScrollContainer>
             <div v-if="getTotal >= pageSize" class="flex py-2 items-center justify-center">
-              <a-pagination
+              <Pagination
                 show-less-items
                 size="small"
                 :page-size="pageSize"
@@ -153,7 +149,8 @@ export default defineComponent({
           </div>
           <template v-else>
             <div class="p-5">
-              <a-empty />
+              <!-- <Empty /> -->
+              {{ '暂无数据' }}
             </div>
           </template>
         </template>
@@ -162,7 +159,7 @@ export default defineComponent({
           <SvgIcon :name="currentSelect" />
         </span>
         <Icon v-else :icon="currentSelect || 'ion:apps-outline'" class="cursor-pointer px-2 py-1" />
-      </a-popover>
+      </Popover>
     </template>
-  </a-input>
+  </Input>
 </template>

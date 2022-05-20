@@ -16,9 +16,9 @@ export default defineComponent({
   setup(props, { emit }) {
     const source = ref(props.startVal)
     const disabled = ref(false)
-    let outputValue = useTransition(source)
+    let outputValue = useTransition(source) as any
 
-    const value = computed(() => formatNumber(unref(outputValue)))
+    const value = computed(() => formatNumber(unref(outputValue) as any))
 
     watchEffect(() => {
       source.value = props.startVal
