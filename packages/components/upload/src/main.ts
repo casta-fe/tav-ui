@@ -131,8 +131,8 @@ class Handler {
    * @param props BasicPropsType
    */
   constructor(props: BasicPropsType, instanceEmit) {
-    this.props = props
     this.emit = instanceEmit
+    this.props = props
 
     // 动态控制默认的表格显示与否
     watch(
