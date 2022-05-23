@@ -1,128 +1,13 @@
-<script lang="ts">
-import { computed, defineComponent, ref, unref, watch, watchEffect } from 'vue'
-import { LoadingOutlined } from '@ant-design/icons-vue'
-import { Select } from 'ant-design-vue'
-import { get, omit } from 'lodash-es'
-import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
-import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
-import { isFunction } from '@tav-ui/utils/is'
-import { propTypes } from '@tav-ui/utils/propTypes'
-import type { PropType } from 'vue'
-import type { ApiSelectOptionsItem } from './types'
-
-export default defineComponent({
-  name: 'ApiSelect',
-  components: {
-    Select,
-    LoadingOutlined,
-  },
-  inheritAttrs: false,
-  props: {
-    value: [Array, Object, String, Number],
-    numberToString: propTypes.bool,
-    api: {
-      type: Function as PropType<(arg?: Record<string, any>) => Promise<ApiSelectOptionsItem[]>>,
-      default: null,
-    },
-    // api params
-    params: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
-    // support xxx.xxx.xx
-    resultField: propTypes.string.def(''),
-    labelField: propTypes.string.def('label'),
-    valueField: propTypes.string.def('value'),
-    immediate: propTypes.bool.def(true),
-  },
-  emits: ['options-change', 'change'],
-  setup(props, { emit }) {
-    const options = ref<ApiSelectOptionsItem[]>([])
-    const loading = ref(false)
-    const isFirstLoad = ref(true)
-    const emitData = ref<any[]>([])
-    const attrs = useAttrs()
-
-    // Embedded in the form, just use the hook binding to perform form verification
-    const [state] = useRuleFormItem(props, 'value', 'change', emitData) as any
-
-    const getOptions = computed(() => {
-      const { labelField, valueField, numberToString } = props
-
-      return unref(options).reduce((prev, next: Record<string, any>) => {
-        if (next) {
-          const value = next[valueField]
-          prev.push({
-            ...omit(next, [labelField, valueField]),
-            label: next[labelField],
-            value: numberToString ? `${value}` : value,
-          })
-        }
-        return prev
-      }, [] as ApiSelectOptionsItem[])
-    })
-
-    watchEffect(() => {
-      props.immediate && fetch()
-    })
-
-    watch(
-      () => props.params,
-      () => {
-        !unref(isFirstLoad) && fetch()
-      },
-      { deep: true }
-    )
-
-    async function fetch() {
-      const api = props.api
-      if (!api || !isFunction(api)) return
-      options.value = []
-      try {
-        loading.value = true
-        const res = await api(props.params)
-        if (Array.isArray(res)) {
-          options.value = res
-          emitChange()
-          return
-        }
-        if (props.resultField) options.value = get(res, props.resultField) || []
-
-        emitChange()
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn(error)
-      } finally {
-        loading.value = false
-      }
-    }
-
-    async function handleFetch() {
-      if (!props.immediate && unref(isFirstLoad)) {
-        await fetch()
-        isFirstLoad.value = false
-      }
-    }
-
-    function emitChange() {
-      emit('options-change', unref(getOptions))
-    }
-
-    function handleChange(_, ...args) {
-      emitData.value = args
-    }
-
-    return { state, attrs, getOptions, loading, handleFetch, handleChange }
-  },
-})
-</script>
 <template>
+  <!--  :dropdownMatchSelectWidth="false" -->
   <Select
-    v-bind="$attrs"
     v-model:value="state"
-    :options="getOptions"
-    @dropdown-visible-change="handleFetch"
+    :options="selectState.list"
+    :mode="mode"
+    :filter-option="false"
+    show-search
     @change="handleChange"
+    @search="handleSearch"
   >
     <template v-for="item in Object.keys($slots)" #[item]="data">
       <slot :name="item" v-bind="data || {}" />
@@ -133,8 +18,169 @@ export default defineComponent({
     <template v-if="loading" #notFoundContent>
       <span>
         <LoadingOutlined spin class="mr-1" />
-        {{ '请等待数据加载完成...' }}
+        数据正在加载...
       </span>
     </template>
   </Select>
 </template>
+<script lang="ts">
+import { defineComponent, nextTick, reactive, ref, unref, watch } from 'vue'
+import { Select } from 'ant-design-vue'
+import { LoadingOutlined } from '@ant-design/icons-vue'
+import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
+import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
+import { isFunction } from '@tav-ui/utils/is'
+import { propTypes } from '@tav-ui/utils/propTypes'
+import type { PropType } from 'vue'
+type OptionsItem = { label: string; value: string; disabled?: boolean }
+type TypeItems = 'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE' | undefined
+type Recordable = Record<string, any>
+export default defineComponent({
+  name: 'TaApiSelect',
+  components: {
+    Select,
+    LoadingOutlined,
+  },
+  inheritAttrs: true,
+  props: {
+    value: [Array, Object, String, Number],
+    numberToString: propTypes.bool,
+    api: {
+      type: Function as PropType<(arg?: Recordable) => Promise<any>>,
+      default: null,
+    },
+    // api params
+    params: {
+      type: Object as PropType<Recordable>,
+      default: () => ({}),
+    },
+    // // 是否开启远程搜索
+    // remote: {
+    //   type: Boolean,
+    //   default: false
+    // },
+    // 搜索的key
+    showSearchKey: {
+      type: String,
+      default: 'searchValue',
+    },
+    // 是否允许自定义输入
+    custom: {
+      type: Boolean,
+      default: false,
+    },
+    mode: {
+      type: String as PropType<TypeItems>,
+      default: undefined,
+    },
+    immediate: {
+      type: Boolean,
+      default: true,
+    },
+    resultField: propTypes.string.def(''),
+    labelField: propTypes.string.def('name'),
+    valueField: propTypes.string.def('id'),
+    // immediate: propTypes.bool.def(true)
+  },
+  emits: ['options-change', 'change'],
+  setup(props, { emit }) {
+    const selectState = reactive({
+      list: [] as OptionsItem[],
+      searchValue: '',
+      allList: [] as OptionsItem[],
+    })
+    const loading = ref(false)
+    const isFirstLoad = ref(true)
+    const emitData = ref<any[]>([])
+    const attrs = useAttrs()
+    // Embedded in the form, just use the hook binding to perform form verification
+    const [state] = useRuleFormItem(props, 'value', 'change', emitData)
+
+    watch(
+      () => props.params,
+      () => {
+        console.log('apiSelect params改变')
+        !unref(isFirstLoad) && fetch()
+      },
+      { deep: true }
+    )
+
+    // 发请求
+    async function fetch() {
+      const api = props.api
+      if (!api || !isFunction(api)) return
+      selectState.list.length = 0
+      try {
+        loading.value = true
+        const params = { ...props.params }
+        params[props.showSearchKey] = selectState.searchValue
+        const res = await api({ ...params })
+        const data: any[] = Array.isArray(res.data) ? res.data : res.data.result
+        let list: OptionsItem[] = []
+        data.forEach((v) => {
+          list.push({
+            label: v[props.labelField],
+            value: v[props.valueField],
+          })
+        })
+        // 允许自定义就给list最前面插入当前插入的数据
+        if (props.custom && selectState.searchValue != '') {
+          list = [{ label: selectState.searchValue, value: '0' }, ...list]
+        }
+        selectState.list = selectState.allList = list
+        nextTick(() => {
+          emitChange()
+        })
+      } catch (error) {
+      } finally {
+        loading.value = false
+      }
+    }
+
+    function emitChange() {
+      emit('options-change', unref(selectState.list))
+    }
+
+    function handleChange(_, ...args) {
+      emitData.value = args
+    }
+    function handleSearch(data) {
+      // 如果加载远端数据 就请求接口
+      if (!props.immediate) {
+        if (data == '') {
+          return
+        }
+        console.log('远程搜索')
+        selectState.searchValue = data
+        setTimeout(() => {
+          if (selectState.searchValue != data) {
+            return
+          } else {
+            fetch()
+          }
+        }, 1000)
+        // throttle(fetch(), 1500);
+      } else {
+        console.log('本地搜索')
+        if (data == '') {
+          selectState.list = selectState.allList
+        } else {
+          selectState.list = selectState.allList.filter((v) => v.label.indexOf(data) > -1)
+        }
+      }
+    }
+    const pageInit = () => {
+      props.immediate && fetch()
+    }
+    pageInit()
+    return {
+      state: state as unknown as string,
+      attrs,
+      selectState,
+      loading,
+      handleChange,
+      handleSearch,
+    }
+  },
+})
+</script>
