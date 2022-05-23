@@ -104,14 +104,16 @@ export function useTableScroll(
     // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    bodyEl!.style.height = '100%'
-    // if (isCanResizeParent) {
-    //   bodyEl!.style.height = '100%'
-    // } else {
-    //   bodyEl!.style.height = 'unset'
-    // }
-    console.log(isCanResizeParent, 'isCanResizeParent')
-    if (!unref(getCanResize)) return
+
+    if (isCanResizeParent) {
+      console.log(isCanResizeParent, 'isCanResizeParent111111')
+      bodyEl!.style.height = '100%'
+      if (!unref(getCanResize)) return
+    } else {
+      console.log(isCanResizeParent, 'isCanResizeParent22222')
+      bodyEl!.style.height = 'unset'
+      if (!unref(getCanResize)) return
+    }
     await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
 
@@ -189,6 +191,7 @@ export function useTableScroll(
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
+    console.log(bodyEl!.style.height, 'beforeCHange')
     if (isCanResizeParent) {
       bodyEl!.style.height = `${height}px`
       if (tableData.length === 0) {
