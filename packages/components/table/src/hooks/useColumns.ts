@@ -2,6 +2,7 @@
 import { computed, ref, toRaw, unref, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
+import { formatNumber } from '@tav-ui/utils'
 import { isArray, isBoolean, isFunction, isMap, isString } from '@tav-ui/utils/is'
 import { renderEditCell } from '../components/editable'
 import { ACTION_COLUMN_FLAG, DEFAULT_ALIGN, INDEX_COLUMN_FLAG, PAGE_SIZE } from '../const'
@@ -296,15 +297,36 @@ export function formatCell(text: string, format: CellFormat, record: Recordable,
   }
 
   try {
-    // date type
-    const DATE_FORMAT_PREFIX = 'date|'
-    if (isString(format) && format.startsWith(DATE_FORMAT_PREFIX)) {
-      const dateFormat = format.replace(DATE_FORMAT_PREFIX, '')
+    //#region define prefix
+    const FORMAT_PREFIX = ['date|', 'number|'] as const
+    const FORMAT_FN = [formatToDate, formatNumber] as const
+    type MapKeyType = typeof FORMAT_PREFIX[number]
 
-      if (!dateFormat) {
-        return text
+    const FORMAT_MAP = new Map<MapKeyType, (...args: any[]) => any>()
+    FORMAT_PREFIX.forEach((el, index) => {
+      FORMAT_MAP.set(el, FORMAT_FN[index])
+    })
+    //#endregion
+
+    if (isString(format)) {
+      const PREFIX = FORMAT_PREFIX.find((prefix) => format.startsWith(prefix))
+      if (PREFIX) {
+        let dateFormat: string | undefined = format.replace(PREFIX, '')
+        /**
+         * 表格的数值格式化全局修改
+         * 数值格式化方法的格式 取默认值
+         */
+        if (PREFIX === 'number|' && dateFormat === '') {
+          dateFormat = undefined
+        }
+
+        if ((PREFIX !== 'number|' && !dateFormat) || text == null) {
+          return text
+        }
+        const formatFn = FORMAT_MAP.get(PREFIX)
+        if (!formatFn) return text
+        return formatFn(text, dateFormat)
       }
-      return formatToDate(text, dateFormat)
     }
 
     // Map

@@ -92,7 +92,7 @@ export default defineComponent({
 
       state.closePanelTimeout = window.setTimeout(() => {
         state.visible = false
-        selfRef.value?.$el.getElementsByTagName('input')?.[0]?.blur()
+        // selfRef.value?.$el.getElementsByTagName('input')?.[0]?.blur()
       }, 1000)
     }
     const onMouseEnter = () => {
@@ -200,6 +200,8 @@ export default defineComponent({
             }
           }}
           onBlur={() => {
+            if (state.visible && !state.isEnter) state.visible = false
+
             if (unref(props.canInputRef)) {
               emitValue()
               return
@@ -211,8 +213,6 @@ export default defineComponent({
                 }
               })
             }
-
-            if (state.visible && !state.isEnter) state.visible = false
           }}
           allowClear
           value={state.value}
