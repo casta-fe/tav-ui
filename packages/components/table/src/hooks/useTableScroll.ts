@@ -104,7 +104,7 @@ export function useTableScroll(
     // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-
+    debugger
     if (isCanResizeParent) {
       console.log(isCanResizeParent, 'isCanResizeParent111111')
       bodyEl!.style.height = '100%'
@@ -117,7 +117,7 @@ export function useTableScroll(
     await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
 
-    const headEl = tableEl.querySelector('.ant-table-thead ')
+    const headEl = tableEl.querySelector('.ant-table-thead')
     if (!headEl) return
 
     // Table height from bottom
@@ -191,6 +191,7 @@ export function useTableScroll(
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
+    debugger
     console.log(bodyEl!.style.height, 'beforeCHange')
     if (isCanResizeParent) {
       bodyEl!.style.height = `${height}px`
