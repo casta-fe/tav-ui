@@ -7,6 +7,7 @@ export interface ButtonGroupItem {
   number?: number | null | undefined
   disabled?: boolean
   permission?: string
+  loading?: boolean
 }
 
 export const buttonGroupProps = {
