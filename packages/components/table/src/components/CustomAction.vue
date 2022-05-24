@@ -2,7 +2,7 @@
   <div class="ta-basic-table-custom-action">
     <Button
       v-if="visible?.isAddVisible"
-      class="mr-4"
+      class="ml-4"
       type="primary"
       pre-icon="ant-design:plus-circle-outlined"
       @click="addOpenModal"
@@ -11,7 +11,7 @@
     </Button>
     <Button
       v-if="visible?.isDeleteVisible"
-      class="mr-4"
+      class="ml-4"
       type="primary"
       pre-icon="ant-design:delete-outlined"
       @click="delOpenModal"
@@ -19,10 +19,10 @@
       删除
     </Button>
     <slot />
-    <!-- <Button v-if="props.visible?.isImportVisible" class="mr-4" type="primary" preIcon="ant-design:import-outlined">导入</Button> -->
+    <!-- <Button v-if="props.visible?.isImportVisible" class="ml-4" type="primary" preIcon="ant-design:import-outlined">导入</Button> -->
     <Button
       v-if="visible?.isExportVisible"
-      class="mr-4"
+      class="ml-4"
       type="primary"
       pre-icon="ant-design:export-outlined"
       @click="exportOpenModal"
@@ -32,7 +32,7 @@
     <!-- <ExpExcelModal @register="expModalRegister" @success="exportHandler" /> -->
     <Button
       v-if="visible?.isRefreshVisible"
-      class="mr-4 refresh-btn"
+      class="ml-4 refresh-btn"
       pre-icon="ant-design:redo-outlined"
       @click="refreshHandler"
     />

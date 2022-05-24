@@ -178,7 +178,6 @@ export const PreviewTable = defineComponent({
                             record.watermarkFileDownload) ??
                           true,
                     onClick() {
-                      previewRecord.value = record
                       props.download?.(record, undefined, true)
                     },
                   },
@@ -192,7 +191,6 @@ export const PreviewTable = defineComponent({
                         ? false
                         : (props.showTableAction.download && record.sourceFileDownload) ?? true,
                     onClick() {
-                      previewRecord.value = record
                       props.download?.(record)
                     },
                   },

@@ -28,6 +28,7 @@
       :style="state.dialogStyle"
       :width="state.dialogStyle.width"
       :mask-style="{ background: 'rgba(0,0,0,0)' }"
+      mask-closable
       @register="pannelFormModalRegister"
       @visible-change="pannelFormModalVisible"
     >
