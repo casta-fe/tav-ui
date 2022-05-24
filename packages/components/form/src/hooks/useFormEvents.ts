@@ -144,7 +144,10 @@ export function useFormEvents({
     if (isArray(data)) updateData = [...data]
 
     const hasField = updateData.every(
-      (item) => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field)
+      (item) =>
+        item.component === 'Divider' ||
+        item.component === 'FormTitle' ||
+        (Reflect.has(item, 'field') && item.field)
     )
 
     if (!hasField) {
@@ -158,12 +161,18 @@ export function useFormEvents({
 
   async function updateSchema(data: Partial<FormSchema> | Partial<FormSchema>[]) {
     let updateData: Partial<FormSchema>[] = []
-    if (isObject(data)) updateData.push(data as FormSchema)
-
-    if (isArray(data)) updateData = [...data]
+    if (isObject(data)) {
+      updateData.push(data as FormSchema)
+    }
+    if (isArray(data)) {
+      updateData = [...data]
+    }
 
     const hasField = updateData.every(
-      (item) => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field)
+      (item) =>
+        item.component === 'Divider' ||
+        item.component === 'FormTitle' ||
+        (Reflect.has(item, 'field') && item.field)
     )
 
     if (!hasField) {
@@ -172,32 +181,24 @@ export function useFormEvents({
       )
       return
     }
-    const schema: FormSchema[] = []
-    // 兼容投管先注释
-    // // 如果初始化时给了空数组，此时调用 updateSchema 应该直接覆盖schema
-    // if (unref(getSchema).length === 0) {
-    //   schema = updateData as any[]
-    // } else {
-    //   updateData.forEach((item) => {
-    //     unref(getSchema).forEach((val) => {
-    //       if (val.field === item.field) {
-    //         const newSchema = deepMerge(val, item)
-    //         schema.push(newSchema as FormSchema)
-    //       } else {
-    //         schema.push(val)
-    //       }
-    //     })
-    //   })
-    // }
+    const schema: FormSchema[] = unref(getSchema)
     updateData.forEach((item) => {
-      unref(getSchema).forEach((val) => {
-        if (val.field === item.field) {
-          const newSchema = deepMerge(val, item)
-          schema.push(newSchema as FormSchema)
-        } else {
-          schema.push(val)
-        }
-      })
+      // debugger
+      const findResult = schema.find((val) => val.field === item.field)
+      if (findResult) {
+        const newSchema: FormSchema = deepMerge(findResult, item)
+        schema.push(newSchema)
+      } else {
+        schema.push(item as FormSchema)
+      }
+      // unref(getSchema).forEach((val) => {
+      //   if (val.field === item.field) {
+      //     const newSchema = deepMerge(val, item);
+      //     schema.push(newSchema as FormSchema);
+      //   } else {
+      //     schema.push(val);
+      //   }
+      // });
     })
     schemaRef.value = uniqBy(schema, 'field')
   }
