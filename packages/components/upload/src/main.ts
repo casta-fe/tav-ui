@@ -80,7 +80,7 @@ class Handler {
     return this._props.typeCodeRecord ?? this._provide.value?.typeCodeRecord ?? {}
   }
 
-  private get _apis() {
+  get apis() {
     const apis = {
       queryFile: (this._provide.value?.queryFile ??
         this._props.queryFile) as ProvideDataType['queryFile'],
@@ -90,6 +90,8 @@ class Handler {
         this._props.uploadFile) as ProvideDataType['uploadFile'],
       uploadHyperlink: (this._provide.value?.uploadHyperlink ??
         this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
+      download: (this._provide.value?.download ??
+        this._props.download) as ProvideDataType['download'],
     }
 
     if (
@@ -275,7 +277,7 @@ class Handler {
       }, 300)
       return
     }
-    this._apis.removeFile!(actualId)
+    this.apis.removeFile!(actualId)
       .then(() => {
         spliceData()
       })
@@ -294,7 +296,7 @@ class Handler {
       this.clearResponse()
       this._isLoading.value = true
 
-      const response = await this._apis.queryFile!({
+      const response = await this.apis.queryFile!({
         filter: {
           ...this._params,
           typeCode: undefined, // 本地切换类型
@@ -305,7 +307,6 @@ class Handler {
         },
       }).finally(() => (this._isLoading.value = false))
       this._uploadResponse.push(...response.data.result)
-      console.error(response, this._uploadResponse)
 
       this.throwResponse(response.data.result)
     }
@@ -326,7 +327,6 @@ class Handler {
    * @param file 一个文件
    */
   beforeUpload = (file: File) => {
-    // console.log(file, "beforeUpload", refFileList.value);
     this._refFileList.push(file)
   }
 
@@ -334,9 +334,7 @@ class Handler {
    * 将多个文件组合在一起发送上传请求
    */
   customRequest = () => {
-    // console.warn("\n\ncustomRequest\n\n");
     if (this.isInvalidRequest()) return
-    // console.warn(refFileList.value);
     const sizeOverflowFiles = this._refFileList.filter((file) => file.size / 1024 / 1024 > 1024)
     if (sizeOverflowFiles.length > 0) {
       createMessage.warn(
@@ -361,8 +359,6 @@ class Handler {
    * 真正的上传请求
    */
   private realUpload = () => {
-    // console.error("handleUpload", refFileList.value);
-    // return;
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
       this.resetFileList()
@@ -383,7 +379,7 @@ class Handler {
     // fillFormData end
 
     this._isLoading.value = true
-    this._apis.uploadFile!(formData)
+    this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(...r)
         this.throwResponse(r)
@@ -391,7 +387,6 @@ class Handler {
         createMessage.success('上传成功')
       })
       .catch(() => {
-        // console.error("catch", e);
         // createMessage.error("上传失败");
       })
       .finally(() => {
@@ -419,7 +414,7 @@ class Handler {
       Reflect.deleteProperty(payload, 'businessKey')
     }
     this._isLoading.value = true
-    this._apis.uploadHyperlink!(payload)
+    this.apis.uploadHyperlink!(payload)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(r)
         this.throwResponse([r])
@@ -427,7 +422,6 @@ class Handler {
         createMessage.success('上传成功')
       })
       .catch(() => {
-        // console.error("catch", e);
         // createMessage.error("上传失败");
       })
       .finally(() => {

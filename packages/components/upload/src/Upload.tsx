@@ -82,6 +82,7 @@ export default defineComponent({
     queryFile: Function as PropType<BasicPropsType['queryFile']>,
     uploadFile: Function as PropType<BasicPropsType['uploadFile']>,
     uploadHyperlink: Function as PropType<BasicPropsType['uploadHyperlink']>,
+    download: Function as PropType<BasicPropsType['download']>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -216,6 +217,7 @@ export default defineComponent({
               canResize={props.canResize}
               tableActionPermission={props.tableActionPermission}
               customOptions={customOptions.value}
+              download={handler.apis.download}
             />
           ))}
       </section>

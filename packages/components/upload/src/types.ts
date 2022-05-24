@@ -201,6 +201,7 @@ type BasicPropsType = {
   showTableAction: {
     preview?: boolean
     download?: boolean
+    downloadWatermark?: boolean
     delete?: boolean
   }
   /**
@@ -287,7 +288,9 @@ type BasicPropsType = {
  * 从App.vue注入的全局 数据/配置项/api接口
  */
 type ProvideDataType = {
+  // 删除文件接口
   removeFile?: PromiseFn
+  // 查询文件接口
   queryFile?: (parame: {
     filter: QueryFileParamsType
     model: {
@@ -299,12 +302,16 @@ type ProvideDataType = {
       sort?: string
     }
   }) => Promise<Result<{ result: FileItemType[] }>>
+  // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  // 上传超链接接口
   uploadHyperlink?: (payload: {
     typeCode: string
     name: string | undefined
     address: string | undefined
   }) => Promise<Result<FileItemType>>
+  // 文件下载方法
+  download?: (file: FileItemType, ...args: any[]) => void
   typeCodeRecord?: Recordable<LabelValueOptions>
 }
 
