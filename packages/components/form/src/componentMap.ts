@@ -1,6 +1,8 @@
 /**
  * Component list, register here to setting it in the form
  */
+// import ApiCascader from "./components/ApiCascader.vue";
+// import ApiRadioGroup from "./components/ApiRadioGroup.vue";
 import {
   AutoComplete,
   Cascader,
@@ -17,13 +19,12 @@ import {
   TimePicker,
   TreeSelect,
 } from 'ant-design-vue'
-import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
-// import ApiCascader from "./components/ApiCascader.vue";
-// import ApiRadioGroup from "./components/ApiRadioGroup.vue";
-import IconPicker from '@tav-ui/components/icon-picker'
 import { TaMemberSelect } from '@tav-ui/components/member-select'
 import { TaStrengthMeter as StrengthMeter } from '@tav-ui/components/strength-meter'
+import IconPicker from '@tav-ui/components/icon-picker'
+import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
 import ApiSelect from './components/ApiSelect.vue'
+import FormTitle from './components/FormTitle.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
 import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
@@ -69,6 +70,7 @@ componentMap.set('InputCountDown', CountdownInput)
 
 // componentMap.set('Upload', BasicUpload);
 componentMap.set('Divider', Divider)
+componentMap.set('FormTitle', FormTitle)
 
 // customadd
 add('MemberSelect', TaMemberSelect)

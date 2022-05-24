@@ -111,6 +111,7 @@ export type ComponentType =
   | 'Slider'
   | 'Rate'
   | 'Divider'
+  | 'FormTitle'
   | 'MemberSelect'
   | 'SearchableApiSelect'
   | 'TagSelect'
