@@ -24,10 +24,6 @@ export default defineComponent({
 <template>
   <div>
     <slot name="insertFooter" />
-    <a-button v-if="showCancelBtn" v-bind="cancelButtonProps" @click="handleCancel">
-      {{ cancelText }}
-    </a-button>
-    <slot name="centerFooter" />
     <a-button
       v-if="showOkBtn"
       type="primary"
@@ -36,6 +32,10 @@ export default defineComponent({
       @click="handleOk"
     >
       {{ okText }}
+    </a-button>
+    <slot name="centerFooter" />
+    <a-button v-if="showCancelBtn" v-bind="cancelButtonProps" @click="handleCancel">
+      {{ cancelText }}
     </a-button>
     <slot name="appendFooter" />
   </div>

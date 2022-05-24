@@ -57,7 +57,7 @@ export const basicProps = Object.assign({}, modalProps, {
 
   mask: { type: Boolean, default: true },
 
-  maskClosable: { type: Boolean, default: true },
+  maskClosable: { type: Boolean, default: false },
   keyboard: { type: Boolean, default: true },
 
   maskStyle: Object as PropType<CSSProperties>,
