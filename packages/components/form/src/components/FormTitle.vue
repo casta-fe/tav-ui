@@ -23,11 +23,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style lang="less" scoped>
-.ta-form-title {
-  margin-top: 5px;
-  font-weight: bold;
-  line-height: 1;
-}
-</style>
