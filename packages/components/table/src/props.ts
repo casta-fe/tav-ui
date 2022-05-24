@@ -116,7 +116,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: false,
+        ifShow: true,
       }
     },
   },
@@ -124,7 +124,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: false,
+        ifShow: true,
       }
     },
   },
@@ -132,7 +132,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: false,
+        ifShow: true,
       }
     },
   },
@@ -140,7 +140,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: false,
+        ifShow: true,
       }
     },
   },
@@ -148,7 +148,7 @@ export const tableProps = {
     type: Object as PropType<useAction>,
     default() {
       return {
-        ifShow: false,
+        ifShow: true,
       }
     },
   },

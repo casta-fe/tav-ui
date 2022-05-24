@@ -172,22 +172,33 @@ export function useFormEvents({
       )
       return
     }
-    let schema: FormSchema[] = []
-    // 如果初始化时给了空数组，此时调用 updateSchema 应该直接覆盖schema
-    if (unref(getSchema).length === 0) {
-      schema = updateData as any[]
-    } else {
-      updateData.forEach((item) => {
-        unref(getSchema).forEach((val) => {
-          if (val.field === item.field) {
-            const newSchema = deepMerge(val, item)
-            schema.push(newSchema as FormSchema)
-          } else {
-            schema.push(val)
-          }
-        })
+    const schema: FormSchema[] = []
+    // 兼容投管先注释
+    // // 如果初始化时给了空数组，此时调用 updateSchema 应该直接覆盖schema
+    // if (unref(getSchema).length === 0) {
+    //   schema = updateData as any[]
+    // } else {
+    //   updateData.forEach((item) => {
+    //     unref(getSchema).forEach((val) => {
+    //       if (val.field === item.field) {
+    //         const newSchema = deepMerge(val, item)
+    //         schema.push(newSchema as FormSchema)
+    //       } else {
+    //         schema.push(val)
+    //       }
+    //     })
+    //   })
+    // }
+    updateData.forEach((item) => {
+      unref(getSchema).forEach((val) => {
+        if (val.field === item.field) {
+          const newSchema = deepMerge(val, item)
+          schema.push(newSchema as FormSchema)
+        } else {
+          schema.push(val)
+        }
       })
-    }
+    })
     schemaRef.value = uniqBy(schema, 'field')
   }
 

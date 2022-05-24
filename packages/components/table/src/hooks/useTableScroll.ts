@@ -104,13 +104,13 @@ export function useTableScroll(
     // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    debugger
+    // debugger
     if (isCanResizeParent) {
-      console.log(isCanResizeParent, 'isCanResizeParent111111')
+      // console.log(isCanResizeParent, 'isCanResizeParent111111')
       bodyEl!.style.height = '100%'
       if (!unref(getCanResize)) return
     } else {
-      console.log(isCanResizeParent, 'isCanResizeParent22222')
+      // console.log(isCanResizeParent, 'isCanResizeParent22222')
       bodyEl!.style.height = 'unset'
       if (!unref(getCanResize)) return
     }
@@ -191,7 +191,7 @@ export function useTableScroll(
 
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
-    debugger
+    // debugger
     console.log(bodyEl!.style.height, 'beforeCHange')
     if (isCanResizeParent) {
       bodyEl!.style.height = `${height}px`
