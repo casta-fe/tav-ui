@@ -214,7 +214,12 @@ export default defineComponent({
 
       const result = {
         isVisible:
-          isAddVisible || isDeleteVisible || isImportVisible || isExportVisible || isRefreshVisible,
+          isAddVisible ||
+          isDeleteVisible ||
+          isImportVisible ||
+          isExportVisible ||
+          isRefreshVisible ||
+          !!slots.customAction,
         isAddVisible,
         addHandle: useAdd?.handleAction,
         isDeleteVisible,
