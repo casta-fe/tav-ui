@@ -192,7 +192,7 @@ export function useTableScroll(
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
     // debugger
-    console.log(bodyEl!.style.height, 'beforeCHange')
+    // console.log(bodyEl!.style.height, 'beforeCHange')
     if (isCanResizeParent) {
       bodyEl!.style.height = `${height}px`
       if (tableData.length === 0) {
