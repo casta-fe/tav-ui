@@ -147,6 +147,7 @@ export type EditableComponentType =
   | 'Slider'
   | 'Rate'
   | 'Divider'
+  | 'FormTitle'
   | 'MemberSelect'
   | 'SearchableApiSelect'
   | 'TagSelect'

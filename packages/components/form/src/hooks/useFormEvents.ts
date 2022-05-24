@@ -189,7 +189,7 @@ export function useFormEvents({
         const newSchema: FormSchema = deepMerge(findResult, item)
         schema.push(newSchema)
       } else {
-        schema.push(item)
+        schema.push(item as FormSchema)
       }
       // unref(getSchema).forEach((val) => {
       //   if (val.field === item.field) {
