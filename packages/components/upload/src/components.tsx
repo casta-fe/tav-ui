@@ -167,30 +167,11 @@ export const PreviewTable = defineComponent({
                     },
                   },
                   {
-                    label: '下载水印文件',
+                    label: '下载',
                     permission: props.tableActionPermission.download,
-                    ifShow:
-                      record.hyperlink === 1
-                        ? false
-                        : readonly.value
-                        ? false
-                        : (props.showTableAction.downloadWatermark &&
-                            record.watermarkFileDownload) ??
-                          true,
+                    ifShow: record.hyperlink === 1 ? false : props.showTableAction.download ?? true,
                     onClick() {
-                      props.download?.(record, undefined, true)
-                    },
-                  },
-                  {
-                    label: '下载源文件',
-                    permission: props.tableActionPermission.download,
-                    ifShow:
-                      record.hyperlink === 1
-                        ? false
-                        : readonly.value
-                        ? false
-                        : (props.showTableAction.download && record.sourceFileDownload) ?? true,
-                    onClick() {
+                      previewRecord.value = record
                       props.download?.(record)
                     },
                   },

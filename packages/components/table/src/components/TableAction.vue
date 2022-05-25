@@ -46,10 +46,10 @@ import { Button, Divider, Tooltip } from 'ant-design-vue'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { usePermission } from "@tav-ui/hooks/web/usePermission";
 import { isBoolean, isFunction, isNullOrUnDef, isString } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import type { TooltipProps } from 'ant-design-vue'
@@ -102,10 +102,24 @@ export default defineComponent({
       return isIfShow
     }
 
+    // permisson filter
+    const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+    const getPermissonFilterActions = computed(() => {
+      return (toRaw(props.actions) || [])
+        .filter((action) => isIfShow(action))
+        .filter((action) => {
+          // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+          return action.permission
+            ? unref(Permissions)[action.permission]?.ifShow ?? isIfShow(action)
+            : isIfShow(action)
+        })
+    })
+
     let restActions: ActionItem[] = []
     const Actions = computed(() => {
-      let actions = toRaw(props.actions) || []
-      actions = actions.filter((action) => isIfShow(action))
+      // let actions = toRaw(props.actions) || []
+      // actions = actions.filter((action) => isIfShow(action))
+      const actions = getPermissonFilterActions.value
       if (actions.length <= MAX_ACTION_NUMBER) {
         return actions
       } else {
@@ -120,19 +134,19 @@ export default defineComponent({
       return actions
     })
 
-    const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+    // const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
     const getActions = computed(() => {
       return (
         Actions.value
+          // // .filter((action) => {
+          // //   return hasPermission(action.auth) && isIfShow(action);
+          // // })
           // .filter((action) => {
-          //   return hasPermission(action.auth) && isIfShow(action);
+          //   // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+          //   return isNullOrUnDef(action.permission)
+          //     ? isIfShow(action)
+          //     : unref(Permissions)[action.permission]?.ifShow && isIfShow(action)
           // })
-          .filter((action) => {
-            // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-            return isNullOrUnDef(action.permission)
-              ? isIfShow(action)
-              : unref(Permissions)[action.permission]?.ifShow && isIfShow(action)
-          })
           .map((action) => {
             return {
               type: 'link',
@@ -146,13 +160,13 @@ export default defineComponent({
     const getDropdownList = computed(() => {
       return (
         DropdownActions.value
-          // .filter(action => hasPermission(action.auth) && isIfShow(action))
-          .filter((action) => {
-            // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-            return action.permission
-              ? unref(Permissions)[action.permission]?.ifShow ?? isIfShow(action)
-              : isIfShow(action)
-          })
+          // // .filter(action => hasPermission(action.auth) && isIfShow(action))
+          // .filter((action) => {
+          //   // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+          //   return action.permission
+          //     ? unref(Permissions)[action.permission]?.ifShow ?? isIfShow(action)
+          //     : isIfShow(action)
+          // })
           .map((action, index, list) => {
             const { label } = action
             // const { label, popConfirm } = action;
