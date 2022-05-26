@@ -67,6 +67,7 @@ export const PreviewTable = defineComponent({
       if (
         props.showTableAction.preview === false &&
         props.showTableAction.download === false &&
+        props.showTableAction.downloadWatermark === false &&
         props.showTableAction.delete === false
       )
         return undefined
@@ -152,41 +153,70 @@ export const PreviewTable = defineComponent({
               typeCodeOptions.value.find((el) => el.value === text)?.label || text,
             action: ({ record }) => (
               <TableAction
-                actions={[
-                  {
-                    label: '查看',
-                    permission: props.tableActionPermission.preview,
-                    ifShow: record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
-                    onClick() {
-                      if (record.hyperlink === 1) {
-                        window.open(record.address)?.focus()
-                        return
-                      }
-                      previewRecord.value = [record]
-                      showPreview.value = true
-                    },
-                  },
-                  {
-                    label: '下载',
-                    permission: props.tableActionPermission.download,
-                    ifShow: record.hyperlink === 1 ? false : props.showTableAction.download ?? true,
-                    onClick() {
-                      previewRecord.value = record
-                      props.download?.(record)
-                    },
-                  },
-                  {
-                    label: '删除',
-                    permission: props.tableActionPermission.delete,
-                    ifShow: props.showTableAction.delete ?? !readonly.value,
-                    popConfirm: {
-                      title: '是否确认删除?',
-                      confirm: () => {
-                        emit('delete', record)
+                actions={(() => {
+                  const actions = [
+                    {
+                      label: '查看',
+                      permission: props.tableActionPermission.preview,
+                      ifShow:
+                        record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
+                      onClick() {
+                        if (record.hyperlink === 1) {
+                          window.open(record.address)?.focus()
+                          return
+                        }
+                        previewRecord.value = [record]
+                        showPreview.value = true
                       },
                     },
-                  },
-                ]}
+                    {
+                      label: '下载水印文件',
+                      permission: props.tableActionPermission.download,
+                      ifShow:
+                        record.hyperlink === 1
+                          ? false
+                          : readonly.value
+                          ? false
+                          : (props.showTableAction.downloadWatermark &&
+                              record.watermarkFileDownload) ??
+                            true,
+                      onClick() {
+                        props.download?.(record, undefined, true)
+                      },
+                    },
+                  ]
+                  actions.push(
+                    {
+                      // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
+                      label: actions.some((el) => el.label === '下载水印文件' && el.ifShow)
+                        ? '下载源文件'
+                        : '下载',
+                      permission: props.tableActionPermission.download,
+                      ifShow:
+                        record.hyperlink === 1
+                          ? false
+                          : readonly.value
+                          ? false
+                          : (props.showTableAction.download && record.sourceFileDownload) ?? true,
+                      onClick() {
+                        props.download?.(record)
+                      },
+                    },
+                    {
+                      label: '删除',
+                      permission: props.tableActionPermission.delete,
+                      ifShow: props.showTableAction.delete ?? !readonly.value,
+                      // @ts-ignore
+                      popConfirm: {
+                        title: '是否确认删除?',
+                        confirm: () => {
+                          emit('delete', record)
+                        },
+                      },
+                    }
+                  )
+                  return actions
+                })()}
               />
             ),
           }}
@@ -250,7 +280,7 @@ export const TypeSelect = defineComponent({
     let isInit = true
     const defaultValue = computed(() => {
       if (unref(props.noDefaultValue) || !isInit) {
-        return props.selected
+        return props.selected || undefined
       } else {
         return props.selected &&
           localTypeCodeOptions.value.some((el) => props.selected === el.value)
