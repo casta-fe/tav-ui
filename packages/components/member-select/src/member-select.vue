@@ -44,7 +44,7 @@
       <template v-else>
         <TreeSelect
           v-model:value="selectedData[0]"
-          dropdown-class-name="ta-member-tree"
+          dropdown-class-name="ta-member-select-tree"
           tree-node-filter-prop="title"
           show-search
           tree-icon
