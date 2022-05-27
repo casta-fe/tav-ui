@@ -4,6 +4,7 @@ const columns: Record<string, any>[] = [
     dataIndex: 'fullName',
     key: 'fullName',
     slots: { customRender: 'name' },
+    width: 300,
     ellipsis: true,
   },
   {

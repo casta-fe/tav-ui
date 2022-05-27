@@ -5,7 +5,7 @@ import { TaTable, TableAction, useTable } from '@tav-ui/components/table'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { columns } from './config'
-import { useFileTypeCode } from './hooks'
+import { creatToolTipTable, useFileTypeCode } from './hooks'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -126,10 +126,10 @@ export const PreviewTable = defineComponent({
                       props.onClickName?.(record)
                     }}
                   >
-                    {text || record.name}
+                    {creatToolTipTable(text || record.name, 300)}
                   </a>
                 ) : (
-                  <span>{text || record.name}</span>
+                  <span>{creatToolTipTable(text || record.name, 300)}</span>
                 )}
                 {record.hyperlink == 1 ? (
                   <>
@@ -143,7 +143,7 @@ export const PreviewTable = defineComponent({
                           ?.focus()
                       }}
                     >
-                      {record.address}
+                      {creatToolTipTable(record.address, 300)}
                     </a>
                   </>
                 ) : null}

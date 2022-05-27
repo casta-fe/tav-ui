@@ -1,7 +1,44 @@
-import { computed } from 'vue'
+import { computed, h } from 'vue'
+import { Tooltip } from 'ant-design-vue'
+import { isNumber, isString } from '@tav-ui/utils/is'
+import type { VNode } from 'vue'
 import type { Handler } from './main'
-
 import type { LabelValueOptions, Recordable } from './types'
+
+export function creatToolTipTable(content: string | undefined, width: string | number = 0): VNode {
+  if (!content) return h('span', '')
+  const ellipsis = {
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    display: 'inline-block',
+    width: '100%',
+    cursor: 'default',
+    verticalAlign: 'top',
+  }
+  let tdLen = 0
+  if (isString(width)) {
+    tdLen = Number(width.split('px')[0]) - 16
+  }
+  if (isNumber(width)) {
+    tdLen = width - 16
+  }
+  const len = content.length * 14
+  // console.log(content.length, "+++");
+  const vnode =
+    len > tdLen
+      ? h(
+          Tooltip,
+          { placement: 'top' },
+          {
+            title: () => h('span', content),
+            default: () => h('span', { style: ellipsis }, content),
+          }
+        )
+      : h('span', content)
+
+  return vnode
+}
 
 /**
  * ***begin***
