@@ -62,7 +62,10 @@
     "qrcode": "1.4.4",
     "resize-observer-polyfill": "1.5.1",
     "sortablejs": "1.15.0",
-    "vue-types": "4.1.1"
+    "vue-types": "4.1.1",
+    "vxe-table": "4.1.0",
+    "vxe-table-plugin-antd": "3.0.3",
+    "xe-utils": "3.3.1"
   },
   "engines": {
     "node": ">= 16"

@@ -1,19 +1,18 @@
 @import '../var/index.less';
-@radius: 4px;
 .ta-darg-verify {
   position: relative;
   overflow: hidden;
   text-align: center;
   background-color: rgb(238 238 238);
   border: 1px solid #ddd;
-  border-radius: @radius;
+  border-radius: @primary-border-radius;
 
   &-bar {
     position: absolute;
     width: 0;
     height: 36px;
     background-color: @success-color;
-    border-radius: @radius;
+    border-radius: @primary-border-radius;
 
     &.to-left {
       width: 0 !important;
@@ -56,7 +55,7 @@
     display: flex;
     cursor: move;
     background-color: @white;
-    border-radius: @radius;
+    border-radius: @primary-border-radius;
     justify-content: center;
     align-items: center;
 

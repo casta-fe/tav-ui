@@ -13,13 +13,14 @@ import * as components from '@tav-ui/components'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
-import { TaUpload, taUploadProvideData } from './components/TaUpload'
-import SearchableApiSelect from './components/SearchableApiSelect.vue'
+import { taUploadProvideData } from './components/TaUpload'
+// import SearchableApiSelect from './components/SearchableApiSelect.vue'
+import TaTablePro from './components/TablePro'
 
 export default defineComponent({
   components: {
-    TaUpload,
-    SearchableApiSelect,
+    // TaUpload,
+    // SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
@@ -29,6 +30,7 @@ export default defineComponent({
     // ModalPage,
     // BasicTablePage,
     // FollewPage,
+    TaTablePro,
   },
   setup() {
     // 函数方式调用loading
@@ -66,7 +68,7 @@ export default defineComponent({
 
 <template>
   <TaConfigProvider :permissions="state.permissions" :components="state.components">
-    <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
+    <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
     </TaButton>
     <TaBasicArrow />
@@ -76,7 +78,7 @@ export default defineComponent({
       basic title
     </TaBasicTitle>
     <SearchableApiSelect />
-    <TaUpload />
+    <TaUpload /> -->
     <!-- <TaLoading  :loading="true"></TaLoading> -->
 
     <!-- <TimeLineListPage />
@@ -87,6 +89,7 @@ export default defineComponent({
   <ModalPage />
   <FormPage />
   <BasicTablePage /> -->
+    <TaTablePro />
   </TaConfigProvider>
 </template>
 
