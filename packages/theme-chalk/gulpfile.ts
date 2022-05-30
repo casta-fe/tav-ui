@@ -8,11 +8,7 @@ import less from 'gulp-less'
 
 function compileLess() {
   return src(path.resolve(__dirname, './src/*.less'))
-    .pipe(
-      less({
-        paths: ['../../node_modules'],
-      })
-    )
+    .pipe(less())
     .pipe(autoprefixer())
     .pipe(
       cleanCSS({}, (details) => {

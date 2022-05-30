@@ -60,9 +60,6 @@ importers:
       vue: 3.2.21
       vue-tsc: 0.29.3
       vue-types: 4.1.1
-      vxe-table: 4.1.0
-      vxe-table-plugin-antd: 3.0.3
-      xe-utils: 3.3.1
     dependencies:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-vue': 6.0.1_vue@3.2.21
@@ -87,9 +84,6 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1_vue@3.2.21
-      vxe-table: 4.1.0_vue@3.2.21+xe-utils@3.3.1
-      vxe-table-plugin-antd: 3.0.3_vxe-table@4.1.0
-      xe-utils: 3.3.1
     devDependencies:
       '@commitlint/cli': 16.2.3
       '@commitlint/config-conventional': 16.2.1
@@ -272,9 +266,6 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.1.0
-      vxe-table-plugin-antd: 3.0.3
-      xe-utils: 3.3.1
     dependencies:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-vue': 6.0.1
@@ -291,9 +282,6 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.1.0_xe-utils@3.3.1
-      vxe-table-plugin-antd: 3.0.3_vxe-table@4.1.0
-      xe-utils: 3.3.1
 
   packages/theme-chalk:
     specifiers:
@@ -9119,33 +9107,6 @@ packages:
       '@vue/shared': 3.2.33
     dev: true
 
-  /vxe-table-plugin-antd/3.0.3_vxe-table@4.1.0:
-    resolution: {integrity: sha512-2zwoxOe+Am/oz7i6Y1vxkhBDqK6OadJJQaPGyQxgirC7X+VHBY1bBnMm08l0lO+K+ttzi4GRDrfZNpzqxVfOeg==}
-    peerDependencies:
-      vxe-table: ^4.0.10
-    dependencies:
-      vxe-table: 4.1.0_xe-utils@3.3.1
-    dev: false
-
-  /vxe-table/4.1.0_vue@3.2.21+xe-utils@3.3.1:
-    resolution: {integrity: sha512-FX4nc4ckkQGWG/W94z97KBIGrfZsbcni3pm+4uMzNQUcEgxgchnY78/4PrRC4ZRsHJIMv4mtNrzdfJDCTfA65g==}
-    peerDependencies:
-      vue: ^3.2.2
-      xe-utils: ^3.2.0
-    dependencies:
-      vue: 3.2.21
-      xe-utils: 3.3.1
-    dev: false
-
-  /vxe-table/4.1.0_xe-utils@3.3.1:
-    resolution: {integrity: sha512-FX4nc4ckkQGWG/W94z97KBIGrfZsbcni3pm+4uMzNQUcEgxgchnY78/4PrRC4ZRsHJIMv4mtNrzdfJDCTfA65g==}
-    peerDependencies:
-      vue: ^3.2.2
-      xe-utils: ^3.2.0
-    dependencies:
-      xe-utils: 3.3.1
-    dev: false
-
   /warning/4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
     dependencies:
@@ -9278,10 +9239,6 @@ packages:
     dependencies:
       js-yaml: 4.1.0
       write-file-atomic: 3.0.3
-
-  /xe-utils/3.3.1:
-    resolution: {integrity: sha512-OdQgl9WPV9dK3/djneFPrGX8z1M4neX+VOkzra5oONjoNsCKQhwdiut99WlxceNMQ5vXDv4EQ/wKA2fux3Gdug==}
-    dev: false
 
   /xtend/4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
