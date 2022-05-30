@@ -177,9 +177,8 @@ export const PreviewTable = defineComponent({
                           ? false
                           : readonly.value
                           ? false
-                          : (props.showTableAction.downloadWatermark &&
-                              record.watermarkFileDownload) ??
-                            true,
+                          : (props.showTableAction.downloadWatermark ?? true) &&
+                            record.watermarkFileDownload,
                       onClick() {
                         props.download?.(record, undefined, true)
                       },
@@ -197,7 +196,7 @@ export const PreviewTable = defineComponent({
                           ? false
                           : readonly.value
                           ? false
-                          : (props.showTableAction.download && record.sourceFileDownload) ?? true,
+                          : (props.showTableAction.download ?? true) && record.sourceFileDownload,
                       onClick() {
                         props.download?.(record)
                       },
