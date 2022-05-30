@@ -7,6 +7,7 @@ export default defineComponent({
   components: { TaTimeLine },
   setup() {
     const state = reactive<TimeLinePropsType>({
+      loading: true,
       list: [
         {
           times: ['2022-05-30', '18:10:00'],
@@ -41,6 +42,9 @@ export default defineComponent({
     const loadingMore = () => {
       console.log('loadingMoreloadingMore')
     }
+    setTimeout(() => {
+      state.loading = false
+    }, 3000)
     return {
       state,
       renderListItem,
@@ -54,7 +58,12 @@ export default defineComponent({
   <section class="test">
     <h2>TimeLineList默认使用</h2>
     <div class="components">
-      <TaTimeLine :list="state.list" :use-loading-more="true" @loading-more="loadingMore" />
+      {{ state.loading }}loadingloadingloading
+      <TaTimeLine
+        :list="state.list"
+        :use-loading-more="state.loading"
+        @loading-more="loadingMore"
+      />
     </div>
     <h2>TimeLineList 自定义渲染内容使用</h2>
     <div class="components">
