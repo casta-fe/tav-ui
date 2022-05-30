@@ -19,13 +19,8 @@ import 'ant-design-vue/dist/antd.less'
 import '../../dist/tav-ui/theme-chalk/src/index.less'
 import 'virtual:windi.css'
 import App from './App.vue'
-
-// eslint-disable-next-line import/order
-import { setupVxeTable } from '@tav-ui/components/table-pro'
-
 const app = createApp(App)
 app.use(TaUi)
-app.use(setupVxeTable)
 // app.use(TaIcon)
 // app.use(TaButton)
 // app.use(TaBasicTitle)
