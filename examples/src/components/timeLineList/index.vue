@@ -1,40 +1,36 @@
 <script lang="ts">
 import { defineComponent, h, reactive } from 'vue'
+import { TaTimeLine } from '@tav-ui/components'
 import type { TimeLinePropsType } from '../../../../dist/types/components/timeLine/src/types'
-
 export default defineComponent({
   name: 'TimeLineListTest',
-  components: {},
+  components: { TaTimeLine },
   setup() {
     const state = reactive<TimeLinePropsType>({
       list: [
         {
-          times: ['1111', '22222'],
-          status: 'success',
-          title: '测试一下啦',
-          tags: [
-            {
-              label: 'tag1',
-              color: '#999999',
-            },
-          ],
-          description: ['dkdkdkd', 'sdkdkdiddi'],
+          times: ['2022-05-30', '18:10:00'],
+          status: 'continue',
+          tags: [{ label: '发起审核', color: '#FFC400' }],
+          description: ['发起人：梁策(测试)', '审核意见：123'],
+          title: '项目终止审核',
         },
         {
-          times: ['1111', '22222'],
+          times: ['2022-05-27', '16:46:09'],
           status: 'success',
-          title: '测试一下啦',
           tags: [
-            {
-              label: 'tag1',
-              color: '#999999',
-            },
-            {
-              label: 'tag1',
-              color: '#999999',
-            },
+            { label: '审核通过', color: '#2CC8B2' },
+            { label: '1级审核通过', color: '#2CC8B2' },
           ],
-          description: ['dkdkdkd', 'sdkdkdiddi'],
+          description: [],
+          title: '时间排期审核',
+        },
+        {
+          times: ['2022-05-27', '16:45:17'],
+          status: 'continue',
+          tags: [{ label: '发起审核', color: '#FFC400' }],
+          description: ['发起人：系统管理员'],
+          title: '时间排期审核',
         },
       ],
     })
@@ -58,15 +54,15 @@ export default defineComponent({
   <section class="test">
     <h2>TimeLineList默认使用</h2>
     <div class="components">
-      <TaTimeline :list="state.list" :use-loading-more="true" @loading-more="loadingMore" />
+      <TaTimeLine :list="state.list" :use-loading-more="true" @loading-more="loadingMore" />
     </div>
     <h2>TimeLineList 自定义渲染内容使用</h2>
     <div class="components">
-      <TaTimeline :list="state.list" :use-loading-more="true" :render-list-item="renderListItem">
+      <TaTimeLine :list="state.list" :use-loading-more="true" :render-list-item="renderListItem">
         <template #loadMore>
           <div>dkdkdkdkdkdk</div>
         </template>
-      </TaTimeline>
+      </TaTimeLine>
     </div>
   </section>
 </template>
