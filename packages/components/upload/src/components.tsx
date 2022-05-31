@@ -5,7 +5,7 @@ import { TaTable, TableAction, useTable } from '@tav-ui/components/table'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { columns } from './config'
-import { creatToolTipTable, useFileTypeCode } from './hooks'
+import { creatToolTipTable, getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -71,8 +71,21 @@ export const PreviewTable = defineComponent({
         props.showTableAction.delete === false
       )
         return undefined
+
+      const labels: string[] = []
+
+      // #region 配置显示的操作列
+      if (props.showTableAction.preview !== false) labels.push('查看')
+      if (props.showTableAction.download !== false) {
+        if (props.showTableAction.downloadWatermark === false) labels.push('下载')
+        else labels.push('下载源文件')
+      }
+      if (props.showTableAction.downloadWatermark !== false) labels.push('下载水印文件')
+      if (props.showTableAction.delete !== false) labels.push('删除')
+      // #endregion
+
       return {
-        width: 140,
+        width: getActionColumnMaxWidth(labels),
         title: '操作',
         dataIndex: 'action',
         slots: { customRender: 'action' },

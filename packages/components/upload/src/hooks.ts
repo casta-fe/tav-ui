@@ -170,3 +170,22 @@ export const useFileTypeCode = (fileTypeCode: Recordable<LabelValueOptions<strin
     getOptionsByModuleCodePrefix,
   }
 }
+
+/**
+ * 操作列按钮所需要的最大列宽度
+ * @param arr ${string[]}
+ * @param param1 config { margin=40, fontSize=12, appendWidth=10 }
+ * @returns maxWidth ${number}
+ */
+export function getActionColumnMaxWidth(
+  arr: string[],
+  { margin = 40, fontSize = 12, appendWidth = 10 } = {}
+) {
+  // TableAction 组件最多展示3个按钮, 间距为 20+20
+  let l = margin
+  arr.sort((x, y) => y.length - x.length)
+  for (const str of arr) {
+    l += str.length * fontSize
+  }
+  return l + appendWidth
+}
