@@ -141,7 +141,7 @@
       .ta-menu-item-active:not(.ta-menu-submenu) {
         background: @primary-color  !important;
         box-shadow: 0 4px 10px rgb(41 77 242 / 30%);
-        border-radius: 4px;
+        border-radius: @primary-border-radius;
         color: #fff !important;
 
         &::after {
@@ -339,7 +339,7 @@
 
     .ant-table-wrapper {
       padding: @gapy @gapy 12px !important;
-      border-radius: @border-radius-base  !important;
+      border-radius: @primary-border-radius !important;
     }
 
     .ant-table-title {
@@ -400,8 +400,8 @@
     }
 
     .ant-table-content {
-      border-top-left-radius: @border-radius-base  !important;
-      border-top-right-radius: @border-radius-base  !important;
+      border-top-left-radius: @primary-border-radius  !important;
+      border-top-right-radius: @primary-border-radius  !important;
       background-color: #fff;
     }
 
@@ -430,8 +430,8 @@
       // padding: (@gapy / 2) @gapy !important;
       padding: 8px 0 0 !important;
 
-      border-bottom-left-radius: @border-radius-base  !important;
-      border-bottom-right-radius: @border-radius-base  !important;
+      border-bottom-left-radius: @primary-border-radius  !important;
+      border-bottom-right-radius: @primary-border-radius  !important;
       font-size: 12px;
       color: #555;
       line-height: 16px;
@@ -455,7 +455,7 @@
 
       .ant-select-selector,
       .ant-pagination-item {
-        border-radius: @border-radius-base;
+        border-radius: @primary-border-radius;
       }
 
       .ant-pagination-disabled {
@@ -469,7 +469,7 @@
           padding: 0 10px;
           border: 1px solid @primiary-color;
           color: @primiary-color;
-          border-radius: @border-radius-base;
+          border-radius: @primary-border-radius;
           background-color: #fff;
         }
 
@@ -495,7 +495,7 @@
         min-width: 70px !important;
         color: @primiary-color;
         border: 1px solid @primiary-color;
-        border-radius: @border-radius-base;
+        border-radius: @primary-border-radius;
         background-color: #fff !important;
       }
 
@@ -748,12 +748,12 @@
     }
 
     .ant-modal-content {
-      border-radius: @border-radius-base;
+      border-radius: @primary-border-radius;
     }
 
     .ant-modal-header {
       padding: 10px 24px;
-      border-radius: @border-radius-base @border-radius-base 0 0;
+      border-radius: @primary-border-radius @primary-border-radius 0 0;
     }
 
     .ant-modal-title {
