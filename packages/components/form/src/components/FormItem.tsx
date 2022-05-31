@@ -153,9 +153,7 @@ export default defineComponent({
     watch(
       () => props.formModel[props.schema.field],
       (newVal) => {
-        setTimeout(() => {
-          getFormItemPrecision(newVal)
-        }, 50)
+        getFormItemPrecision(newVal, false)
       },
       { immediate: true }
     )
@@ -477,8 +475,11 @@ export default defineComponent({
       return rules
     }
     // 获取数字类型数据精度 最小为2最大为6
-    function getFormItemPrecision(_value) {
+    function getFormItemPrecision(_value, getDomValue) {
       if (props.schema.component !== 'InputNumber') {
+        return
+      }
+      if (_value === undefined) {
         return
       }
       // console.log(props.schema.componentProps);
@@ -487,7 +488,7 @@ export default defineComponent({
       }
       let precision = 0
       let value = _value
-      if (itemRef.value) {
+      if (getDomValue && itemRef.value) {
         const inputEle = itemRef.value.querySelector('input')
         if (inputEle) {
           value = inputEle.value
@@ -539,7 +540,9 @@ export default defineComponent({
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
           props.setFormModel(field, value)
-          getFormItemPrecision(value)
+          setTimeout(() => {
+            getFormItemPrecision(value, true)
+          }, 50)
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
