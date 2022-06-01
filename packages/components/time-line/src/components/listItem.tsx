@@ -41,7 +41,7 @@ export default defineComponent({
             <div class="description">
               {listItemData?.description &&
                 listItemData?.description.map((desc) => {
-                  return <p key={desc}>{{ desc }}</p>
+                  return <p key={desc}>{desc}</p>
                 })}
             </div>
           </div>

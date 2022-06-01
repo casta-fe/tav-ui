@@ -4,7 +4,7 @@
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import { defineComponent, reactive } from 'vue'
 import * as components from '@tav-ui/components'
-// import TimeLineListPage from './components/timeLineList/index.vue'
+import TimeLineListPage from './components/timeLineList/index.vue'
 // import TimePage from './components/time/index.vue'
 // import InputNumberRangePage from './components/InputNumberRange/index.vue'
 // import FileViewPage from './components/FileView/index.vue'
@@ -20,7 +20,7 @@ export default defineComponent({
   components: {
     TaUpload,
     SearchableApiSelect,
-    // TimeLineListPage,
+    TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
@@ -78,8 +78,8 @@ export default defineComponent({
     <SearchableApiSelect />
     <TaUpload />
     <!-- <TaLoading  :loading="true"></TaLoading> -->
-
-    <!-- <TimeLineListPage />
+    <TimeLineListPage />
+    <!-- 
   <TimePage />
   <InputNumberRangePage />
   <FileViewPage />

@@ -48,7 +48,7 @@ import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { usePermission } from "@tav-ui/hooks/web/usePermission";
-import { isBoolean, isFunction, isNullOrUnDef, isString } from '@tav-ui/utils/is'
+import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
 import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
@@ -105,14 +105,12 @@ export default defineComponent({
     // permisson filter
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
     const getPermissonFilterActions = computed(() => {
-      return (toRaw(props.actions) || [])
-        .filter((action) => isIfShow(action))
-        .filter((action) => {
-          // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-          return action.permission
-            ? unref(Permissions)[action.permission]?.ifShow ?? isIfShow(action)
-            : isIfShow(action)
-        })
+      return (toRaw(props.actions) || []).filter((action) => {
+        // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
+        return action.permission
+          ? unref(Permissions)[action.permission]?.ifShow && isIfShow(action)
+          : isIfShow(action)
+      })
     })
 
     let restActions: ActionItem[] = []

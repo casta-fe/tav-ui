@@ -15,7 +15,6 @@ export default defineComponent({
       emit('loadingMore')
     }
     // eslint-disable-next-line vue/no-setup-props-destructure
-    const { list, useLoadingMore } = props
     const renderItem = ({ item, index }) => {
       if (props.renderListItem) return props.renderListItem({ item, index })
       else return <TimeLineItemDefault itemData={item}></TimeLineItemDefault>
@@ -24,10 +23,10 @@ export default defineComponent({
       <List
         class="ta-timeline-list"
         item-layout="horizontal"
-        data-source={list}
+        data-source={props.list}
         renderItem={renderItem}
       >
-        {useLoadingMore ? (
+        {props.useLoadingMore ? (
           slots.loadMore ? (
             slots.loadMore()
           ) : (

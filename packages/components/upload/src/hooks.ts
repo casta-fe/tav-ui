@@ -1,7 +1,44 @@
-import { computed } from 'vue'
+import { computed, h } from 'vue'
+import { Tooltip } from 'ant-design-vue'
+import { isNumber, isString } from '@tav-ui/utils/is'
+import type { VNode } from 'vue'
 import type { Handler } from './main'
-
 import type { LabelValueOptions, Recordable } from './types'
+
+export function creatToolTipTable(content: string | undefined, width: string | number = 0): VNode {
+  if (!content) return h('span', '')
+  const ellipsis = {
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    display: 'inline-block',
+    width: '100%',
+    cursor: 'default',
+    verticalAlign: 'top',
+  }
+  let tdLen = 0
+  if (isString(width)) {
+    tdLen = Number(width.split('px')[0]) - 16
+  }
+  if (isNumber(width)) {
+    tdLen = width - 16
+  }
+  const len = content.length * 14
+  // console.log(content.length, "+++");
+  const vnode =
+    len > tdLen
+      ? h(
+          Tooltip,
+          { placement: 'top' },
+          {
+            title: () => h('span', content),
+            default: () => h('span', { style: ellipsis }, content),
+          }
+        )
+      : h('span', content)
+
+  return vnode
+}
 
 /**
  * ***begin***
@@ -132,4 +169,23 @@ export const useFileTypeCode = (fileTypeCode: Recordable<LabelValueOptions<strin
     getOptionsByModuleCode,
     getOptionsByModuleCodePrefix,
   }
+}
+
+/**
+ * 操作列按钮所需要的最大列宽度
+ * @param arr ${string[]}
+ * @param param1 config { margin=40, fontSize=12, appendWidth=10 }
+ * @returns maxWidth ${number}
+ */
+export function getActionColumnMaxWidth(
+  arr: string[],
+  { margin = 40, fontSize = 12, appendWidth = 10 } = {}
+) {
+  // TableAction 组件最多展示3个按钮, 间距为 20+20
+  let l = margin
+  arr.sort((x, y) => y.length - x.length)
+  for (const str of arr) {
+    l += str.length * fontSize
+  }
+  return l + appendWidth
 }
