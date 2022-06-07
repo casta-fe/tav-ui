@@ -25,6 +25,7 @@ declare module 'vue' {
     TaModal: typeof import('tav-ui')['TaModal']
     TaScrollbar: typeof import('tav-ui')['TaScrollbar']
     TaTable: typeof import('tav-ui')['TaTable']
+    TaTablePro: typeof import('tav-ui')['TaTablePro']
     TableAction: typeof import('tav-ui')['TableAction']
     TableImg: typeof import('tav-ui')['TableImg']
     TaTableTags: typeof import('tav-ui')['TaTableTags']
