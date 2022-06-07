@@ -2,6 +2,7 @@
   <!--  :dropdownMatchSelectWidth="false" -->
   <Select
     v-model:value="state"
+    :disabled="disabled"
     :options="selectState.list"
     :mode="mode"
     :filter-option="false"
@@ -77,6 +78,10 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     resultField: propTypes.string.def(''),
     labelField: propTypes.string.def('name'),
     valueField: propTypes.string.def('id'),
@@ -104,10 +109,10 @@ export default defineComponent({
       },
       { deep: true }
     )
-
     // 发请求
     async function fetch() {
       const api = props.api
+      console.log(2333)
       if (!api || !isFunction(api)) return
       selectState.list.length = 0
       try {
