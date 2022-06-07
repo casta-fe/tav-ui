@@ -103,7 +103,6 @@ export default defineComponent({
       const Actions = getActions()
 
       if (unref(Actions).length) {
-        console.log(111)
         return unref(Actions).map((action, index) => {
           const modalButton = () => (
             <ModalButton {...action} type="link" size="small">
