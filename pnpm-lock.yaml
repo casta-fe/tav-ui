@@ -60,6 +60,8 @@ importers:
       vue: 3.2.21
       vue-tsc: 0.29.3
       vue-types: 4.1.1
+      vxe-table: 4.2.3
+      xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-vue': 6.0.1_vue@3.2.21
@@ -84,6 +86,8 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1_vue@3.2.21
+      vxe-table: 4.2.3_vue@3.2.21+xe-utils@3.5.4
+      xe-utils: 3.5.4
     devDependencies:
       '@commitlint/cli': 16.2.3
       '@commitlint/config-conventional': 16.2.1
@@ -266,6 +270,8 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
+      vxe-table: 4.2.3
+      xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-vue': 6.0.1
@@ -282,6 +288,8 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
+      vxe-table: 4.2.3_xe-utils@3.5.4
+      xe-utils: 3.5.4
 
   packages/theme-chalk:
     specifiers:
@@ -5295,7 +5303,7 @@ packages:
     engines: {node: '>= 4'}
 
   /image-size/0.5.5:
-    resolution: {integrity: sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=}
+    resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
     engines: {node: '>=0.10.0'}
     hasBin: true
     requiresBuild: true
@@ -9107,6 +9115,25 @@ packages:
       '@vue/shared': 3.2.33
     dev: true
 
+  /vxe-table/4.2.3_vue@3.2.21+xe-utils@3.5.4:
+    resolution: {integrity: sha512-sbW9yZ763/ArOpJXRyBJwPKShU0za4lq5WJYdzF+O73yqdhmSUJ/cFuf3E/JJ/DxD/rk3BdV7/jDaFR6YBDyIQ==}
+    peerDependencies:
+      vue: ^3.2.2
+      xe-utils: ^3.5.0
+    dependencies:
+      vue: 3.2.21
+      xe-utils: 3.5.4
+    dev: false
+
+  /vxe-table/4.2.3_xe-utils@3.5.4:
+    resolution: {integrity: sha512-sbW9yZ763/ArOpJXRyBJwPKShU0za4lq5WJYdzF+O73yqdhmSUJ/cFuf3E/JJ/DxD/rk3BdV7/jDaFR6YBDyIQ==}
+    peerDependencies:
+      vue: ^3.2.2
+      xe-utils: ^3.5.0
+    dependencies:
+      xe-utils: 3.5.4
+    dev: false
+
   /warning/4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
     dependencies:
@@ -9239,6 +9266,10 @@ packages:
     dependencies:
       js-yaml: 4.1.0
       write-file-atomic: 3.0.3
+
+  /xe-utils/3.5.4:
+    resolution: {integrity: sha512-oH7VOgvHv34pn198dhKPVKnuEHV22Q06YpCTVnAS3JuutylmZj/rtJGvn0BxxWQ37w2LgCknoebLA4uIGXwFtw==}
+    dev: false
 
   /xtend/4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}

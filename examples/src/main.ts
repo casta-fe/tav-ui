@@ -14,13 +14,18 @@ import { createApp } from 'vue'
 //   TaTime,
 //   TaTimeLine,
 // } from '../../dist/tav-ui/dist/index.full.mjs'
-import TaUi from '../../dist/tav-ui/es/index.mjs'
+// import TaUi from '../../dist/tav-ui/es/index.mjs'
 import 'ant-design-vue/dist/antd.less'
-import '../../dist/tav-ui/theme-chalk/src/index.less'
+import '@tav-ui/theme-chalk/src/index.less'
 import 'virtual:windi.css'
 import App from './App.vue'
+import 'vxe-table/lib/style.css'
+// eslint-disable-next-line import/order
+import { setupVxeTable } from '@tav-ui/components/table-pro/src/setup'
+
 const app = createApp(App)
-app.use(TaUi)
+// app.use(TaUi)
+app.use(setupVxeTable)
 // app.use(TaIcon)
 // app.use(TaButton)
 // app.use(TaBasicTitle)
