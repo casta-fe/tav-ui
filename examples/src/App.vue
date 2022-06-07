@@ -4,7 +4,8 @@
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 import { defineComponent, reactive } from 'vue'
 import * as components from '@tav-ui/components'
-import TimeLineListPage from './components/timeLineList/index.vue'
+import TaConfigProvider from '@tav-ui/components/config-provider'
+// import TimeLineListPage from './components/timeLineList/index.vue'
 // import TimePage from './components/time/index.vue'
 // import InputNumberRangePage from './components/InputNumberRange/index.vue'
 // import FileViewPage from './components/FileView/index.vue'
@@ -13,14 +14,17 @@ import TimeLineListPage from './components/timeLineList/index.vue'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
-import { TaUpload, taUploadProvideData } from './components/TaUpload'
-import SearchableApiSelect from './components/SearchableApiSelect.vue'
+// import { TaUpload, taUploadProvideData } from './components/TaUpload'
+// import SearchableApiSelect from './components/SearchableApiSelect.vue'
+import TablePro from './components/TablePro/test'
 
 export default defineComponent({
   components: {
-    TaUpload,
-    SearchableApiSelect,
-    TimeLineListPage,
+    TaConfigProvider,
+    TablePro,
+    // TaUpload,
+    // SearchableApiSelect,
+    // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
@@ -45,7 +49,7 @@ export default defineComponent({
     const state = reactive({
       permissions: {},
       components: {
-        TaUpload: taUploadProvideData,
+        // TaUpload: taUploadProvideData,
       },
     })
     setTimeout(() => {
@@ -66,7 +70,8 @@ export default defineComponent({
 
 <template>
   <TaConfigProvider :permissions="state.permissions" :components="state.components">
-    <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
+    <TablePro />
+    <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
     </TaButton>
     <TaBasicArrow />
@@ -77,8 +82,8 @@ export default defineComponent({
     </TaBasicTitle>
     <SearchableApiSelect />
     <TaUpload />
-    <!-- <TaLoading  :loading="true"></TaLoading> -->
-    <TimeLineListPage />
+    <TaLoading  :loading="true"></TaLoading>
+    <TimeLineListPage /> -->
     <!-- 
   <TimePage />
   <InputNumberRangePage />
@@ -89,11 +94,3 @@ export default defineComponent({
   <BasicTablePage /> -->
   </TaConfigProvider>
 </template>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-</style>

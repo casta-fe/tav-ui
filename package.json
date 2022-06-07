@@ -54,7 +54,9 @@
     "qrcode": "1.4.4",
     "resize-observer-polyfill": "1.5.1",
     "sortablejs": "1.15.0",
-    "vue-types": "4.1.1"
+    "vue-types": "4.1.1",
+    "vxe-table": "4.2.3",
+    "xe-utils": "3.5.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",

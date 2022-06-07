@@ -32,9 +32,9 @@
               </template>
               <div>
                 <Icon v-if="item.icon" :icon="item.icon" />
-                <span class="ml-1 ant-btn ant-btn-link ant-btn-sm" style="font-size: 12px">{{
-                  item.text
-                }}</span>
+                <span class="ml-1 ant-btn ant-btn-link ant-btn-sm" style="font-size: 12px">
+                  {{ item.text }}
+                </span>
               </div>
             </ModalButton>
             <template v-else>
@@ -53,12 +53,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { Dropdown, Menu, Popconfirm } from 'ant-design-vue'
-import { omit } from 'lodash-es'
+// import { computed } from 'vue'
+import { Dropdown, Menu /*Popconfirm*/ } from 'ant-design-vue'
+// import { omit } from 'lodash-es'
 import ModalButton from '@tav-ui/components/button-modal'
 import Icon from '@tav-ui/components/icon'
-import { isFunction } from '@tav-ui/utils/is'
+// import { isFunction } from '@tav-ui/utils/is'
 import { dropdownProps } from './types'
 import type { DropdownMenu as DropMenu } from './types'
 
@@ -66,7 +66,7 @@ const ADropdown = Dropdown
 const AMenu = Menu
 const AMenuItem = Menu.Item
 const AMenuDivider = Menu.Divider
-const APopconfirm = Popconfirm
+// const APopconfirm = Popconfirm
 
 const props = defineProps(dropdownProps)
 
@@ -74,25 +74,27 @@ const emit = defineEmits(['menuEvent', 'menuItemPopConfirmVisible'])
 
 function handleClickMenu(item: DropMenu) {
   const { event } = item
-  const menu = props.dropMenuList.find((item) => `${item.event}` === `${event}`)
-  emit('menuEvent', menu)
+  if (event) {
+    const menu = props.dropMenuList.find((item) => `${item.event}` === `${event}`)
+    menu && emit('menuEvent', menu)
+  }
   item.onClick?.()
 }
 
-function handlePopConfirmVisible(visible: boolean) {
-  emit('menuItemPopConfirmVisible', visible)
-}
+// function handlePopConfirmVisible(visible: boolean) {
+//   emit('menuItemPopConfirmVisible', visible)
+// }
 
-const getPopConfirmAttrs = computed(() => {
-  return (attrs) => {
-    const originAttrs = omit(attrs, ['confirm', 'cancel', 'icon'])
-    if (!attrs.onConfirm && attrs.confirm && isFunction(attrs.confirm))
-      originAttrs['onConfirm'] = attrs.confirm
-    if (!attrs.onCancel && attrs.cancel && isFunction(attrs.cancel))
-      originAttrs['onCancel'] = attrs.cancel
-    return originAttrs
-  }
-})
+// const getPopConfirmAttrs = computed(() => {
+//   return (attrs) => {
+//     const originAttrs = omit(attrs, ['confirm', 'cancel', 'icon'])
+//     if (!attrs.onConfirm && attrs.confirm && isFunction(attrs.confirm))
+//       originAttrs['onConfirm'] = attrs.confirm
+//     if (!attrs.onCancel && attrs.cancel && isFunction(attrs.cancel))
+//       originAttrs['onCancel'] = attrs.cancel
+//     return originAttrs
+//   }
+// })
 
 const getAttr = (key: string | number) => ({ key })
 </script>
