@@ -1,0 +1,305 @@
+@import '../var/index.less';
+.ta-table-pro {
+  position: relative;
+  // padding: 16px 16px 12px !important;
+  // border-radius: @primary-border-radius !important;
+
+  &--fill-inner {
+    .vxe-table {
+      margin: @gap16 @gap16 0;
+
+      .vxe-table-slots, .vxe-table--render-wrapper {
+        position: relative;
+        z-index: 2;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: -@gap16;
+        left: -@gap16;
+        width: calc(100% + @gap16 * 2);
+        height: calc(100% + @gap16);
+        background-color: #fff;
+        // z-index: 1;
+        border-top-left-radius: @primary-border-radius;
+        border-top-right-radius: @primary-border-radius;
+      }
+    }
+    .vxe-grid--pager-wrapper {
+      position: relative;
+      padding: 0 @gap16 6px;
+      background-color: #fff;
+      border-bottom-left-radius: @primary-border-radius;
+      border-bottom-right-radius: @primary-border-radius;
+    }
+  }
+
+  // header cell
+  .vxe-header--column,
+  .vxe-header--gutter {
+    background: #f8f8fb;
+  }
+  .vxe-header--column:not(.col--last) {
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 25%;
+      right: 0;
+      left: auto;
+      bottom: auto;
+      width: 1px;
+      height: 50%;
+      background-color: #e8eaec;
+    }
+  }
+  // header cell highlight
+  .vxe-table--render-default.column--highlight
+    .vxe-header--column:not(.col--seq):hover {
+    background-color: #f5f7fa;
+  }
+
+  // resize bar
+  .vxe-table--render-default .vxe-table--resizable-bar:before {
+    background-color: #e8eaec;
+  }
+
+  // checkbox
+  .vxe-custom--option .vxe-checkbox--icon:before,
+  .vxe-export--panel-column-option .vxe-checkbox--icon:before,
+  .vxe-table--filter-option .vxe-checkbox--icon:before,
+  .vxe-table--render-default .vxe-cell--checkbox .vxe-checkbox--icon:before {
+    border-radius: @primary-border-radius;
+    border: 1px solid #dcdfe6;
+  }
+
+  // highlight
+  .vxe-table--render-default .vxe-body--row.row--checked,
+  .vxe-table--render-default .vxe-body--row.row--radio {
+    background-color: @table-selected-row-bg;
+  }
+
+  // loading
+  .vxe-grid.is--loading:before {
+    background-color: #f0f2f566;
+    // height: calc(100% + 10px);
+  }
+  .vxe-table .vxe-loading {
+    background-color: transparent;
+
+    .vxe-loading--spinner {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  // pagination
+  .vxe-pager .vxe-pager--jump-next:not(.is--disabled):hover,
+  .vxe-pager .vxe-pager--jump-prev:not(.is--disabled):hover,
+  .vxe-pager .vxe-pager--next-btn:not(.is--disabled):hover,
+  .vxe-pager .vxe-pager--num-btn:not(.is--disabled):hover,
+  .vxe-pager .vxe-pager--prev-btn:not(.is--disabled):hover {
+    color: @primary-color;
+  }
+  .vxe-pager--wrapper {
+    font-size: 12px;
+    color: #555;
+    line-height: 27px;
+
+    .is--disabled {
+      display: none;
+    }
+
+    .vxe-pager--sizes,
+    .vxe-pager--total {
+      float: left;
+    }
+
+    .vxe-pager--sizes {
+      .vxe-input--inner {
+        height: 24px;
+        line-height: 24px;
+      }
+    }
+
+    .vxe-pager--num-btn {
+      padding: 0 10px;
+      margin: 0 6px 0 4px;
+      border: 1px solid @primary-color;
+      color: @primary-color;
+      border-radius: @primary-border-radius;
+      background-color: #fff;
+
+      &.is--active {
+        background-color: @primary-color;
+        color: #fff !important;
+      }
+    }
+
+    .vxe-pager--prev-btn,
+    .vxe-pager--next-btn {
+      min-width: 70px !important;
+      color: @primary-color;
+      border: 1px solid @primary-color;
+      border-radius: @primary-border-radius;
+      background-color: #fff !important;
+
+      .vxe-pager--btn-icon {
+        display: none;
+      }
+      &::after {
+        content: attr(title);
+      }
+    }
+  }
+
+  // operations => filter-form + custom action
+  &-operations {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  // filter-form
+  &-filter-form {
+    display: flex;
+    align-items: center;
+    flex: 1 1 50%;
+    margin-bottom: @gap16;
+
+    &-input {
+      width: 380px;
+      margin-right: @gap16;
+
+      .ant-form-item {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &-pannel {
+      &-activator {
+        height: 32px !important;
+        line-height: 32px !important;
+
+        .ant-badge {
+          position: absolute;
+          top: -15px;
+          right: -80%;
+        }
+      }
+
+      &-form {
+        .ant-form-item-label label {
+          color: #999 !important;
+        }
+      }
+    }
+  }
+  // custom action
+  &-custom-action {
+    margin-bottom: @gap16;
+
+    .ta-basic-button {
+      margin-left: @gap16;
+      & + & {
+        margin-right: @gap16;
+      }
+    }
+
+    &-btn.refresh {
+      min-width: auto;
+      color: @primary-color;
+      border-color: @primary-color;
+    }
+  }
+
+  // operations
+  &-operations {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  // tags
+  &-tags-scroll-container {
+    .scrollbar__bar.is-vertical {
+      width: 2px;
+    }
+    .scrollbar__bar.is-horizontal {
+      height: 2px;
+    }
+  }
+
+  // action
+  &-action {
+    display: flex;
+    align-items: center;
+
+    .action-divider {
+      display: table;
+    }
+
+    .ant-popover {
+      top: 30px !important;
+
+      .ant-popover-arrow {
+        // bottom: auto !important;
+        // top: 6px !important;
+        display: none !important;
+      }
+    }
+
+    .ant-dropdown-trigger {
+      margin-left: 10px;
+    }
+
+    &.left {
+      justify-content: flex-start;
+    }
+
+    &.center {
+      justify-content: center;
+    }
+
+    &.right {
+      justify-content: flex-end;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      font-size: 12px;
+
+      min-width: auto;
+
+      span {
+        margin-left: 0 !important;
+      }
+    }
+
+    button.ant-btn-circle {
+      span {
+        margin: auto !important;
+      }
+    }
+
+    .ant-divider,
+    .ant-divider-vertical {
+      margin: 0 10px;
+    }
+
+    .icon-more {
+      transform: rotate(90deg);
+
+      svg {
+        font-size: 1.1em;
+        font-weight: 700;
+      }
+    }
+  }
+}

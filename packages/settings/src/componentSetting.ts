@@ -8,15 +8,15 @@ export default {
     // Form interface request general configuration
     // support xxx.xxx.xxx
     fetchSetting: {
-      // The field name of the current page passed to the background
       // pageField: "page",
+      // 请求接口当前页数
       pageField: 'currentPage',
-      // The number field name of each page displayed in the background
+      // 每页显示多少条
       sizeField: 'pageSize',
-      // Field name of the form data returned by the interface
       // listField: "items",
+      // 请求结果列表字段  支持 a.b.c
       listField: 'result',
-      // Total number of tables returned by the interface field name
+      // 请求结果总数字段  支持 a.b.c
       totalField: 'total',
     },
     // Number of pages that can be selected

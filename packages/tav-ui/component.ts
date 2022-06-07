@@ -27,6 +27,7 @@ import { TaQrCode } from '@tav-ui/components/qr-code'
 import { TaScrollbar } from '@tav-ui/components/scrollbar'
 import { TaStrengthMeter } from '@tav-ui/components/strength-meter'
 import { TaTable, TableAction, TableImg } from '@tav-ui/components/table'
+import { TaTablePro } from '@tav-ui/components/table-pro'
 import { TaTableTags } from '@tav-ui/components/table-tags'
 import { TaTime } from '@tav-ui/components/time'
 import { TaTimeLine } from '@tav-ui/components/time-line'
@@ -74,6 +75,7 @@ export default [
   TaTable,
   TableAction,
   TableImg,
+  TaTablePro,
   TaTableTags,
   TaTime,
   TaTimeLine,

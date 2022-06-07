@@ -37,4 +37,17 @@ defineOptions({
 
 1. git tag v0.0.1 
 2. git push --tag
-3. github action 自动发布
+
+等待 github action 自动发布即可，发布进度在 github 仓库中的 actions 下查看
+
+# 本地调试
+
+1. pnpm build 打出 dist
+2. 修改自己项目中的 package.json tav-ui 路径为 `"tav-ui": "file:/Users/i7eo/Documents/Company/XA-Castianta/tav-ui/dist/tav-ui"`
+3. 重新 yarn install 即可查看
+
+# TalePro
+
+1. 所有对象配置均改为 xxxconfig 和 vxetable 风格一致，例如: `filter => filterFormConfig`，使用前请先查看 vxegrid api 和 tablepro 下的 types
+2. ifShow 均改为 enable 和 vxetable 保持一致
+3. 按钮权限打散到每个按钮中
