@@ -359,11 +359,11 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
   ]
 }
 
-export const filterForm2 = (): TableProFilterForm => {
-  // await API__POE_CUSTOM_ALL({
-  //   filter: { tab: 0 },
-  //   model: { page: 1, limit: 2 },
-  // })
+export const filterForm2 = async (): Promise<TableProFilterForm> => {
+  await API__POE_CUSTOM_ALL({
+    filter: { tab: 0 },
+    model: { page: 1, limit: 2 },
+  })
 
   return {
     inputForm: {

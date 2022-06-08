@@ -1,5 +1,6 @@
 import { computed, unref } from 'vue'
-import { deepMerge } from '@tav-ui/utils/basic'
+// import { deepMerge } from '@tav-ui/utils/basic'
+// import { cloneDeep } from 'lodash-es'
 import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
@@ -188,10 +189,16 @@ function mergePropsRef(
       if (unref(defaultPropsRef)[key]) {
         // 只对对象进行合并，其他类型已传入的值为准
         if (isObject(unref(defaultPropsRef)[key])) {
-          unref(paramPropsRef)[key] = deepMerge(
-            unref(defaultPropsRef)[key],
-            unref(paramPropsRef)[key]
-          )
+          // // 会有性能问题，暂时浅合并
+          // unref(paramPropsRef)[key] = deepMerge(
+          //   cloneDeep(unref(defaultPropsRef)[key]),
+          //   cloneDeep(unref(paramPropsRef)[key])
+          // )
+          // 浅合并
+          unref(paramPropsRef)[key] = {
+            ...unref(defaultPropsRef)[key],
+            ...unref(paramPropsRef)[key],
+          }
         }
       }
     }

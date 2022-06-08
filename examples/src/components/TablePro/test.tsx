@@ -30,13 +30,13 @@ export default defineComponent({
     //   loading.value = false
     // }, 300)
 
-    const handleFilterFormConfig = (): TableProFilterFormConfig => ({
-      // enabled: false,
-      ...filterForm2(),
-    })
+    // const handleFilterFormConfig = (): TableProFilterFormConfig => ({
+    //   // enabled: false,
+    //   ...filterForm2(),
+    // })
 
     onMounted(async () => {
-      // state.filterFormConfig = await filterForm2()
+      state.filterFormConfig = await filterForm2()
       state.columns = await columns2()
     })
 
@@ -120,8 +120,8 @@ export default defineComponent({
               loading={loading.value}
               height="auto"
               // height={500}
-              filterFormConfig={handleFilterFormConfig()}
-              // filterFormConfig={state.filterFormConfig}
+              // filterFormConfig={handleFilterFormConfig()}
+              filterFormConfig={state.filterFormConfig}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
               api={handleApi}
