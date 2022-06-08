@@ -1,20 +1,21 @@
 @import "../var/index.less";
 .ta-button-group {
   margin-bottom: @gap16;
+  position: relative;
 
   &-inner {
     white-space: nowrap;
     max-width: 100%;
     overflow-y: hidden;
     overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .ant-btn {
     border-radius: 32px !important;
-  }
-
-  .ant-btn + .ant-btn {
-    margin-left: 16px;
   }
 
   .ant-btn-default {
