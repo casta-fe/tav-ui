@@ -63,7 +63,7 @@
     "resize-observer-polyfill": "1.5.1",
     "sortablejs": "1.15.0",
     "vue-types": "4.1.1",
-    "vxe-table": "4.2.3",
+    "vxe-table": "4.2.6",
     "xe-utils": "3.5.4"
   },
   "engines": {

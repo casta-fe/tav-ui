@@ -22,7 +22,7 @@ const props = {
     >,
     required: true,
   },
-  config: {
+  tagConfig: {
     type: Object as PropType<Partial<TableProTagsConfig>>,
   },
   maxNum: {
@@ -42,10 +42,10 @@ export default defineComponent({
   name: ComponentTagsName,
   props,
   setup(props) {
-    const getConfig = computed(() => Object.assign({}, DEFAULT_CONFIG, props.config))
+    const getConfig = computed(() => Object.assign({}, DEFAULT_CONFIG, props.tagConfig))
 
     const renderTag = (info: Record<string, any>) => {
-      const { label, value } = unref(getConfig)
+      const { label, value, color, style } = unref(getConfig)
       return (
         <Tag color={props.color} key={`${info[label]}-${info[value]}`} title={info[label]}>
           {getShortText(info[label])}

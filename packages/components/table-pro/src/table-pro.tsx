@@ -1,16 +1,17 @@
-import { computed, defineComponent, ref, unref, watchEffect } from 'vue'
+import { computed, defineComponent, ref, unref } from 'vue'
 import { setupVxeTable } from '@tav-ui/components/table-pro/src/setup'
 import { mitt } from '@tav-ui/utils/mitt'
+import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
-import ComponentCustomAction from './components/custom-action'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
-import { useListeners } from './hooks/useListeners'
-import { tableProEmits, tableProProps } from './types'
 import { useColumns } from './hooks/useColums'
-import { useProps } from './hooks/useProps'
 import { useDataSource } from './hooks/useDataSource'
+import { useListeners } from './hooks/useListeners'
+import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
+import { useWatchDom } from './hooks/useWatchDom'
+import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const { Grid } = setupVxeTable()
@@ -60,20 +61,14 @@ export default defineComponent({
     // 数据处理
     useDataSource(getProps, tableRef)
 
+    // 执行dom监听的处理
+    useWatchDom(getBindValues, tableRef, tableEmitter)
+
     // 注入数据
     createTableContext({ tableRef, tableEmitter })
 
     // 抛出实例
-    expose(tableRef)
-
-    // vxeGrid 渲染完毕
-    watchEffect(() => {
-      if (unref(tableRef.value)) {
-        tableEmitter.emit('table-pro:dom-ready', {
-          table: unref(tableRef.value)?.$el,
-        })
-      }
-    })
+    expose({ instance: tableRef })
 
     return () => {
       return (

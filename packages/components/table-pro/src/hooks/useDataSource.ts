@@ -1,6 +1,6 @@
 import { onMounted, unref } from 'vue'
-import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { isBoolean, isFunction } from '@tav-ui/utils/is'
+import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProInstance, TableProProps } from '../types'

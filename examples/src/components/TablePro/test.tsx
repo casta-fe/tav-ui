@@ -1,34 +1,43 @@
-import { defineComponent, ref, unref } from 'vue'
+import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import { columns2, filterForm2 } from './data'
 import type {
+  ITableProInstance,
   TableProApi,
   TableProCheckboxAll,
   TableProCheckboxChange,
   TableProCustomActionConfig,
   TableProFilterFormConfig,
-  TableProInstance,
   TableProProxyConfig,
 } from '@tav-ui/components/table-pro'
 
 export default defineComponent({
   setup() {
+    const state = reactive({
+      filterFormConfig: {},
+      columns: [] as any[],
+    })
     const loading = ref<boolean>(false)
 
-    const columns = columns2
+    // const columns = columns2
 
-    const tableRef = ref<TableProInstance | null>(null)
+    const tableRef = ref<ITableProInstance | null>(null)
 
     // loading.value = true
     // setTimeout(() => {
     //   loading.value = false
     // }, 300)
 
-    const handleFilterFormConfig = (): TableProFilterFormConfig => ({
-      // enabled: false,
-      ...filterForm2(),
+    // const handleFilterFormConfig = (): TableProFilterFormConfig => ({
+    //   // enabled: false,
+    //   ...filterForm2(),
+    // })
+
+    onMounted(async () => {
+      state.filterFormConfig = await filterForm2()
+      state.columns = await columns2()
     })
 
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({
@@ -67,12 +76,12 @@ export default defineComponent({
     const handleApi: TableProApi<Promise<any>> = ({ filter, model }) =>
       API__POE_CUSTOM_ALL({
         filter: { ...filter, tab: 0 },
-        model,
+        model: { ...model, ...{ limit: 2 } },
       })
 
     const handleCheckboxChange: TableProCheckboxChange = (params) => {
       console.log('handleCheckboxChange: ', params)
-      console.log(unref(tableRef.value)?.getCheckboxRecords())
+      console.log(unref(tableRef)?.instance?.getCheckboxRecords())
       // unref(tableRef.value)?.scrollTo(null, 0)
     }
 
@@ -97,21 +106,22 @@ export default defineComponent({
         <div
           style={{
             width: '80%',
-            height: '100%',
+            height: '968px',
             backgroundColor: '#f6f8ff',
-            padding: '50px 0',
             margin: '0 auto',
           }}
         >
-          <div style={{ width: '90%', height: '100%', margin: '0 auto' }}>
+          <div style={{ width: '90%', height: '968px', margin: '0 auto' }}>
             <TaTablePro
               ref={tableRef}
               // data={MockData()}
-              columns={columns()}
+              // columns={columns()}
+              columns={state.columns}
               loading={loading.value}
               height="auto"
               // height={500}
-              filterFormConfig={handleFilterFormConfig()}
+              // filterFormConfig={handleFilterFormConfig()}
+              filterFormConfig={state.filterFormConfig}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
               api={handleApi}
