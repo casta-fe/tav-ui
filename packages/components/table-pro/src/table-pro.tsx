@@ -68,7 +68,7 @@ export default defineComponent({
     createTableContext({ tableRef, tableEmitter })
 
     // 抛出实例
-    expose(tableRef)
+    expose({ instance: tableRef })
 
     return () => {
       return (

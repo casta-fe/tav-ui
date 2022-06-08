@@ -4,12 +4,12 @@ import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import { columns2, filterForm2 } from './data'
 import type {
+  ITableProInstance,
   TableProApi,
   TableProCheckboxAll,
   TableProCheckboxChange,
   TableProCustomActionConfig,
   TableProFilterFormConfig,
-  TableProInstance,
   TableProProxyConfig,
 } from '@tav-ui/components/table-pro'
 
@@ -23,7 +23,7 @@ export default defineComponent({
 
     // const columns = columns2
 
-    const tableRef = ref<TableProInstance | null>(null)
+    const tableRef = ref<ITableProInstance | null>(null)
 
     // loading.value = true
     // setTimeout(() => {
@@ -81,7 +81,7 @@ export default defineComponent({
 
     const handleCheckboxChange: TableProCheckboxChange = (params) => {
       console.log('handleCheckboxChange: ', params)
-      console.log(unref(tableRef.value)?.getCheckboxRecords())
+      console.log(unref(tableRef)?.instance?.getCheckboxRecords())
       // unref(tableRef.value)?.scrollTo(null, 0)
     }
 

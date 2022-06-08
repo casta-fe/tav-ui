@@ -29,6 +29,9 @@ import type {
 export type TableProColumn = VxeTableDefines.ColumnOptions
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
+export interface ITableProInstance {
+  instance: VxeGridInstance
+}
 /** table 支持的事件类型 */
 export type TableProEvent = VxeTableEventProps & VxeGridEventProps
 /** table 支持的事件名称 */
