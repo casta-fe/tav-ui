@@ -10,7 +10,7 @@ import { isFunction } from '@tav-ui/utils/is'
 import { useCountdown } from '@tav-ui/components/count-down/src/useCountdown'
 import { countButtonProps } from './types'
 export default defineComponent({
-  name: 'CountButton',
+  name: 'TaCountButton',
   components: { Button },
   props: countButtonProps,
   setup(props) {
