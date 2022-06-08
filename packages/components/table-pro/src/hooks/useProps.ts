@@ -1,8 +1,8 @@
-import { computed, nextTick, unref } from 'vue'
+import { computed, unref } from 'vue'
+import { deepMerge } from '@tav-ui/utils/basic'
 import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
-import { setActionWidth } from './useColums'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProGridEmit, TableProInstance, TableProProps } from '../types'
 import type { TableProApiParams, VxeQueryParams } from '../typings'
@@ -136,7 +136,7 @@ function handleExtenApi(
           ...result,
         })
 
-        // // 阻断 vue 对大数组的监听，避免 vue 绑定大数据造成短暂的卡顿
+        // // 阻断 vue 对大数组的监听，避免 vue 绑定大数据造成短暂的卡顿, => 虚拟滚动-最大高度demo
         // unref(tableRef.value)?.loadData(result)
         return Promise.resolve(result)
       } catch (error) {
@@ -147,11 +147,6 @@ function handleExtenApi(
     // 要使用beforequery则query必须存在
     unref(tablePropsRef).proxyConfig!['ajax'] = {
       query: () => Promise.resolve({}),
-    }
-    // 使用 afterquery 来动态设置列宽，比如 tableaction
-    unref(tablePropsRef).proxyConfig!['afterQuery'] = async () => {
-      await nextTick()
-      setActionWidth(tablePropsRef, tableRef)
     }
   }
 
@@ -193,10 +188,10 @@ function mergePropsRef(
       if (unref(defaultPropsRef)[key]) {
         // 只对对象进行合并，其他类型已传入的值为准
         if (isObject(unref(defaultPropsRef)[key])) {
-          unref(paramPropsRef)[key] = {
-            ...unref(defaultPropsRef)[key],
-            ...unref(paramPropsRef)[key],
-          }
+          unref(paramPropsRef)[key] = deepMerge(
+            unref(defaultPropsRef)[key],
+            unref(paramPropsRef)[key]
+          )
         }
       }
     }

@@ -1,6 +1,7 @@
 import { Tag } from 'ant-design-vue'
 import { TableAction } from '@tav-ui/components/table'
 import { TaTableProAction, TaTableProTags } from '@tav-ui/components/table-pro'
+import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import type { FormSchema } from '@tav-ui/components/form'
 import type { TableProColumn, TableProFilterForm } from '@tav-ui/components/table-pro'
 
@@ -234,17 +235,23 @@ export const filterForm1 = (): TableProFilterForm => ({
   ] as FormSchema[],
 })
 
-export const columns2 = (): TableProColumn[] => {
+export const columns2 = async (): Promise<TableProColumn[]> => {
+  await API__POE_CUSTOM_ALL({
+    filter: { tab: 0 },
+    model: { page: 1, limit: 50 },
+  })
+
   return [
     { field: 'customerName', title: '客户名称', fixed: 'left' },
-    { field: 'customerCode', title: '客户编号' },
+    { field: 'customerCode', title: '客户编号', fixed: 'left' },
     {
       field: 'classificationValue',
       title: '客户分类',
       width: 1000,
       slots: {
         default: ({ row: { classificationValue } }) => {
-          return [<TaTableProTags data={classificationValue} color={'blue'} />]
+          console.log(classificationValue)
+          return [<TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />]
         },
       },
     },
@@ -260,7 +267,7 @@ export const columns2 = (): TableProColumn[] => {
       title: '行业',
       slots: {
         default: ({ row: { industryList } }) => {
-          return [<TaTableProTags data={industryList} color={'green'} />]
+          return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
         },
       },
     },
@@ -269,7 +276,7 @@ export const columns2 = (): TableProColumn[] => {
       title: '应用领域',
       slots: {
         default: ({ row: { applicationList } }) => {
-          return [<TaTableProTags data={applicationList} color={'purple'} />]
+          return [<TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />]
         },
       },
     },
@@ -352,134 +359,141 @@ export const columns2 = (): TableProColumn[] => {
   ]
 }
 
-export const filterForm2 = (): TableProFilterForm => ({
-  inputForm: {
-    field: 'customerName',
-    componentProps: {
-      placeholder: '请输入客户名称',
-    },
-  },
-  pannelForm: [
-    // {
-    //   field: "industryIds",
-    //   component: "CheckboxGroup",
-    //   label: "行业",
-    //   colProps: {
-    //     span: 24
-    //   },
-    //   componentProps: () => {
-    //     return {
-    //       options: INDUSTRY_List.value
-    //     };
-    //   }
-    // },
-    // {
-    //   field: "classification",
-    //   component: "CheckboxGroup",
-    //   label: "客户分类",
-    //   colProps: {
-    //     span: 24
-    //   },
-    //   componentProps: () => {
-    //     return {
-    //       options: CLASSIFICATION_List.value
-    //     };
-    //   }
-    // },
-    {
-      field: 'minValuation',
-      component: 'InputNumber',
-      label: '估值区间',
-      colProps: {
-        span: 7,
-        // offset: 6,
-        // pull: 6
-      },
+export const filterForm2 = (): TableProFilterForm => {
+  // await API__POE_CUSTOM_ALL({
+  //   filter: { tab: 0 },
+  //   model: { page: 1, limit: 2 },
+  // })
+
+  return {
+    inputForm: {
+      field: 'customerName',
       componentProps: {
-        placeholder: '万元',
-        allowClear: true,
+        placeholder: '请输入客户名称',
       },
     },
-    {
-      field: 'maxValuation',
-      component: 'InputNumber',
-      label: '至',
-      colProps: {
-        span: 7,
-        offset: 5,
-        pull: 6,
+    pannelForm: [
+      // {
+      //   field: "industryIds",
+      //   component: "CheckboxGroup",
+      //   label: "行业",
+      //   colProps: {
+      //     span: 24
+      //   },
+      //   componentProps: () => {
+      //     return {
+      //       options: INDUSTRY_List.value
+      //     };
+      //   }
+      // },
+      // {
+      //   field: "classification",
+      //   component: "CheckboxGroup",
+      //   label: "客户分类",
+      //   colProps: {
+      //     span: 24
+      //   },
+      //   componentProps: () => {
+      //     return {
+      //       options: CLASSIFICATION_List.value
+      //     };
+      //   }
+      // },
+      {
+        field: 'minValuation',
+        component: 'InputNumber',
+        label: '估值区间',
+        colProps: {
+          span: 7,
+          // offset: 6,
+          // pull: 6
+        },
+        componentProps: {
+          placeholder: '万元',
+          allowClear: true,
+        },
       },
-      componentProps: {
-        placeholder: '万元',
-        allowClear: true,
+      {
+        field: 'maxValuation',
+        component: 'InputNumber',
+        label: '至',
+        colProps: {
+          span: 7,
+          offset: 5,
+          pull: 6,
+        },
+        componentProps: {
+          placeholder: '万元',
+          allowClear: true,
+        },
       },
-    },
-    {
-      field: 'minAnnualRevenue',
-      component: 'InputNumber',
-      label: '营收区间',
-      colProps: {
-        span: 7,
+      {
+        field: 'minAnnualRevenue',
+        component: 'InputNumber',
+        label: '营收区间',
+        colProps: {
+          span: 7,
+        },
+        componentProps: {
+          placeholder: '万元',
+          allowClear: true,
+        },
       },
-      componentProps: {
-        placeholder: '万元',
-        allowClear: true,
+      {
+        field: 'maxAnnualRevenue',
+        component: 'InputNumber',
+        label: '至',
+        colProps: {
+          span: 7,
+          offset: 5,
+          pull: 6,
+        },
+        componentProps: {
+          placeholder: '万元',
+          allowClear: true,
+        },
       },
-    },
-    {
-      field: 'maxAnnualRevenue',
-      component: 'InputNumber',
-      label: '至',
-      colProps: {
-        span: 7,
-        offset: 5,
-        pull: 6,
+      {
+        field: 'customerType',
+        component: 'RadioGroup',
+        label: '客户类型',
+        colProps: {
+          span: 24,
+        },
+        defaultValue: 0,
+        componentProps: {
+          options: [
+            {
+              label: '全部',
+              value: 0,
+            },
+            {
+              label: '机构',
+              value: 1,
+            },
+            {
+              label: '企业',
+              value: 2,
+            },
+          ],
+        },
       },
-      componentProps: {
-        placeholder: '万元',
-        allowClear: true,
-      },
-    },
-    {
-      field: 'customerType',
-      component: 'RadioGroup',
-      label: '客户类型',
-      colProps: {
-        span: 24,
-      },
-      defaultValue: 0,
-      componentProps: {
-        options: [
-          {
-            label: '全部',
-            value: 0,
-          },
-          {
-            label: '机构',
-            value: 1,
-          },
-          {
-            label: '企业',
-            value: 2,
-          },
-        ],
-      },
-    },
-    // {
-    //   field: 'ownerList',
-    //   component: 'MemberSelect',
-    //   label: '客户负责人',
-    //   colProps: {
-    //     span: 12,
-    //     offset: 12,
-    //     pull: 12,
-    //   },
-    //   componentProps: {
-    //     multiple: true,
-    //     placeholder: '请选择客户负责人',
-    //     allowClear: true,
-    //     getPopupContainer: () => document.body,
-    //   },
-    // },
-  ],
-})
+      // {
+      //   field: 'ownerList',
+      //   component: 'MemberSelect',
+      //   label: '客户负责人',
+      //   colProps: {
+      //     span: 12,
+      //     offset: 12,
+      //     pull: 12,
+      //   },
+      //   componentProps: {
+      //     multiple: true,
+      //     placeholder: '请选择客户负责人',
+      //     allowClear: true,
+      //     getPopupContainer: () => document.body,
+      //   },
+      // },
+    ],
+  }
+}

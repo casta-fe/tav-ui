@@ -61,22 +61,27 @@ export default defineComponent({
         onSearch: useDebounceFn(inputFormSubmit, 300),
       },
     }
-    let inputFormSchema = {}
 
-    if (props.config?.inputForm) {
-      // 因为这里定死是 inputSearch，但是开发中可能是inputSearch但是会重写onSearch方法，所以这里需要merge
-      if (
-        // 方便投管迁移，兼容 Omit<FormSchema, "label" | "component"> 写法
-        !(props.config?.inputForm as any).component ||
-        (props.config?.inputForm as any).component === 'InputSearch'
-      ) {
-        inputFormSchema = merge(defaultInputFormSchema, unref(props.config?.inputForm))
-      } else {
-        // 如果开发传入的 component 不是 inputseacrh，那么直接按照传入的schema生成，不merge
-        inputFormSchema = unref(props.config?.inputForm)
+    const inputFormSchema = computed(() => {
+      let inputFormSchema = {}
+
+      if (props.config?.inputForm) {
+        // 因为这里定死是 inputSearch，但是开发中可能是inputSearch但是会重写onSearch方法，所以这里需要merge
+        if (
+          // 方便投管迁移，兼容 Omit<FormSchema, "label" | "component"> 写法
+          !(props.config?.inputForm as any).component ||
+          (props.config?.inputForm as any).component === 'InputSearch'
+        ) {
+          inputFormSchema = merge(defaultInputFormSchema, unref(props.config?.inputForm))
+        } else {
+          // 如果开发传入的 component 不是 inputseacrh，那么直接按照传入的schema生成，不merge
+          inputFormSchema = unref(props.config?.inputForm)
+        }
       }
-    }
-    const pannelFormSchema = props.config?.pannelForm ?? []
+      return [inputFormSchema as FormSchema]
+    })
+
+    const pannelFormSchema = computed(() => props.config?.pannelForm ?? [])
 
     const tableFilterParams = computed(() => JSON.stringify(state.currentFilter))
 
@@ -122,14 +127,12 @@ export default defineComponent({
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
 
-    const inputForm: FormSchema[] = [inputFormSchema as FormSchema]
-
     const [
       inputFormRegister,
       { resetFields: inputFormResetFields, getFieldsValue: inputFormGetFieldsValue },
     ] = useForm({
       labelWidth: 120,
-      schemas: inputForm,
+      schemas: inputFormSchema,
       showActionButtonGroup: false,
     })
 

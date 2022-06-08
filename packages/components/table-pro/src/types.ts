@@ -92,7 +92,7 @@ export const tableProProps = {
   /** 是否为圆角边框 */
   round: {
     type: Boolean as PropType<VxeTablePropTypes.Round>,
-    default: false,
+    default: true,
   },
   /** 是否带有边框 */
   border: {
@@ -453,6 +453,7 @@ export const tableProProps = {
   pagerConfig: {
     type: Object as PropType<PagerConfig>,
     default: () => ({
+      size: 'mini',
       layouts: ['PrevPage', 'Number', 'NextPage', 'Sizes', 'Total'],
       pageSize: PAGE_SIZE,
       pageSizes: PAGE_SIZE_OPTIONS.map((size) => Number(size)),

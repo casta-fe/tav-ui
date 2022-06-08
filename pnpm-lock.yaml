@@ -60,7 +60,7 @@ importers:
       vue: 3.2.21
       vue-tsc: 0.29.3
       vue-types: 4.1.1
-      vxe-table: 4.2.3
+      vxe-table: 4.2.6
       xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
@@ -86,7 +86,7 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1_vue@3.2.21
-      vxe-table: 4.2.3_vue@3.2.21+xe-utils@3.5.4
+      vxe-table: 4.2.6_vue@3.2.21+xe-utils@3.5.4
       xe-utils: 3.5.4
     devDependencies:
       '@commitlint/cli': 16.2.3
@@ -270,7 +270,7 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.2.3
+      vxe-table: 4.2.6
       xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
@@ -288,7 +288,7 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.2.3_xe-utils@3.5.4
+      vxe-table: 4.2.6_xe-utils@3.5.4
       xe-utils: 3.5.4
 
   packages/theme-chalk:
@@ -9115,8 +9115,8 @@ packages:
       '@vue/shared': 3.2.33
     dev: true
 
-  /vxe-table/4.2.3_vue@3.2.21+xe-utils@3.5.4:
-    resolution: {integrity: sha512-sbW9yZ763/ArOpJXRyBJwPKShU0za4lq5WJYdzF+O73yqdhmSUJ/cFuf3E/JJ/DxD/rk3BdV7/jDaFR6YBDyIQ==}
+  /vxe-table/4.2.6_vue@3.2.21+xe-utils@3.5.4:
+    resolution: {integrity: sha512-hxjwJIanUn9KWU0+twHQ12YHZhjrWLTFwJos8m2RSrA9YV3UfHg15dmQYSsvDE9/x5NDDCoDOxpQi/dhp7aZvQ==}
     peerDependencies:
       vue: ^3.2.2
       xe-utils: ^3.5.0
@@ -9125,8 +9125,8 @@ packages:
       xe-utils: 3.5.4
     dev: false
 
-  /vxe-table/4.2.3_xe-utils@3.5.4:
-    resolution: {integrity: sha512-sbW9yZ763/ArOpJXRyBJwPKShU0za4lq5WJYdzF+O73yqdhmSUJ/cFuf3E/JJ/DxD/rk3BdV7/jDaFR6YBDyIQ==}
+  /vxe-table/4.2.6_xe-utils@3.5.4:
+    resolution: {integrity: sha512-hxjwJIanUn9KWU0+twHQ12YHZhjrWLTFwJos8m2RSrA9YV3UfHg15dmQYSsvDE9/x5NDDCoDOxpQi/dhp7aZvQ==}
     peerDependencies:
       vue: ^3.2.2
       xe-utils: ^3.5.0

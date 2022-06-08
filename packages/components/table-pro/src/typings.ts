@@ -2,6 +2,7 @@ import type { FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { VxeGridPropTypes } from 'vxe-table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
+import type { CSSProperties } from 'vue'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -45,9 +46,15 @@ export interface TableProApi<T> {
 
 export interface TableProTagsConfig {
   /** label 对应的字段 */
-  label: string
+  label?: string
   /** value 对应的字段 */
-  value: string
+  value?: string
+  /** tag 颜色 */
+  color?: string
+  // /** tag 是否圆角 */
+  round?: boolean | string
+  /** tag 自定义样式 */
+  style?: CSSProperties
 }
 
 export interface TableProPopConfirm {
