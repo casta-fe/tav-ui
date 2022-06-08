@@ -3,6 +3,7 @@
   <Select
     v-model:value="state"
     :disabled="disabled"
+    :placeholder="placeholder"
     :options="selectState.list"
     :mode="mode"
     :filter-option="false"
