@@ -1,7 +1,8 @@
 import { computed, defineComponent, unref } from 'vue'
-import { Tag } from 'ant-design-vue'
+import { TagsOutlined } from '@ant-design/icons-vue'
+import { Tag, Tooltip } from 'ant-design-vue'
 import Scrollbar from '@tav-ui/components/scrollbar'
-import { isArray, isObject, isString } from '@tav-ui/utils/is'
+import { isArray, isNumber, isObject, isString } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentTagsName } from '../const'
 import type { ScrollbarProps } from '@tav-ui/components/scrollbar'
 import type { PropType } from 'vue'
@@ -10,8 +11,8 @@ import type { TableProTagsConfig } from '../typings'
 const ComponentPrefixCls = CamelCaseToCls(ComponentTagsName)
 
 const DEFAULT_CONFIG: TableProTagsConfig = {
-  label: 'id',
-  value: 'name',
+  label: 'name',
+  value: 'id',
 }
 
 const props = {
@@ -23,6 +24,10 @@ const props = {
   },
   config: {
     type: Object as PropType<Partial<TableProTagsConfig>>,
+  },
+  maxNum: {
+    type: [Number, null] as PropType<number | null>,
+    default: null,
   },
   color: String,
   scroll: {
@@ -42,24 +47,57 @@ export default defineComponent({
     const renderTag = (info: Record<string, any>) => {
       const { label, value } = unref(getConfig)
       return (
-        <Tag color={props.color} key={`${info[label]}-${info[value]}`}>
-          {info[label]}
+        <Tag color={props.color} key={`${info[label]}-${info[value]}`} title={info[label]}>
+          {getShortText(info[label])}
         </Tag>
       )
     }
-
+    const getShortText = (text = '') => {
+      return text.length > 6 ? `${text.slice(0, 5)}...` : text
+    }
     const createTags = () => {
       const { label } = unref(getConfig)
-      if (isArray(props.data)) {
-        return <div>{props.data.map((v) => renderTag(v))}</div>
-      } else if (isObject(props.data)) {
-        return renderTag(props.data)
-      } else if (isString(props.data)) {
-        return renderTag({
-          [label]: props.data,
+      // 先整理数据，如果非数组、字符串、对象返回 “-”
+      let tagList: Record<string, any>[] = []
+      if (isString(props.data)) {
+        tagList = props.data.split(',').map((v) => {
+          return {
+            [label]: v,
+          }
         })
+      } else if (isArray(props.data)) {
+        tagList = [...props.data]
+      } else if (isObject(props.data)) {
+        tagList = [props.data]
+      } else {
+        return '-'
       }
-      return '-'
+      const maxNum = props.maxNum
+      // maxNum为null或者大于tag数量，就全量展示，否则将多余的收起来
+      if (maxNum === null || (isNumber(maxNum) && maxNum > tagList.length)) {
+        return <>{tagList.map((v) => renderTag(v))}</>
+      } else {
+        const thisTags = [...tagList].splice(0, maxNum)
+        return (
+          <div class="tatable-tag-list">
+            {thisTags.map((v) => renderTag(v))}
+            {thisTags.length < tagList.length ? (
+              <Tooltip
+                overlayClassName="table-pro-tags-Tooltip"
+                v-slots={{
+                  title: () => {
+                    return tagList.map((v) => renderTag(v))
+                  },
+                }}
+              >
+                <TagsOutlined />
+              </Tooltip>
+            ) : (
+              ''
+            )}
+          </div>
+        )
+      }
     }
 
     return () => {
