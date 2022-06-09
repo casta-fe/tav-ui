@@ -1,11 +1,12 @@
-import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
+import { computed, defineComponent, ref, unref } from 'vue'
 import { Select as TaSelect } from 'ant-design-vue'
 import { TaFileView } from '@tav-ui/components/file-view'
-import { TaTable, TableAction, useTable } from '@tav-ui/components/table'
+import { TableAction } from '@tav-ui/components/table'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
+import { setupVxeTable } from '@tav-ui/components/table-pro'
 import { columns } from './config'
-import { creatToolTipTable, getActionColumnMaxWidth, useFileTypeCode } from './hooks'
+import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -15,6 +16,9 @@ import type {
   Result,
   TypeSelectPropType,
 } from './types'
+import type { VxeGridProps } from 'vxe-table'
+
+const { Grid } = setupVxeTable()
 
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
@@ -63,14 +67,14 @@ export const PreviewTable = defineComponent({
       // @ts-ignore
       () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
     )
-    const showActionColumn = computed(() => {
+    const getActionColumn = computed<VxeGridProps['columns']>(() => {
       if (
         props.showTableAction.preview === false &&
         props.showTableAction.download === false &&
         props.showTableAction.downloadWatermark === false &&
         props.showTableAction.delete === false
       )
-        return undefined
+        return []
 
       const labels: string[] = []
 
@@ -84,66 +88,93 @@ export const PreviewTable = defineComponent({
       if (props.showTableAction.delete !== false) labels.push('删除')
       // #endregion
 
-      return {
-        width: getActionColumnMaxWidth(labels),
-        title: '操作',
-        dataIndex: 'action',
-        slots: { customRender: 'action' },
-      }
+      return [
+        {
+          width: getActionColumnMaxWidth(labels),
+          fixed: 'right',
+          resizeable: true,
+          title: '操作',
+          field: 'action',
+          slots: { default: 'action' },
+          // showOverflow: 'tooltip',
+          align: 'center',
+        },
+      ]
     })
 
-    const { loading, readonly } = toRefs(props)
-    const [tableRegister, { setTableData }] = useTable({
-      columns,
-      dataSource: dataSource.value,
-      pagination: false,
-      rowKey: 'id',
-      actionColumn: showActionColumn,
-      useAdd: {
-        ifShow: false,
-      },
-      useDelete: {
-        ifShow: false,
-      },
-      useExport: {
-        ifShow: false,
-      },
-      useRefresh: {
-        ifShow: false,
-      },
-      scroll: {
-        y: 250,
-      },
-    })
-    watch(
-      () => dataSource.value,
-      (val) => {
-        setTableData<FileItemType>(val)
-      },
-      {
-        deep: true,
-      }
-    )
+    const getActions = (record) => {
+      const actions = [
+        {
+          label: '查看',
+          permission: props.tableActionPermission.preview,
+          ifShow: record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
+          onClick() {
+            if (record.hyperlink === 1) {
+              window.open(record.address)?.focus()
+              return
+            }
+            previewRecord.value = [record]
+            showPreview.value = true
+          },
+        },
+        {
+          label: '下载水印文件',
+          permission: props.tableActionPermission.download,
+          ifShow: !!(record.hyperlink === 1
+            ? false
+            : props.readonly
+            ? false
+            : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
+          onClick() {
+            props.download?.(record, undefined, true)
+          },
+        },
+      ]
+      actions.push(
+        {
+          // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
+          label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
+          permission: props.tableActionPermission.download,
+          ifShow: !!(record.hyperlink === 1
+            ? false
+            : props.readonly
+            ? false
+            : (props.showTableAction.download ?? true) && record.sourceFileDownload),
+          onClick() {
+            props.download?.(record)
+          },
+        },
+        {
+          label: '删除',
+          permission: props.tableActionPermission.delete,
+          ifShow: props.showTableAction.delete ?? !props.readonly,
+          // @ts-ignore
+          popConfirm: {
+            title: '是否确认删除?',
+            confirm: () => {
+              emit('delete', record)
+            },
+          },
+        }
+      )
+      return actions
+    }
+
     const showPreview = ref(false)
     const previewRecord = ref<FileItemType[]>([])
 
     return () => (
       <div class="ta-upload-preview-table">
-        <TaTable onRegister={tableRegister} loading={loading.value} canResize={props.canResize}>
+        <Grid
+          height="auto"
+          columns={columns!.concat(getActionColumn.value as any[])}
+          data={dataSource.value}
+          loading={props.loading}
+        >
           {{
-            name: ({ text, record }) => (
+            fullName: ({ row: record }) => (
               <>
-                {props.onClickName ? (
-                  <a
-                    onClick={() => {
-                      props.onClickName?.(record)
-                    }}
-                  >
-                    {creatToolTipTable(text || record.name, 300)}
-                  </a>
-                ) : (
-                  <span>{creatToolTipTable(text || record.name, 300)}</span>
-                )}
+                <span>{record.fullName}</span>
                 {record.hyperlink == 1 ? (
                   <>
                     <br />
@@ -156,83 +187,17 @@ export const PreviewTable = defineComponent({
                           ?.focus()
                       }}
                     >
-                      {creatToolTipTable(record.address, 300)}
+                      {record.address}
                     </a>
                   </>
                 ) : null}
               </>
             ),
-            typeCode: ({ text }) =>
+            typeCode: ({ row: { typeCode: text } }) =>
               typeCodeOptions.value.find((el) => el.value === text)?.label || text,
-            action: ({ record }) => (
-              <TableAction
-                actions={(() => {
-                  const actions = [
-                    {
-                      label: '查看',
-                      permission: props.tableActionPermission.preview,
-                      ifShow:
-                        record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
-                      onClick() {
-                        if (record.hyperlink === 1) {
-                          window.open(record.address)?.focus()
-                          return
-                        }
-                        previewRecord.value = [record]
-                        showPreview.value = true
-                      },
-                    },
-                    {
-                      label: '下载水印文件',
-                      permission: props.tableActionPermission.download,
-                      ifShow:
-                        record.hyperlink === 1
-                          ? false
-                          : readonly.value
-                          ? false
-                          : (props.showTableAction.downloadWatermark ?? true) &&
-                            record.watermarkFileDownload,
-                      onClick() {
-                        props.download?.(record, undefined, true)
-                      },
-                    },
-                  ]
-                  actions.push(
-                    {
-                      // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
-                      label: actions.some((el) => el.label === '下载水印文件' && el.ifShow)
-                        ? '下载源文件'
-                        : '下载',
-                      permission: props.tableActionPermission.download,
-                      ifShow:
-                        record.hyperlink === 1
-                          ? false
-                          : readonly.value
-                          ? false
-                          : (props.showTableAction.download ?? true) && record.sourceFileDownload,
-                      onClick() {
-                        props.download?.(record)
-                      },
-                    },
-                    {
-                      label: '删除',
-                      permission: props.tableActionPermission.delete,
-                      ifShow: props.showTableAction.delete ?? !readonly.value,
-                      // @ts-ignore
-                      popConfirm: {
-                        title: '是否确认删除?',
-                        confirm: () => {
-                          emit('delete', record)
-                        },
-                      },
-                    }
-                  )
-                  return actions
-                })()}
-              />
-            ),
+            action: ({ row }) => <TableAction actions={getActions(row)} />,
           }}
-        </TaTable>
+        </Grid>
         <TaFileView
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}

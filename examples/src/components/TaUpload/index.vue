@@ -1,12 +1,13 @@
 <template>
-  <ta-upload :params="params" />
+  <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
+    <ta-upload :params="params" :show-table-action="{ downloadWatermark: false }" />
+  </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 import { defineComponent } from 'vue'
-// import { TaUpload } from '@tav-ui/components'
-import TaUpload from '../../../../dist/tav-ui/es/components/upload/src/Upload'
+import { TaUpload } from '@tav-ui/components'
 
 export default defineComponent({
   components: {

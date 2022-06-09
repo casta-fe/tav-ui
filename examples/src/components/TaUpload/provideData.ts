@@ -22,6 +22,8 @@ const uploadArr: any[] = [
     fileSize: '5KB',
     moduleCode: 'tg_fund_manager',
     typeCode: 'FUND_GLR_QTZL',
+    sourceFileDownload: 1,
+    watermarkFileDownload: 2,
   },
   {
     fullName: 'doge.png',
@@ -29,6 +31,10 @@ const uploadArr: any[] = [
     createByName: 'mxs',
     createTime: new Date(),
     typeCode: 'FILE_TYPE_1',
+    sourceFileDownload: null,
+    watermarkFileDownload: null,
+    hyperlink: 1,
+    address: 'https://poe.haixingdata.com',
   },
 ]
 

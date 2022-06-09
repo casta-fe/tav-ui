@@ -179,7 +179,15 @@ export const useFileTypeCode = (fileTypeCode: Recordable<LabelValueOptions<strin
  */
 export function getActionColumnMaxWidth(
   arr: string[],
-  { margin = 40, fontSize = 12, appendWidth = 10 } = {}
+  {
+    margin = 44,
+    fontSize = 12,
+    appendWidth = 10,
+  }: {
+    margin?: number
+    fontSize?: number
+    appendWidth?: number
+  } = {}
 ) {
   // TableAction 组件最多展示3个按钮, 间距为 20+20
   let l = margin
@@ -187,5 +195,7 @@ export function getActionColumnMaxWidth(
   for (const str of arr) {
     l += str.length * fontSize
   }
+  // 表格td 自带 padding(左[10]+右[10])
+  l += 20
   return l + appendWidth
 }
