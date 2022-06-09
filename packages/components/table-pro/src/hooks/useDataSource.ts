@@ -4,7 +4,6 @@ import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProInstance, TableProProps } from '../types'
-import type { TableProApiParams } from '../typings'
 
 export function useDataSource(
   tablePropsRef: ComputedRef<TableProProps>,
@@ -14,7 +13,7 @@ export function useDataSource(
   const hasApi = api && isFunction(api)
   if (!hasApi) return
 
-  const params: TableProApiParams = {
+  const params = {
     filter: {},
     model: {},
   }

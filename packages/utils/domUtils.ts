@@ -162,6 +162,22 @@ export function useRafThrottle<T extends FunctionArgs>(fn: T): any {
   }
 }
 
+function doubleRequestAnimationFrame(callback: (...args) => any) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(callback)
+  })
+}
+
+export function componentRendered(callback?: (...args) => any) {
+  if (callback && typeof callback === 'function') {
+    doubleRequestAnimationFrame(callback)
+  } else {
+    return new Promise((resolve) => {
+      doubleRequestAnimationFrame(resolve)
+    })
+  }
+}
+
 export function parentsUntil(el, selector, filter): HTMLDivElement[] {
   const result: HTMLDivElement[] = []
   const matchesSelector =

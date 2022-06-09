@@ -76,13 +76,19 @@ export default defineComponent({
     const handleApi: TableProApi<Promise<any>> = ({ filter, model }) =>
       API__POE_CUSTOM_ALL({
         filter: { ...filter, tab: 0 },
-        model: { ...model, ...{ limit: 2 } },
+        model: { ...model, limit: 20 },
       })
 
     const handleCheckboxChange: TableProCheckboxChange = (params) => {
       console.log('handleCheckboxChange: ', params)
-      console.log(unref(tableRef)?.instance?.getCheckboxRecords())
-      // unref(tableRef.value)?.scrollTo(null, 0)
+      console.log(unref(tableRef)?.instance?.getSelectRowKeys())
+      setTimeout(() => {
+        // unref(tableRef)?.instance?.reload({ clearSelect: true })
+        // unref(tableRef)?.instance?.reload()
+        // unref(tableRef)?.instance?.reload({ page: 1 })
+        // unref(tableRef)?.instance?.clearSelectedRows()
+        unref(tableRef)?.instance?.clearSelectedRowByKey(3284)
+      }, 1500)
     }
 
     const handleCheckboxAll: TableProCheckboxAll = (params) => {
@@ -114,12 +120,11 @@ export default defineComponent({
           <div style={{ width: '90%', height: '968px', margin: '0 auto' }}>
             <TaTablePro
               ref={tableRef}
+              rowConfig={{ keyField: 'id' }}
               // data={MockData()}
               // columns={columns()}
               columns={state.columns}
               loading={loading.value}
-              height="auto"
-              // height={500}
               // filterFormConfig={handleFilterFormConfig()}
               filterFormConfig={state.filterFormConfig}
               customActionConfig={handleCustomActionConfig()}

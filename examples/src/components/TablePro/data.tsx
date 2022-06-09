@@ -250,7 +250,6 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
       width: 1000,
       slots: {
         default: ({ row: { classificationValue } }) => {
-          console.log(classificationValue)
           return [<TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />]
         },
       },
