@@ -35,9 +35,10 @@ export interface TableProCustomActionConfig {
 
 export type VxeQueryParams = VxeGridPropTypes.ProxyAjaxQueryParams
 export type TableProApiParams = {
-  filter: Record<string, any>
-  model: Record<string, any>
-  [key: string]: any
+  filter?: Record<string, any>
+  model?: Record<string, any>
+  clearSelect?: boolean
+  page?: number
 }
 
 export interface TableProApi<T> {

@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, unref } from 'vue'
+import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { setupVxeTable } from '@tav-ui/components/table-pro/src/setup'
 import { mitt } from '@tav-ui/utils/mitt'
 import ComponentCustomAction from './components/custom-action'
@@ -12,6 +12,7 @@ import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
 import { tableProEmits, tableProProps } from './types'
+import { useExtendInstance } from './hooks/useExtendInstance'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const { Grid } = setupVxeTable()
@@ -62,13 +63,13 @@ export default defineComponent({
     useDataSource(getProps, tableRef)
 
     // 执行dom监听的处理
-    useWatchDom(getBindValues, tableRef, tableEmitter)
+    useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
     createTableContext({ tableRef, tableEmitter })
 
     // 抛出实例
-    expose({ instance: tableRef })
+    expose({ ...toRefs(useExtendInstance(tableRef, getProps)) })
 
     return () => {
       return (

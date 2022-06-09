@@ -1,6 +1,6 @@
-import { computed, unref } from 'vue'
 // import { deepMerge } from '@tav-ui/utils/basic'
 // import { cloneDeep } from 'lodash-es'
+import { computed, unref } from 'vue'
 import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
@@ -89,6 +89,7 @@ function handleExtenApi(
 
   if (hasApi) {
     /**  处理 vxetable proxy */
+    // 缓存api option
     let params: TableProApiParams = {
       filter: {},
       model: {},
@@ -108,7 +109,13 @@ function handleExtenApi(
         page: currentPage,
         limit: pageSize,
       }
-      params = option ? { ...option, ...{ model } } : { ...params, ...{ model } }
+
+      // model 中的值已vxetable计算的为准，其他值已传入为准，reload 传入 model 后，要对vxetable的model进行合并
+      params = option
+        ? option.model
+          ? { ...option, ...{ model }, ...option.model }
+          : { ...option, ...{ model } }
+        : { ...params, ...{ model } }
       try {
         if (beforeApi && isFunction(beforeApi)) {
           params = (await beforeApi(option)) || option

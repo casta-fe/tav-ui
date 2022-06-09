@@ -3,7 +3,7 @@ import { useMutationObserver } from '@vueuse/core'
 import { CamelCaseToCls, ComponentActionName } from '../const'
 import type { Emitter } from '@tav-ui/utils/mitt'
 import type { ComputedRef, Ref } from 'vue'
-import type { TableProEvent, TableProInstance, TableProProps } from '../types'
+import type { TableProInstance, TableProProps } from '../types'
 
 const ComponentActionPrefixCls = CamelCaseToCls(ComponentActionName)
 const ACTION_COLUMNS = ['actions', 'action']
@@ -49,7 +49,7 @@ async function setActionWidth(
  * @returns
  */
 export function useWatchDom(
-  getBindValues: ComputedRef<TableProProps & TableProEvent>,
+  tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
   tableEmitter: Emitter
 ) {
@@ -69,8 +69,9 @@ export function useWatchDom(
         (mutations) => {
           const mutation = mutations[0]
           if (!mutation) return
-          if (mutation.attributeName === 'style') {
-            setActionWidth(getBindValues, tableRef)
+          // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
+          if (mutation.attributeName === 'style' && (mutation.target as HTMLElement).style.width) {
+            setActionWidth(tablePropsRef, tableRef)
             tableEmitter.emit('table-pro:render-ready')
             stop()
           }

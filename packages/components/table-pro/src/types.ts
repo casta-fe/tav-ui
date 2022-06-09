@@ -8,7 +8,8 @@ import {
   ROW_KEY,
   buildTableId,
 } from './const'
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { TableProExtendApis } from './hooks/useExtendInstance'
+import type { ExtractPropTypes, PropType, Ref } from 'vue'
 import type {
   VxeGridEventProps,
   VxeGridInstance,
@@ -29,8 +30,9 @@ import type {
 export type TableProColumn = VxeTableDefines.ColumnOptions
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
+/** 扩展后的 table 实例 */
 export interface ITableProInstance {
-  instance: VxeGridInstance
+  instance: TableProInstance & TableProExtendApis
 }
 /** table 支持的事件类型 */
 export type TableProEvent = VxeTableEventProps & VxeGridEventProps
@@ -59,6 +61,7 @@ export const tableProProps = {
   },
   /**
    * 表格高度（默认为铺满网页）https://vxetable.cn/#/table/base/autoHeight
+   * 当前默认值为 'auto' 随父级高度变化（必须开启autoresize，当前默认开启）
    * 1. 如果要随父级高度变化，此处必须设置为 'auto'。然后在外层包一个带有指定高度的父容器, 跟随父级走的话高度会跳动
    * 2. 不追随父级变化，此处可以直接设置 500。即高度为 500px
    * 3. 当高度设置为数字后还有固定表头的作用 https://vxetable.cn/#/table/base/height
@@ -66,6 +69,7 @@ export const tableProProps = {
    */
   height: {
     type: [String, Number] as PropType<VxeTablePropTypes.Height>,
+    default: 'auto',
   },
   /** 表格最大高度（超出自动出现 y轴 滚动条） */
   maxHeight: {
@@ -247,6 +251,7 @@ export const tableProProps = {
   /** 自动监听父元素的变化去重新计算表格（对于父元素可能存在动态变化、显示隐藏的容器中、列宽异常等场景中的可能会用到） */
   autoResize: {
     type: Boolean as PropType<VxeTablePropTypes.AutoResize>,
+    default: true,
   },
   /** 自动跟随某个属性的变化去重新计算表格，和手动调用 recalculate 方法是一样的效果（对于通过某个属性来控制显示/隐藏切换时可能会用到） */
   syncResize: {

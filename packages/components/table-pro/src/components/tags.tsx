@@ -10,8 +10,8 @@ import type { TableProTagsConfig } from '../typings'
 const ComponentPrefixCls = CamelCaseToCls(ComponentTagsName)
 
 const DEFAULT_CONFIG: TableProTagsConfig = {
-  label: 'id',
-  value: 'name',
+  label: 'name',
+  value: 'id',
 }
 
 const props = {
