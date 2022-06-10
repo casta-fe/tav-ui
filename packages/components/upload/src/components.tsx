@@ -1,10 +1,6 @@
 import { computed, defineComponent, ref, unref } from 'vue'
 import { Select as TaSelect } from 'ant-design-vue'
-import { TaFileView } from '@tav-ui/components/file-view'
-import { TableAction } from '@tav-ui/components/table'
-import { TaButton } from '@tav-ui/components/button'
-import { TaForm, useForm } from '@tav-ui/components/form'
-import { setupVxeTable } from '@tav-ui/components/table-pro'
+import { TaButton, TaFileView, TaForm, TaTablePro, TableAction, useForm } from '@tav-ui/components'
 import { columns } from './config'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type { PropType, Ref } from 'vue'
@@ -17,8 +13,6 @@ import type {
   TypeSelectPropType,
 } from './types'
 import type { VxeGridProps } from 'vxe-table'
-
-const { Grid } = setupVxeTable()
 
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
@@ -61,8 +55,7 @@ export const PreviewTable = defineComponent({
     const { getOptionsByTypeCodes } = useFileTypeCode(props.typeCodeRecord)
     // init end
 
-    const dataSource = computed(() => props.dataSource)
-    const typeCodeArray = computed(() => dataSource.value.map((el) => el.typeCode))
+    const typeCodeArray = computed(() => props.dataSource.map((el) => el.typeCode))
     const typeCodeOptions = computed(
       // @ts-ignore
       () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
@@ -165,11 +158,12 @@ export const PreviewTable = defineComponent({
 
     return () => (
       <div class="ta-upload-preview-table">
-        <Grid
+        <TaTablePro
           height="auto"
-          columns={columns!.concat(getActionColumn.value as any[])}
-          data={dataSource.value}
+          pagerConfig={{ enabled: false }}
+          data={props.dataSource}
           loading={props.loading}
+          columns={columns!.concat(getActionColumn.value as any[])}
         >
           {{
             fullName: ({ row: record }) => (
@@ -197,7 +191,7 @@ export const PreviewTable = defineComponent({
               typeCodeOptions.value.find((el) => el.value === text)?.label || text,
             action: ({ row }) => <TableAction actions={getActions(row)} />,
           }}
-        </Grid>
+        </TaTablePro>
         <TaFileView
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}

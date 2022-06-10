@@ -96,6 +96,7 @@ export default defineComponent({
                     />
                   </div>
                 ) : null,
+              ...slots,
             }}
           </Grid>
         </div>
