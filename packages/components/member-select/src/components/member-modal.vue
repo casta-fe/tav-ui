@@ -333,6 +333,12 @@ export default defineComponent({
         emit('change', val)
       }
     )
+    watch(
+      () => userList.value,
+      () => {
+        pageInit()
+      }
+    )
     onMounted(() => {
       listenerUserScroll()
     })

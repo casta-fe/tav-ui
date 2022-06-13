@@ -34,7 +34,7 @@
               v-if="userList.length > 0"
               class="ta-member-select-option-more"
               @mousedown="(e) => e.preventDefault()"
-              @click="showModal"
+              @click="userShowMore"
             >
               <a href="javascript:;">查看更多</a>
             </div>
@@ -140,7 +140,7 @@ export default defineComponent({
     )
     const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
     const orgApi = globalConfig.value?.TaMemberSelect?.orgApi || props.orgApi
-    const userListApi = globalConfig.value?.TaMemberSelect?.userListApi || props.userListApi
+    const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
     const userOptions = computed(() => {
       const list: Options[] = []
       state.userList.forEach((v) => {
@@ -176,9 +176,7 @@ export default defineComponent({
       // 某些情况下直接拉起弹窗，那么就需要重置下数据和请求用户列表
       setBaseData()
       //  延迟出现，防止互相覆盖
-      setTimeout(() => {
-        openMemberModal()
-      }, 500)
+      openMemberModal()
     }
     const hideModal = () => {
       closeMemberModal()
@@ -245,6 +243,12 @@ export default defineComponent({
       })
       return list
     }
+    // 下拉列表中的查看更多点击事件
+    const userShowMore = () => {
+      setTimeout(() => {
+        showModal()
+      }, 200)
+    }
     const userVisibleChange = () => {
       // if (v) {
       // }
@@ -308,6 +312,7 @@ export default defineComponent({
       userSelectRef,
       ...toRefs(state),
       userOptions,
+      userShowMore,
       userVisibleChange,
       orgVisibleChange,
       showModal,

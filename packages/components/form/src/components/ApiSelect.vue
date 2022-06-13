@@ -51,6 +51,10 @@ export default defineComponent({
       type: Function as PropType<(arg?: Recordable) => Promise<any>>,
       default: null,
     },
+    placeholder: {
+      type: String,
+      default: '',
+    },
     // api params
     params: {
       type: Object as PropType<Recordable>,
