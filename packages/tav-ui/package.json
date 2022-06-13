@@ -52,7 +52,7 @@
     "@ant-design/icons-vue": "6.0.1",
     "@iconify/iconify": "2.2.1",
     "@purge-icons/generated": "0.7.0",
-    "@vueuse/core": "8.2.5",
+    "@vueuse/core": "8.6.0",
     "@vueuse/shared": "6.8.0",
     "@zxcvbn-ts/core": "1.0.0",
     "ant-design-vue": "2.2.8",
