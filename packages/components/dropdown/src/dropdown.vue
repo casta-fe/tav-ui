@@ -7,7 +7,7 @@
       <a-menu :selected-keys="selectedKeys">
         <template v-for="item in dropMenuList" :key="`${item.event}`">
           <a-menu-item
-            v-bind="getAttr(item.event)"
+            v-bind="getAttr(item.event!)"
             :disabled="item.disabled"
             size="small"
             @click.stop.prevent="handleClickMenu(item)"
@@ -59,6 +59,7 @@ import { Dropdown, Menu /*Popconfirm*/ } from 'ant-design-vue'
 import ModalButton from '@tav-ui/components/button-modal'
 import Icon from '@tav-ui/components/icon'
 // import { isFunction } from '@tav-ui/utils/is'
+import { isDef } from '@tav-ui/utils'
 import { dropdownProps } from './types'
 import type { DropdownMenu as DropMenu } from './types'
 
@@ -74,7 +75,7 @@ const emit = defineEmits(['menuEvent', 'menuItemPopConfirmVisible'])
 
 function handleClickMenu(item: DropMenu) {
   const { event } = item
-  if (event) {
+  if (isDef(event)) {
     const menu = props.dropMenuList.find((item) => `${item.event}` === `${event}`)
     menu && emit('menuEvent', menu)
   }
