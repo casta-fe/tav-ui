@@ -171,6 +171,7 @@ export const PreviewTable = defineComponent({
           data={props.dataSource}
           loading={props.loading}
           columns={columns!.concat(getActionColumn.value as any[])}
+          fillInner={false}
         >
           {{
             fullName: ({ row: record }) => (
