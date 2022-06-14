@@ -1,34 +1,31 @@
-const columns: Record<string, any>[] = [
+import { formatToDate } from '@tav-ui/utils'
+import type { TableProColumn } from '@tav-ui/components/table-pro'
+
+const columns: TableProColumn[] = [
   {
     title: '文件名称',
-    dataIndex: 'fullName',
-    key: 'fullName',
-    slots: { customRender: 'name' },
-    width: 300,
-    ellipsis: true,
+    field: 'fullName',
+    slots: { default: 'fullName' },
+    showOverflow: 'tooltip',
   },
   {
     title: '文件类型',
-    dataIndex: 'typeCode',
-    key: 'typeCode',
-    width: 100,
-    slots: { customRender: 'typeCode' },
-    ellipsis: true,
+    field: 'typeCode',
+    minWidth: 100,
+    slots: { default: 'typeCode' },
   },
   {
     title: '文件大小',
-    dataIndex: 'fileSize',
-    key: 'fileSize',
-    width: 100,
-    ellipsis: true,
+    field: 'fileSize',
+    minWidth: 100,
   },
-  { title: '上传人', dataIndex: 'createByName', key: 'createByName', ellipsis: true },
+  { title: '上传人', field: 'createByName' },
   {
     title: '更新时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
-    ellipsis: true,
-    format: 'date|YYYY-MM-DD',
+    field: 'createTime',
+    formatter: ({ cellValue }) => {
+      return formatToDate(cellValue)
+    },
   },
 ]
 

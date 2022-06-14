@@ -120,6 +120,7 @@ export default defineComponent({
           <div style={{ width: '90%', height: '968px', margin: '0 auto' }}>
             <TaTablePro
               ref={tableRef}
+              // pagerConfig={{ enabled: false }}
               rowConfig={{ keyField: 'id' }}
               // data={MockData()}
               // columns={columns()}

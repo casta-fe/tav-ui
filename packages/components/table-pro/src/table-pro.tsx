@@ -13,6 +13,7 @@ import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
 import { tableProEmits, tableProProps } from './types'
 import { useExtendInstance } from './hooks/useExtendInstance'
+// import { isBoolean } from '@tav-ui/utils/is'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const { Grid } = setupVxeTable()
@@ -71,31 +72,45 @@ export default defineComponent({
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps)) })
 
+    // 类名处理
+    const getWrapperClass = computed(() => {
+      const values = unref(getBindValues)
+      return [
+        ComponentPrefixCls,
+        attrs.class,
+        {
+          [`${ComponentPrefixCls}--fill-inner`]: values.fillInner,
+          // [`${ComponentPrefixCls}--pager-disabled`]: isBoolean(values.pagerConfig.enabled) && !values.pagerConfig.enabled,
+        },
+      ]
+    })
+
+    // components
+    function createOperation() {
+      const values = unref(getBindValues)
+      return values.showOperations ? (
+        <div class={ComponentOperationsPrefixCls}>
+          <ComponentFilterForm
+            config={values.filterFormConfig}
+            tableRef={tableRef}
+            tableSlots={slots}
+          />
+          <ComponentCustomAction
+            config={values.customActionConfig}
+            tableRef={tableRef}
+            tableSlots={slots}
+          />
+        </div>
+      ) : null
+    }
+
     return () => {
       return (
-        <div
-          class={`${ComponentPrefixCls} ${
-            unref(getBindValues).fillInner ? `${ComponentPrefixCls}--fill-inner` : ''
-          }`}
-        >
+        <div class={unref(getWrapperClass)}>
           <Grid ref={tableRef} {...unref(getBindValues)}>
             {{
               empty: () => <ComponentEmpty />,
-              form: () =>
-                unref(getBindValues).showOperations ? (
-                  <div class={ComponentOperationsPrefixCls}>
-                    <ComponentFilterForm
-                      config={unref(getBindValues).filterFormConfig}
-                      tableRef={tableRef}
-                      tableSlots={slots}
-                    />
-                    <ComponentCustomAction
-                      config={unref(getBindValues).customActionConfig}
-                      tableRef={tableRef}
-                      tableSlots={slots}
-                    />
-                  </div>
-                ) : null,
+              form: () => createOperation(),
               ...slots,
             }}
           </Grid>
