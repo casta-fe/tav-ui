@@ -153,7 +153,7 @@ export default defineComponent({
     function createDropdownList() {
       const DropdownList = getDropdownList()
 
-      if (unref(DropdownList).length || props.dropDownActions.length) {
+      if (unref(DropdownList).length || props.dropDownActions?.length) {
         return (
           <Dropdown
             trigger={['hover']}

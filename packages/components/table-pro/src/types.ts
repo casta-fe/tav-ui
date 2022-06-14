@@ -9,7 +9,7 @@ import {
   buildTableId,
 } from './const'
 import type { TableProExtendApis } from './hooks/useExtendInstance'
-import type { ExtractPropTypes, PropType, Ref } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
 import type {
   VxeGridEventProps,
   VxeGridInstance,
@@ -335,15 +335,19 @@ export const tableProProps = {
    * 单选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   radioConfig: {
-    type: Object as PropType<VxeTablePropTypes.RadioConfig>,
+    type: Object as PropType<VxeTablePropTypes.RadioConfig & { enabled: boolean }>,
+    default: () => ({
+      enabled: false,
+    }),
   },
   /**
    * 复选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   checkboxConfig: {
-    type: Object as PropType<VxeTablePropTypes.CheckboxConfig>,
+    type: Object as PropType<VxeTablePropTypes.CheckboxConfig & { enabled: boolean }>,
     default: () => ({
       range: true,
+      enabled: true,
     }),
   },
   /**

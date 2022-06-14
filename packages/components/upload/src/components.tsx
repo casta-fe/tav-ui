@@ -172,6 +172,7 @@ export const PreviewTable = defineComponent({
           loading={props.loading}
           columns={columns!.concat(getActionColumn.value as any[])}
           fillInner={false}
+          checkboxConfig={{ enabled: false }}
         >
           {{
             fullName: ({ row: record }) => (

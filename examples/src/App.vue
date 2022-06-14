@@ -14,7 +14,7 @@ import TaConfigProvider from '@tav-ui/components/config-provider'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
-// import { TaUpload, taUploadProvideData } from './components/TaUpload'
+import { TaUpload, taUploadProvideData } from './components/TaUpload'
 // import SearchableApiSelect from './components/SearchableApiSelect.vue'
 import TablePro from './components/TablePro/test'
 
@@ -22,7 +22,7 @@ export default defineComponent({
   components: {
     TaConfigProvider,
     TablePro,
-    // TaUpload,
+    TaUpload,
     // SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
@@ -49,7 +49,7 @@ export default defineComponent({
     const state = reactive({
       permissions: {},
       components: {
-        // TaUpload: taUploadProvideData,
+        TaUpload: taUploadProvideData,
       },
     })
     setTimeout(() => {
@@ -70,6 +70,7 @@ export default defineComponent({
 
 <template>
   <TaConfigProvider :permissions="state.permissions" :components="state.components">
+    <TaUpload />
     <TablePro />
     <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
