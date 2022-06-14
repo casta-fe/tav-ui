@@ -7,6 +7,10 @@ import type { TableProInstance, TableProProps } from '../types'
 
 const ComponentActionPrefixCls = CamelCaseToCls(ComponentActionName)
 const ACTION_COLUMNS = ['actions', 'action']
+const MutationObserverState = {
+  useApiExecCount: 0,
+  useDataExecCount: 0,
+}
 
 async function setActionWidth(
   tablePropsRef: ComputedRef<TableProProps>,
@@ -45,6 +49,70 @@ async function setActionWidth(
 }
 
 /**
+ * 使用 api 导入数据的监听
+ * @param tablePropsRef
+ * @param tableRef
+ * @param tableEmitter
+ */
+function useApiTableProObserver(
+  tablePropsRef: ComputedRef<TableProProps>,
+  tableRef: Ref<TableProInstance | null>,
+  tableEmitter: Emitter
+) {
+  if (MutationObserverState.useApiExecCount > 0) return
+  // vxegrid 渲染完毕事件
+  const targetEl = (unref(tableRef.value)?.$el as HTMLElement).querySelector(
+    '.vxe-table .vxe-table--body'
+  ) as HTMLElement
+  const { stop } = useMutationObserver(
+    targetEl,
+    (mutations) => {
+      const mutation = mutations[0]
+      if (!mutation) return
+      // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
+      if (mutation.attributeName === 'style' && (mutation.target as HTMLElement).style.width) {
+        setActionWidth(tablePropsRef, tableRef)
+        tableEmitter.emit('table-pro:render-ready')
+        stop()
+      }
+    },
+    { attributes: true }
+  )
+}
+
+/**
+ * 使用 data 导入数据的监听
+ * @param tablePropsRef
+ * @param tableRef
+ * @param tableEmitter
+ */
+function useDataTableProObserver(
+  tablePropsRef: ComputedRef<TableProProps>,
+  tableRef: Ref<TableProInstance | null>,
+  tableEmitter: Emitter
+) {
+  if (MutationObserverState.useApiExecCount > 0) return
+  // vxegrid 渲染完毕事件
+  const targetEl = (unref(tableRef.value)?.$el as HTMLElement).querySelector(
+    '.vxe-table .vxe-table--body tbody'
+  ) as HTMLElement
+  const { stop } = useMutationObserver(
+    targetEl,
+    (mutations) => {
+      const mutation = mutations[0]
+      if (!mutation) return
+      // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
+      if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+        setActionWidth(tablePropsRef, tableRef)
+        tableEmitter.emit('table-pro:render-ready')
+        stop()
+      }
+    },
+    { childList: true }
+  )
+}
+
+/**
  * 必须在表格渲染完成后执行
  * @returns
  */
@@ -60,24 +128,13 @@ export function useWatchDom(
         table: unref(tableRef.value)?.$el,
       })
 
-      // vxegrid 渲染完毕事件
-      const targetEl = (unref(tableRef.value)?.$el as HTMLElement).querySelector(
-        '.vxe-table .vxe-table--body'
-      ) as HTMLElement
-      const { stop } = useMutationObserver(
-        targetEl,
-        (mutations) => {
-          const mutation = mutations[0]
-          if (!mutation) return
-          // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
-          if (mutation.attributeName === 'style' && (mutation.target as HTMLElement).style.width) {
-            setActionWidth(tablePropsRef, tableRef)
-            tableEmitter.emit('table-pro:render-ready')
-            stop()
-          }
-        },
-        { attributes: true }
-      )
+      if (unref(tablePropsRef).api) {
+        useApiTableProObserver(tablePropsRef, tableRef, tableEmitter)
+        MutationObserverState.useApiExecCount++
+      } else {
+        useDataTableProObserver(tablePropsRef, tableRef, tableEmitter)
+        MutationObserverState.useDataExecCount++
+      }
     }
   })
 }

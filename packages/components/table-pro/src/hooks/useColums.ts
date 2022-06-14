@@ -32,7 +32,7 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @returns
  */
 function autoAddChoosenElement(tablePropsRef: ComputedRef<TableProProps>) {
-  const { columns = [], checkboxConfig = {}, radioConfig = {} } = unref(tablePropsRef)
+  const { columns = [], checkboxConfig, radioConfig } = unref(tablePropsRef)
   // const hasCheckbox = Object.keys(checkboxConfig).length > 0
   // const hasRadioConfig = Object.keys(radioConfig).length > 0
   const isColumnsHasCheckbox = columns?.find((column) => column.type === 'checkbox')
@@ -41,12 +41,10 @@ function autoAddChoosenElement(tablePropsRef: ComputedRef<TableProProps>) {
   // column 可能是promise需要等有值后再执行，减少rerender
   if (!columns.length) return columns
 
-  // @ts-ignore
   if (!isColumnsHasCheckbox && checkboxConfig.enabled) {
     columns.unshift({ type: 'checkbox', fixed: 'left' })
   }
 
-  // @ts-ignore
   if (!isColumnsHasRadio && radioConfig.enabled) {
     columns.unshift({
       type: 'radio',
