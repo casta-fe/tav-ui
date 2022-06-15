@@ -17,13 +17,26 @@
   //   display: block;
   // }
 
-  &-title {
-    display: flex;
-    align-items: center;
-  }
-
   &-btn {
+    &-title {
+      display: flex;
+      align-items: center;
+    }
+
     margin-left: 16px;
+
+    .file {
+      &:hover,
+      &:focus {
+        z-index: 2;
+      }
+    }
+    .hyperlink {
+      &:hover,
+      &:focus {
+        z-index: 2;
+      }
+    }
   }
 
   &-preview-table {

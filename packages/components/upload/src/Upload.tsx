@@ -112,7 +112,7 @@ export default defineComponent({
         {(slots.title && slots.title()) ||
           (title.value && <div class="ta-upload-title">{title.value}</div>)}
 
-        <div class="ta-upload-title">
+        <div class="ta-upload-btn-title">
           {(slots.selectType && (
             <TypeSelect
               moduleCode={params.value.moduleCode}
@@ -194,24 +194,24 @@ export default defineComponent({
                 </ButtonGroup>
               </div>
             ))}
-
-          {/* 超链接 */}
-          {handler.currentTypeCodeIsHyperlink.value && (
-            <HyperlinkForm
-              name={handler.paramsName}
-              onUpdate:name={(v) => (handler.paramsName = v)}
-              address={handler.paramsAddress}
-              onUpdate:address={(v) => (handler.paramsAddress = v)}
-              onChange={(success) => {
-                if (success) {
-                  handler.hyperlinkUpload()
-                }
-              }}
-              loading={handler.loading}
-              onRegister={hyperlinkFormRegister}
-            />
-          )}
         </div>
+
+        {/* 超链接 */}
+        {handler.currentTypeCodeIsHyperlink.value && (
+          <HyperlinkForm
+            name={handler.paramsName}
+            onUpdate:name={(v) => (handler.paramsName = v)}
+            address={handler.paramsAddress}
+            onUpdate:address={(v) => (handler.paramsAddress = v)}
+            onChange={(success) => {
+              if (success) {
+                handler.hyperlinkUpload()
+              }
+            }}
+            loading={handler.loading}
+            onRegister={hyperlinkFormRegister}
+          />
+        )}
 
         {(slots.tablePreview &&
           slots.tablePreview({
