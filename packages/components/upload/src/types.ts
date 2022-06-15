@@ -282,6 +282,12 @@ type BasicPropsType = {
     download?: string
     delete?: string
   }
+  /**
+   * 文件上传组件的图标
+   *
+   * 同 `TaIcon` 组件的 `icon` props
+   */
+  uploadIcon: string
 } & ProvideDataType
 
 /**

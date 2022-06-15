@@ -1,17 +1,28 @@
 <template>
   <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
-    <ta-upload :params="params" :show-table-action="{ downloadWatermark: false }" />
+    <ta-upload :params="params" :show-table-action="{ downloadWatermark: false }">
+      <template #beforeButton="{ loading }">
+        <TaButton :loading="loading">beforeButton</TaButton>
+      </template>
+      <template #centerButton="{ loading }">
+        <TaButton :loading="loading">centerButton</TaButton>
+      </template>
+      <template #afterButton="{ loading }">
+        <TaButton :loading="loading">afterButton</TaButton>
+      </template>
+    </ta-upload>
   </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 import { defineComponent } from 'vue'
-import { TaUpload } from '@tav-ui/components'
+import { TaButton, TaUpload } from '@tav-ui/components'
 
 export default defineComponent({
   components: {
     TaUpload,
+    TaButton,
   },
   setup() {
     return {

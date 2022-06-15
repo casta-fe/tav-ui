@@ -1,6 +1,7 @@
 import { defineComponent, toRefs } from 'vue'
-import { Upload } from 'ant-design-vue'
+import { ButtonGroup, Upload } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
+import { TaIcon } from '@tav-ui/components'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler, hyperlinkFormRegister } from './main'
 import type { PropType, Slot } from 'vue'
@@ -83,6 +84,10 @@ export default defineComponent({
     uploadFile: Function as PropType<BasicPropsType['uploadFile']>,
     uploadHyperlink: Function as PropType<BasicPropsType['uploadHyperlink']>,
     download: Function as PropType<BasicPropsType['download']>,
+    uploadIcon: {
+      type: String as PropType<BasicPropsType['uploadIcon']>,
+      default: 'ant-design:upload-outlined',
+    },
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -107,57 +112,46 @@ export default defineComponent({
         {(slots.title && slots.title()) ||
           (title.value && <div class="ta-upload-title">{title.value}</div>)}
 
-        {(slots.selectType && (
-          <TypeSelect
-            moduleCode={params.value.moduleCode}
-            typeCodeArray={typeCodeArray.value}
-            noDefaultValue={props.noDefaultValue}
-            typeCodeRecord={handler.typeCodeRecord}
-          >
-            {{
-              default: ({ typeCodeOptions }) =>
-                (slots.selectType as Slot)({
-                  typeCodeOptions,
-                  selectedValue: handler.typeCode.value,
-                  selectedLabel: typeCodeOptions.find((el) => el.value === handler.typeCode.value)
-                    ?.label,
-                }),
-            }}
-          </TypeSelect>
-        )) || (
-          <>
-            {showSelect.value && !readonly.value && (
-              <TypeSelect
-                customOptions={customOptions.value}
-                moduleCode={params.value.moduleCode}
-                typeCodeArray={typeCodeArray.value}
-                noDefaultValue={props.noDefaultValue}
-                selected={handler.typeCode.value}
-                typeCodeRecord={handler.typeCodeRecord}
-                onUpdate:selected={(val) => {
-                  handler.typeCode.value = val
-                  handler.fillDataSource()
-                }}
-              />
-            )}
-          </>
-        )}
-
-        {showUploadBtn.value &&
-          !readonly.value &&
-          ((slots.default && (
-            <Upload
-              fileList={[]}
-              showUploadList={false}
-              multiple={true}
-              beforeUpload={handler.beforeUpload}
-              customRequest={handler.customRequest}
-              accept={accept.value}
+        <div class="ta-upload-title">
+          {(slots.selectType && (
+            <TypeSelect
+              moduleCode={params.value.moduleCode}
+              typeCodeArray={typeCodeArray.value}
+              noDefaultValue={props.noDefaultValue}
+              typeCodeRecord={handler.typeCodeRecord}
             >
-              {slots.default({ loading: handler.loading.value })}
-            </Upload>
+              {{
+                default: ({ typeCodeOptions }) =>
+                  (slots.selectType as Slot)({
+                    typeCodeOptions,
+                    selectedValue: handler.typeCode.value,
+                    selectedLabel: typeCodeOptions.find((el) => el.value === handler.typeCode.value)
+                      ?.label,
+                  }),
+              }}
+            </TypeSelect>
           )) || (
-            <div class="ta-upload-btn">
+            <>
+              {showSelect.value && !readonly.value && (
+                <TypeSelect
+                  customOptions={customOptions.value}
+                  moduleCode={params.value.moduleCode}
+                  typeCodeArray={typeCodeArray.value}
+                  noDefaultValue={props.noDefaultValue}
+                  selected={handler.typeCode.value}
+                  typeCodeRecord={handler.typeCodeRecord}
+                  onUpdate:selected={(val) => {
+                    handler.typeCode.value = val
+                    handler.fillDataSource()
+                  }}
+                />
+              )}
+            </>
+          )}
+
+          {showUploadBtn.value &&
+            !readonly.value &&
+            ((slots.default && (
               <Upload
                 fileList={[]}
                 showUploadList={false}
@@ -166,39 +160,58 @@ export default defineComponent({
                 customRequest={handler.customRequest}
                 accept={accept.value}
               >
-                <TaButton class="file" onClick={handler.preOpenChooseFile}>
-                  <i class="ta-upload-btn-icon" />
-                  上传文件
-                </TaButton>
+                {slots.default({ loading: handler.loading.value })}
               </Upload>
-              <TaButton
-                class="hyperlink"
-                onClick={() => {
-                  handler.currentTypeCodeIsHyperlink.value =
-                    !handler.currentTypeCodeIsHyperlink.value
-                }}
-              >
-                {handler.currentTypeCodeIsHyperlink.value ? '隐藏超链接上传' : '上传超链接'}
-              </TaButton>
-            </div>
-          ))}
+            )) || (
+              <div class="ta-upload-btn">
+                <ButtonGroup>
+                  {slots.beforeButton?.({ loading: handler.loading.value })}
+                  <Upload
+                    fileList={[]}
+                    showUploadList={false}
+                    multiple={true}
+                    beforeUpload={handler.beforeUpload}
+                    customRequest={handler.customRequest}
+                    accept={accept.value}
+                  >
+                    <TaButton class="file" onClick={handler.preOpenChooseFile}>
+                      {/* <i class="ta-upload-btn-icon" /> */}
+                      <TaIcon icon={props.uploadIcon} />
+                      上传文件
+                    </TaButton>
+                  </Upload>
+                  {slots.centerButton?.({ loading: handler.loading.value })}
+                  <TaButton
+                    class="hyperlink"
+                    onClick={() => {
+                      handler.currentTypeCodeIsHyperlink.value =
+                        !handler.currentTypeCodeIsHyperlink.value
+                    }}
+                  >
+                    {handler.currentTypeCodeIsHyperlink.value ? '隐藏超链接上传' : '上传超链接'}
+                  </TaButton>
+                  {slots.afterButton?.({ loading: handler.loading.value })}
+                </ButtonGroup>
+              </div>
+            ))}
 
-        {/* 超链接 */}
-        {handler.currentTypeCodeIsHyperlink.value && (
-          <HyperlinkForm
-            name={handler.paramsName}
-            onUpdate:name={(v) => (handler.paramsName = v)}
-            address={handler.paramsAddress}
-            onUpdate:address={(v) => (handler.paramsAddress = v)}
-            onChange={(success) => {
-              if (success) {
-                handler.hyperlinkUpload()
-              }
-            }}
-            loading={handler.loading}
-            onRegister={hyperlinkFormRegister}
-          />
-        )}
+          {/* 超链接 */}
+          {handler.currentTypeCodeIsHyperlink.value && (
+            <HyperlinkForm
+              name={handler.paramsName}
+              onUpdate:name={(v) => (handler.paramsName = v)}
+              address={handler.paramsAddress}
+              onUpdate:address={(v) => (handler.paramsAddress = v)}
+              onChange={(success) => {
+                if (success) {
+                  handler.hyperlinkUpload()
+                }
+              }}
+              loading={handler.loading}
+              onRegister={hyperlinkFormRegister}
+            />
+          )}
+        </div>
 
         {(slots.tablePreview &&
           slots.tablePreview({
