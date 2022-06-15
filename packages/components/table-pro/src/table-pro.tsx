@@ -7,13 +7,14 @@ import ComponentFilterForm from './components/filter-form'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
+import { useExtendInstance } from './hooks/useExtendInstance'
 import { useListeners } from './hooks/useListeners'
+import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
-import { tableProEmits, tableProProps } from './types'
-import { useExtendInstance } from './hooks/useExtendInstance'
 // import { isBoolean } from '@tav-ui/utils/is'
+import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const { Grid } = setupVxeTable()
@@ -52,12 +53,16 @@ export default defineComponent({
     // 透传 listener
     const getListeners = useListeners(emit)
 
+    // extend props&apis
+    const { loading, setLoading } = useLoading(getProps)
+
     // merge v-bind value
     const getBindValues = computed<TableProProps & TableProEvent>(() => ({
       ...unref(getProps),
       ...unref(getColumns),
       ...unref(getAttrs),
       ...unref(getListeners),
+      loading: unref(loading),
     }))
 
     // 数据处理
@@ -70,7 +75,7 @@ export default defineComponent({
     createTableContext({ tableRef, tableEmitter })
 
     // 抛出实例
-    expose({ ...toRefs(useExtendInstance(tableRef, getProps)) })
+    expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading })) })
 
     // 类名处理
     const getWrapperClass = computed(() => {
@@ -88,7 +93,16 @@ export default defineComponent({
     // components
     function createOperation() {
       const values = unref(getBindValues)
-      return values.showOperations ? (
+      const isFilterFormHasContent =
+        values.filterFormConfig.inputForm || values.filterFormConfig.pannelForm
+      const isCustomActionHasContent =
+        values.customActionConfig.add ||
+        values.customActionConfig.delete ||
+        values.customActionConfig.export ||
+        values.customActionConfig.import ||
+        values.customActionConfig.refresh ||
+        slots.customAction
+      return values.showOperations && (isFilterFormHasContent || isCustomActionHasContent) ? (
         <div class={ComponentOperationsPrefixCls}>
           <ComponentFilterForm
             config={values.filterFormConfig}

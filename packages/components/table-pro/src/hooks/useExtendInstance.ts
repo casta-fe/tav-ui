@@ -73,7 +73,10 @@ function createExendApis(
 }
 
 /** 扩展实例 */
-export type TableProExtendApis = ReturnType<typeof createExendApis>
+type OuterExtendApis = {
+  setLoading: (loading: boolean) => void
+}
+export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 
 /**
  * 扩展 vxegrid instance 实例
@@ -82,7 +85,8 @@ export type TableProExtendApis = ReturnType<typeof createExendApis>
  */
 export function useExtendInstance(
   tableRef: Ref<TableProInstance | null>,
-  tablePropsRef: ComputedRef<TableProProps>
+  tablePropsRef: ComputedRef<TableProProps>,
+  outerExtendApis: OuterExtendApis
 ) {
   const state = reactive<{
     instance: TableProInstance | null
@@ -98,6 +102,9 @@ export function useExtendInstance(
         const extendApis = createExendApis(tableRef, tablePropsRef)
         Object.keys(extendApis).forEach((name) => {
           state.instance![name] = extendApis[name]
+        })
+        Object.keys(outerExtendApis).forEach((name) => {
+          state.instance![name] = outerExtendApis[name]
         })
       }
     }

@@ -371,6 +371,7 @@ export const HyperlinkForm = defineComponent({
 
     return () => (
       <TaForm
+        class="ta-upload-hyperlink-form"
         onRegister={formRegister}
         // style={{
         //   border: "1px solid red",
