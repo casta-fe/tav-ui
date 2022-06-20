@@ -44,6 +44,48 @@ function createExendApis(
     if (hasRadioConfig) unref(tableRef)!.clearRadioRow()
   }
 
+  function insertRows(records: Record<string, any> | Record<string, any>[]) {
+    let _records: any[] = []
+    if (Array.isArray(records)) {
+      _records = [...records]
+    } else {
+      _records = [records]
+    }
+    unref(tableRef)!.insertAt(_records, -1)
+  }
+
+  function updateRows(records: Record<string, any> | Record<string, any>[]) {
+    const {
+      rowConfig: { keyField = ROW_KEY },
+    } = unref(tablePropsRef)
+    const fullData = unref(tableRef)!.getTableData().fullData
+    let _records: any[] = []
+    if (Array.isArray(records)) {
+      _records = [...records]
+    } else {
+      _records = [records]
+    }
+    const _data = fullData?.map((record) => {
+      const matchedRecord = _records.find((_record) => _record[keyField] === record[keyField])
+      if (matchedRecord) {
+        return { ...record, ...matchedRecord }
+      } else {
+        return record
+      }
+    })
+    unref(tableRef)!.loadData(_data)
+  }
+
+  function deleteRows(records: Record<string, any> | Record<string, any>[]) {
+    let _records: any[] = []
+    if (Array.isArray(records)) {
+      _records = [...records]
+    } else {
+      _records = [records]
+    }
+    unref(tableRef)!.remove(_records)
+  }
+
   function reload(options?: TableProApiParams) {
     const { checkboxConfig = {}, radioConfig = {} } = unref(tablePropsRef)
 
@@ -68,6 +110,9 @@ function createExendApis(
     clearSelectedRowByKey,
     getSelectRows,
     clearSelectedRows,
+    insertRows,
+    updateRows,
+    deleteRows,
     reload,
   }
 }
