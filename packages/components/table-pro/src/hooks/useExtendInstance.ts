@@ -44,7 +44,7 @@ function createExendApis(
     if (hasRadioConfig) unref(tableRef)!.clearRadioRow()
   }
 
-  function insertRows(records: Record<string, any> | Record<string, any>[]) {
+  function insertRow(records: Record<string, any> | Record<string, any>[]) {
     let _records: any[] = []
     if (Array.isArray(records)) {
       _records = [...records]
@@ -54,7 +54,7 @@ function createExendApis(
     unref(tableRef)!.insertAt(_records, -1)
   }
 
-  function updateRows(records: Record<string, any> | Record<string, any>[]) {
+  function updateRow(records: Record<string, any> | Record<string, any>[]) {
     const {
       rowConfig: { keyField = ROW_KEY },
     } = unref(tablePropsRef)
@@ -76,7 +76,7 @@ function createExendApis(
     unref(tableRef)!.loadData(_data)
   }
 
-  function deleteRows(records: Record<string, any> | Record<string, any>[]) {
+  function deleteRow(records: Record<string, any> | Record<string, any>[]) {
     let _records: any[] = []
     if (Array.isArray(records)) {
       _records = [...records]
@@ -110,9 +110,9 @@ function createExendApis(
     clearSelectedRowByKey,
     getSelectRows,
     clearSelectedRows,
-    insertRows,
-    updateRows,
-    deleteRows,
+    insertRow,
+    updateRow,
+    deleteRow,
     reload,
   }
 }
