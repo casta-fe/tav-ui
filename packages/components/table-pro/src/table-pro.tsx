@@ -42,7 +42,7 @@ export default defineComponent({
 
     // 扩展 columns
     const getColumns = computed(() => {
-      return { columns: useColumns(getProps) }
+      return { columns: useColumns(getProps, tableRef, emit) }
     })
 
     // 透传 attr
@@ -121,10 +121,10 @@ export default defineComponent({
     return () => {
       return (
         <div class={unref(getWrapperClass)}>
+          {createOperation()}
           <Grid ref={tableRef} {...unref(getBindValues)}>
             {{
               empty: () => <ComponentEmpty />,
-              form: () => createOperation(),
               ...slots,
             }}
           </Grid>

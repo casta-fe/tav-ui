@@ -1,7 +1,8 @@
 import { unref } from 'vue'
+import { Checkbox } from 'ant-design-vue'
 import { MIN_WIDTH, MIN_WIDTH_SMALL } from '../const'
-import type { ComputedRef } from 'vue'
-import type { TableProColumn, TableProProps } from '../types'
+import type { ComputedRef, Ref } from 'vue'
+import type { TableProColumn, TableProGridEmit, TableProInstance, TableProProps } from '../types'
 
 const SELECT_COMPONENTS = ['checkbox', 'radio']
 const ACTION_COLUMNS = ['actions', 'action']
@@ -31,7 +32,11 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @param tablePropsRef
  * @returns
  */
-function autoAddChoosenElement(tablePropsRef: ComputedRef<TableProProps>) {
+function autoAddChoosenElement(
+  tablePropsRef: ComputedRef<TableProProps>,
+  tableRef: Ref<TableProInstance | null>,
+  emit: TableProGridEmit
+) {
   const { columns = [], checkboxConfig, radioConfig } = unref(tablePropsRef)
   // const hasCheckbox = Object.keys(checkboxConfig).length > 0
   // const hasRadioConfig = Object.keys(radioConfig).length > 0
@@ -42,7 +47,38 @@ function autoAddChoosenElement(tablePropsRef: ComputedRef<TableProProps>) {
   if (!columns.length) return columns
 
   if (!isColumnsHasCheckbox && checkboxConfig.enabled) {
-    columns.unshift({ type: 'checkbox', fixed: 'left' })
+    columns.unshift({
+      type: 'checkbox',
+      fixed: 'left',
+      slots: {
+        header: (info: any) => {
+          const { checked, indeterminate } = info
+          return [
+            <Checkbox
+              indeterminate={indeterminate}
+              checked={checked}
+              onChange={() => {
+                unref(tableRef)?.toggleAllCheckboxRow()
+                emit('CheckboxAll', info)
+              }}
+            />,
+          ]
+        },
+        checkbox: (info: any) => {
+          const { row, checked, indeterminate } = info
+          return [
+            <Checkbox
+              indeterminate={indeterminate}
+              checked={checked}
+              onChange={() => {
+                unref(tableRef)?.toggleCheckboxRow(row)
+                emit('CheckboxChange', info)
+              }}
+            />,
+          ]
+        },
+      },
+    })
   }
 
   if (!isColumnsHasRadio && radioConfig.enabled) {
@@ -59,7 +95,11 @@ function autoAddChoosenElement(tablePropsRef: ComputedRef<TableProProps>) {
  * 操作列数据，设置最小宽度，自动注入checkbox等
  * @param propsRef
  */
-export function useColumns(tablePropsRef: ComputedRef<TableProProps>) {
-  const columns = autoAddChoosenElement(tablePropsRef)
+export function useColumns(
+  tablePropsRef: ComputedRef<TableProProps>,
+  tableRef: Ref<TableProInstance | null>,
+  emit: TableProGridEmit
+) {
+  const columns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
   return setColumnMinWidth(columns)
 }

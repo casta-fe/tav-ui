@@ -338,6 +338,7 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.RadioConfig & { enabled: boolean }>,
     default: () => ({
       enabled: false,
+      highlight: true,
     }),
   },
   /**
@@ -348,6 +349,7 @@ export const tableProProps = {
     default: () => ({
       range: true,
       enabled: true,
+      highlight: true,
     }),
   },
   /**

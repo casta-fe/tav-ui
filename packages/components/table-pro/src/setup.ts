@@ -260,7 +260,8 @@ export function setupVxeTable(app?: App) {
     //   FORM_SUFFIX: 'vxe-icon--info',
     //   FORM_FOLDING: 'vxe-icon--arrow-top rotate180',
     //   FORM_UNFOLDING: 'vxe-icon--arrow-top'
-    // }
+    // LOADING: 'vxe-icon--refresh roll'
+    LOADING: 'ta-table-pro-loading',
   }
 
   const setupOptions: VXETableSetupOptions = Object.assign(VXETableGlobalSettings, {

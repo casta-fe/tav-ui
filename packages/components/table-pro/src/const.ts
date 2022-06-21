@@ -38,7 +38,7 @@ const {
 } = table
 
 export const ROW_KEY = '__id'
-export const DEFAULT_LINE_HEIGTH = 40
+export const DEFAULT_LINE_HEIGTH = 42
 
 // Optional display number per page;
 export const PAGE_SIZE_OPTIONS = pageSizeOptions
