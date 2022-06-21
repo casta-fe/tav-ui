@@ -12,7 +12,7 @@ import { useListeners } from './hooks/useListeners'
 import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
-import { useWatchDom } from './hooks/useWatchDom'
+// import { useWatchDom } from './hooks/useWatchDom'
 // import { isBoolean } from '@tav-ui/utils/is'
 import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
@@ -68,8 +68,8 @@ export default defineComponent({
     // 数据处理
     useDataSource(getProps, tableRef)
 
-    // 执行dom监听的处理
-    useWatchDom(getProps, tableRef, tableEmitter)
+    // // 执行dom监听的处理
+    // useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
     createTableContext({ tableRef, tableEmitter })

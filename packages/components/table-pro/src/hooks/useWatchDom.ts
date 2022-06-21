@@ -59,7 +59,7 @@ function useApiTableProObserver(
   tableRef: Ref<TableProInstance | null>,
   tableEmitter: Emitter
 ) {
-  if (MutationObserverState.useApiExecCount > 0) return
+  if (MutationObserverState.useDataExecCount > 0) return
   // vxegrid 渲染完毕事件
   const targetEl = (unref(tableRef.value)?.$el as HTMLElement).querySelector(
     '.vxe-table .vxe-table--body'

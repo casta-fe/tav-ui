@@ -65,7 +65,8 @@ export const MAX_ACTION_NUMBER = 3
 export const DEFAULT_ALIGN = 'left'
 
 export const MIN_WIDTH_SMALL = 45
-export const MIN_WIDTH = 80
+// export const MIN_WIDTH = 60
+export const MIN_WIDTH = 120
 
 export type FetchSetting = typeof componentSetting.table.fetchSetting
 
