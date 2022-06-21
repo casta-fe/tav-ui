@@ -177,9 +177,13 @@ export const PreviewTable = defineComponent({
           {{
             fullName: ({ row: record }) => (
               <>
-                <span>{record.fullName}</span>
-                {record.hyperlink == 1 ? (
+                {record.hyperlink != 1 ? (
+                  // 普通文件
+                  <span>{record.fullName}</span>
+                ) : (
+                  // 超链接
                   <>
+                    <span>{record.name}</span>
                     <br />
                     <a
                       onClick={() => {
@@ -193,7 +197,7 @@ export const PreviewTable = defineComponent({
                       {record.address}
                     </a>
                   </>
-                ) : null}
+                )}
               </>
             ),
             typeCode: ({ row: { typeCode: text } }) =>
