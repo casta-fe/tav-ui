@@ -19,6 +19,7 @@ function setColumnMinWidth(columns: TableProColumn[]) {
           if (!column.width) column.width = MIN_WIDTH_SMALL
         } else if (column.field && ACTION_COLUMNS.includes(column.field)) {
           // column.showOverflow = false
+          column.minWidth = MIN_WIDTH
         } else {
           if (!column.minWidth) column.minWidth = MIN_WIDTH
         }
