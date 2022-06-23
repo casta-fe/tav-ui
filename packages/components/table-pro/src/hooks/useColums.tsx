@@ -1,32 +1,14 @@
 import { unref } from 'vue'
 import { Checkbox } from 'ant-design-vue'
-import { MIN_WIDTH, MIN_WIDTH_SMALL } from '../const'
+import {
+  ACTION_COLUMNS,
+  ComponentCellName,
+  MIN_WIDTH,
+  MIN_WIDTH_SMALL,
+  SELECT_COMPONENTS,
+} from '../const'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProColumn, TableProGridEmit, TableProInstance, TableProProps } from '../types'
-
-const SELECT_COMPONENTS = ['checkbox', 'radio']
-const ACTION_COLUMNS = ['actions', 'action']
-
-/**
- * 设置最小宽度
- * @param columns
- * @returns
- */
-function setColumnMinWidth(columns: TableProColumn[]) {
-  return columns.length
-    ? columns?.map((column: TableProColumn) => {
-        if (column.type && SELECT_COMPONENTS.includes(column.type)) {
-          if (!column.width) column.width = MIN_WIDTH_SMALL
-        } else if (column.field && ACTION_COLUMNS.includes(column.field)) {
-          // column.showOverflow = false
-          column.minWidth = MIN_WIDTH
-        } else {
-          if (!column.minWidth) column.minWidth = MIN_WIDTH
-        }
-        return column
-      })
-    : columns
-}
 
 /**
  * 自动添加 checkbox/radio
@@ -93,6 +75,46 @@ function autoAddChoosenElement(
 }
 
 /**
+ * 设置最小宽度
+ * @param columns
+ * @returns
+ */
+function setColumnMinWidth(columns: TableProColumn[]) {
+  return columns.length
+    ? columns?.map((column: TableProColumn) => {
+        if (column.type && SELECT_COMPONENTS.includes(column.type)) {
+          if (!column.width) column.width = MIN_WIDTH_SMALL
+        } else if (column.field && ACTION_COLUMNS.includes(column.field)) {
+          // column.showOverflow = false
+          if (!column.minWidth) column.minWidth = MIN_WIDTH + 10
+        } else {
+          if (!column.minWidth) column.minWidth = MIN_WIDTH
+        }
+        return column
+      })
+    : columns
+}
+
+/**
+ * 包装单元格
+ * @param columns
+ * @returns
+ */
+function wrapperColumnSlot(columns: TableProColumn[]) {
+  return columns.length
+    ? columns.map((column: TableProColumn) => {
+        const { customRender } = column
+        // // 只包装 tbody（内容区域）除选择框、action以外的单元格
+        column['cellRender'] = {
+          name: ComponentCellName,
+          options: [{ customRender }],
+        }
+        return column
+      })
+    : columns
+}
+
+/**
  * 操作列数据，设置最小宽度，自动注入checkbox等
  * @param propsRef
  */
@@ -101,6 +123,9 @@ export function useColumns(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  const columns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
-  return setColumnMinWidth(columns)
+  const autoAddChoosenElementColumns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
+  const setColumnMinWidthColumns = setColumnMinWidth(autoAddChoosenElementColumns)
+  const columns = wrapperColumnSlot(setColumnMinWidthColumns)
+  // return setColumnMinWidthColumns
+  return columns
 }

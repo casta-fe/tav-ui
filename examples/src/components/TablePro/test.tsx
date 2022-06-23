@@ -9,8 +9,8 @@ import type {
   TableProCheckboxAll,
   TableProCheckboxChange,
   TableProCustomActionConfig,
-  TableProFilterFormConfig,
-  TableProProxyConfig,
+  /*TableProFilterFormConfig,
+  TableProProxyConfig,*/
 } from '@tav-ui/components/table-pro'
 
 export default defineComponent({
@@ -76,7 +76,7 @@ export default defineComponent({
     const handleApi: TableProApi<Promise<any>> = ({ filter, model }) =>
       API__POE_CUSTOM_ALL({
         filter: { ...filter, tab: 0 },
-        model: { ...model, limit: 20 },
+        model: { ...model },
       })
 
     const handleCheckboxChange: TableProCheckboxChange = (params) => {
@@ -94,6 +94,7 @@ export default defineComponent({
 
     const handleCheckboxAll: TableProCheckboxAll = (params) => {
       console.log('handleCheckboxAll: ', params)
+      console.log(unref(tableRef)?.instance?.getTableColumn())
     }
 
     const handlePageChange = (info) => {
@@ -149,6 +150,11 @@ export default defineComponent({
                     </Button>
                   </>
                 ),
+                // customerType: ({ row: { customerType } }) => (
+                //   <>
+                //   {customerType}
+                //   </>
+                // )
               }}
             </TaTablePro>
           </div>

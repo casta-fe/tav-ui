@@ -1,7 +1,7 @@
 @import '../var/index.less';
 @keyframes loadingCircle {
   to {
-      transform: rotate(360deg)
+    transform: rotate(360deg);
   }
 }
 
@@ -27,8 +27,10 @@
     font-size: 14px;
   }
 
-  .vxe-table--render-default.size--small .vxe-header--column.col--ellipsis {
+  .vxe-table--render-default.size--small .vxe-header--column.col--ellipsis,
+  .vxe-table--render-default.size--small .vxe-header--column {
     height: 42px; // 取决于table-pro的row-config的height
+    line-height: unset;
   }
 
   // loading
@@ -39,6 +41,17 @@
     background-image: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 48 48"%3E%3Cpath fill="none" stroke="dodgerblue" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M4 24c0 11.046 8.954 20 20 20s20-8.954 20-20S35.046 4 24 4"%2F%3E%3C%2Fsvg%3E');
     background-size: 100% 100%;
     animation: loadingCircle 1s infinite linear;
+  }
+
+  // cell padding
+  .vxe-table--render-default.size--small .vxe-body--column:not(.col--ellipsis) {
+    padding: 6px !important;
+  }
+  .vxe-table--render-default.size--small
+    .vxe-footer--column:not(.col--ellipsis),
+  .vxe-table--render-default.size--small
+    .vxe-header--column:not(.col--ellipsis) {
+    padding: 0px 6px !important;
   }
 
   // header cell
@@ -246,6 +259,17 @@
 
     .vxe-select-option.is--selected {
       color: @primary-color;
+    }
+  }
+
+  // cell
+  &-cell {
+    // &[data-type="header"] {}
+    // &[data-type="body"] {}
+    &--tooltip {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

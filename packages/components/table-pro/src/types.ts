@@ -9,8 +9,9 @@ import {
   buildTableId,
 } from './const'
 import type { TableProExtendApis } from './hooks/useExtendInstance'
-import type { ExtractPropTypes, PropType } from 'vue'
+import type { ExtractPropTypes, PropType, VNode } from 'vue'
 import type {
+  VxeColumnPropTypes,
   VxeGridEventProps,
   VxeGridInstance,
   VxeGridPropTypes,
@@ -27,7 +28,11 @@ import type {
 } from './typings'
 
 /** column 类型 */
-export type TableProColumn = VxeTableDefines.ColumnOptions
+export type TableProColumn = VxeTableDefines.ColumnOptions & {
+  /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
+  customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
+  showTooltip?: boolean
+}
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
 /** 扩展后的 table 实例 */
@@ -231,17 +236,17 @@ export const tableProProps = {
   /** 设置所有内容过长时显示为省略号（如果是固定列建议设置该值，提升渲染速度） */
   showOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowOverflow>,
-    default: true,
+    default: 'ellipsis',
   },
   /** 设置表头所有内容过长时显示为省略号 */
   showHeaderOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowHeaderOverflow>,
-    default: true,
+    default: 'ellipsis',
   },
   /** 设置表尾所有内容过长时显示为省略号 */
   showFooterOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowFooterOverflow>,
-    default: true,
+    default: 'ellipsis',
   },
   /** 保持原始值的状态，被某些功能所依赖，比如编辑状态、还原数据等（开启后影响性能，具体取决于数据量） */
   keepSource: {
@@ -548,6 +553,11 @@ export const tableProProps = {
   },
   /** 给table填充颜色，将table和filterform区分开 */
   fillInner: {
+    type: Boolean,
+    default: true,
+  },
+  /** 覆盖tooltip */
+  showTooltip: {
     type: Boolean,
     default: true,
   },

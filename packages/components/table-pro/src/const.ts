@@ -8,6 +8,7 @@ export const ComponentFilterFormName = `${ComponentName}FilterForm`
 export const ComponentCustomActionName = `${ComponentName}CustomAction`
 export const ComponentActionName = `${ComponentName}Action`
 export const ComponentTagsName = `${ComponentName}Tags`
+export const ComponentCellName = `${ComponentName}Cell`
 
 /**
  * 示例：TaTablePro => ta-table-pro
@@ -67,6 +68,12 @@ export const DEFAULT_ALIGN = 'left'
 export const MIN_WIDTH_SMALL = 45
 // export const MIN_WIDTH = 60
 export const MIN_WIDTH = 120
+
+/** tooltip 位置 */
+export const TOOLTIP_PLACEMENT = 'top'
+
+export const SELECT_COMPONENTS = ['checkbox', 'radio']
+export const ACTION_COLUMNS = ['actions', 'action']
 
 export type FetchSetting = typeof componentSetting.table.fetchSetting
 

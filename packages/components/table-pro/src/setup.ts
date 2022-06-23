@@ -1,4 +1,5 @@
 import VXETable from 'vxe-table'
+import { VxeCellRenderer } from './components/cell'
 import type { App } from 'vue'
 import type { VXETableSetupOptions } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
@@ -268,12 +269,10 @@ export function setupVxeTable(app?: App) {
     icon: VXETableGlobalIcons,
   })
 
-  // VXETable.interceptor.add('event.clearActived', function (this: any, params: any) {
-  //   console.log(this, params)
-  // })
+  // 自定义渲染 cell
+  VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
 
   // 注册插件
-
   // VXETable.use(VXETablePluginAntd)
 
   // 注册自定义组件

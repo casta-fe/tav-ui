@@ -1,6 +1,6 @@
 import { inject, provide } from 'vue'
-import type { Ref } from 'vue'
-import type { TableProInstance } from '../types'
+import type { ComputedRef, Ref } from 'vue'
+import type { TableProInstance, TableProProps } from '../types'
 import type { Emitter } from '@tav-ui/utils/mitt'
 
 const key = Symbol('table-pro')
@@ -8,6 +8,7 @@ const key = Symbol('table-pro')
 interface Context {
   tableRef: Ref<TableProInstance | null>
   tableEmitter: Emitter
+  tablePropsRef: ComputedRef<TableProProps>
 }
 
 export function createTableContext(context: Context) {

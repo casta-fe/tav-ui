@@ -1,6 +1,6 @@
 import { computed, defineComponent, ref, toRefs, unref } from 'vue'
-import { setupVxeTable } from '@tav-ui/components/table-pro/src/setup'
 import { mitt } from '@tav-ui/utils/mitt'
+import { setupVxeTable } from './setup'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -72,7 +72,7 @@ export default defineComponent({
     // useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
-    createTableContext({ tableRef, tableEmitter })
+    createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
 
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading })) })
