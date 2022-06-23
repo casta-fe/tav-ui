@@ -26,7 +26,7 @@ const uploadArr: any[] = [
     watermarkFileDownload: 2,
   },
   {
-    fullName: 'doge.png',
+    name: 'doge.png',
     fileSize: '1MB',
     createByName: 'mxs',
     createTime: new Date(),

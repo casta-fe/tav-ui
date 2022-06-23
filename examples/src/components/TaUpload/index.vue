@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
-    <ta-upload :params="params" :show-table-action="{ downloadWatermark: false }">
+    <ta-upload :params="params">
       <template #beforeButton="{ loading }">
         <TaButton :loading="loading">beforeButton</TaButton>
       </template>

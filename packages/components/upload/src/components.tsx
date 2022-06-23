@@ -8,8 +8,8 @@ import {
   TaTableProAction,
   useForm,
 } from '@tav-ui/components'
-import { columns } from './config'
-import { /*getActionColumnMaxWidth, */ useFileTypeCode } from './hooks'
+import { formatToDate } from '@tav-ui/utils'
+import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -91,12 +91,58 @@ export const PreviewTable = defineComponent({
 
       return [
         {
-          // width: getActionColumnMaxWidth(labels),
+          title: '文件名称',
+          field: 'fullName',
+          customRender: ({ row: record }) => (
+            <>
+              {record.hyperlink != 1 ? (
+                // 普通文件
+                <span>{record.fullName}</span>
+              ) : (
+                // 超链接
+                <>
+                  <span>{record.name}</span>
+                  <br />
+                  <a
+                    onClick={() => {
+                      window
+                        .open(
+                          record.address.includes('//') ? record.address : `//${record.address}`
+                        )
+                        ?.focus()
+                    }}
+                  >
+                    {record.address}
+                  </a>
+                </>
+              )}
+            </>
+          ),
+        },
+        {
+          title: '文件类型',
+          field: 'typeCode',
+          minWidth: 100,
+          customRender: ({ row: { typeCode } }) =>
+            typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
+        },
+        {
+          title: '文件大小',
+          field: 'fileSize',
+          minWidth: 100,
+        },
+        { title: '上传人', field: 'createByName' },
+        {
+          title: '更新时间',
+          field: 'createTime',
+          customRender: ({ row: { createTime } }) => formatToDate(createTime),
+        },
+        {
+          width: getActionColumnMaxWidth(labels),
           fixed: 'right',
           title: '操作',
           field: 'action',
-          slots: { default: 'action' },
-          // showOverflow: 'tooltip',
+          customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
           align: 'center',
         },
       ]
@@ -170,41 +216,10 @@ export const PreviewTable = defineComponent({
           showOperations={false}
           data={props.dataSource}
           loading={props.loading}
-          columns={columns!.concat(getActionColumn.value as any[])}
+          columns={getActionColumn.value}
           fillInner={false}
           checkboxConfig={{ enabled: false }}
-        >
-          {{
-            fullName: ({ row: record }) => (
-              <>
-                {record.hyperlink != 1 ? (
-                  // 普通文件
-                  <span>{record.fullName}</span>
-                ) : (
-                  // 超链接
-                  <>
-                    <span>{record.name}</span>
-                    <br />
-                    <a
-                      onClick={() => {
-                        window
-                          .open(
-                            record.address.includes('//') ? record.address : `//${record.address}`
-                          )
-                          ?.focus()
-                      }}
-                    >
-                      {record.address}
-                    </a>
-                  </>
-                )}
-              </>
-            ),
-            typeCode: ({ row: { typeCode: text } }) =>
-              typeCodeOptions.value.find((el) => el.value === text)?.label || text,
-            action: ({ row }) => <TaTableProAction actions={getActions(row)} />,
-          }}
-        </TaTablePro>
+        />
         <TaFileView
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}

@@ -82,6 +82,7 @@ export default defineComponent({
       const Actions = computed(() => {
         const actions = unref(permissonFilterActions)
         if (actions.length <= MAX_ACTION_NUMBER) {
+          restActions = []
           return actions
         } else {
           const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
