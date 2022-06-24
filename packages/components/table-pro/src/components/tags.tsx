@@ -28,7 +28,7 @@ const props = {
   },
   maxNum: {
     type: [Number, null] as PropType<number | null>,
-    default: null,
+    default: 2,
   },
   color: String,
   scroll: {
