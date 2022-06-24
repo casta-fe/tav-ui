@@ -9,8 +9,6 @@ import type {
   TableProCheckboxAll,
   TableProCheckboxChange,
   TableProCustomActionConfig,
-  /*TableProFilterFormConfig,
-  TableProProxyConfig,*/
 } from '@tav-ui/components/table-pro'
 
 export default defineComponent({
@@ -101,6 +99,13 @@ export default defineComponent({
       console.log(info)
     }
 
+    const height = ref('50%')
+    onMounted(() => {
+      setTimeout(() => {
+        height.value = '100%'
+      }, 2000)
+    })
+
     // onMounted(() => {
     //   unref(tableRef.value)?.commitProxy('query', {
     //     filter: {},
@@ -111,54 +116,55 @@ export default defineComponent({
 
     return () => {
       return (
-        <div
-          style={{
-            width: '80%',
-            height: '968px',
-            backgroundColor: '#f6f8ff',
-            margin: '0 auto',
-            overflow: 'auto',
-          }}
-        >
-          <div style={{ width: '90%', height: '568px', margin: '0 auto' }}>
-            <TaTablePro
-              ref={tableRef}
-              // pagerConfig={{ enabled: false }}
-              rowConfig={{ keyField: 'id' }}
-              // data={MockData()}
-              // columns={columns()}
-              columns={state.columns}
-              loading={loading.value}
-              // filterFormConfig={handleFilterFormConfig()}
-              filterFormConfig={state.filterFormConfig}
-              customActionConfig={handleCustomActionConfig()}
-              // proxyConfig={handleProxyConfig()}
-              api={handleApi}
-              onCheckboxChange={handleCheckboxChange}
-              onCheckboxAll={handleCheckboxAll}
-              onPageChange={handlePageChange}
-            >
-              {{
-                // filterForm: () => (<div>123</div>),
-                customAction: () => (
-                  <>
-                    <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
-                      变更负责人
-                    </Button>
-                    <Button type={'primary'} preIcon={'ant-design:setting-filled'}>
-                      设置分组
-                    </Button>
-                  </>
-                ),
-                // customerType: ({ row: { customerType } }) => (
-                //   <>
-                //   {customerType}
-                //   </>
-                // )
-              }}
-            </TaTablePro>
-          </div>
+        // <div
+        //   style={{
+        //     width: '80%',
+        //     height: '968px',
+        //     backgroundColor: '#f6f8ff',
+        //     margin: '0 auto',
+        //     overflow: 'auto',
+        //   }}
+        // >
+        <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
+          <TaTablePro
+            ref={tableRef}
+            // pagerConfig={{ enabled: false }}
+            rowConfig={{ keyField: 'id' }}
+            // data={MockData()}
+            // columns={columns()}
+            columns={state.columns}
+            loading={loading.value}
+            // filterFormConfig={handleFilterFormConfig()}
+            filterFormConfig={state.filterFormConfig}
+            customActionConfig={handleCustomActionConfig()}
+            // proxyConfig={handleProxyConfig()}
+            api={handleApi}
+            onCheckboxChange={handleCheckboxChange}
+            onCheckboxAll={handleCheckboxAll}
+            onPageChange={handlePageChange}
+            fillInner={false}
+          >
+            {{
+              // filterForm: () => (<div>123</div>),
+              customAction: () => (
+                <>
+                  <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
+                    变更负责人
+                  </Button>
+                  <Button type={'primary'} preIcon={'ant-design:setting-filled'}>
+                    设置分组
+                  </Button>
+                </>
+              ),
+              // customerType: ({ row: { customerType } }) => (
+              //   <>
+              //   {customerType}
+              //   </>
+              // )
+            }}
+          </TaTablePro>
         </div>
+        // </div>
       )
     }
   },

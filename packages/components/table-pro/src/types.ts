@@ -74,6 +74,7 @@ export const tableProProps = {
    */
   height: {
     type: [String, Number] as PropType<VxeTablePropTypes.Height>,
+    // default: '100%',
     default: 'auto',
   },
   /** 表格最大高度（超出自动出现 y轴 滚动条） */
@@ -236,17 +237,20 @@ export const tableProProps = {
   /** 设置所有内容过长时显示为省略号（如果是固定列建议设置该值，提升渲染速度） */
   showOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowOverflow>,
-    default: 'ellipsis',
+    // default: 'ellipsis',
+    default: true,
   },
   /** 设置表头所有内容过长时显示为省略号 */
   showHeaderOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowHeaderOverflow>,
-    default: 'ellipsis',
+    // default: 'ellipsis',
+    default: true,
   },
   /** 设置表尾所有内容过长时显示为省略号 */
   showFooterOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowFooterOverflow>,
-    default: 'ellipsis',
+    // default: 'ellipsis',
+    default: true,
   },
   /** 保持原始值的状态，被某些功能所依赖，比如编辑状态、还原数据等（开启后影响性能，具体取决于数据量） */
   keepSource: {
@@ -267,7 +271,8 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.ScrollX>,
     default: () => ({
       enabled: true,
-      gt: 60,
+      gt: 30,
+      /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
       oSize: 0,
     }),
   },
@@ -277,8 +282,10 @@ export const tableProProps = {
     default: () => ({
       enabled: true,
       mode: 'default',
-      gt: 30,
+      gt: 50,
+      /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
       oSize: 0,
+      scrollToTopOnChange: true,
     }),
   },
   //:==================================================: 全局设置 :==================================================://
@@ -559,8 +566,13 @@ export const tableProProps = {
   /** 覆盖tooltip */
   showTooltip: {
     type: Boolean,
-    default: true,
+    default: false,
   },
+  // /** 设置pagerconfig enabled 在api模式下报错，这里单独配置分页的显隐藏 */
+  // pagination: {
+  //   type: Boolean,
+  //   default: true,
+  // }
   //:==================================================: 扩展配置 :==================================================://
 }
 /** table props 类型 */

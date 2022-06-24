@@ -10,6 +10,8 @@ import {
 } from '@tav-ui/components'
 import { formatToDate } from '@tav-ui/utils'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
+import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
+// import type { VxeGridProps } from 'vxe-table'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -19,8 +21,6 @@ import type {
   Result,
   TypeSelectPropType,
 } from './types'
-// import type { VxeGridProps } from 'vxe-table'
-import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
 
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
@@ -93,38 +93,70 @@ export const PreviewTable = defineComponent({
         {
           title: '文件名称',
           field: 'fullName',
-          customRender: ({ row: record }) => (
-            <>
-              {record.hyperlink != 1 ? (
-                // 普通文件
-                <span>{record.fullName}</span>
-              ) : (
-                // 超链接
-                <>
-                  <span>{record.name}</span>
-                  <br />
-                  <a
-                    onClick={() => {
-                      window
-                        .open(
-                          record.address.includes('//') ? record.address : `//${record.address}`
-                        )
-                        ?.focus()
-                    }}
-                  >
-                    {record.address}
-                  </a>
-                </>
-              )}
-            </>
-          ),
+          slots: {
+            default: ({ row: record }) => [
+              <>
+                {record.hyperlink != 1 ? (
+                  // 普通文件
+                  <span>{record.fullName}</span>
+                ) : (
+                  // 超链接
+                  <>
+                    <span>{record.name}</span>
+                    <br />
+                    <a
+                      onClick={() => {
+                        window
+                          .open(
+                            record.address.includes('//') ? record.address : `//${record.address}`
+                          )
+                          ?.focus()
+                      }}
+                    >
+                      {record.address}
+                    </a>
+                  </>
+                )}
+              </>,
+            ],
+          },
+          // customRender: ({ row: record }) => (
+          //   <>
+          //     {record.hyperlink != 1 ? (
+          //       // 普通文件
+          //       <span>{record.fullName}</span>
+          //     ) : (
+          //       // 超链接
+          //       <>
+          //         <span>{record.name}</span>
+          //         <br />
+          //         <a
+          //           onClick={() => {
+          //             window
+          //               .open(
+          //                 record.address.includes('//') ? record.address : `//${record.address}`
+          //               )
+          //               ?.focus()
+          //           }}
+          //         >
+          //           {record.address}
+          //         </a>
+          //       </>
+          //     )}
+          //   </>
+          // ),
         },
         {
           title: '文件类型',
           field: 'typeCode',
           minWidth: 100,
-          customRender: ({ row: { typeCode } }) =>
-            typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
+          slots: {
+            default: ({ row: { typeCode } }) => [
+              typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
+            ],
+          },
+          // customRender: ({ row: { typeCode } }) =>
+          //   typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
         },
         {
           title: '文件大小',
@@ -135,15 +167,21 @@ export const PreviewTable = defineComponent({
         {
           title: '更新时间',
           field: 'createTime',
-          customRender: ({ row: { createTime } }) => formatToDate(createTime),
+          slots: {
+            default: ({ row: { createTime } }) => [formatToDate(createTime)],
+          },
+          // customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
         {
           width: getActionColumnMaxWidth(labels),
           fixed: 'right',
           title: '操作',
           field: 'action',
-          customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
           align: 'center',
+          slots: {
+            default: ({ row }) => [<TaTableProAction actions={getActions(row)} />],
+          },
+          // customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
         },
       ]
     })

@@ -10,7 +10,7 @@
       v-if="isPannelFormShow"
       class="filter-pannel-form-modal-activator"
       type="primary"
-      prev-icon="ant-design:filter-outlined"
+      pre-icon="ant-design:filter-outlined"
       :post-icon="state.visible ? 'ant-design:caret-up-outlined' : 'ant-design:caret-down-outlined'"
       @click="openPannelFormModal"
     >

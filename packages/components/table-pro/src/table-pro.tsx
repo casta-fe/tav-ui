@@ -1,6 +1,5 @@
 import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
-import { setupVxeTable } from './setup'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -12,10 +11,12 @@ import { useListeners } from './hooks/useListeners'
 import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
+import { setupVxeTable } from './setup'
+import { tableProEmits, tableProProps } from './types'
+import { useFixHeight, useHeight } from './hooks/useHeight'
+import type { TableProEvent, TableProInstance, TableProProps } from './types'
 // import { useWatchDom } from './hooks/useWatchDom'
 // import { isBoolean } from '@tav-ui/utils/is'
-import { tableProEmits, tableProProps } from './types'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const { Grid } = setupVxeTable()
 const ComponentPrefixCls = CamelCaseToCls(ComponentName)
@@ -81,11 +82,12 @@ export default defineComponent({
     const getWrapperClass = computed(() => {
       const values = unref(getBindValues)
       return [
-        ComponentPrefixCls,
+        // ComponentPrefixCls,
         attrs.class,
+        `${ComponentPrefixCls}-wrapper`,
         {
           [`${ComponentPrefixCls}--fill-inner`]: values.fillInner,
-          // [`${ComponentPrefixCls}--pager-disabled`]: isBoolean(values.pagerConfig.enabled) && !values.pagerConfig.enabled,
+          // [`${ComponentPrefixCls}--pagination-disabled`]: !values.pagination,
         },
       ]
     })
@@ -103,7 +105,7 @@ export default defineComponent({
         values.customActionConfig.refresh ||
         slots.customAction
       return values.showOperations && (isFilterFormHasContent || isCustomActionHasContent) ? (
-        <div class={ComponentOperationsPrefixCls}>
+        <div class={ComponentOperationsPrefixCls} ref={operationRef}>
           <ComponentFilterForm
             config={values.filterFormConfig}
             tableRef={tableRef}
@@ -118,16 +120,22 @@ export default defineComponent({
       ) : null
     }
 
+    // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
+    const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
+    useFixHeight(tableRef, wrapperRef, setHeight)
+
     return () => {
       return (
-        <div class={unref(getWrapperClass)}>
+        <div class={unref(getWrapperClass)} ref={wrapperRef}>
           {createOperation()}
-          <Grid ref={tableRef} {...unref(getBindValues)}>
-            {{
-              empty: () => <ComponentEmpty />,
-              ...slots,
-            }}
-          </Grid>
+          <div class={ComponentPrefixCls} style={{ height: unref(getHeight) }}>
+            <Grid ref={tableRef} {...unref(getBindValues)}>
+              {{
+                empty: () => <ComponentEmpty />,
+                ...slots,
+              }}
+            </Grid>
+          </div>
         </div>
       )
     }
