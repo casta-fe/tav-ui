@@ -34,7 +34,7 @@ const props = {
   scroll: {
     type: Object as PropType<ScrollbarProps & { enabled: boolean }>,
     default: () => ({
-      enabled: true,
+      enabled: false,
     }),
   },
 }
