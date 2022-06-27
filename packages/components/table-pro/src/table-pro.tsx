@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, onMounted, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
@@ -122,8 +122,9 @@ export default defineComponent({
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
-    useFixHeight(tableRef, wrapperRef, setHeight)
-
+    onMounted(() => {
+      useFixHeight(tableRef, wrapperRef, setHeight)
+    })
     return () => {
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef}>
