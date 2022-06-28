@@ -128,13 +128,13 @@ export function useWatchDom(
         table: unref(tableRef.value)?.$el,
       })
 
-      if (unref(tablePropsRef).api) {
-        useApiTableProObserver(tablePropsRef, tableRef, tableEmitter)
-        MutationObserverState.useApiExecCount++
-      } else {
-        useDataTableProObserver(tablePropsRef, tableRef, tableEmitter)
-        MutationObserverState.useDataExecCount++
-      }
+      // if (unref(tablePropsRef).api) {
+      //   useApiTableProObserver(tablePropsRef, tableRef, tableEmitter)
+      //   MutationObserverState.useApiExecCount++
+      // } else {
+      //   useDataTableProObserver(tablePropsRef, tableRef, tableEmitter)
+      //   MutationObserverState.useDataExecCount++
+      // }
     }
   })
 }

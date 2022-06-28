@@ -14,8 +14,8 @@ import { createTableContext } from './hooks/useTableContext'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import { useFixHeight, useHeight } from './hooks/useHeight'
+import { useWatchDom } from './hooks/useWatchDom'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
-// import { useWatchDom } from './hooks/useWatchDom'
 // import { isBoolean } from '@tav-ui/utils/is'
 
 const { Grid } = setupVxeTable()
@@ -70,7 +70,7 @@ export default defineComponent({
     useDataSource(getProps, tableRef)
 
     // // 执行dom监听的处理
-    // useWatchDom(getProps, tableRef, tableEmitter)
+    useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
     createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
