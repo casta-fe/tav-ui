@@ -88,6 +88,7 @@ export default defineComponent({
       type: String as PropType<BasicPropsType['uploadIcon']>,
       default: 'ant-design:upload-outlined',
     },
+    onSelect: Function as PropType<BasicPropsType['onSelect']>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -119,6 +120,7 @@ export default defineComponent({
               typeCodeArray={typeCodeArray.value}
               noDefaultValue={props.noDefaultValue}
               typeCodeRecord={handler.typeCodeRecord}
+              onSelect={props.onSelect}
             >
               {{
                 default: ({ typeCodeOptions }) =>
@@ -144,6 +146,7 @@ export default defineComponent({
                     handler.typeCode.value = val
                     handler.fillDataSource()
                   }}
+                  onSelect={props.onSelect}
                 />
               )}
             </>

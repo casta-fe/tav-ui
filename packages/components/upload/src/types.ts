@@ -167,7 +167,7 @@ interface IHandle {
  * @author mxs
  * @name TaUploadBasciProps
  * @createDate 2022/01/12
- * @updateDate 2022/03/09
+ * @updateDate 2022/06/28
  */
 type BasicPropsType = {
   /**
@@ -288,6 +288,10 @@ type BasicPropsType = {
    * 同 `TaIcon` 组件的 `icon` props
    */
   uploadIcon: string
+  /**
+   * 文件类型 选择框 onSelect
+   */
+  onSelect?: Fn
 } & ProvideDataType
 
 /**

@@ -281,6 +281,7 @@ export const TypeSelect = defineComponent({
       required: true,
     },
     queryFileType: Function as PropType<PromiseFn<any, Result<{ code: string }[]>>>,
+    onSelect: Function,
   },
   emits: ['update:selected'],
   setup(props, { emit, slots }) {
@@ -350,7 +351,10 @@ export const TypeSelect = defineComponent({
           value={defaultValue.value}
           style="width: 200px"
           options={localTypeCodeOptions.value}
-          onSelect={(value, option) => emit('update:selected', value, option)}
+          onSelect={(value, option) => {
+            props.onSelect?.(value, option)
+            emit('update:selected', value, option)
+          }}
           placeholder="请选择文件类型"
           allowClear={true}
           onClear={() => {
