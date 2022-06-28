@@ -2,6 +2,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref } from 'vue'
 import { addResizeListener, removeResizeListener } from '@tav-ui/utils/event'
 import type { TableProInstance } from '../types'
 import type { ComputedRef, Ref } from 'vue'
+import type { Emitter } from '@tav-ui/utils/mitt'
 
 /**
  * 手动计算表格内容区域高度
@@ -39,7 +40,8 @@ export function useHeight(): {
 export function useFixHeight(
   tableRef: Ref<TableProInstance | null>,
   wrapperRef: Ref<HTMLElement | null>,
-  setHeight: () => void
+  setHeight: () => void,
+  tableEmitter: Emitter
 ) {
   const reCalculate = () => {
     setHeight()
@@ -48,9 +50,12 @@ export function useFixHeight(
     })
   }
 
+  // onMounted 确保table rendered，但filter-form中的schema有可能异步渲染所以需要监听
   onMounted(() => {
-    const parentEl = unref(wrapperRef)?.parentElement
-    addResizeListener(parentEl, reCalculate)
+    tableEmitter.on('table-pro:filter-form-rendered', () => {
+      const parentEl = unref(wrapperRef)?.parentElement
+      addResizeListener(parentEl, reCalculate)
+    })
   })
 
   onBeforeUnmount(() => {

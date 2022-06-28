@@ -99,11 +99,16 @@ export default defineComponent({
       console.log(info)
     }
 
-    const height = ref('50%')
+    const wrapperHeight = ref('50%')
+    const height = ref('20%')
     onMounted(() => {
       setTimeout(() => {
-        height.value = '100%'
-      }, 2000)
+        wrapperHeight.value = '463px'
+      }, 16.7)
+
+      setTimeout(() => {
+        height.value = '417px'
+      }, 100)
     })
 
     // onMounted(() => {
@@ -116,55 +121,91 @@ export default defineComponent({
 
     return () => {
       return (
-        // <div
-        //   style={{
-        //     width: '80%',
-        //     height: '968px',
-        //     backgroundColor: '#f6f8ff',
-        //     margin: '0 auto',
-        //     overflow: 'auto',
-        //   }}
-        // >
-        <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
-          <TaTablePro
-            ref={tableRef}
-            // pagerConfig={{ enabled: false }}
-            rowConfig={{ keyField: 'id' }}
-            // data={MockData()}
-            // columns={columns()}
-            columns={state.columns}
-            loading={loading.value}
-            // filterFormConfig={handleFilterFormConfig()}
-            filterFormConfig={state.filterFormConfig}
-            customActionConfig={handleCustomActionConfig()}
-            // proxyConfig={handleProxyConfig()}
-            api={handleApi}
-            onCheckboxChange={handleCheckboxChange}
-            onCheckboxAll={handleCheckboxAll}
-            onPageChange={handlePageChange}
-            fillInner={false}
-          >
-            {{
-              // filterForm: () => (<div>123</div>),
-              customAction: () => (
-                <>
-                  <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
-                    变更负责人
-                  </Button>
-                  <Button type={'primary'} preIcon={'ant-design:setting-filled'}>
-                    设置分组
-                  </Button>
-                </>
-              ),
-              // customerType: ({ row: { customerType } }) => (
-              //   <>
-              //   {customerType}
-              //   </>
-              // )
-            }}
-          </TaTablePro>
+        <div style={{ height: unref(wrapperHeight), overflow: 'hidden' }}>
+          <div class="ta-page-tabs" style={{ padding: '16px 24px 0' }}>
+            <div class="ta-button-group">
+              <div class="ta-button-group-inner">
+                <button
+                  iconsize="14"
+                  ifshow="true"
+                  class="ant-btn ant-btn-primary ta-basic-button"
+                  type="button"
+                >
+                  <span>我参与的</span>
+                  <span>（5）</span>
+                </button>
+                <button
+                  iconsize="14"
+                  ifshow="true"
+                  class="ant-btn ant-btn-default ta-basic-button"
+                  type="button"
+                >
+                  <span>待审核</span>
+                  <span>（0）</span>
+                </button>
+                <button
+                  iconsize="14"
+                  ifshow="true"
+                  class="ant-btn ant-btn-default ta-basic-button"
+                  type="button"
+                >
+                  <span>我关注的</span>
+                  <span>（0）</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* <div
+          style={{
+            width: '80%',
+            height: '968px',
+            backgroundColor: '#f6f8ff',
+            margin: '0 auto',
+            overflow: 'auto',
+          }}
+        > */}
+          {/* <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}> */}
+          <div style={{ height: unref(height), padding: '16px 24px 0' }}>
+            <TaTablePro
+              ref={tableRef}
+              // pagerConfig={{ enabled: false }}
+              rowConfig={{ keyField: 'id' }}
+              // data={MockData()}
+              // columns={columns()}
+              columns={state.columns}
+              loading={loading.value}
+              // filterFormConfig={handleFilterFormConfig()}
+              filterFormConfig={state.filterFormConfig}
+              customActionConfig={handleCustomActionConfig()}
+              // proxyConfig={handleProxyConfig()}
+              api={handleApi}
+              onCheckboxChange={handleCheckboxChange}
+              onCheckboxAll={handleCheckboxAll}
+              onPageChange={handlePageChange}
+              fillInner={false}
+            >
+              {{
+                // filterForm: () => (<div>123</div>),
+                customAction: () => (
+                  <>
+                    <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
+                      变更负责人
+                    </Button>
+                    <Button type={'primary'} preIcon={'ant-design:setting-filled'}>
+                      设置分组
+                    </Button>
+                  </>
+                ),
+                // customerType: ({ row: { customerType } }) => (
+                //   <>
+                //   {customerType}
+                //   </>
+                // )
+              }}
+            </TaTablePro>
+          </div>
+          {/* </div> */}
         </div>
-        // </div>
       )
     }
   },

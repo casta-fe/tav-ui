@@ -1,4 +1,4 @@
-import { computed, defineComponent, onBeforeMount, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
@@ -7,14 +7,14 @@ import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
+import { useFixHeight, useHeight } from './hooks/useHeight'
 import { useListeners } from './hooks/useListeners'
 import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
+import { useWatchDom } from './hooks/useWatchDom'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
-import { useFixHeight, useHeight } from './hooks/useHeight'
-import { useWatchDom } from './hooks/useWatchDom'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 // import { isBoolean } from '@tav-ui/utils/is'
 
@@ -69,7 +69,7 @@ export default defineComponent({
     // 数据处理
     useDataSource(getProps, tableRef)
 
-    // // 执行dom监听的处理
+    // 执行dom监听的处理
     useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
@@ -122,9 +122,8 @@ export default defineComponent({
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
-    onBeforeMount(() => {
-      useFixHeight(tableRef, wrapperRef, setHeight)
-    })
+    useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
+
     return () => {
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef}>

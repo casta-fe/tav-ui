@@ -72,7 +72,7 @@ function useApiTableProObserver(
       // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
       if (mutation.attributeName === 'style' && (mutation.target as HTMLElement).style.width) {
         setActionWidth(tablePropsRef, tableRef)
-        tableEmitter.emit('table-pro:render-ready')
+        tableEmitter.emit('table-pro:rendered')
         stop()
       }
     },
@@ -104,7 +104,7 @@ function useDataTableProObserver(
       // 已 '.vxe-table .vxe-table--body' 的动态宽度变化来作为渲染完成依据
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
         setActionWidth(tablePropsRef, tableRef)
-        tableEmitter.emit('table-pro:render-ready')
+        tableEmitter.emit('table-pro:rendered')
         stop()
       }
     },

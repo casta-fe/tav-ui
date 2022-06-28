@@ -1,4 +1,4 @@
-import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, reactive, ref, unref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { Badge } from 'ant-design-vue'
 import { merge } from 'lodash-es'
@@ -238,6 +238,18 @@ export default defineComponent({
       closePannelFormModal()
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
+
+    watch(
+      () => props.config,
+      (config, prevConfig) => {
+        if (config && JSON.stringify(config) !== JSON.stringify(prevConfig)) {
+          // input/pannel 都有可能是异步赋值所以这里需要判断rendered
+          nextTick(() => {
+            tableEmitter.emit('table-pro:filter-form-rendered')
+          })
+        }
+      }
+    )
 
     return () => {
       return unref(isFilterFormShow) ? (
