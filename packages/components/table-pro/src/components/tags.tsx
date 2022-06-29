@@ -3,7 +3,7 @@ import { computed, defineComponent, unref } from 'vue'
 import { TagsOutlined } from '@ant-design/icons-vue'
 import { Tag, Tooltip } from 'ant-design-vue'
 import Scrollbar from '@tav-ui/components/scrollbar'
-import { isArray, isNumber, isObject, isString } from '@tav-ui/utils/is'
+import { isArray, isBoolean, isNumber, isObject, isString } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentTagsName } from '../const'
 import type { ScrollbarProps } from '@tav-ui/components/scrollbar'
 import type { PropType } from 'vue'
@@ -15,6 +15,8 @@ const DEFAULT_CONFIG: TableProTagsConfig = {
   label: 'name',
   value: 'id',
 }
+
+const ROUNDRADIUS = '20px'
 
 const props = {
   data: {
@@ -46,9 +48,16 @@ export default defineComponent({
     const getConfig = computed(() => Object.assign({}, DEFAULT_CONFIG, props.tagConfig))
 
     const renderTag = (info: Record<string, any>) => {
-      const { label, value, color, style } = unref(getConfig)
+      const { label, value, color, style, round } = unref(getConfig)
+      let _style = style
+      if (isBoolean(round)) {
+        _style = { ..._style, borderRadius: ROUNDRADIUS }
+      }
+      if (isString(round)) {
+        _style = { ..._style, borderRadius: round }
+      }
       return (
-        <Tag color={props.color} key={`${info[label]}-${info[value]}`} title={info[label]}>
+        <Tag color={color} key={`${info[label]}-${info[value]}`} title={info[label]} style={_style}>
           {getShortText(info[label])}
         </Tag>
       )

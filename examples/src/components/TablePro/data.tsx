@@ -252,7 +252,12 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
       // visible: false,
       slots: {
         default: ({ row: { classificationValue } }) => {
-          return [<TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />]
+          return [
+            <TaTableProTags
+              data={classificationValue}
+              tagConfig={{ color: 'blue', round: '50px' }}
+            />,
+          ]
         },
       },
       // customRender: ({ row: { classificationValue } }) => (
