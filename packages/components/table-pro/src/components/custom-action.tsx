@@ -40,6 +40,8 @@ export default defineComponent({
         props.config?.add.handleAction(e)
     }
 
+    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
+
     const addButton = () =>
       props.config?.add ? (
         <Button
@@ -47,6 +49,7 @@ export default defineComponent({
           type="primary"
           preIcon={'ant-design:plus-circle-outlined'}
           onClick={handleAdd}
+          permission={getPermission(props.config?.add)}
         >
           新增
         </Button>
@@ -64,6 +67,7 @@ export default defineComponent({
           type="primary"
           preIcon={'ant-design:delete-outlined'}
           onClick={handleDelete}
+          permission={getPermission(props.config?.delete)}
         >
           删除
         </Button>
@@ -81,6 +85,7 @@ export default defineComponent({
           type="primary"
           preIcon={'ant-design:import-outlined'}
           onClick={handleImport}
+          permission={getPermission(props.config?.import)}
         >
           导入
         </Button>
@@ -98,6 +103,7 @@ export default defineComponent({
           type="primary"
           preIcon={'ant-design:export-outlined'}
           onClick={handleExport}
+          permission={getPermission(props.config?.export)}
         >
           导出
         </Button>
@@ -118,6 +124,7 @@ export default defineComponent({
           type="default"
           preIcon={'ant-design:redo-outlined'}
           onClick={handleRefresh}
+          permission={getPermission(props.config?.refresh)}
         />
       ) : null
 
