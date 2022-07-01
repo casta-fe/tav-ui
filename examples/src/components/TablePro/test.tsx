@@ -2,7 +2,7 @@ import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
-import { columns2, filterForm2 } from './data'
+import { columns2, filterForm1, filterForm2 } from './data'
 import type {
   ITableProInstance,
   TableProApi,
@@ -14,7 +14,7 @@ import type {
 export default defineComponent({
   setup() {
     const state = reactive({
-      filterFormConfig: {},
+      filterFormConfig: filterForm1(),
       columns: [] as any[],
     })
     const loading = ref<boolean>(false)
@@ -34,7 +34,7 @@ export default defineComponent({
     // })
 
     onMounted(async () => {
-      state.filterFormConfig = await filterForm2()
+      // state.filterFormConfig = await filterForm2()
       state.columns = await columns2()
     })
 
@@ -87,6 +87,7 @@ export default defineComponent({
         // unref(tableRef)?.instance?.clearSelectedRows()
         // unref(tableRef)?.instance?.clearSelectedRowByKey(3284)
         // unref(tableRef)?.instance?.setLoading(true)
+        unref(tableRef)?.instance?.recalculate
       }, 1500)
     }
 

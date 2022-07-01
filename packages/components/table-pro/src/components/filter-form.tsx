@@ -242,7 +242,9 @@ export default defineComponent({
     watch(
       () => props.config,
       (config, prevConfig) => {
-        if (config && JSON.stringify(config) !== JSON.stringify(prevConfig)) {
+        // if (config && JSON.stringify(config) !== JSON.stringify(prevConfig))
+        // 这样子只能判断异步schema同步不能进行了
+        if (config) {
           // input/pannel 都有可能是异步赋值所以这里需要判断rendered
           nextTick(() => {
             tableEmitter.emit('table-pro:filter-form-rendered')
@@ -275,7 +277,7 @@ export default defineComponent({
                 <div style="position: relative; display: inline-flex; margin: 0 8px">
                   更多筛选
                   {state.choosedNum > 0 ? (
-                    <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '52c41a' }} />
+                    <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '#52c41a' }} />
                   ) : null}
                 </div>
               </Button>

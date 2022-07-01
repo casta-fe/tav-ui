@@ -23,8 +23,11 @@ export function useHeight(): {
 
   const setHeight = () => {
     if (unref(wrapperRef) && unref(operationRef)) {
-      const { height: wrapperHeight } = unref(wrapperRef)!.getBoundingClientRect()
-      const { height: operationHeight } = unref(operationRef)!.getBoundingClientRect()
+      // getBoundingClientRect 会被 transform scale 影响
+      // const { height: wrapperHeight } = unref(wrapperRef)!.getBoundingClientRect()
+      // const { height: operationHeight } = unref(operationRef)!.getBoundingClientRect()
+      const wrapperHeight = unref(wrapperRef)!.offsetHeight
+      const operationHeight = unref(operationRef)!.offsetHeight
       height.value = `${wrapperHeight - operationHeight}px`
     }
   }
