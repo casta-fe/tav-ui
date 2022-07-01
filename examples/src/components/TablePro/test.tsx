@@ -87,7 +87,6 @@ export default defineComponent({
         // unref(tableRef)?.instance?.clearSelectedRows()
         // unref(tableRef)?.instance?.clearSelectedRowByKey(3284)
         // unref(tableRef)?.instance?.setLoading(true)
-        unref(tableRef)?.instance?.recalculate
       }, 1500)
     }
 
