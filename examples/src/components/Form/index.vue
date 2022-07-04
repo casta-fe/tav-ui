@@ -84,24 +84,27 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useForm } from '../../../../dist/tav-ui/es/index.mjs'
+import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '../../../../dist/tav-ui/es/hooks/web/useMessage'
 
 import type { FormSchema } from '../../../../dist/types/components/form/src/types/form'
-
+const a = [
+  { name: '用户1', id: 99 },
+  { name: '用户2', id: 100 },
+  { name: '用户3', id: 3 },
+]
 const schemas: FormSchema[] = [
   {
     field: 'field1',
-    component: 'Input',
+    component: 'MemberSelect',
     label: '字段1',
     colProps: {
       span: 8,
     },
     componentProps: {
       placeholder: '自定义placeholder',
-      onChange: (e: any) => {
-        console.log(e)
-      },
+      multiple: true,
+      options: [],
     },
   },
   {
@@ -239,7 +242,7 @@ const schemas: FormSchema[] = [
 ]
 
 export default defineComponent({
-  components: {},
+  components: { TaButton, TaForm },
   setup() {
     const { createMessage } = useMessage()
 
@@ -251,7 +254,17 @@ export default defineComponent({
       },
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
-
+    setTimeout(() => {
+      setFieldsValue({ field1: [99, 100] })
+    }, 500)
+    setTimeout(() => {
+      updateSchema({
+        field: 'field1',
+        componentProps: {
+          options: a,
+        },
+      })
+    }, 1500)
     async function handleLoad() {
       const promiseFn = function () {
         return new Promise((resolve) => {

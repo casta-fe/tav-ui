@@ -140,6 +140,7 @@ export default defineComponent({
     )
     const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
     const orgApi = globalConfig.value?.TaMemberSelect?.orgApi || props.orgApi
+    const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
     const userOptions = computed(() => {
       const list: Options[] = []
@@ -194,6 +195,7 @@ export default defineComponent({
           state.userList = getTrueUserList(res.data)
         })
       }
+      checkUserIsExist()
     }
     // 获取组织数据
     const getOrgList = (): void => {
@@ -225,9 +227,30 @@ export default defineComponent({
           state.selectedData = [[]]
         } else {
           state.selectedData = [[...props.value]]
+          checkUserIsExist()
         }
       } else {
         state.selectedData = props.value ? [props.value] : [null]
+        checkUserIsExist()
+      }
+    }
+    // 检查用户在当前的用户列表中是否存在，不存在就去全部用户列表中匹配，匹配到后塞到现有用户列表中去
+    const checkUserIsExist = () => {
+      if (props.multiple) {
+        state.selectedData[0].forEach((userId) => {
+          getUserItem(userId)
+        })
+      } else {
+        getUserItem(state.selectedData[0])
+      }
+      function getUserItem(userId) {
+        // 如果当前用户列表中查不到该用户就在所用用户中去匹配，匹配到后插入当当前用户列表中
+        if (!state.userList.some((v) => v.id === userId)) {
+          const item = allUserList.find((v) => v.id === userId)
+          if (item) {
+            state.userList.push(item)
+          }
+        }
       }
     }
     // 这块是用户基础数据，更多选项里面也有用
@@ -256,6 +279,7 @@ export default defineComponent({
     const orgVisibleChange = () => {
       // console.log(v);
     }
+
     watch(
       () => state.orgList,
       (newData) => {
