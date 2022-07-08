@@ -30,8 +30,10 @@ import type {
 /** column 类型 */
 export type TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
+  // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
-  showTooltip?: boolean
+  // 因为是自定义属性，vxetable中不接收，所以在运行时取不到，通过vxetable提供的column.params传进去
+  // showTooltip?: boolean
 }
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
@@ -369,6 +371,9 @@ export const tableProProps = {
    */
   tooltipConfig: {
     type: Object as PropType<VxeTablePropTypes.TooltipConfig>,
+    default: () => ({
+      theme: 'dark',
+    }),
   },
   /**
    * 导出配置项（详情查看：https://vxetable.cn/#/grid/api）
@@ -566,7 +571,12 @@ export const tableProProps = {
   /** 覆盖tooltip */
   showTooltip: {
     type: Boolean,
-    default: false,
+    default: true,
+  },
+  /** 是否使用固定行高 */
+  fixedLineHeight: {
+    type: Boolean,
+    default: true,
   },
   // /** 设置pagerconfig enabled 在api模式下报错，这里单独配置分页的显隐藏 */
   // pagination: {
@@ -577,3 +587,9 @@ export const tableProProps = {
 }
 /** table props 类型 */
 export type TableProProps = ExtractPropTypes<typeof tableProProps>
+
+const config: {
+  id?: string
+} = {}
+
+config.id! = '123'

@@ -80,7 +80,7 @@
         color: #000000d9;
       }
       &--sort {
-        >.sort--active {
+        > .sort--active {
           border-color: @primary-color;
         }
       }
@@ -286,10 +286,12 @@
   &-cell {
     // &[data-type="header"] {}
     // &[data-type="body"] {}
-    &--tooltip {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    &-content {
+      &.-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 
@@ -364,12 +366,22 @@
   }
 
   // tags
-  &-tags-scroll-container {
-    .scrollbar__bar.is-vertical {
-      width: 2px;
+  &-tags {
+    .ant-tag {
+      margin-right: 0;
     }
-    .scrollbar__bar.is-horizontal {
-      height: 2px;
+
+    .ant-tag + .ant-tag {
+      margin-right: 8px;
+    }
+
+    &-scroll-container {
+      .scrollbar__bar.is-vertical {
+        width: 2px;
+      }
+      .scrollbar__bar.is-horizontal {
+        height: 2px;
+      }
     }
   }
 

@@ -50,6 +50,7 @@
   "dependencies": {
     "@ant-design/colors": "6.0.0",
     "@ant-design/icons-vue": "6.0.1",
+    "@floating-ui/dom": "^0.5.4",
     "@iconify/iconify": "2.2.1",
     "@purge-icons/generated": "0.7.0",
     "@vueuse/core": "8.6.0",

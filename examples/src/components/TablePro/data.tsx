@@ -243,34 +243,44 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
 
   return [
     { field: 'customerName', title: '客户名称', fixed: 'left' },
+    // { field: 'customerCode', title: '客户编号', fixed: 'left', params: { showTooltip: false } },
     { field: 'customerCode', title: '客户编号', fixed: 'left' },
+    // {
+    //   title: '集合',
+    //   fixed: 'left',
+    //   width: 200,
+    //   children: [
+    //     { field: 'customerName', title: '客户名称', width: 100 },
+    //     { field: 'customerCode', title: '客户编号', width: 100 },
+    //   ]
+    // },
     {
       field: 'classificationValue',
       title: '客户分类',
       width: 1000,
-      // showTooltip: false,
+      // showTooltip: true,
       // visible: false,
-      slots: {
-        default: ({ row: { classificationValue } }) => {
-          return [
-            <TaTableProTags
-              data={classificationValue}
-              tagConfig={{ color: 'blue', round: '50px' }}
-            />,
-          ]
-        },
-      },
-      // customRender: ({ row: { classificationValue } }) => (
-      //   <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
-      // ),
+      // slots: {
+      //   default: ({ row: { classificationValue } }) => {
+      //     return [
+      //       <TaTableProTags
+      //         data={classificationValue}
+      //         tagConfig={{ color: 'blue', round: '50px' }}
+      //       />,
+      //     ]
+      //   },
+      // },
+      customRender: ({ row: { classificationValue } }) => (
+        <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
+      ),
     },
     {
       field: 'customerType',
       title: '客户类型',
-      slots: {
-        default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
-      },
-      // customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
+      // slots: {
+      //   default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
+      // },
+      customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
       // slots: {
       //   default: 'customerType'
       // }
@@ -278,26 +288,26 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
     {
       field: 'industryList',
       title: '行业',
-      slots: {
-        default: ({ row: { industryList } }) => {
-          return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
-        },
-      },
-      // customRender: ({ row: { industryList } }) => (
-      //   <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
-      // ),
+      // slots: {
+      //   default: ({ row: { industryList } }) => {
+      //     return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
+      //   },
+      // },
+      customRender: ({ row: { industryList } }) => (
+        <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
+      ),
     },
     {
       field: 'applicationList',
       title: '应用领域',
-      slots: {
-        default: ({ row: { applicationList } }) => {
-          return [<TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />]
-        },
-      },
-      // customRender: ({ row: { applicationList } }) => (
-      //   <TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />
-      // ),
+      // slots: {
+      //   default: ({ row: { applicationList } }) => {
+      //     return [<TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />]
+      //   },
+      // },
+      customRender: ({ row: { applicationList } }) => (
+        <TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />
+      ),
     },
     {
       field: 'address',
@@ -337,74 +347,74 @@ export const columns2 = async (): Promise<TableProColumn[]> => {
       fixed: 'right',
       // showTooltip: false,
       // width: 85,
-      slots: {
-        default: () => [
-          <TaTableProAction
-            actions={[
-              {
-                label: '编辑',
-                onClick: () => {
-                  console.log('edit')
-                },
-              },
-              {
-                label: '测试1',
-                onClick: () => {
-                  console.log('test 1')
-                },
-              },
-              {
-                label: '测试2',
-                onClick: () => {
-                  console.log('test 2')
-                },
-              },
-              {
-                label: '删除',
-                popConfirm: {
-                  title: '删除后将无法恢复，确定删除吗？',
-                  confirm: () => {
-                    console.log('del')
-                  },
-                },
-              },
-            ]}
-          />,
-        ],
-      },
-      // customRender: () => (
-      //   <TaTableProAction
-      //     actions={[
-      //       {
-      //         label: '编辑',
-      //         onClick: () => {
-      //           console.log('edit')
-      //         },
-      //       },
-      //       {
-      //         label: '测试1',
-      //         onClick: () => {
-      //           console.log('test 1')
-      //         },
-      //       },
-      //       {
-      //         label: '测试2',
-      //         onClick: () => {
-      //           console.log('test 2')
-      //         },
-      //       },
-      //       {
-      //         label: '删除',
-      //         popConfirm: {
-      //           title: '删除后将无法恢复，确定删除吗？',
-      //           confirm: () => {
-      //             console.log('del')
+      // slots: {
+      //   default: () => [
+      //     <TaTableProAction
+      //       actions={[
+      //         {
+      //           label: '编辑',
+      //           onClick: () => {
+      //             console.log('edit')
       //           },
       //         },
-      //       },
-      //     ]}
-      //   />
-      // ),
+      //         {
+      //           label: '测试1',
+      //           onClick: () => {
+      //             console.log('test 1')
+      //           },
+      //         },
+      //         {
+      //           label: '测试2',
+      //           onClick: () => {
+      //             console.log('test 2')
+      //           },
+      //         },
+      //         {
+      //           label: '删除',
+      //           popConfirm: {
+      //             title: '删除后将无法恢复，确定删除吗？',
+      //             confirm: () => {
+      //               console.log('del')
+      //             },
+      //           },
+      //         },
+      //       ]}
+      //     />,
+      //   ],
+      // },
+      customRender: () => (
+        <TaTableProAction
+          actions={[
+            {
+              label: '编辑',
+              onClick: () => {
+                console.log('edit')
+              },
+            },
+            {
+              label: '测试1',
+              onClick: () => {
+                console.log('test 1')
+              },
+            },
+            {
+              label: '测试2',
+              onClick: () => {
+                console.log('test 2')
+              },
+            },
+            {
+              label: '删除',
+              popConfirm: {
+                title: '删除后将无法恢复，确定删除吗？',
+                confirm: () => {
+                  console.log('del')
+                },
+              },
+            },
+          ]}
+        />
+      ),
     },
   ]
 }

@@ -100,12 +100,10 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @param columns
  * @returns
  */
-function wrapperColumnSlot(tablePropsRef: ComputedRef<TableProProps>, columns: TableProColumn[]) {
-  const { showTooltip } = unref(tablePropsRef)
-  return columns.length && showTooltip
+function wrapperColumnSlot(columns: TableProColumn[]) {
+  return columns.length
     ? columns.map((column: TableProColumn) => {
         const { customRender } = column
-        // // 只包装 tbody（内容区域）除选择框、action以外的单元格
         column['cellRender'] = {
           name: ComponentCellName,
           options: [{ customRender }],
@@ -126,7 +124,7 @@ export function useColumns(
 ) {
   const autoAddChoosenElementColumns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
   const setColumnMinWidthColumns = setColumnMinWidth(autoAddChoosenElementColumns)
-  const columns = wrapperColumnSlot(tablePropsRef, setColumnMinWidthColumns)
+  const columns = wrapperColumnSlot(setColumnMinWidthColumns)
   // return setColumnMinWidthColumns
   return columns
 }
