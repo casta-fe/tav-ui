@@ -82,6 +82,7 @@ export const basicProps = Object.assign({}, modalProps, {
  * @description: 弹窗对外暴露的方法
  */
 export interface ModalMethods {
+  redoThumbHeight: () => void
   setModalProps: (props: Partial<ModalProps>) => void
   emitVisible?: (visible: boolean, uid: number) => void
   redoModalHeight?: () => void

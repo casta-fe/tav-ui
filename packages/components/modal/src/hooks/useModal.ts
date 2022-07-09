@@ -76,6 +76,10 @@ export function useModal(): UseModalReturnType {
       getInstance()?.redoModalHeight?.()
     },
 
+    redoThumbHeight: () => {
+      getInstance()?.redoThumbHeight?.()
+    },
+
     openModal: <T = any>(visible = true, data?: T, openOnSet = true): void => {
       getInstance()?.setModalProps({
         visible,
@@ -155,6 +159,10 @@ export const useModalInner = (callbackFn?: Fn): UseModalInnerReturnType => {
       redoModalHeight: () => {
         const callRedo = getInstance()?.redoModalHeight
         callRedo && callRedo()
+      },
+
+      redoThumbHeight() {
+        getInstance()?.redoThumbHeight?.()
       },
     },
   ]

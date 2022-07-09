@@ -4,6 +4,7 @@ import {
   defineComponent,
   getCurrentInstance,
   nextTick,
+  provide,
   ref,
   toRef,
   unref,
@@ -13,6 +14,7 @@ import {
 import { omit } from 'lodash-es'
 import { isFunction } from '@tav-ui/utils/is'
 import { deepMerge } from '@tav-ui/utils/basic'
+import { mitt } from '@tav-ui/utils/mitt'
 
 import ModalContent from './components/ModalContent'
 import ModalWrapper from './components/ModalWrapper.vue'
@@ -36,6 +38,9 @@ export default defineComponent({
   props: basicProps,
   emits: ['visible-change', 'height-change', 'cancel', 'ok', 'register', 'update:visible'],
   setup(props, { emit, attrs }) {
+    const modalEmitter = mitt()
+    provide('modalEmitter', modalEmitter)
+
     const visibleRef = ref(false)
     const propsRef = ref<Partial<ModalProps> | null>(null)
     const modalWrapperRef = ref<any>(null)
@@ -44,6 +49,7 @@ export default defineComponent({
     // modal   Bottom and top height
     const extHeightRef = ref(0)
     const modalMethods: ModalMethods = {
+      redoThumbHeight: () => modalEmitter.emit('redoThumbHeight'),
       setModalProps,
       emitVisible: undefined,
       redoModalHeight: () => {
