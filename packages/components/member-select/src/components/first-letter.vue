@@ -21,7 +21,7 @@ export default defineComponent({
     const pageInit = () => {
       const { name, phone } = props.value
       state.letter = name.substring(0, 1)
-      state.index = phone.substring(10, 1)
+      state.index = phone?.substring(10, 1)
     }
     onMounted(() => {
       pageInit()
