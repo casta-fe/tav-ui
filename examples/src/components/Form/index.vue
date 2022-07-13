@@ -85,9 +85,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
-import { useMessage } from '../../../../dist/tav-ui/es/hooks/web/useMessage'
-
-import type { FormSchema } from '../../../../dist/types/components/form/src/types/form'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import type { FormSchema } from '@tav-ui/components/form'
 const a = [
   { name: '用户1', id: 99 },
   { name: '用户2', id: 100 },

@@ -1,0 +1,32 @@
+@import '../var/index.less';
+@prefix-cls-popper: ~'ta-popper';
+
+.@{prefix-cls-popper} {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  display: block;
+  padding: 6px 8px;
+  border-radius: (@primary-border-radius / 2);
+
+  font-size: 12px;
+
+  color: white;
+  // background-image: linear-gradient(to bottom, #000000bf 0%, #222 100%);
+  background: #303133;
+  box-shadow: 0 2px 8px #00000026;
+
+  pointer-events: none;
+
+  &-arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+
+    transform: rotate(45deg);
+
+    background-color: #303133;
+  }
+}

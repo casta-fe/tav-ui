@@ -14,19 +14,31 @@ type Result<T = any> = {
 type Recordable<T = any> = Record<string, T>
 type LabelValueOption<T = any, K = any> = { label: string; value: T } & Recordable<K>
 
+export type SearchableApiSelectBasicProps = {
+  api: (keyword: string, page?: string | number) => Promise<Result<Recordable>>
+  canInputRef?: boolean | Record<string, any>
+  labelField?: string
+  valueField?: string
+  keyField?: string
+  panelMaxHeight?: string
+
+  value?: [string, LabelValueOption<any, any>]
+  onChange?: (parame?: [string, LabelValueOption<string, string>]) => void
+  getPopupContainer?: typeof getPopupContainer
+  onSelect?: (value: string, option: LabelValueOption<string, string>) => void
+}
+
 export default defineComponent({
   name: 'SearchableApiSelect',
   components: { Search, Dropdown },
   props: {
     api: {
-      type: Function as PropType<
-        (keyword: string, page?: string | number) => Promise<Result<Recordable>>
-      >,
+      type: Function as PropType<SearchableApiSelectBasicProps['api']>,
       required: true,
     },
-    value: Array as unknown as PropType<[string, LabelValueOption]>,
+    value: Array as unknown as PropType<SearchableApiSelectBasicProps['value']>,
     canInputRef: { type: [Object, Boolean], default: false },
-    getPopupContainer: Function as PropType<typeof getPopupContainer>,
+    getPopupContainer: Function as PropType<SearchableApiSelectBasicProps['getPopupContainer']>,
     labelField: {
       type: String,
       default: 'name',
@@ -43,10 +55,8 @@ export default defineComponent({
       type: String,
       default: '200px',
     },
-    onSelect: Function as PropType<
-      (value: string, option: LabelValueOption<string, string>) => void
-    >,
-    onChange: Function as PropType<(parame?: [string, LabelValueOption<string, string>]) => void>,
+    onSelect: Function as PropType<SearchableApiSelectBasicProps['onSelect']>,
+    onChange: Function as PropType<SearchableApiSelectBasicProps['onChange']>,
   },
   emits: ['change'],
   setup(props, { emit, attrs }) {
@@ -58,7 +68,6 @@ export default defineComponent({
       isEnter: false,
       visible: false,
       loading: false,
-      closePanelTimeout: 0,
       loadMoreLoading: false,
       options: [] as LabelValueOption[],
     })
@@ -89,19 +98,9 @@ export default defineComponent({
 
     const onMouseLeave = () => {
       state.isEnter = false
-
-      state.closePanelTimeout = window.setTimeout(() => {
-        state.visible = false
-        // selfRef.value?.$el.getElementsByTagName('input')?.[0]?.blur()
-      }, 1000)
     }
     const onMouseEnter = () => {
       state.isEnter = true
-
-      if (state.closePanelTimeout) {
-        clearTimeout(state.closePanelTimeout)
-        state.closePanelTimeout = 0
-      }
     }
 
     /**
@@ -206,7 +205,7 @@ export default defineComponent({
               emitValue()
               return
             }
-            if (state.options.length === 0 && state.value.length > 2) {
+            if (state.options.length === 0 && state.value.length >= 2) {
               fetchCurrentKeyword().then(() => {
                 if (!state.visible) {
                   state.visible = true

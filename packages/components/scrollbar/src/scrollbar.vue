@@ -2,6 +2,7 @@
 import {
   computed,
   defineComponent,
+  inject,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -13,6 +14,7 @@ import { addResizeListener, removeResizeListener } from '@tav-ui/utils/event/ind
 import Bar from './bar'
 import { scrollbarProps } from './types'
 import { toObject } from './util'
+import type { Emitter } from '@tav-ui/utils'
 
 export default defineComponent({
   name: 'TaScrollbar',
@@ -44,7 +46,6 @@ export default defineComponent({
 
     const update = () => {
       if (!unref(wrap)) return
-
       const heightPercentage = (unref(wrap).clientHeight * 100) / unref(wrap).scrollHeight
       const widthPercentage = (unref(wrap).clientWidth * 100) / unref(wrap).scrollWidth
 
@@ -55,6 +56,10 @@ export default defineComponent({
     onMounted(() => {
       if (props.native) return
       nextTick(update)
+      inject<Emitter>('modalEmitter')?.on('redoThumbHeight', () => {
+        nextTick(update)
+      })
+
       if (!props.noresize) {
         addResizeListener(unref(resize), update)
         addResizeListener(unref(wrap), update)

@@ -79,11 +79,7 @@ function handleExtenAfterApi(
  * @param emit
  * @returns
  */
-function handleExtenApi(
-  tablePropsRef: ComputedRef<TableProProps>,
-  tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
-) {
+function handleExtenApi(tablePropsRef: ComputedRef<TableProProps>, emit: TableProGridEmit) {
   const { api, beforeApi, afterApi } = unref(tablePropsRef)
   const hasApi = api && isFunction(api)
 
@@ -175,8 +171,34 @@ function handleExtendProps(
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
   const handleExtenAfterApiResult = handleExtenAfterApi(handleExtendProxyConfigResult, tableRef)
-  const handleExtenApiResult = handleExtenApi(handleExtenAfterApiResult, tableRef, emit)
+  const handleExtenApiResult = handleExtenApi(handleExtenAfterApiResult, emit)
   return handleExtenApiResult
+}
+
+/**
+ * 根据 fixedLineHeight 做行高处理
+ * @param tablePropsRef \
+ */
+function handleRowLineHeight(tablePropsRef: ComputedRef<TableProProps>) {
+  const { fixedLineHeight } = unref(tablePropsRef)
+  // 因为 vxetable 虚拟滚动的要求是关闭动态行高（即行高度不允许被内容撑开）
+  if (fixedLineHeight) {
+    // 所以当 showTooltip 为 true 时，要设置固定行高度（即设置 showOverflow）
+    unref(tablePropsRef).showOverflow = 'title'
+    unref(tablePropsRef).showHeaderOverflow = 'title'
+    unref(tablePropsRef).showFooterOverflow = 'title'
+    unref(tablePropsRef).scrollX.enabled = true
+    unref(tablePropsRef).scrollY.enabled = true
+  } else {
+    // 所以当 showTooltip 为 false 时，不设置固定行高度，行高度由内容撑开（虚拟滚动失效）
+    unref(tablePropsRef).showOverflow = null
+    unref(tablePropsRef).showHeaderOverflow = null
+    unref(tablePropsRef).showFooterOverflow = null
+    unref(tablePropsRef).scrollX.enabled = false
+    unref(tablePropsRef).scrollY.enabled = false
+  }
+
+  return tablePropsRef
 }
 
 /**
@@ -209,7 +231,8 @@ function mergePropsRef(
         }
       }
     }
-    const tablePropsRef = handleExtendProps(paramPropsRef, tableRef, emit)
+    const handledRowLineHeightTablePropsRef = handleRowLineHeight(paramPropsRef)
+    const tablePropsRef = handleExtendProps(handledRowLineHeightTablePropsRef, tableRef, emit)
     return { ...unref(tablePropsRef) }
   })
 }

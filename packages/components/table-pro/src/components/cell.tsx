@@ -1,4 +1,4 @@
-import { defineComponent, unref } from 'vue'
+import { computed, defineComponent, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
 import { isUnDef } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentCellName, TOOLTIP_PLACEMENT } from '../const'
@@ -8,6 +8,7 @@ import type { PropType } from 'vue'
 import type { TableProColumn } from '../types'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCellName)
+export const ContentPrefixCls = CamelCaseToCls(`${ComponentCellName}Content`)
 
 export const Cell = defineComponent({
   name: ComponentCellName,
@@ -21,7 +22,7 @@ export const Cell = defineComponent({
       required: true,
     },
   },
-  setup(props, { slots }) {
+  setup(props, { slots, attrs }) {
     const { tablePropsRef } = useTableContext()
 
     const createTooltipTitle = (type = '') => {
@@ -43,10 +44,11 @@ export const Cell = defineComponent({
       // }
 
       const isTableHasTooltip = unref(tablePropsRef).showTooltip
-      const isColumnHasTooltip = (unref(tablePropsRef).columns as TableProColumn[])?.find(
-        (column) => column.field === props.column.field
-      )?.showTooltip
-      const hasTooltip = isUnDef(isColumnHasTooltip) ? isTableHasTooltip : isColumnHasTooltip
+      // const isColumnHasTooltip = (unref(tablePropsRef).columns as TableProColumn[])?.find(
+      //   (column) => column.field === props.column.field
+      // )?.showTooltip
+      // const hasTooltip = isUnDef(isColumnHasTooltip) ? isTableHasTooltip : isColumnHasTooltip
+      const hasTooltip = isTableHasTooltip
 
       if (hasTooltip) {
         return (
@@ -62,10 +64,23 @@ export const Cell = defineComponent({
       }
     }
 
+    // 类名处理
+    const getContentClass = computed(() => {
+      return [
+        // ComponentPrefixCls,
+        attrs.class,
+        `${ContentPrefixCls}`,
+        {
+          [`-ellipsis`]: unref(tablePropsRef).fixedLineHeight,
+        },
+      ]
+    })
+
     return () => {
       return (
         <div class={ComponentPrefixCls} data-type={props.type}>
-          {createCell()}
+          {/* {createCell()} */}
+          <div class={unref(getContentClass)}>{slots.default?.()}</div>
         </div>
       )
     }
@@ -94,7 +109,7 @@ export const VxeCellRenderer: {
     },
     renderDefault(opt, params) {
       const { options } = opt
-      const customRender = options![0].customRender
+      const { customRender } = options![0]
       const { row, column } = params
       return [
         column.visible ? (

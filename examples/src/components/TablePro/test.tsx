@@ -2,7 +2,7 @@ import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
-import { columns2, filterForm1, filterForm2 } from './data'
+import { columns2, filterForm2 } from './data'
 import type {
   ITableProInstance,
   TableProApi,
@@ -14,7 +14,7 @@ import type {
 export default defineComponent({
   setup() {
     const state = reactive({
-      filterFormConfig: filterForm1(),
+      filterFormConfig: {},
       columns: [] as any[],
     })
     const loading = ref<boolean>(false)
@@ -34,7 +34,7 @@ export default defineComponent({
     // })
 
     onMounted(async () => {
-      // state.filterFormConfig = await filterForm2()
+      state.filterFormConfig = await filterForm2()
       state.columns = await columns2()
     })
 
@@ -107,7 +107,7 @@ export default defineComponent({
       }, 16.7)
 
       setTimeout(() => {
-        height.value = '417px'
+        height.value = '100%'
       }, 100)
     })
 
@@ -121,41 +121,41 @@ export default defineComponent({
 
     return () => {
       return (
-        <div style={{ height: unref(wrapperHeight), overflow: 'hidden' }}>
-          <div class="ta-page-tabs" style={{ padding: '16px 24px 0' }}>
-            <div class="ta-button-group">
-              <div class="ta-button-group-inner">
-                <button
-                  iconsize="14"
-                  ifshow="true"
-                  class="ant-btn ant-btn-primary ta-basic-button"
-                  type="button"
-                >
-                  <span>我参与的</span>
-                  <span>（5）</span>
-                </button>
-                <button
-                  iconsize="14"
-                  ifshow="true"
-                  class="ant-btn ant-btn-default ta-basic-button"
-                  type="button"
-                >
-                  <span>待审核</span>
-                  <span>（0）</span>
-                </button>
-                <button
-                  iconsize="14"
-                  ifshow="true"
-                  class="ant-btn ant-btn-default ta-basic-button"
-                  type="button"
-                >
-                  <span>我关注的</span>
-                  <span>（0）</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* <div
+        // <div style={{ height: unref(wrapperHeight), overflow: 'hidden' }}>
+        //   <div class="ta-page-tabs" style={{ padding: '16px 24px 0' }}>
+        //     <div class="ta-button-group">
+        //       <div class="ta-button-group-inner">
+        //         <button
+        //           iconsize="14"
+        //           ifshow="true"
+        //           class="ant-btn ant-btn-primary ta-basic-button"
+        //           type="button"
+        //         >
+        //           <span>我参与的</span>
+        //           <span>（5）</span>
+        //         </button>
+        //         <button
+        //           iconsize="14"
+        //           ifshow="true"
+        //           class="ant-btn ant-btn-default ta-basic-button"
+        //           type="button"
+        //         >
+        //           <span>待审核</span>
+        //           <span>（0）</span>
+        //         </button>
+        //         <button
+        //           iconsize="14"
+        //           ifshow="true"
+        //           class="ant-btn ant-btn-default ta-basic-button"
+        //           type="button"
+        //         >
+        //           <span>我关注的</span>
+        //           <span>（0）</span>
+        //         </button>
+        //       </div>
+        //     </div>
+        //   </div>
+        <div
           style={{
             width: '80%',
             height: '968px',
@@ -163,9 +163,9 @@ export default defineComponent({
             margin: '0 auto',
             overflow: 'auto',
           }}
-        > */}
-          {/* <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}> */}
-          <div style={{ height: unref(height), padding: '16px 24px 0' }}>
+        >
+          <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
+            {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
             <TaTablePro
               ref={tableRef}
               // pagerConfig={{ enabled: false }}

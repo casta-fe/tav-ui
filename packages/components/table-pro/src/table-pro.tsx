@@ -1,5 +1,6 @@
-import { computed, defineComponent, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
+import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -13,6 +14,7 @@ import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
+import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
@@ -57,12 +59,20 @@ export default defineComponent({
     // extend props&apis
     const { loading, setLoading } = useLoading(getProps)
 
+    // 手动处理单元格 tooltip
+    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
+
+    // 监听全局鼠标滚动取消cell tooltip
+    useHideTooltips(instances)
+
     // merge v-bind value
     const getBindValues = computed<TableProProps & TableProEvent>(() => ({
       ...unref(getProps),
       ...unref(getColumns),
       ...unref(getAttrs),
       ...unref(getListeners),
+      onCellMouseenter,
+      onCellMouseleave,
       loading: unref(loading),
     }))
 
