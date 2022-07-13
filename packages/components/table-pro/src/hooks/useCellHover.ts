@@ -12,13 +12,13 @@ function showCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { cell, column, row } = params
+  const { cell, column, _rowIndex, _columnIndex } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `row_${row.id}-${column.id}`
+    const id = `row_${_rowIndex}-${_columnIndex}`
     const el = (cell as HTMLElement).querySelector(`.${ContentPrefixCls}`) as HTMLElement
     let title = ''
     let isCellOverflow = false
@@ -47,13 +47,13 @@ function hideCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { column, row } = params
+  const { column, _rowIndex, _columnIndex } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `row_${row.id}-${column.id}`
+    const id = `row_${_rowIndex}-${_columnIndex}`
     const instance = instances.get(id)
     instance?.hideTooltip()
   }
