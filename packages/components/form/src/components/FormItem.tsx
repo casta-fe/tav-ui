@@ -5,6 +5,7 @@ import { Col, Divider, Form } from 'ant-design-vue'
 import { cloneDeep, upperFirst } from 'lodash-es'
 import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
 import clickOutside from '@tav-ui/directives/src/clickOutside'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { formatToDate, getMomentFormatString } from '@tav-ui/utils/dateUtil'
 import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
 import {
@@ -37,22 +38,6 @@ import type { FormActionType, FormProps, FormSchema } from '../types/form'
 
 type Recordable<T = any> = Record<string, T>
 type Nullable<T> = T | null
-
-/*
-  可编辑表格编写思路：
-  1. 底层还是套用form，样式层面通过添加类名编写样式
-  2. 数据层面：
-    - 通过定义变量hasEditable、isEditable、isEditableItemClicked来做dom切换
-    - 通过监听表单项model的变化来进行不同组件的数据处理（见函数setEditableFormItemValue）包括数据的初始化、数据的更新。从而达到控制dom上文字的会显的目的
-    - 复杂组件（需要动态生成dom并插入document）的弹窗组件，如 datepicker、select 等，监听 onchange 选中后要隐藏，clickoutside 也要隐藏
-    - 普通组件，如 input、checkbox 等，直接在 clickoutside 隐藏
-  3. 特别注意：
-    - 点击dom要显示弹窗的时候一般要直接把弹窗的下来打开，所以在 compattr 里面做了控制
-    - 因为生成的弹窗直接插入document中，点击弹窗内容也会触发clickoutside所以必须把弹窗动态插入对应表单项下，在 compattr 中做了控制
-  4. 遗留问题：
-    - datepicker 组件因为选中后即隐藏看不到清除按钮所以是否把清除按钮上移到dom？
-    - 只支持了部分组件，详情查看componentMap
-  */
 
 const NUMBER_MAX = 9999999999
 export default defineComponent({
@@ -213,7 +198,16 @@ export default defineComponent({
           (editableComponentChecksTypeMap.has(schema.component) &&
             schema.component.includes('Group'))
         ) {
-          const target = schema.componentProps?.options
+          let schemaOptions = []
+          // 成员选择器 由于匹配人员是注入的，不是通过option传入，在editable匹配时候无法匹配到，所以在这里处理下
+          if (schema.component == 'MemberSelect') {
+            const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+            const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
+            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+          } else {
+            schema.componentProps?.options
+          }
+          const target = schemaOptions
             ?.reduce((result, option) => {
               if (value.includes(option.value) || value.includes(option.label))
                 result.push(option.label)
