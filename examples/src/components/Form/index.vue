@@ -87,10 +87,10 @@ import { defineComponent } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import type { FormSchema } from '@tav-ui/components/form'
-const a = [
-  { name: '用户1', id: 99 },
-  { name: '用户2', id: 100 },
-  { name: '用户3', id: 3 },
+const aaaaa = [
+  { label: '用户1', value: 99 },
+  { label: '用户2', value: 100 },
+  { label: '用户3', value: 3 },
 ]
 const schemas: FormSchema[] = [
   {
@@ -100,144 +100,144 @@ const schemas: FormSchema[] = [
     colProps: {
       span: 8,
     },
+    editable: true,
     componentProps: {
       placeholder: '自定义placeholder',
-      multiple: true,
       options: [],
     },
   },
-  {
-    field: 'field2',
-    component: 'Input',
-    label: '字段2',
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'field3',
-    component: 'DatePicker',
-    label: '字段3',
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'fieldTime',
-    component: 'RangePicker',
-    label: '时间字段',
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'field4',
-    component: 'Select',
-    label: '字段4',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      options: [
-        {
-          label: '选项1',
-          value: '1',
-          key: '1',
-        },
-        {
-          label: '选项2',
-          value: '2',
-          key: '2',
-        },
-      ],
-    },
-  },
-  {
-    field: 'field5',
-    component: 'CheckboxGroup',
-    label: '字段5',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      options: [
-        {
-          label: '选项1',
-          value: '1',
-        },
-        {
-          label: '选项2',
-          value: '2',
-        },
-      ],
-    },
-  },
-  {
-    field: 'field7',
-    component: 'RadioGroup',
-    label: '字段7',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      options: [
-        {
-          label: '选项1',
-          value: '1',
-        },
-        {
-          label: '选项2',
-          value: '2',
-        },
-      ],
-    },
-  },
-  {
-    field: 'field8',
-    component: 'ApiCascader',
-    label: '联动',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      api: () => {
-        console.log(1)
-      },
-      apiParamKey: 'parentCode',
-      dataField: 'data',
-      labelField: 'name',
-      valueField: 'code',
-      initFetchParams: {
-        parentCode: '',
-      },
-      isLeaf: (record) => {
-        return !(record.levelType < 3)
-      },
-    },
-  },
-  {
-    field: 'field9',
-    component: 'ApiCascader',
-    label: '联动回显',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      api: () => {
-        console.log('1')
-      },
-      apiParamKey: 'parentCode',
-      dataField: 'data',
-      labelField: 'name',
-      valueField: 'code',
-      initFetchParams: {
-        parentCode: '',
-      },
-      isLeaf: (record) => {
-        return !(record.levelType < 3)
-      },
-    },
-  },
+  // {
+  //   field: 'field2',
+  //   component: 'Input',
+  //   label: '字段2',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
+  // {
+  //   field: 'field3',
+  //   component: 'DatePicker',
+  //   label: '字段3',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
+  // {
+  //   field: 'fieldTime',
+  //   component: 'RangePicker',
+  //   label: '时间字段',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
+  // {
+  //   field: 'field4',
+  //   component: 'Select',
+  //   label: '字段4',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     options: [
+  //       {
+  //         label: '选项1',
+  //         value: '1',
+  //         key: '1',
+  //       },
+  //       {
+  //         label: '选项2',
+  //         value: '2',
+  //         key: '2',
+  //       },
+  //     ],
+  //   },
+  // },
+  // {
+  //   field: 'field5',
+  //   component: 'CheckboxGroup',
+  //   label: '字段5',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     options: [
+  //       {
+  //         label: '选项1',
+  //         value: '1',
+  //       },
+  //       {
+  //         label: '选项2',
+  //         value: '2',
+  //       },
+  //     ],
+  //   },
+  // },
+  // {
+  //   field: 'field7',
+  //   component: 'RadioGroup',
+  //   label: '字段7',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     options: [
+  //       {
+  //         label: '选项1',
+  //         value: '1',
+  //       },
+  //       {
+  //         label: '选项2',
+  //         value: '2',
+  //       },
+  //     ],
+  //   },
+  // },
+  // {
+  //   field: 'field8',
+  //   component: 'ApiCascader',
+  //   label: '联动',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     api: () => {
+  //       console.log(1)
+  //     },
+  //     apiParamKey: 'parentCode',
+  //     dataField: 'data',
+  //     labelField: 'name',
+  //     valueField: 'code',
+  //     initFetchParams: {
+  //       parentCode: '',
+  //     },
+  //     isLeaf: (record) => {
+  //       return !(record.levelType < 3)
+  //     },
+  //   },
+  // },
+  // {
+  //   field: 'field9',
+  //   component: 'ApiCascader',
+  //   label: '联动回显',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     api: () => {
+  //       console.log('1')
+  //     },
+  //     apiParamKey: 'parentCode',
+  //     dataField: 'data',
+  //     labelField: 'name',
+  //     valueField: 'code',
+  //     initFetchParams: {
+  //       parentCode: '',
+  //     },
+  //     isLeaf: (record) => {
+  //       return !(record.levelType < 3)
+  //     },
+  //   },
+  // },
 ]
 
 export default defineComponent({
@@ -254,16 +254,8 @@ export default defineComponent({
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
     setTimeout(() => {
-      setFieldsValue({ field1: [99, 100] })
+      setFieldsValue({ field1: 99 })
     }, 500)
-    setTimeout(() => {
-      updateSchema({
-        field: 'field1',
-        componentProps: {
-          options: a,
-        },
-      })
-    }, 1500)
     async function handleLoad() {
       const promiseFn = function () {
         return new Promise((resolve) => {

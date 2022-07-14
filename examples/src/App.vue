@@ -9,13 +9,13 @@ import TaConfigProvider from '@tav-ui/components/config-provider'
 // import TimePage from './components/time/index.vue'
 // import InputNumberRangePage from './components/InputNumberRange/index.vue'
 // import FileViewPage from './components/FileView/index.vue'
-// import FormPage from './components/Form/index.vue'
 // import TreePage from './components/Tree/index.vue'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import { TaButton } from '@tav-ui/components/button'
+import FormPage from './components/Form/index.vue'
 import { TaUpload, taUploadProvideData } from './components/TaUpload'
 // import SearchableApiSelect from './components/SearchableApiSelect.vue'
 import TablePro from './components/TablePro/test'
@@ -33,7 +33,7 @@ export default defineComponent({
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    // FormPage,
+    FormPage,
     // TreePage,
     // ModalPage,
     // BasicTablePage,
@@ -57,7 +57,9 @@ export default defineComponent({
       components: {
         TaUpload: taUploadProvideData,
         TaMemberSelect: {
-          allUserList: allUsers.data,
+          allUserList: allUsers.data.map((v) => {
+            return { label: v.name, value: v.id, ...v }
+          }),
         },
       },
     })
@@ -82,7 +84,7 @@ export default defineComponent({
 
 <template>
   <TaConfigProvider :permissions="state.permissions" :components="state.components">
-    <!-- <FormPage /> -->
+    <FormPage />
     <TaUpload />
     <TablePro />
     <TaModal
