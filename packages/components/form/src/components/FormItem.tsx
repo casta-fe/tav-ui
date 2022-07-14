@@ -184,7 +184,7 @@ export default defineComponent({
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
             schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
           } else {
-            schema.componentProps?.options
+            schemaOptions = schema.componentProps?.options
           }
           const target = schemaOptions.find(
             (option) => option.value === value || option.label === value
@@ -214,7 +214,7 @@ export default defineComponent({
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
             schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
           } else {
-            schema.componentProps?.options
+            schemaOptions = schema.componentProps?.options
           }
           const target = schemaOptions
             ?.reduce((result, option) => {
