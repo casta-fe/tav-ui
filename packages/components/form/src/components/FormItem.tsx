@@ -198,7 +198,7 @@ export default defineComponent({
           (editableComponentChecksTypeMap.has(schema.component) &&
             schema.component.includes('Group'))
         ) {
-          let schemaOptions = []
+          let schemaOptions: any[] = []
           // 成员选择器 由于匹配人员是注入的，不是通过option传入，在editable匹配时候无法匹配到，所以在这里处理下
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
