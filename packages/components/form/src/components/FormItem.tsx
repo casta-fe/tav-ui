@@ -177,7 +177,16 @@ export default defineComponent({
       } else if (isNumber(value)) {
         // select 要回显 label
         if (editableComponentSelectTypeMap.has(schema.component)) {
-          const target = schema.componentProps?.options?.find(
+          let schemaOptions: any[] = []
+          // 成员选择器 由于匹配人员是注入的，不是通过option传入，在editable匹配时候无法匹配到，所以在这里处理下
+          if (schema.component == 'MemberSelect') {
+            const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+            const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
+            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+          } else {
+            schema.componentProps?.options
+          }
+          const target = schemaOptions.find(
             (option) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
