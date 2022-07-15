@@ -292,6 +292,7 @@ export default defineComponent({
       pannelFormRegister,
       handlePannelFormSubmit,
       handlePannelFormResetFields,
+      pannelFormSetFieldsValue,
     }
   },
 })

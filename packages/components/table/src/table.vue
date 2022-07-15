@@ -419,7 +419,10 @@ export default defineComponent({
     function setProps(props: Partial<BasicTableProps>) {
       innerPropsRef.value = { ...unref(innerPropsRef), ...props }
     }
-
+    const getFilterForm = () => {
+      //@ts-ignore
+      return filterElRef.value.pannelFormRef
+    }
     const tableAction: TableActionType = {
       reload,
       getSelectRows,
@@ -453,6 +456,7 @@ export default defineComponent({
       expandRows,
       scrollTo,
       collapseAll,
+      getFilterForm,
       getSize: () => {
         return unref(getBindValues).size as SizeType
       },

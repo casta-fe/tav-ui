@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/member-delimiter-style */
-import type { FormProps, FormSchema } from '@tav-ui/components/form/src/types/form'
+import type { FormActionType, FormProps, FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { RoleEnum } from '@tav-ui/enums/roleEnum'
 import type { VueNode } from '@tav-ui/utils/propTypes'
 import type {
@@ -143,6 +143,7 @@ export interface TableActionType {
   setShowPagination: (show: boolean) => Promise<void>
   getShowPagination: () => boolean
   setCacheColumnsByField?: (dataIndex: string | undefined, value: BasicColumn) => void
+  getFilterForm: () => FormActionType
 }
 
 export interface FetchSetting {

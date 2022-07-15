@@ -1,8 +1,8 @@
 import { onUnmounted, ref, toRaw, unref, watch } from 'vue'
 import { getDynamicProps } from '@tav-ui/utils/basic'
 import { error } from '@tav-ui/utils/log'
-import type { ComputedRef, Ref, WatchStopHandle } from 'vue'
 import type { FormActionType } from '@tav-ui/components/form/src/types/form'
+import type { ComputedRef, Ref, WatchStopHandle } from 'vue'
 import type { PaginationProps } from '../types/pagination'
 import type { BasicColumn, BasicTableProps, FetchParams, TableActionType } from '../types/table'
 
@@ -29,7 +29,6 @@ export function useTable(tableProps?: Props): [
   const tableRef = ref<Nullable<TableActionType>>(null)
   const loadedRef = ref<Nullable<boolean>>(false)
   const formRef = ref<Nullable<UseTableMethod>>(null)
-
   let stopWatch: WatchStopHandle
 
   function register(instance: TableActionType, formInstance: UseTableMethod) {
@@ -45,7 +44,6 @@ export function useTable(tableProps?: Props): [
     formRef.value = formInstance
     tableProps && instance.setProps(getDynamicProps(tableProps))
     loadedRef.value = true
-
     stopWatch?.()
 
     stopWatch = watch(
@@ -170,6 +168,9 @@ export function useTable(tableProps?: Props): [
     },
     scrollTo: (pos: string) => {
       getTableInstance().scrollTo(pos)
+    },
+    getFilterForm: (): FormActionType => {
+      return getTableInstance().getFilterForm()
     },
   }
 
