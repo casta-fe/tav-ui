@@ -148,7 +148,7 @@ export const PreviewTable = defineComponent({
         },
         {
           title: '文件类型',
-          field: 'typeCode',
+          field: 'typeName',
           minWidth: 100,
           slots: {
             default: ({ row: { typeCode } }) => [
