@@ -587,9 +587,3 @@ export const tableProProps = {
 }
 /** table props 类型 */
 export type TableProProps = ExtractPropTypes<typeof tableProProps>
-
-const config: {
-  id?: string
-} = {}
-
-config.id! = '123'

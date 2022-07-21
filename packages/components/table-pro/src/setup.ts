@@ -272,8 +272,7 @@ export function setupVxeTable(app?: App) {
   })
 
   // 自定义渲染 cell
-  const renderer = VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
-  const _VXETable = { ...VXETable, renderer }
+  VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
 
   // formatter 表格格式化
 
@@ -331,7 +330,7 @@ export function setupVxeTable(app?: App) {
   // registerAllComponent()
 
   // 执行注册方法
-  _VXETable.setup(setupOptions)
-  app?.use(_VXETable, setupOptions)
-  return _VXETable
+  VXETable.setup(setupOptions)
+  app?.use(VXETable, setupOptions)
+  return VXETable
 }
