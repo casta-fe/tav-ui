@@ -270,8 +270,8 @@ export function setupVxeTable(app?: App) {
   })
 
   // 自定义渲染 cell
-  // @ts-ignore
-  VXETable['renderer'] = VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
+  const renderer = VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
+  const _VXETable = { ...VXETable, renderer }
 
   // 注册插件
   // VXETable.use(VXETablePluginAntd)
@@ -280,7 +280,7 @@ export function setupVxeTable(app?: App) {
   // registerAllComponent()
 
   // 执行注册方法
-  VXETable.setup(setupOptions)
-  app?.use(VXETable, setupOptions)
-  return VXETable
+  _VXETable.setup(setupOptions)
+  app?.use(_VXETable, setupOptions)
+  return _VXETable
 }
