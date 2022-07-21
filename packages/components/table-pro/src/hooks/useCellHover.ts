@@ -60,7 +60,7 @@ function hideCellTooltip(
 }
 
 export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: TableProGridEmit) {
-  const instances = new Map()
+  const instances = new Map<string, any>()
 
   const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams, event) => {
     // 详情可参考 vxetable body.ts triggerHeaderTooltipEvent/triggerBodyTooltipEvent/triggerFooterTooltipEvent

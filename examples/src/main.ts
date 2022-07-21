@@ -21,11 +21,11 @@ import 'virtual:windi.css'
 import App from './App.vue'
 import 'vxe-table/lib/style.css'
 // eslint-disable-next-line import/order
-import { setupVxeTable } from '@tav-ui/components/table-pro/src/setup'
+import { TaVXETable } from '@tav-ui/components/table-pro'
 
 const app = createApp(App)
 // app.use(TaUi)
-app.use(setupVxeTable)
+app.use(TaVXETable)
 // app.use(TaIcon)
 // app.use(TaButton)
 // app.use(TaBasicTitle)

@@ -20,7 +20,9 @@ import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
 // import { isBoolean } from '@tav-ui/utils/is'
 
-const { Grid } = setupVxeTable()
+const _VXETable = setupVxeTable()
+const { Grid } = _VXETable
+export const VXETable = _VXETable
 const ComponentPrefixCls = CamelCaseToCls(ComponentName)
 const ComponentOperationsPrefixCls = CamelCaseToCls(ComponentOperationsName)
 
