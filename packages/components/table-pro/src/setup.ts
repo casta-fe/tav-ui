@@ -1,4 +1,6 @@
 import VXETable from 'vxe-table'
+import { formatNumber, formatToDate } from '@tav-ui'
+import { ProvinceCityOptions } from '@tav-ui/utils/geo'
 import { VxeCellRenderer } from './components/cell'
 import type { App } from 'vue'
 import type { VXETableSetupOptions, VxeGlobalRenderer } from 'vxe-table'
@@ -272,6 +274,55 @@ export function setupVxeTable(app?: App) {
   // 自定义渲染 cell
   const renderer = VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
   const _VXETable = { ...VXETable, renderer }
+
+  // formatter 表格格式化
+
+  VXETable.formats
+    .add('number', ({ cellValue }, format = 2) => formatNumber(cellValue, format))
+    .add('date', ({ cellValue }, format = 'YYYY-MM-DD') => formatToDate(cellValue, format))
+    .add('geo', ({ cellValue, row }, noDistrict = true, joinChar = '-') => {
+      const res: string[] = []
+
+      if (!row) return ''
+      const { province = cellValue, city, district } = row
+      /**
+       * 直辖市
+       */
+      const IS_TWO_LEVEL = province == city
+
+      // #region province
+      if (!province) {
+        return ''
+      }
+
+      const provinceItem = ProvinceCityOptions.find((el) => province == el.value)
+      if (!provinceItem) return ''
+      // #endregion
+
+      // 直辖市不重复 市
+      IS_TWO_LEVEL || res.push(provinceItem.label)
+
+      // #region city
+      if (!city) return res.join(joinChar)
+
+      const cityItem = provinceItem?.children?.find((el) => city == el.value)
+      if (!cityItem) return res.join(joinChar)
+      // #endregion
+
+      res.push(cityItem.label)
+
+      // #region district
+      // 北京-北京市-东城区 -> 北京市-东城区
+      if (!district || (noDistrict && !IS_TWO_LEVEL)) return res.join(joinChar)
+
+      const districtItem = cityItem?.children?.find((el) => district == el.value)
+      if (!districtItem) return res.join(joinChar)
+      // #endregion
+
+      res.push(districtItem.label)
+
+      return res.join(joinChar)
+    })
 
   // 注册插件
   // VXETable.use(VXETablePluginAntd)
