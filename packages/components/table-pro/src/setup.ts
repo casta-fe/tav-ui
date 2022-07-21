@@ -1,7 +1,7 @@
 import VXETable from 'vxe-table'
 import { VxeCellRenderer } from './components/cell'
 import type { App } from 'vue'
-import type { VXETableSetupOptions } from 'vxe-table'
+import type { VXETableSetupOptions, VxeGlobalRenderer } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
 import 'xe-utils'
 
@@ -270,7 +270,8 @@ export function setupVxeTable(app?: App) {
   })
 
   // 自定义渲染 cell
-  VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
+  // @ts-ignore
+  VXETable['renderer'] = VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
 
   // 注册插件
   // VXETable.use(VXETablePluginAntd)
