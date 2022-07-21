@@ -1,9 +1,7 @@
 import VXETable from 'vxe-table'
-import { formatNumber, formatToDate } from '@tav-ui'
-import { ProvinceCityOptions } from '@tav-ui/utils/geo'
 import { VxeCellRenderer } from './components/cell'
 import type { App } from 'vue'
-import type { VXETableSetupOptions, VxeGlobalRenderer } from 'vxe-table'
+import type { VXETableSetupOptions } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
 import 'xe-utils'
 
