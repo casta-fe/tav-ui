@@ -2,9 +2,9 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
-import { defineComponent, reactive } from 'vue'
-import * as components from '@tav-ui/components'
+import { defineComponent, onMounted, reactive } from 'vue'
 import TaConfigProvider from '@tav-ui/components/config-provider'
+import { useWatermark } from '@tav-ui/hooks/web/useWatermark'
 // import TimeLineListPage from './components/timeLineList/index.vue'
 // import TimePage from './components/time/index.vue'
 // import InputNumberRangePage from './components/InputNumberRange/index.vue'
@@ -13,14 +13,14 @@ import TaConfigProvider from '@tav-ui/components/config-provider'
 // import ModalPage from './components/Modal/index.vue'
 // import FollewPage from './components/Follow/index.vue'
 // import BasicTablePage from './components/table/Basic.vue'
-import { TaModal, useModal } from '@tav-ui/components/modal'
 import { TaButton } from '@tav-ui/components/button'
+import { TaModal, useModal } from '@tav-ui/components/modal'
 import FormPage from './components/Form/index.vue'
 import { TaUpload, taUploadProvideData } from './components/TaUpload'
 // import SearchableApiSelect from './components/SearchableApiSelect.vue'
-import TablePro from './components/TablePro/test'
 import allUsers from './allUserList'
-console.log(components)
+import TablePro from './components/TablePro/test'
+
 export default defineComponent({
   components: {
     TaConfigProvider,
@@ -72,6 +72,12 @@ export default defineComponent({
       }
       console.log(state)
     }, 1000)
+
+    onMounted(() => {
+      const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
+      setWatermark('系统管理员9999')
+    })
+
     return {
       state,
       ModalRegister,

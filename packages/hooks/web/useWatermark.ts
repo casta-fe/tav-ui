@@ -5,10 +5,17 @@ import { isDef } from '@tav-ui/utils/is'
 import type { Ref } from 'vue'
 
 const domSymbol = Symbol('watermark-dom')
+const DEFAULT_FILL_STYLE = 'rgba(0, 0, 0, 0.1)'
+const DEFAULT_WATER_MARKER_SIZE = {
+  width: 300,
+  height: 240,
+}
 
-export function useWatermark(
-  appendEl: Ref<HTMLElement | null> = ref(document.body) as Ref<HTMLElement>
-) {
+export function useWatermark({
+  appendEl = ref(document.body) as Ref<HTMLElement | null>,
+  color = DEFAULT_FILL_STYLE,
+  size = DEFAULT_WATER_MARKER_SIZE,
+}) {
   const id = domSymbol.toString()
   const watermarkEl = shallowRef<HTMLElement>()
 
@@ -30,16 +37,15 @@ export function useWatermark(
 
   function createBase64(str: string) {
     const can = document.createElement('canvas')
-    const width = 300
     // const height = 160;
-    const height = 240
+    const { width, height } = size
     Object.assign(can, { width, height })
 
     const cans = can.getContext('2d')
     if (cans) {
       cans.rotate((-20 * Math.PI) / 120)
       cans.font = '15px Vedana'
-      cans.fillStyle = 'rgba(0, 0, 0, 0.1)'
+      cans.fillStyle = color || 'rgba(0, 0, 0, 0.1)'
       cans.textAlign = 'left'
       cans.textBaseline = 'middle'
       cans.fillText(str, width / 20, height)
