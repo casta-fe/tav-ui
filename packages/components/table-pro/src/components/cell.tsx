@@ -1,8 +1,8 @@
 import { computed, defineComponent, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
-import { isUnDef } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentCellName, TOOLTIP_PLACEMENT } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
+import { useFormats } from '../utils/formats'
 import type { RendererOptions } from 'vxe-table'
 import type { PropType } from 'vue'
 import type { TableProColumn } from '../types'
@@ -111,6 +111,9 @@ export const VxeCellRenderer: {
       const { options } = opt
       const { customRender } = options![0]
       const { row, column } = params
+
+      useFormats(params)
+
       return [
         column.visible ? (
           <Cell type="body" column={column}>
