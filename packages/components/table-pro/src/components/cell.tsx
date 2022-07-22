@@ -112,12 +112,10 @@ export const VxeCellRenderer: {
       const { customRender } = options![0]
       const { row, column } = params
 
-      useFormats(params)
-
       return [
         column.visible ? (
           <Cell type="body" column={column}>
-            {customRender ? customRender(params) : row[column.field]}
+            {customRender ? customRender(params) : useFormats(params) || row[column.field]}
           </Cell>
         ) : (
           <></>

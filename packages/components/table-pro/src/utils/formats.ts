@@ -59,7 +59,7 @@ export const formats = {
   geo,
 }
 
-export function useFormats(params: VxeGlobalRendererHandles.RenderEditParams) {
+export function useFormats(params: VxeGlobalRendererHandles.RenderEditParams): string | void {
   const { row, column } = params
   if (column.formatter) {
     let formatFn: undefined | ((...args: any[]) => any) = undefined
@@ -73,7 +73,6 @@ export function useFormats(params: VxeGlobalRendererHandles.RenderEditParams) {
       formatterArgs = args
     }
 
-    const result = formatFn?.({ cellValue: row[column.field], ...params }, ...formatterArgs)
-    result && (row[column.field] = result)
+    return formatFn?.({ cellValue: row[column.field], ...params }, ...formatterArgs)
   }
 }
