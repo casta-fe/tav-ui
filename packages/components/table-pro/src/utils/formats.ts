@@ -1,6 +1,4 @@
-import { formatNumber, formatToDate } from '@tav-ui/utils'
-import { ProvinceCityOptions } from '@tav-ui/utils/geo'
-import { isArray, isString } from '@tav-ui/utils/is'
+import { ProvinceCityRecord, formatNumber, formatToDate, isArray, isString } from '@tav-ui/utils'
 import type { VxeGlobalRendererHandles } from 'vxe-table'
 
 function number({ cellValue }, format = 2) {
@@ -24,31 +22,14 @@ function geo({ cellValue, row }, noDistrict = true, joinChar = '-') {
     return ''
   }
 
-  const provinceItem = ProvinceCityOptions.find((el) => province == el.value)
-  if (!provinceItem) return ''
-  // #endregion
-
-  // 直辖市不重复 市
-  IS_TWO_LEVEL || res.push(provinceItem.label)
-
-  // #region city
-  if (!city) return res.join(joinChar)
-
-  const cityItem = provinceItem?.children?.find((el) => city == el.value)
-  if (!cityItem) return res.join(joinChar)
-  // #endregion
-
-  res.push(cityItem.label)
-
-  // #region district
-  // 北京-北京市-东城区 -> 北京市-东城区
-  if (!district || (noDistrict && !IS_TWO_LEVEL)) return res.join(joinChar)
-
-  const districtItem = cityItem?.children?.find((el) => district == el.value)
-  if (!districtItem) return res.join(joinChar)
-  // #endregion
-
-  res.push(districtItem.label)
+  ProvinceCityRecord[province] && res.push(ProvinceCityRecord[province])
+  // 直辖市不重复 市: 北京-北京市-东城区 -> 北京市-东城区
+  if (city && !IS_TWO_LEVEL) {
+    ProvinceCityRecord[city] && res.push(ProvinceCityRecord[city])
+  }
+  if (district && !noDistrict) {
+    ProvinceCityRecord[district] && res.push(ProvinceCityRecord[district])
+  }
 
   return res.join(joinChar)
 }
