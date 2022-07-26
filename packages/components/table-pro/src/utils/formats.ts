@@ -42,14 +42,16 @@ export const formats = {
 
 export function useFormats(params: VxeGlobalRendererHandles.RenderEditParams): string | void {
   const { row, column } = params
-  if (column.formatter) {
+  const formatter = column.params?.formatter
+
+  if (formatter) {
     let formatFn: undefined | ((...args: any[]) => any) = undefined
     let formatterArgs: any[] = []
 
-    if (isString(column.formatter)) {
-      formatFn = formats[column.formatter]
-    } else if (isArray(column.formatter)) {
-      const [name, ...args] = column.formatter
+    if (isString(formatter)) {
+      formatFn = formats[formatter]
+    } else if (isArray(formatter)) {
+      const [name, ...args] = formatter
       formatFn = formats[name]
       formatterArgs = args
     }
