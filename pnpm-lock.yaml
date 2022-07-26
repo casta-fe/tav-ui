@@ -46,7 +46,6 @@ importers:
       js-pinyin: 0.1.9
       lint-staged: ^12.4.1
       lodash-es: 4.17.21
-      moment: 2.29.3
       prettier: ^2.6.2
       pretty-quick: ^3.1.3
       qrcode: 1.4.4
@@ -83,7 +82,6 @@ importers:
       ant-design-vue: 2.2.8_rf3etge4zgy5cgubra7yhbvwa4
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
-      moment: 2.29.3
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
@@ -268,7 +266,6 @@ importers:
       ant-design-vue: 2.2.8
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
-      moment: 2.29.3
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
@@ -287,7 +284,6 @@ importers:
       ant-design-vue: 2.2.8
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
-      moment: 2.29.3
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0

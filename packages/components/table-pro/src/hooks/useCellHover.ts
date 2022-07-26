@@ -59,16 +59,34 @@ function hideCellTooltip(
   }
 }
 
+function deleteTitle(cellEl: HTMLElement) {
+  const targetCls = ['vxe-header--column', 'vxe-body--column', 'vxe-footer--column']
+  const cotainsNum = targetCls.reduce((total, cur) => {
+    if (cellEl.classList.contains(cur)) {
+      total += 1
+    }
+    return total
+  }, 0)
+  const isColumnTdEL = cotainsNum > 0
+  if (isColumnTdEL) {
+    cellEl.removeAttribute('title')
+    cellEl.querySelector('.vxe-cell')!.removeAttribute('title')
+  }
+}
+
 export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: TableProGridEmit) {
   const instances = new Map<string, any>()
 
-  const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams, event) => {
+  const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams) => {
     // 详情可参考 vxetable body.ts triggerHeaderTooltipEvent/triggerBodyTooltipEvent/triggerFooterTooltipEvent
     if (!params) return
     showCellTooltip(instances, tablePropsRef, params)
     emit('CellMouseenter', params)
+    setTimeout(() => {
+      deleteTitle(params.cell)
+    }, 150)
   }
-  const onCellMouseleave = (params: VxeGridDefines.CellMouseleaveEventParams, event) => {
+  const onCellMouseleave = (params: VxeGridDefines.CellMouseleaveEventParams) => {
     if (!params) return
     hideCellTooltip(instances, tablePropsRef, params)
     emit('CellMouseleave', params)

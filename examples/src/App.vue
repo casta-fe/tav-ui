@@ -74,8 +74,8 @@ export default defineComponent({
     }, 1000)
 
     onMounted(() => {
-      const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
-      setWatermark('系统管理员9999')
+      // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
+      // setWatermark('系统管理员9999')
     })
 
     return {
