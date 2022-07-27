@@ -235,14 +235,31 @@ export const filterForm1 = (): TableProFilterForm => ({
   ] as FormSchema[],
 })
 
-export const columns2 = async (): Promise<TableProColumn[]> => {
+export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> => {
   await API__POE_CUSTOM_ALL({
     filter: { tab: 0 },
     model: { page: 1, limit: 50 },
   })
 
   return [
-    { field: 'customerName', title: '客户名称', fixed: 'left' },
+    {
+      field: 'customerName',
+      title: '客户名称',
+      fixed: 'left',
+      customRender: ({ row: { customerName } }) => (
+        <a
+          href="javascript:;"
+          style="color: #3a67fc"
+          onClick={(e) => {
+            handleRoutePush(e, {
+              name: 'Test',
+            })
+          }}
+        >
+          {customerName}
+        </a>
+      ),
+    },
     // { field: 'customerCode', title: '客户编号', fixed: 'left', params: { showTooltip: false } },
     { field: 'customerCode', title: '客户编号', fixed: 'left' },
     // {

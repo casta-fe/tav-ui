@@ -59,6 +59,14 @@ function hideCellTooltip(
   }
 }
 
+function hideCellAllTooltip(instances: Map<any, any>) {
+  if (instances.size > 0) {
+    instances.forEach((instance) => {
+      instance?.hideTooltip()
+    })
+  }
+}
+
 function deleteTitle(cellEl: HTMLElement) {
   const targetCls = ['vxe-header--column', 'vxe-body--column', 'vxe-footer--column']
   const cotainsNum = targetCls.reduce((total, cur) => {
@@ -86,10 +94,14 @@ export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: Ta
       deleteTitle(params.cell)
     }, 150)
   }
-  const onCellMouseleave = (params: VxeGridDefines.CellMouseleaveEventParams) => {
-    if (!params) return
-    hideCellTooltip(instances, tablePropsRef, params)
-    emit('CellMouseleave', params)
+
+  const onCellMouseleave = (params?: VxeGridDefines.CellMouseleaveEventParams) => {
+    if (!params) {
+      hideCellAllTooltip(instances)
+    } else {
+      hideCellTooltip(instances, tablePropsRef, params)
+      emit('CellMouseleave', params)
+    }
   }
 
   return {

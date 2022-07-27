@@ -136,6 +136,11 @@ export default defineComponent({
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
+    onUnmounted(() => {
+      // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
+      onCellMouseleave()
+    })
+
     return () => {
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef}>

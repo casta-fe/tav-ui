@@ -1,4 +1,5 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
+import { useRouter } from 'vue-router'
 import Button from '@tav-ui/components/button'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
@@ -13,10 +14,17 @@ import type {
 
 export default defineComponent({
   setup() {
+    const router = useRouter()
     const state = reactive({
       filterFormConfig: {},
       columns: [] as any[],
     })
+    const handleRoutePush = (e: Event, opts: any) => {
+      e.stopPropagation()
+      router.push({
+        ...opts,
+      })
+    }
     const loading = ref<boolean>(false)
 
     // const columns = columns2
@@ -35,7 +43,7 @@ export default defineComponent({
 
     onMounted(async () => {
       state.filterFormConfig = await filterForm2()
-      state.columns = await columns2()
+      state.columns = await columns2({ handleRoutePush })
     })
 
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({

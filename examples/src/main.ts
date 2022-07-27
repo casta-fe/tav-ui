@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { router } from './router'
 // import {
 //   TaBasicArrow,
 //   TaBasicHelp,
@@ -24,6 +25,7 @@ import 'vxe-table/lib/style.css'
 import { TaVXETable } from '@tav-ui/components/table-pro'
 
 const app = createApp(App)
+app.use(router)
 // app.use(TaUi)
 app.use(TaVXETable)
 // app.use(TaIcon)
