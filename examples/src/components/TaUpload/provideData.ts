@@ -1,6 +1,9 @@
 const uploadArr: any[] = [
   {
     id: 7116,
+    abc: 'abc',
+    def: 'def',
+    ghi: 'ghi',
     appId: 10001,
     actualId: '93645034fb304ba3a5015412c1b2fc4a',
     moduleId: 25,
@@ -26,6 +29,10 @@ const uploadArr: any[] = [
     watermarkFileDownload: 2,
   },
   {
+    id: 9547,
+    abc: 'abc',
+    def: 'def',
+    ghi: 'ghi',
     name: 'doge.png',
     fileSize: '1MB',
     createByName: 'mxs',

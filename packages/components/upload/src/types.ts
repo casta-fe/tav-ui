@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { TableProColumn } from '../../table-pro'
 import type { Handler } from './main'
 
 type Recordable<T = any> = Record<string, T>
@@ -164,6 +165,17 @@ interface IHandle {
 }
 
 /**
+ * 默认列field
+ */
+type DefaultColumnFields =
+  | 'fullName'
+  | 'typeName'
+  | 'fileSize'
+  | 'createByName'
+  | 'createTime'
+  | 'action'
+
+/**
  * @author mxs
  * @name TaUploadBasciProps
  * @createDate 2022/01/12
@@ -292,6 +304,18 @@ type BasicPropsType = {
    * 文件类型 选择框 onSelect
    */
   onSelect?: Fn
+  nameColumnWidth?: number | string
+  insertColumns?: {
+    /**
+     * @default 'createTime'
+     */
+    position?: DefaultColumnFields
+    /**
+     * @default 'after'
+     */
+    beforeOrAfter?: 'before' | 'after'
+    column: TableProColumn
+  }[]
 } & ProvideDataType
 
 /**
@@ -325,7 +349,7 @@ type ProvideDataType = {
   updateFileNameAndAddress?: (
     file: Pick<FileItemType, 'id' | 'name' | 'address'>,
     ...args: any[]
-  ) => void
+  ) => Promise<void>
   typeCodeRecord?: Recordable<LabelValueOptions>
 }
 

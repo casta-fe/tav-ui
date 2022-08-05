@@ -1,6 +1,18 @@
 <template>
   <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
-    <ta-upload :params="params" @select="onSelect">
+    <ta-upload
+      :params="params"
+      :insert-columns="[
+        { column: { field: 'abc', title: '默认新增列' } },
+        { position: 'typeName', column: { field: 'def', title: '文件类型后的新增列' } },
+        {
+          position: 'typeName',
+          beforeOrAfter: 'before',
+          column: { field: 'ghi', title: '文件类型前的新增列' },
+        },
+      ]"
+      @select="onSelect"
+    >
       <template #beforeButton="{ loading }">
         <TaButton :loading="loading">beforeButton</TaButton>
       </template>

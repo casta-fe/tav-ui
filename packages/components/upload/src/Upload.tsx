@@ -90,6 +90,8 @@ export default defineComponent({
       default: 'ant-design:upload-outlined',
     },
     onSelect: Function as PropType<BasicPropsType['onSelect']>,
+    insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
+    nameColumnWidth: [Number, String] as PropType<BasicPropsType['nameColumnWidth']>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -223,8 +225,20 @@ export default defineComponent({
 
         {(slots.tablePreview &&
           slots.tablePreview({
-            loading: handler.loading.value,
+            typeCodeRecord: handler.typeCodeRecord,
             dataSource: handler.dataSource.value,
+            loading: handler.loading.value,
+            readonly: readonly.value,
+            onDelete: handler.deleteItem,
+            showTableAction: props.showTableAction,
+            onClickName: props.onClickName,
+            canResize: props.canResize,
+            tableActionPermission: props.tableActionPermission,
+            customOptions: customOptions.value,
+            download: handler.apis.download,
+            updateFileNameAndAddress: handler.apis.updateFileNameAndAddress,
+            insertColumns: props.insertColumns,
+            nameColumnWidth: props.nameColumnWidth,
           })) ||
           (showTable.value && (
             <PreviewTable
@@ -240,6 +254,8 @@ export default defineComponent({
               customOptions={customOptions.value}
               download={handler.apis.download}
               updateFileNameAndAddress={handler.apis.updateFileNameAndAddress}
+              insertColumns={props.insertColumns}
+              nameColumnWidth={props.nameColumnWidth}
             />
           ))}
       </section>

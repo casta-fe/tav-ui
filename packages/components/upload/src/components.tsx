@@ -1,4 +1,4 @@
-import { computed, defineComponent, onBeforeUnmount, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, reactive, ref, unref } from 'vue'
 import { Spin, Select as TaSelect } from 'ant-design-vue'
 import { Input } from 'vxe-table'
 import {
@@ -19,6 +19,7 @@ import type {
 } from '@tav-ui/components/table-pro'
 import type { PropType, Ref } from 'vue'
 import type {
+  BasicPropsType,
   FileItemType,
   PreviewTablePropType,
   PromiseFn,
@@ -65,6 +66,8 @@ export const PreviewTable = defineComponent({
       type: Object,
       required: true,
     },
+    insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
+    nameColumnWidth: { type: [Number, String], default: 300 },
   },
   emits: ['delete'],
   setup(props, { emit }) {
@@ -75,7 +78,7 @@ export const PreviewTable = defineComponent({
 
     const typeCodeArray = computed(() => props.dataSource.map((el) => el.typeCode))
 
-    const nameColumnWidthRef = ref<number>(300)
+    // const nameColumnWidthRef = ref<number>(300)
     const currentEditCellIsLoading = ref(false)
     const currentEditCell = ref<Record<'rowIndex' | 'columnIndex', string | number>>()
 
@@ -104,11 +107,11 @@ export const PreviewTable = defineComponent({
       if (props.showTableAction.delete !== false) labels.push('删除')
       // #endregion
 
-      return [
+      const columns: TableProColumn[] = [
         {
           title: '文件名称',
           field: 'fullName',
-          width: nameColumnWidthRef.value,
+          width: props.nameColumnWidth,
           editRender: {},
           slots: {
             edit: ({ row, rowIndex, columnIndex }) => {
@@ -117,6 +120,9 @@ export const PreviewTable = defineComponent({
               return [
                 <UpdateNameForm
                   row={row}
+                  onEnter={() => {
+                    taTableProInstanceRef.value?.instance.clearEdit()
+                  }}
                   onChange={(payload) => {
                     if (
                       (row.hyperlink &&
@@ -128,9 +134,7 @@ export const PreviewTable = defineComponent({
                     }
 
                     if (!props.updateFileNameAndAddress) {
-                      if (import.meta.env.DEV) {
-                        console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
-                      }
+                      console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
                       return
                     }
 
@@ -212,6 +216,26 @@ export const PreviewTable = defineComponent({
           customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
         },
       ]
+
+      if (props.insertColumns?.length) {
+        for (const columnItem of props.insertColumns) {
+          if (!columnItem.column) continue
+
+          const prevIndex = columns.findIndex(
+            (el) => (columnItem.position ?? 'createTime') === el.field
+          )
+          if (-1 === prevIndex) continue
+
+          if ('before' === columnItem.beforeOrAfter) {
+            columns.splice(prevIndex, 0, columnItem.column)
+          } else {
+            // 默认after
+            columns.splice(prevIndex + 1, 0, columnItem.column)
+          }
+        }
+      }
+
+      return columns
     })
 
     const getActions = (record) => {
@@ -519,10 +543,8 @@ export const UpdateNameForm = defineComponent({
   // @ts-ignore
   props: {
     row: { type: Object as PropType<FileItemType>, required: true },
-    // loading: { type: Object as PropType<Ref<boolean>>, default: false },
     onChange: Function,
-    onRecoveryWidth: Function,
-    // updateFileNameAndAddress: Function as PropType<PromiseFn>,
+    onEnter: Function,
   },
   setup(props) {
     const state = reactive({
@@ -538,7 +560,6 @@ export const UpdateNameForm = defineComponent({
       payload.name = state.name
       props.row.hyperlink && (payload.address = state.address)
 
-      // onRecoveryWidth?.()
       return props.onChange?.(payload)
     }
 
@@ -560,6 +581,9 @@ export const UpdateNameForm = defineComponent({
           colProps: { span: 12 },
           componentProps: {
             maxLength: 100,
+            onPressEnter: ({ code }) => {
+              'Enter' === code && props.onEnter?.()
+            },
             onBlur: throwResult,
             onChange(e: { target: { value: string } }) {
               state.name = e.target.value
@@ -583,6 +607,9 @@ export const UpdateNameForm = defineComponent({
           ],
           componentProps: {
             maxLength: 400,
+            onPressEnter: ({ code }) => {
+              'Enter' === code && props.onEnter?.()
+            },
             onBlur: throwResult,
             onChange(e: { target: { value: string } }) {
               const value = e.target.value
@@ -594,12 +621,13 @@ export const UpdateNameForm = defineComponent({
       ],
     })
 
-    props.onRecoveryWidth && onBeforeUnmount(props.onRecoveryWidth)
-
     return () => [
       props.row.hyperlink != 1 ? (
         // 普通文件
         <Input
+          onKeydown={({ $event: { code } }) => {
+            'Enter' === code && props.onEnter?.()
+          }}
           style={{
             display: 'inline-block',
             width: 'calc(100% - 22px)',
@@ -607,10 +635,7 @@ export const UpdateNameForm = defineComponent({
           onChange={({ value }) => {
             state.name = value
           }}
-          onBlur={() => {
-            console.error('input name is blur')
-            throwResult()
-          }}
+          onBlur={throwResult}
           modelValue={state.name}
         />
       ) : (
