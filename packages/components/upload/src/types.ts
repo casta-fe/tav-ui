@@ -304,6 +304,8 @@ type BasicPropsType = {
    * 文件类型 选择框 onSelect
    */
   onSelect?: Fn
+  coverColumnTitle?: Record<DefaultColumnFields, string>
+  hideColumnFields?: DefaultColumnFields[]
   nameColumnWidth?: number | string
   insertColumns?: {
     /**

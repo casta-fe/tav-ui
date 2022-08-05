@@ -90,6 +90,8 @@ export default defineComponent({
       default: 'ant-design:upload-outlined',
     },
     onSelect: Function as PropType<BasicPropsType['onSelect']>,
+    coverColumnTitle: Object as PropType<BasicPropsType['coverColumnTitle']>,
+    hideColumnFields: Array as PropType<BasicPropsType['hideColumnFields']>,
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: [Number, String] as PropType<BasicPropsType['nameColumnWidth']>,
   },
@@ -237,6 +239,8 @@ export default defineComponent({
             customOptions: customOptions.value,
             download: handler.apis.download,
             updateFileNameAndAddress: handler.apis.updateFileNameAndAddress,
+            coverColumnTitle: props.coverColumnTitle,
+            hideColumnFields: props.hideColumnFields,
             insertColumns: props.insertColumns,
             nameColumnWidth: props.nameColumnWidth,
           })) ||
@@ -254,6 +258,8 @@ export default defineComponent({
               customOptions={customOptions.value}
               download={handler.apis.download}
               updateFileNameAndAddress={handler.apis.updateFileNameAndAddress}
+              coverColumnTitle={props.coverColumnTitle}
+              hideColumnFields={props.hideColumnFields}
               insertColumns={props.insertColumns}
               nameColumnWidth={props.nameColumnWidth}
             />

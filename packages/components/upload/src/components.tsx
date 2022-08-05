@@ -66,6 +66,11 @@ export const PreviewTable = defineComponent({
       type: Object,
       required: true,
     },
+    coverColumnTitle: Object as PropType<BasicPropsType['coverColumnTitle']>,
+    hideColumnFields: {
+      type: Array as PropType<BasicPropsType['hideColumnFields']>,
+      default: () => [],
+    },
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: { type: [Number, String], default: 300 },
   },
@@ -109,8 +114,9 @@ export const PreviewTable = defineComponent({
 
       const columns: TableProColumn[] = [
         {
-          title: '文件名称',
+          title: props.coverColumnTitle?.fullName ?? '文件名称',
           field: 'fullName',
+          visible: !props?.hideColumnFields!.includes('fullName'),
           width: props.nameColumnWidth,
           editRender: {},
           slots: {
@@ -190,28 +196,36 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          title: '文件类型',
+          title: props.coverColumnTitle?.typeName ?? '文件类型',
           field: 'typeName',
+          visible: !props?.hideColumnFields!.includes('typeName'),
           minWidth: 100,
           customRender: ({ row: { typeCode } }) =>
             typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
         },
         {
-          title: '文件大小',
+          title: props.coverColumnTitle?.fileSize ?? '文件大小',
           field: 'fileSize',
+          visible: !props?.hideColumnFields!.includes('fileSize'),
           minWidth: 100,
         },
-        { title: '上传人', field: 'createByName' },
         {
-          title: '更新时间',
+          title: props.coverColumnTitle?.createByName ?? '上传人',
+          field: 'createByName',
+          visible: !props?.hideColumnFields!.includes('createByName'),
+        },
+        {
+          title: props.coverColumnTitle?.createTime ?? '更新时间',
           field: 'createTime',
+          visible: !props?.hideColumnFields!.includes('createTime'),
           customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
         {
           width: getActionColumnMaxWidth(labels),
           fixed: 'right',
-          title: '操作',
+          title: props.coverColumnTitle?.action ?? '操作',
           field: 'action',
+          visible: !props?.hideColumnFields!.includes('action'),
           align: 'center',
           customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
         },
