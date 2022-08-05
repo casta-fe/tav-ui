@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, onUnmounted, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, onUnmounted, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import ComponentCustomAction from './components/custom-action'
@@ -18,6 +18,7 @@ import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
+import type { ComputedRef } from 'vue'
 // import { isBoolean } from '@tav-ui/utils/is'
 
 const _VXETable = setupVxeTable()
@@ -33,6 +34,7 @@ export default defineComponent({
   setup(props, { slots, attrs, expose, emit }) {
     // 获取实例
     const tableRef = ref<TableProInstance | null>(null)
+    const filterRef = ref<ComputedRef | null>(null)
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -88,7 +90,7 @@ export default defineComponent({
     createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
 
     // 抛出实例
-    expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading })) })
+    expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
 
     // 类名处理
     const getWrapperClass = computed(() => {
@@ -119,6 +121,7 @@ export default defineComponent({
       return values.showOperations && (isFilterFormHasContent || isCustomActionHasContent) ? (
         <div class={ComponentOperationsPrefixCls} ref={operationRef}>
           <ComponentFilterForm
+            ref={filterRef}
             config={values.filterFormConfig}
             tableRef={tableRef}
             tableSlots={slots}

@@ -6,7 +6,8 @@ import type { TableProApiParams } from '../typings'
 
 function createExendApis(
   tableRef: Ref<TableProInstance | null>,
-  tablePropsRef: ComputedRef<TableProProps>
+  tablePropsRef: ComputedRef<TableProProps>,
+  filterRef
 ) {
   function getSelectRowKeys(): string[] {
     const {
@@ -87,6 +88,10 @@ function createExendApis(
   }
 
   function reload(options?: TableProApiParams) {
+    const tableFilterSearchParams = filterRef.value
+      ? JSON.parse(filterRef.value.$el.dataset.filterParams)
+      : {}
+
     const { checkboxConfig = {}, radioConfig = {} } = unref(tablePropsRef)
 
     const hasCheckbox = Object.keys(checkboxConfig).length > 0
@@ -94,15 +99,16 @@ function createExendApis(
     if (options?.clearSelect && hasCheckbox) unref(tableRef)!.clearCheckboxRow()
     if (options?.clearSelect && hasRadioConfig) unref(tableRef)!.clearRadioRow()
 
+    const apiParams: TableProApiParams = { filter: tableFilterSearchParams, model: {} }
     if (options) {
-      const apiParams: TableProApiParams = { filter: options.filter ?? {}, model: {} }
       if (options.page && options.page > 0) {
         apiParams.model = { ...(options.model ?? {}), page: options.page }
       }
-      unref(tableRef)!.commitProxy('query', { ...apiParams })
+      // unref(tableRef)!.commitProxy('query', { ...apiParams })
     } else {
-      unref(tableRef)!.commitProxy('query')
+      // unref(tableRef)!.commitProxy('query')
     }
+    unref(tableRef)!.commitProxy('query', { ...apiParams })
   }
 
   return {
@@ -131,7 +137,8 @@ export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExten
 export function useExtendInstance(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
-  outerExtendApis: OuterExtendApis
+  outerExtendApis: OuterExtendApis,
+  filterRef: Ref<ComputedRef | null>
 ) {
   const state = reactive<{
     instance: TableProInstance | null
@@ -144,7 +151,7 @@ export function useExtendInstance(
     (curTableRef, preTableRef) => {
       if (curTableRef && curTableRef !== preTableRef) {
         state.instance = curTableRef
-        const extendApis = createExendApis(tableRef, tablePropsRef)
+        const extendApis = createExendApis(tableRef, tablePropsRef, filterRef)
         Object.keys(extendApis).forEach((name) => {
           state.instance![name] = extendApis[name]
         })
