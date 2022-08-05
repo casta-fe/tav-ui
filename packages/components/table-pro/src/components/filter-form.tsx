@@ -255,7 +255,7 @@ export default defineComponent({
 
     return () => {
       return unref(isFilterFormShow) ? (
-        <div class={ComponentPrefixCls} data-filter-params={tableFilterParams}>
+        <div class={ComponentPrefixCls} data-filter-params={tableFilterParams.value}>
           {unref(isInputFormShow) ? (
             <BasicForm
               ref={inputFormRef}
