@@ -3,7 +3,7 @@ import { ButtonGroup, Upload } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
-import { Handler, hyperlinkFormRegister } from './main'
+import { Handler } from './main'
 import type { PropType, Slot } from 'vue'
 import type { BasicPropsType } from './types'
 
@@ -84,6 +84,7 @@ export default defineComponent({
     uploadFile: Function as PropType<BasicPropsType['uploadFile']>,
     uploadHyperlink: Function as PropType<BasicPropsType['uploadHyperlink']>,
     download: Function as PropType<BasicPropsType['download']>,
+    updateFileNameAndAddress: Function as PropType<BasicPropsType['updateFileNameAndAddress']>,
     uploadIcon: {
       type: String as PropType<BasicPropsType['uploadIcon']>,
       default: 'ant-design:upload-outlined',
@@ -177,7 +178,11 @@ export default defineComponent({
                     customRequest={handler.customRequest}
                     accept={accept.value}
                   >
-                    <TaButton class="file" onClick={handler.preOpenChooseFile}>
+                    <TaButton
+                      loading={handler.loading.value}
+                      class="file"
+                      onClick={handler.preOpenChooseFile}
+                    >
                       {/* <i class="ta-upload-btn-icon" /> */}
                       <TaIcon icon={props.uploadIcon} />
                       上传文件
@@ -212,7 +217,7 @@ export default defineComponent({
               }
             }}
             loading={handler.loading}
-            onRegister={hyperlinkFormRegister}
+            onRegister={handler.hyperlinkFormRegister}
           />
         )}
 
@@ -234,6 +239,7 @@ export default defineComponent({
               tableActionPermission={props.tableActionPermission}
               customOptions={customOptions.value}
               download={handler.apis.download}
+              updateFileNameAndAddress={handler.apis.updateFileNameAndAddress}
             />
           ))}
       </section>

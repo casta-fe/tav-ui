@@ -2,18 +2,18 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { isFunction } from '@tav-ui/utils'
-import { useHyperlinkForm } from './hooks'
 import type { Ref } from 'vue'
 import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
+import type { FormActionType } from '../../form'
 
 // global variable beginRegion
 const { createMessage } = useMessage()
 // global variable endRegion
 
-export const [hyperlinkFormRegister, { resetFields }] = useHyperlinkForm()
-
 class Handler {
   private emit: Fn
+
+  private _hyperlinkFormMethods: Partial<FormActionType> = {}
 
   private _props!: BasicPropsType
 
@@ -92,6 +92,8 @@ class Handler {
         this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
       download: (this._provide.value?.download ??
         this._props.download) as ProvideDataType['download'],
+      updateFileNameAndAddress: (this._provide.value?.updateFileNameAndAddress ??
+        this._props.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
     }
 
     if (
@@ -394,10 +396,14 @@ class Handler {
       })
   }
 
+  hyperlinkFormRegister = (methods: Partial<FormActionType>) => {
+    this._hyperlinkFormMethods = methods
+  }
+
   /**
    * 超链接上传
    */
-  public hyperlinkUpload() {
+  hyperlinkUpload() {
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
       this.resetFileList()
@@ -425,7 +431,7 @@ class Handler {
         // createMessage.error("上传失败");
       })
       .finally(() => {
-        resetFields()
+        this._hyperlinkFormMethods.resetFields?.()
         this._isLoading.value = false
       })
   }

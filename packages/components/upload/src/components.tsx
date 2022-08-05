@@ -1,5 +1,6 @@
-import { computed, defineComponent, ref, unref } from 'vue'
-import { Select as TaSelect } from 'ant-design-vue'
+import { computed, defineComponent, onBeforeUnmount, reactive, ref, unref } from 'vue'
+import { Spin, Select as TaSelect } from 'ant-design-vue'
+import { Input } from 'vxe-table'
 import {
   TaButton,
   TaFileView,
@@ -10,8 +11,12 @@ import {
 } from '@tav-ui/components'
 import { formatToDate } from '@tav-ui/utils'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
-import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
-// import type { VxeGridProps } from 'vxe-table'
+
+import type {
+  ITableProInstance,
+  TableProActionItem,
+  TableProColumn,
+} from '@tav-ui/components/table-pro'
 import type { PropType, Ref } from 'vue'
 import type {
   FileItemType,
@@ -21,6 +26,9 @@ import type {
   Result,
   TypeSelectPropType,
 } from './types'
+
+const ADDRESS_PATTERN =
+  /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/
 
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
@@ -52,6 +60,7 @@ export const PreviewTable = defineComponent({
     },
     customOptions: Array as PropType<PreviewTablePropType['customOptions']>,
     download: Function,
+    updateFileNameAndAddress: Function as PropType<PromiseFn>,
     typeCodeRecord: {
       type: Object,
       required: true,
@@ -59,11 +68,17 @@ export const PreviewTable = defineComponent({
   },
   emits: ['delete'],
   setup(props, { emit }) {
+    const taTableProInstanceRef = ref<ITableProInstance>()
     // init begin
     const { getOptionsByTypeCodes } = useFileTypeCode(props.typeCodeRecord)
     // init end
 
     const typeCodeArray = computed(() => props.dataSource.map((el) => el.typeCode))
+
+    const nameColumnWidthRef = ref<number>(300)
+    const currentEditCellIsLoading = ref(false)
+    const currentEditCell = ref<Record<'rowIndex' | 'columnIndex', string | number>>()
+
     const typeCodeOptions = computed(
       // @ts-ignore
       () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
@@ -93,70 +108,89 @@ export const PreviewTable = defineComponent({
         {
           title: '文件名称',
           field: 'fullName',
+          width: nameColumnWidthRef.value,
+          editRender: {},
           slots: {
-            default: ({ row: record }) => [
-              <>
-                {record.hyperlink != 1 ? (
-                  // 普通文件
-                  <span>{record.fullName}</span>
-                ) : (
-                  // 超链接
-                  <>
-                    <span>{record.name}</span>
-                    <br />
-                    <a
-                      onClick={() => {
-                        window
-                          .open(
-                            record.address.includes('//') ? record.address : `//${record.address}`
-                          )
-                          ?.focus()
-                      }}
-                    >
-                      {record.address}
-                    </a>
-                  </>
-                )}
-              </>,
-            ],
+            edit: ({ row, rowIndex, columnIndex }) => {
+              currentEditCell.value = { rowIndex, columnIndex }
+
+              return [
+                <UpdateNameForm
+                  row={row}
+                  onChange={(payload) => {
+                    if (
+                      (row.hyperlink &&
+                        payload.name === row.name &&
+                        payload.address === row.address) ||
+                      (!row.hyperlink && payload.name === row.name)
+                    ) {
+                      return
+                    }
+
+                    if (!props.updateFileNameAndAddress) {
+                      if (import.meta.env.DEV) {
+                        console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
+                      }
+                      return
+                    }
+
+                    currentEditCellIsLoading.value = true
+                    props
+                      .updateFileNameAndAddress(payload)
+                      .then(() => {
+                        row.name = payload.name
+                        row.hyperlink
+                          ? (row.address = payload.address)
+                          : (row.fullName = `${payload.name}.${row.suffix}`)
+                      })
+                      .finally(() => (currentEditCellIsLoading.value = false))
+                  }}
+                />,
+              ]
+            },
+            default: ({ row, rowIndex, columnIndex }) => {
+              const res =
+                row.hyperlink != 1
+                  ? [
+                      // 普通文件
+                      <span>{row.fullName}</span>,
+                    ]
+                  : [
+                      // 超链接
+                      <span>{row.name}</span>,
+                      <br />,
+                      <a
+                        onClick={() => {
+                          window
+                            .open(row.address.includes('//') ? row.address : `//${row.address}`)
+                            ?.focus()
+                        }}
+                      >
+                        {row.address}
+                      </a>,
+                    ]
+
+              if (currentEditCellIsLoading.value) {
+                if (currentEditCell.value) {
+                  if (
+                    rowIndex === currentEditCell.value.rowIndex &&
+                    columnIndex === currentEditCell.value.columnIndex
+                  ) {
+                    res.unshift(<Spin size="small" />)
+                  }
+                }
+              }
+
+              return res
+            },
           },
-          // customRender: ({ row: record }) => (
-          //   <>
-          //     {record.hyperlink != 1 ? (
-          //       // 普通文件
-          //       <span>{record.fullName}</span>
-          //     ) : (
-          //       // 超链接
-          //       <>
-          //         <span>{record.name}</span>
-          //         <br />
-          //         <a
-          //           onClick={() => {
-          //             window
-          //               .open(
-          //                 record.address.includes('//') ? record.address : `//${record.address}`
-          //               )
-          //               ?.focus()
-          //           }}
-          //         >
-          //           {record.address}
-          //         </a>
-          //       </>
-          //     )}
-          //   </>
-          // ),
         },
         {
           title: '文件类型',
           field: 'typeName',
           minWidth: 100,
-          slots: {
-            default: ({ row: { typeCode } }) => [
-              typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
-            ],
-          },
-          // customRender: ({ row: { typeCode } }) =>
-          //   typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
+          customRender: ({ row: { typeCode } }) =>
+            typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
         },
         {
           title: '文件大小',
@@ -167,10 +201,7 @@ export const PreviewTable = defineComponent({
         {
           title: '更新时间',
           field: 'createTime',
-          slots: {
-            default: ({ row: { createTime } }) => [formatToDate(createTime)],
-          },
-          // customRender: ({ row: { createTime } }) => formatToDate(createTime),
+          customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
         {
           width: getActionColumnMaxWidth(labels),
@@ -178,10 +209,7 @@ export const PreviewTable = defineComponent({
           title: '操作',
           field: 'action',
           align: 'center',
-          slots: {
-            default: ({ row }) => [<TaTableProAction actions={getActions(row)} />],
-          },
-          // customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
+          customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
         },
       ]
     })
@@ -250,6 +278,16 @@ export const PreviewTable = defineComponent({
     return () => (
       <div class="ta-upload-preview-table">
         <TaTablePro
+          ref={taTableProInstanceRef}
+          // 传此api -> 可编辑
+          editConfig={
+            props.updateFileNameAndAddress && {
+              // trigger: 'manual',
+              trigger: 'click',
+              mode: 'cell',
+              // autoClear: false,
+            }
+          }
           pagerConfig={{ enabled: false }}
           showOperations={false}
           data={props.dataSource}
@@ -409,8 +447,7 @@ export const HyperlinkForm = defineComponent({
               required: true,
             },
             {
-              pattern:
-                /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/,
+              pattern: ADDRESS_PATTERN,
               message: '请输入正确的链接',
             },
           ],
@@ -474,5 +511,132 @@ export const HyperlinkForm = defineComponent({
         }}
       </TaForm>
     )
+  },
+})
+
+// eslint-disable-next-line vue/one-component-per-file
+export const UpdateNameForm = defineComponent({
+  // @ts-ignore
+  props: {
+    row: { type: Object as PropType<FileItemType>, required: true },
+    // loading: { type: Object as PropType<Ref<boolean>>, default: false },
+    onChange: Function,
+    onRecoveryWidth: Function,
+    // updateFileNameAndAddress: Function as PropType<PromiseFn>,
+  },
+  setup(props) {
+    const state = reactive({
+      name: props.row.name,
+      address: props.row.address,
+    })
+
+    const throwResult = () => {
+      const payload = {
+        id: props.row.id,
+      } as Partial<FileItemType>
+
+      payload.name = state.name
+      props.row.hyperlink && (payload.address = state.address)
+
+      // onRecoveryWidth?.()
+      return props.onChange?.(payload)
+    }
+
+    const [formRegister] = useForm({
+      layout: 'vertical',
+      // labelWidth: 80,
+      showResetButton: false,
+      showSubmitButton: false,
+      // showAdvancedButton: false,
+      showActionButtonGroup: false,
+      rowProps: { gutter: 16 },
+      schemas: [
+        {
+          field: 'name',
+          label: '',
+          required: true,
+          component: 'Input',
+          defaultValue: state.name,
+          colProps: { span: 12 },
+          componentProps: {
+            maxLength: 100,
+            onBlur: throwResult,
+            onChange(e: { target: { value: string } }) {
+              state.name = e.target.value
+            },
+          },
+        },
+        {
+          field: 'address',
+          label: '',
+          component: 'Input',
+          defaultValue: state.address,
+          colProps: { span: 12 },
+          rules: [
+            {
+              required: true,
+            },
+            {
+              pattern: ADDRESS_PATTERN,
+              message: '请输入正确的链接',
+            },
+          ],
+          componentProps: {
+            maxLength: 400,
+            onBlur: throwResult,
+            onChange(e: { target: { value: string } }) {
+              const value = e.target.value
+
+              ADDRESS_PATTERN.test(value) && (state.address = value)
+            },
+          },
+        },
+      ],
+    })
+
+    props.onRecoveryWidth && onBeforeUnmount(props.onRecoveryWidth)
+
+    return () => [
+      props.row.hyperlink != 1 ? (
+        // 普通文件
+        <Input
+          style={{
+            display: 'inline-block',
+            width: 'calc(100% - 22px)',
+          }}
+          onChange={({ value }) => {
+            state.name = value
+          }}
+          onBlur={() => {
+            console.error('input name is blur')
+            throwResult()
+          }}
+          modelValue={state.name}
+        />
+      ) : (
+        // form 在此处, 只用于给用户提示, 不用于取值
+        <TaForm class="upload-inline-form" onRegister={formRegister} />
+        // 超链接
+        // <>
+        //   <Input
+        //     style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+        //     onChange={({ value }) => {
+        //       state.name = value
+        //       row.name = value
+        //     }}
+        //     defaultValue={row.name}
+        //   />
+        //   {/* <br /> */}
+        //   <Input
+        //     style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: '16px' }}
+        //     onChange={({ value }) => {
+        //       state.address = value
+        //       row.address = value
+        //     }}
+        //     defaultValue={row.address}
+        //   />
+        // </>
+      ),
+    ]
   },
 })

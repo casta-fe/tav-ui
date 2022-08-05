@@ -101,4 +101,12 @@ export const taUploadProvideData = {
       )
     )
   },
+  updateFileNameAndAddress: (v: any) => {
+    console.error(v)
+    return new Promise((r) => {
+      setTimeout(() => {
+        r({ success: true, data: null })
+      }, 1000)
+    })
+  },
 }

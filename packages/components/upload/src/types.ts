@@ -322,6 +322,10 @@ type ProvideDataType = {
   }) => Promise<Result<FileItemType>>
   // 文件下载方法
   download?: (file: FileItemType, ...args: any[]) => void
+  updateFileNameAndAddress?: (
+    file: Pick<FileItemType, 'id' | 'name' | 'address'>,
+    ...args: any[]
+  ) => void
   typeCodeRecord?: Recordable<LabelValueOptions>
 }
 
