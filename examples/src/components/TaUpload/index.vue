@@ -11,6 +11,8 @@
           column: { field: 'ghi', title: '文件类型前的新增列' },
         },
       ]"
+      :cover-column-title="{ fullName: '全称' }"
+      :hide-column-fields="['createTime']"
       @select="onSelect"
     >
       <template #beforeButton="{ loading }">
