@@ -1,5 +1,6 @@
 import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, unref, watch } from 'vue'
 import { Dropdown, Empty, Input, Menu, MenuItem, Spin } from 'ant-design-vue'
+import { useThrottleFn } from '@vueuse/core'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { getPopupContainer } from '@tav-ui/utils/basic'
 import type { PropType } from 'vue'
@@ -131,6 +132,14 @@ export default defineComponent({
         .finally(() => (state.loading = false))
     }
 
+    const throttleFetchCurrentKeyword = useThrottleFn(() => {
+      fetchCurrentKeyword().then(() => {
+        if (!state.visible) {
+          state.visible = true
+        }
+      })
+    }, 400)
+
     onMounted(() => {
       // 移除鼠标后, 延时关闭选项弹窗
       selfRef.value!.$el.addEventListener('mouseleave', onMouseLeave)
@@ -228,6 +237,7 @@ export default defineComponent({
             } else {
               emitValue(true)
             }
+            throttleFetchCurrentKeyword()
           }}
           onSearch={(keyword) => {
             // 直接点搜索或点击清除按钮

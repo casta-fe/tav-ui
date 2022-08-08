@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { TaForm, useForm } from '../../../dist/tav-ui/es/components'
+import { TaForm, useForm } from '@tav-ui/components'
 
 export default defineComponent({
   name: 'SearchableApiSelectExample',
@@ -25,8 +25,10 @@ export default defineComponent({
           label: '企业名称',
           componentProps: {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            api: (keyword: string, page: string | number) =>
-              new Promise((resolve) =>
+            api: (keyword: string, page: string | number) => {
+              console.log(keyword, page)
+
+              return new Promise((resolve) =>
                 setTimeout(() => {
                   resolve({
                     success: true,
@@ -316,7 +318,8 @@ export default defineComponent({
                     msg: null,
                   })
                 }, 1000)
-              ),
+              )
+            },
           },
         },
       ],
