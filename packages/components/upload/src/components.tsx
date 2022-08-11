@@ -85,7 +85,7 @@ export const PreviewTable = defineComponent({
 
     // const nameColumnWidthRef = ref<number>(300)
     const currentEditCellIsLoading = ref(false)
-    const currentEditCell = ref<Record<'rowIndex' | 'columnIndex', string | number>>()
+    let currentEditCell: null | Record<'rowIndex' | 'columnIndex', string | number> = null
 
     const typeCodeOptions = computed(
       // @ts-ignore
@@ -121,7 +121,7 @@ export const PreviewTable = defineComponent({
           editRender: {},
           slots: {
             edit: ({ row, rowIndex, columnIndex }) => {
-              currentEditCell.value = { rowIndex, columnIndex }
+              currentEditCell = { rowIndex, columnIndex }
 
               return [
                 <UpdateNameForm
@@ -181,10 +181,10 @@ export const PreviewTable = defineComponent({
                     ]
 
               if (currentEditCellIsLoading.value) {
-                if (currentEditCell.value) {
+                if (currentEditCell) {
                   if (
-                    rowIndex === currentEditCell.value.rowIndex &&
-                    columnIndex === currentEditCell.value.columnIndex
+                    rowIndex === currentEditCell.rowIndex &&
+                    columnIndex === currentEditCell.columnIndex
                   ) {
                     res.unshift(<Spin size="small" />)
                   }

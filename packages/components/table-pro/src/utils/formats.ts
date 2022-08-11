@@ -16,10 +16,11 @@ function date({ cellValue }, format = 'YYYY-MM-DD') {
 }
 function geo(
   { cellValue, row },
-  { hideProvince, hideCity, hideDistrict } = {
+  { hideProvince, hideCity, hideDistrict, hideTwoLevelDistrict } = {
     hideProvince: false,
     hideCity: false,
     hideDistrict: true,
+    hideTwoLevelDistrict: false,
   },
   joinChar = '-'
 ) {
@@ -47,8 +48,15 @@ function geo(
   if (city && !hideCity) {
     ProvinceCityRecord[city] && res.push(ProvinceCityRecord[city])
   }
-  if (district && !hideDistrict) {
-    ProvinceCityRecord[district] && res.push(ProvinceCityRecord[district])
+  if (district) {
+    const districtLabel = ProvinceCityRecord[district]
+    if (districtLabel) {
+      if (IS_TWO_LEVEL) {
+        hideTwoLevelDistrict || res.push(districtLabel)
+      } else {
+        hideDistrict || res.push(districtLabel)
+      }
+    }
   }
 
   return res.join(joinChar)
