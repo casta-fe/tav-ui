@@ -174,6 +174,9 @@ export const PreviewTable = defineComponent({
                           window
                             .open(row.address.includes('//') ? row.address : `//${row.address}`)
                             ?.focus()
+                          setTimeout(() => {
+                            taTableProInstanceRef.value?.instance.clearEdit()
+                          }, 0)
                         }}
                       >
                         {row.address}
