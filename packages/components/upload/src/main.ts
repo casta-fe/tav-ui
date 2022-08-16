@@ -1,10 +1,10 @@
 import { computed, nextTick, ref, watch } from 'vue'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { isFunction } from '@tav-ui/utils'
 import type { Ref } from 'vue'
-import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
 import type { FormActionType } from '../../form'
+import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
 
 // global variable beginRegion
 const { createMessage } = useMessage()
@@ -373,7 +373,15 @@ class Handler {
       formData.append('files', el)
     })
     this._params.typeCode = this._typeCode.value
-    for (const k in this._params) {
+
+    // 上传的请求
+    const fileReqirest = this._props.isUpdate ? this.apis.updateFile : this.apis.uploadFile
+    // 上传的参数
+    const filePrams = this._props.isUpdate
+      ? { fileActualIds: [this._props.fileActualIds] }
+      : { ...this._params }
+    // 将参数塞到formData里面去
+    for (const k in filePrams) {
       if (!this._relationBusinessId && ['businessId', 'businessKey'].includes(k)) continue
       if (!this._params[k]) continue
       this._params[k] != undefined && formData.append(k, this._params[k])
@@ -381,7 +389,7 @@ class Handler {
     // fillFormData end
 
     this._isLoading.value = true
-    this.apis.uploadFile!(formData)
+    fileReqirest!(formData)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(...r)
         this.throwResponse(r)

@@ -340,6 +340,8 @@ type ProvideDataType = {
   }) => Promise<Result<{ result: FileItemType[] }>>
   // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  // 更新文件
+  updateFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
   // 上传超链接接口
   uploadHyperlink?: (payload: {
     typeCode: string

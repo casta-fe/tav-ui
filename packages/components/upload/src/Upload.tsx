@@ -1,7 +1,7 @@
 import { defineComponent, toRefs } from 'vue'
 import { ButtonGroup, Upload } from 'ant-design-vue'
-import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components'
+import { TaButton } from '@tav-ui/components/button'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
 import type { PropType, Slot } from 'vue'
@@ -12,6 +12,10 @@ export default defineComponent({
   components: { PreviewTable },
   props: {
     title: String as PropType<BasicPropsType['title']>,
+    isUpdate: {
+      type: Boolean,
+      default: false,
+    },
     typeCodeArray: {
       type: Array as PropType<BasicPropsType['typeCodeArray']>,
       default: () => [],

@@ -90,6 +90,22 @@ export const taUploadProvideData = {
         900
       )
     ),
+  updateFile: (payload: FormData): Promise<any> =>
+    new Promise((r) =>
+      setTimeout(
+        r.bind(null, {
+          data: [...(payload.getAll('files') as File[])].map((el) => ({
+            fullName: el.name,
+            typeCode: payload.get('typeCode'),
+            moduleCode: payload.get('moduleCode'),
+            fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+            createByName: 'mxs',
+            createTime: +new Date() + 1000 * 60 * 24 * 3,
+          })),
+        }),
+        900
+      )
+    ),
   uploadHyperlink: (payload: any): Promise<any> => {
     console.error('upload-hyperlink: ', payload)
     return new Promise((r) =>
