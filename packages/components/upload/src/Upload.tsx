@@ -250,6 +250,7 @@ export default defineComponent({
           })) ||
           (showTable.value && (
             <PreviewTable
+              parentProps={props}
               typeCodeRecord={handler.typeCodeRecord}
               dataSource={handler.dataSource.value}
               loading={handler.loading.value}
