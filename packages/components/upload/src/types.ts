@@ -186,6 +186,7 @@ type BasicPropsType = {
    * 默认加粗样式的标题
    */
   title?: string
+  isUpdate?: boolean
   typeCodeArray?: string[]
   /**
    * 文件真实id(v-model双向绑定)

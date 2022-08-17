@@ -1,4 +1,4 @@
-import { computed, defineComponent, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, reactive, ref, unref, watch } from 'vue'
 import { Spin, Select as TaSelect } from 'ant-design-vue'
 import { Input } from 'vxe-table'
 import {
@@ -9,15 +9,16 @@ import {
   TaTableProAction,
   useForm,
 } from '@tav-ui/components'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { formatToDate } from '@tav-ui/utils'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
-import UpdateFile from './UpdateFile'
+import type { PropType, Ref } from 'vue'
 import type {
   ITableProInstance,
   TableProActionItem,
   TableProColumn,
 } from '@tav-ui/components/table-pro'
-import type { PropType, Ref } from 'vue'
 import type {
   BasicPropsType,
   FileItemType,
@@ -28,13 +29,17 @@ import type {
   TypeSelectPropType,
 } from './types'
 
+/*
+ * 更新文件组件，纯原生的上传
+ */
+
 const ADDRESS_PATTERN =
   /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
   props: {
     parentProps: {
-      type: Object as PropType<any>,
+      type: Object as PropType<BasicPropsType>,
     },
     dataSource: {
       type: Array as PropType<FileItemType[]>,
@@ -285,7 +290,7 @@ export const PreviewTable = defineComponent({
           enabled: !props.readonly,
           // @ts-ignore
           onClick() {
-            updateFileActualIds.value = [record.actualId]
+            updateFileActualIds.value = record.actualId
             console.log('上传')
           },
         },
@@ -345,14 +350,14 @@ export const PreviewTable = defineComponent({
     // 更新文件的回调
     const updateFileChange = (file) => {
       console.log(file)
-      updateFileActualIds.value = []
+      updateFileActualIds.value = ''
     }
     // 更新的文件真实id
-    let updateFileActualIds = ref([])
+    let updateFileActualIds = ref('')
     return () => (
       <div class="ta-upload-preview-table">
         <UpdateFile
-          accept={props.parentProps.accept}
+          accept={props.parentProps?.accept || ''}
           fileActualIds={updateFileActualIds.value}
           onUpdateSuccess={updateFileChange}
         ></UpdateFile>
@@ -718,5 +723,72 @@ export const UpdateNameForm = defineComponent({
         // </>
       ),
     ]
+  },
+})
+
+// eslint-disable-next-line vue/one-component-per-file
+export const UpdateFile = defineComponent({
+  name: 'TaUpDateFile',
+  components: {},
+  props: {
+    accept: {
+      type: String as PropType<BasicPropsType['accept']>,
+      default:
+        '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.zip,.7z,.tar,.tar.gz,.tgz,.rar,.txt',
+    },
+    fileActualIds: {
+      type: String as PropType<string>,
+      required: true,
+    },
+    onUpdateSuccess: Function,
+  },
+  etmis: ['updateSuccess'],
+  setup(props, { emit }) {
+    const config = useGlobalConfig('components')
+    const { createMessage } = useMessage()
+    const uploadRef = ref()
+    const fileChange = (event) => {
+      const updateApi = config.value?.TaUpload?.updateFile
+
+      const files = event.target.files
+      const formData = new FormData()
+      let updateFlag = true
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        if (file.size / 1024 / 1024 > 1024) {
+          updateFlag = false
+          createMessage.warn(`${file.name}:${Math.floor(file.size / 1024 / 1024)}MB大于1GB`)
+        }
+        if (!updateFlag) {
+          return
+        }
+        formData.append('files', file)
+        formData.append('fileActualIds', props.fileActualIds)
+      }
+      updateApi(formData).then((res) => {
+        uploadRef.value.value = ''
+        emit('updateSuccess', res.data)
+      })
+    }
+    watch(
+      () => props.fileActualIds,
+      (ids) => {
+        if (ids.length > 0) {
+          console.log(ids)
+          uploadRef.value.click()
+        }
+      }
+    )
+    return () => (
+      <div style="position: absolute; z-index: -999;opacity: 0;">
+        <input
+          multiple
+          ref={uploadRef}
+          type="file"
+          accept={props.accept}
+          onChange={fileChange.bind(this)}
+        />
+      </div>
+    )
   },
 })

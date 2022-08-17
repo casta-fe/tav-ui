@@ -88,6 +88,8 @@ class Handler {
         this._props.removeFile) as ProvideDataType['removeFile'],
       uploadFile: (this._provide.value?.uploadFile ??
         this._props.uploadFile) as ProvideDataType['uploadFile'],
+      updateFile: (this._provide.value?.updateFile ??
+        this._props.updateFile) as ProvideDataType['updateFile'],
       uploadHyperlink: (this._provide.value?.uploadHyperlink ??
         this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
       download: (this._provide.value?.download ??
