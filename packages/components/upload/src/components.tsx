@@ -368,7 +368,9 @@ export const PreviewTable = defineComponent({
     const previewRecord = ref<FileItemType[]>([])
     // 更新文件的回调
     const updateFileChange = (record) => {
-      props.handler.updateItem && props.handler.updateItem(record)
+      if (props.handler && props.handler.updateItem) {
+        props.handler.updateItem(record)
+      }
       updateFileActualIds.value = ''
     }
     const updateFileFail = () => {
