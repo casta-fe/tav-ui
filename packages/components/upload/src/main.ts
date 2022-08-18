@@ -256,10 +256,27 @@ class Handler {
     this.emit('update:fileActualIds', this.getFileActualIds())
     this.emit('change', newRecord, this._uploadResponse)
   }
-
+  /**
+   * 更新一条数据
+   * @param {Recordable} record
+   * @memberof Handler
+   **/
+  updateItem = (record: FileItemType) => {
+    const { actualId } = record
+    // this._uploadResponse.length = 0
+    const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
+    this._uploadResponse.splice(index, 1, record)
+    this.fillDataSource()
+    console.log(this._uploadResponse)
+  }
   /**
    * 删除一条数据
    * @param record 需要删除的文件信息
+  /**
+   *
+   *
+   * @param {Recordable} record
+   * @memberof Handler
    */
   deleteItem = (record: Recordable) => {
     const { actualId } = record
@@ -364,7 +381,7 @@ class Handler {
    */
   private realUpload = () => {
     // 非更新时候 typecode必传
-    if (!this._props.isUpdate && !this._typeCode.value) {
+    if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
       this.resetFileList()
       return
@@ -376,15 +393,8 @@ class Handler {
       formData.append('files', el)
     })
     this._params.typeCode = this._typeCode.value
-
-    // 上传的请求
-    const fileReqirest = this._props.isUpdate ? this.apis.updateFile : this.apis.uploadFile
-    // 上传的参数
-    const filePrams = this._props.isUpdate
-      ? { fileActualIds: [this._props.fileActualIds] }
-      : { ...this._params }
     // 将参数塞到formData里面去
-    for (const k in filePrams) {
+    for (const k in this._params) {
       if (!this._relationBusinessId && ['businessId', 'businessKey'].includes(k)) continue
       if (!this._params[k]) continue
       this._params[k] != undefined && formData.append(k, this._params[k])
@@ -392,7 +402,7 @@ class Handler {
     // fillFormData end
 
     this._isLoading.value = true
-    fileReqirest!(formData)
+    this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(...r)
         this.throwResponse(r)

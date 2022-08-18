@@ -12,10 +12,6 @@ export default defineComponent({
   components: { PreviewTable },
   props: {
     title: String as PropType<BasicPropsType['title']>,
-    isUpdate: {
-      type: Boolean,
-      default: false,
-    },
     typeCodeArray: {
       type: Array as PropType<BasicPropsType['typeCodeArray']>,
       default: () => [],
@@ -251,6 +247,7 @@ export default defineComponent({
           (showTable.value && (
             <PreviewTable
               parentProps={props}
+              handler={handler}
               typeCodeRecord={handler.typeCodeRecord}
               dataSource={handler.dataSource.value}
               loading={handler.loading.value}

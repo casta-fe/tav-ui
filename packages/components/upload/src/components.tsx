@@ -1,5 +1,6 @@
 import { computed, defineComponent, reactive, ref, unref, watch } from 'vue'
-import { Spin, Select as TaSelect } from 'ant-design-vue'
+import { CloseOutlined } from '@ant-design/icons-vue'
+import { Popover, Spin, Select as TaSelect } from 'ant-design-vue'
 import { Input } from 'vxe-table'
 import {
   TaButton,
@@ -40,6 +41,9 @@ export const PreviewTable = defineComponent({
   props: {
     parentProps: {
       type: Object as PropType<BasicPropsType>,
+    },
+    handler: {
+      type: Object,
     },
     dataSource: {
       type: Array as PropType<FileItemType[]>,
@@ -98,6 +102,7 @@ export const PreviewTable = defineComponent({
       // @ts-ignore
       () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
     )
+    console.log(typeCodeOptions)
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
         props.showTableAction.preview === false &&
@@ -118,7 +123,6 @@ export const PreviewTable = defineComponent({
       if (props.showTableAction.downloadWatermark !== false) labels.push('下载水印文件')
       if (props.showTableAction.delete !== false) labels.push('删除')
       // #endregion
-
       const columns: TableProColumn[] = [
         {
           title: props.coverColumnTitle?.fullName ?? '文件名称',
@@ -225,6 +229,27 @@ export const PreviewTable = defineComponent({
           visible: !props?.hideColumnFields!.includes('createByName'),
         },
         {
+          title: props.coverColumnTitle?.version ?? '版本',
+          field: 'version',
+          visible: !props?.hideColumnFields!.includes('version'),
+          minWidth: 100,
+          customRender: ({ row }) => {
+            return (
+              <>
+                {row.hyperlink === 0 ? (
+                  <FileBranch
+                    tableActionPermission={props.tableActionPermission}
+                    showTableAction={props.showTableAction}
+                    file={row}
+                  />
+                ) : (
+                  ''
+                )}
+              </>
+            )
+          },
+        },
+        {
           title: props.coverColumnTitle?.createTime ?? '更新时间',
           field: 'createTime',
           visible: !props?.hideColumnFields!.includes('createTime'),
@@ -240,9 +265,7 @@ export const PreviewTable = defineComponent({
           customRender: ({ row }) => {
             return (
               <>
-                <TaTableProAction actions={getActions(row)}>
-                  <TaButton type="link">2222</TaButton>
-                </TaTableProAction>
+                <TaTableProAction actions={getActions(row)} />
               </>
             )
           },
@@ -287,19 +310,15 @@ export const PreviewTable = defineComponent({
         },
         {
           label: '更新',
-          enabled: !props.readonly,
+          enabled: !!(record.hyperlink === 1
+            ? false
+            : props.readonly
+            ? false
+            : props.showTableAction.update ?? true),
           // @ts-ignore
           onClick() {
             updateFileActualIds.value = record.actualId
             console.log('上传')
-          },
-        },
-        {
-          label: '查看历史',
-          enabled: props.showTableAction.delete ?? !props.readonly,
-          // @ts-ignore
-          onClick() {
-            console.log('查看历史')
           },
         },
       ]
@@ -348,8 +367,11 @@ export const PreviewTable = defineComponent({
     const showPreview = ref(false)
     const previewRecord = ref<FileItemType[]>([])
     // 更新文件的回调
-    const updateFileChange = (file) => {
-      console.log(file)
+    const updateFileChange = (record) => {
+      props.handler.updateItem && props.handler.updateItem(record)
+      updateFileActualIds.value = ''
+    }
+    const updateFileFail = () => {
       updateFileActualIds.value = ''
     }
     // 更新的文件真实id
@@ -360,6 +382,7 @@ export const PreviewTable = defineComponent({
           accept={props.parentProps?.accept || ''}
           fileActualIds={updateFileActualIds.value}
           onUpdateSuccess={updateFileChange}
+          onUpdateFail={updateFileFail}
         ></UpdateFile>
         <TaTablePro
           ref={taTableProInstanceRef}
@@ -729,7 +752,6 @@ export const UpdateNameForm = defineComponent({
 // eslint-disable-next-line vue/one-component-per-file
 export const UpdateFile = defineComponent({
   name: 'TaUpDateFile',
-  components: {},
   props: {
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
@@ -740,6 +762,7 @@ export const UpdateFile = defineComponent({
       type: String as PropType<string>,
       required: true,
     },
+    onUpdateFail: Function,
     onUpdateSuccess: Function,
   },
   etmis: ['updateSuccess'],
@@ -765,16 +788,21 @@ export const UpdateFile = defineComponent({
         formData.append('files', file)
         formData.append('fileActualIds', props.fileActualIds)
       }
-      updateApi(formData).then((res) => {
-        uploadRef.value.value = ''
-        emit('updateSuccess', res.data)
-      })
+      updateApi(formData)
+        .then((res) => {
+          createMessage.success('更新成功')
+          uploadRef.value.value = ''
+          emit('updateSuccess', res.data[0])
+        })
+        .catch((err) => {
+          uploadRef.value.value = ''
+          emit('updateFail', err)
+        })
     }
     watch(
       () => props.fileActualIds,
-      (ids) => {
-        if (ids.length > 0) {
-          console.log(ids)
+      (id) => {
+        if (id) {
           uploadRef.value.click()
         }
       }
@@ -789,6 +817,183 @@ export const UpdateFile = defineComponent({
           onChange={fileChange.bind(this)}
         />
       </div>
+    )
+  },
+})
+// eslint-disable-next-line vue/one-component-per-file
+export const FileBranch = defineComponent({
+  name: 'TaFileBranch',
+  props: {
+    file: {
+      type: Object as PropType<FileItemType>,
+      required: true,
+    },
+    tableActionPermission: {
+      type: Object as PropType<PreviewTablePropType['tableActionPermission']>,
+      required: true,
+    },
+    showTableAction: {
+      type: Object as PropType<PreviewTablePropType['showTableAction']>,
+      required: true,
+    },
+    download: Function,
+  },
+  setup(props) {
+    const loading = ref(true)
+    const dataSource = ref([])
+    // 文件预览
+    const showPreview = ref(false)
+    const previewRecord = ref<FileItemType[]>([])
+    const columns: TableProColumn[] = [
+      {
+        title: '版本',
+        field: 'version',
+        minWidth: 50,
+        customRender: ({ row }) => {
+          return <>v{row.version}</>
+        },
+      },
+      {
+        title: '文件名称',
+        field: 'fullName',
+        customRender: ({ row }) => {
+          return <>{row.hyperlink === 0 ? row.fullName : row.name}</>
+        },
+      },
+      {
+        title: '文件大小',
+        field: 'fileSize',
+        minWidth: 100,
+      },
+      {
+        title: '上传人',
+        field: 'createByName',
+      },
+
+      {
+        title: '更新时间',
+        field: 'createTime',
+        customRender: ({ row: { createTime } }) => formatToDate(createTime),
+      },
+      {
+        width: '260px',
+        fixed: 'right',
+        title: '操作',
+        field: 'action',
+        align: 'center',
+        customRender: ({ row }) => {
+          return (
+            <>
+              <TaTableProAction actions={getActions(row)} />
+            </>
+          )
+        },
+      },
+    ]
+
+    const getActions = (record) => {
+      const actions: TableProActionItem[] = [
+        {
+          label: '查看',
+          permission: props.tableActionPermission.preview,
+          enabled: record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
+          onClick() {
+            if (record.hyperlink === 1) {
+              window.open(record.address)?.focus()
+              return
+            }
+            previewRecord.value = [record]
+            showPreview.value = true
+          },
+        },
+        {
+          label: '下载水印文件',
+          permission: props.tableActionPermission.download,
+          enabled: !!(record.hyperlink === 1
+            ? false
+            : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
+          onClick() {
+            props.download?.(record, undefined, true)
+          },
+        },
+        {
+          // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
+          label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
+          permission: props.tableActionPermission.download,
+          enabled: !!(record.hyperlink === 1
+            ? false
+            : (props.showTableAction.download ?? true) && record.sourceFileDownload),
+          onClick() {
+            props.download?.(record)
+          },
+        },
+      ]
+      return actions
+    }
+    const getData = () => {
+      const config = useGlobalConfig('components')
+      const queryFileHistory = config.value?.TaUpload?.queryFileHistory
+      queryFileHistory({ fileActualIds: [props.file.actualId] })
+        .then((res) => {
+          dataSource.value = res.data
+          loading.value = false
+          console.log(dataSource.value)
+        })
+        .catch(() => {
+          loading.value = false
+        })
+    }
+    const popVisible = ref(false)
+    const showPopover = () => {
+      popVisible.value = true
+      getData()
+    }
+    const hidePopover = () => {
+      popVisible.value = false
+    }
+
+    return () => (
+      <>
+        <Popover trigger="click" destroyTooltipOnHide visible={popVisible.value}>
+          {{
+            title: () => (
+              <div class="file-branch-title">
+                <div class="file-branch-name">{props.file.fullName || props.file.name}</div>
+                <div class="file-branch-action" onClick={hidePopover}>
+                  <TaButton type="text">
+                    <CloseOutlined />
+                  </TaButton>
+                </div>
+              </div>
+            ),
+            content: () => (
+              <div style="width:800px; height:400px">
+                <TaTablePro
+                  pagerConfig={{ enabled: false }}
+                  showOperations={false}
+                  data={dataSource.value}
+                  loading={loading.value}
+                  columns={columns}
+                  fillInner={false}
+                  // maxHeight={Infinity}
+                  checkboxConfig={{ enabled: false }}
+                />
+              </div>
+            ),
+            default: () => (
+              <TaButton style="min-width:0" type="link" onClick={showPopover}>
+                v{props.file.version}
+              </TaButton>
+            ),
+          }}
+        </Popover>
+
+        <TaFileView
+          show={showPreview.value}
+          onUpdate:show={(v) => (showPreview.value = v)}
+          list={previewRecord.value as any}
+        />
+      </>
     )
   },
 })
