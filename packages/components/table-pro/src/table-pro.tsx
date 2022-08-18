@@ -1,6 +1,7 @@
 import { computed, defineComponent, onUnmounted, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { onMountedOrOnDeactivated } from '@tav-ui/hooks/core/onMountedOrOnDeactivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -139,10 +140,15 @@ export default defineComponent({
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
-    onUnmounted(() => {
+    onMountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
     })
+
+    // onUnmounted(() => {
+    //   // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
+    //   onCellMouseleave()
+    // })
 
     return () => {
       return (
