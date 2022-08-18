@@ -361,7 +361,8 @@ class Handler {
    * 真正的上传请求
    */
   private realUpload = () => {
-    if (!this._typeCode.value) {
+    // 非更新时候 typecode必传
+    if (!this._props.isUpdate && !this._typeCode.value) {
       createMessage.warn('请选择文件类型')
       this.resetFileList()
       return

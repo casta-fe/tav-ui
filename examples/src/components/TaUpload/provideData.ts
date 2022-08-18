@@ -90,8 +90,9 @@ export const taUploadProvideData = {
         900
       )
     ),
-  updateFile: (payload: FormData): Promise<any> =>
-    new Promise((r) =>
+  updateFile: (payload: FormData): Promise<any> => {
+    console.log(payload)
+    return new Promise((r) =>
       setTimeout(
         r.bind(null, {
           data: [...(payload.getAll('files') as File[])].map((el) => ({
@@ -105,7 +106,8 @@ export const taUploadProvideData = {
         }),
         900
       )
-    ),
+    )
+  },
   uploadHyperlink: (payload: any): Promise<any> => {
     console.error('upload-hyperlink: ', payload)
     return new Promise((r) =>

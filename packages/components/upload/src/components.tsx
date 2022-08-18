@@ -11,7 +11,7 @@ import {
 } from '@tav-ui/components'
 import { formatToDate } from '@tav-ui/utils'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
-
+import UpdateFile from './UpdateFile'
 import type {
   ITableProInstance,
   TableProActionItem,
@@ -30,10 +30,12 @@ import type {
 
 const ADDRESS_PATTERN =
   /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/
-
 // eslint-disable-next-line vue/one-component-per-file
 export const PreviewTable = defineComponent({
   props: {
+    parentProps: {
+      type: Object as PropType<any>,
+    },
     dataSource: {
       type: Array as PropType<FileItemType[]>,
       required: true,
@@ -230,7 +232,15 @@ export const PreviewTable = defineComponent({
           field: 'action',
           visible: !props?.hideColumnFields!.includes('action'),
           align: 'center',
-          customRender: ({ row }) => <TaTableProAction actions={getActions(row)} />,
+          customRender: ({ row }) => {
+            return (
+              <>
+                <TaTableProAction actions={getActions(row)}>
+                  <TaButton type="link">2222</TaButton>
+                </TaTableProAction>
+              </>
+            )
+          },
         },
       ]
 
@@ -271,6 +281,25 @@ export const PreviewTable = defineComponent({
           },
         },
         {
+          label: '更新',
+          enabled: !props.readonly,
+          // @ts-ignore
+          onClick() {
+            updateFileActualIds.value = [record.actualId]
+            console.log('上传')
+          },
+        },
+        {
+          label: '查看历史',
+          enabled: props.showTableAction.delete ?? !props.readonly,
+          // @ts-ignore
+          onClick() {
+            console.log('查看历史')
+          },
+        },
+      ]
+      actions.push(
+        {
           label: '下载水印文件',
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
@@ -282,8 +311,6 @@ export const PreviewTable = defineComponent({
             props.download?.(record, undefined, true)
           },
         },
-      ]
-      actions.push(
         {
           // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
           label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
@@ -315,9 +342,20 @@ export const PreviewTable = defineComponent({
 
     const showPreview = ref(false)
     const previewRecord = ref<FileItemType[]>([])
-
+    // 更新文件的回调
+    const updateFileChange = (file) => {
+      console.log(file)
+      updateFileActualIds.value = []
+    }
+    // 更新的文件真实id
+    let updateFileActualIds = ref([])
     return () => (
       <div class="ta-upload-preview-table">
+        <UpdateFile
+          accept={props.parentProps.accept}
+          fileActualIds={updateFileActualIds.value}
+          onUpdateSuccess={updateFileChange}
+        ></UpdateFile>
         <TaTablePro
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
