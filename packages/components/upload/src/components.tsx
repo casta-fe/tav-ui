@@ -1,7 +1,4 @@
-import { computed, defineComponent, reactive, ref, unref, watch } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
-import { Popover, Spin, Select as TaSelect } from 'ant-design-vue'
-import { Input } from 'vxe-table'
 import {
   TaButton,
   TaFileView,
@@ -10,16 +7,19 @@ import {
   TaTableProAction,
   useForm,
 } from '@tav-ui/components'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { formatToDate } from '@tav-ui/utils'
-import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
-import type { PropType, Ref } from 'vue'
 import type {
   ITableProInstance,
   TableProActionItem,
   TableProColumn,
 } from '@tav-ui/components/table-pro'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { formatToDate } from '@tav-ui/utils'
+import { Popover, Select as TaSelect, Spin } from 'ant-design-vue'
+import type { PropType, Ref } from 'vue'
+import { computed, defineComponent, reactive, ref, unref } from 'vue'
+import { Input } from 'vxe-table'
+import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type {
   BasicPropsType,
   FileItemType,
@@ -240,6 +240,7 @@ export const PreviewTable = defineComponent({
                   <FileBranch
                     tableActionPermission={props.tableActionPermission}
                     showTableAction={props.showTableAction}
+                    download={props.download}
                     file={row}
                   />
                 ) : (
@@ -317,7 +318,7 @@ export const PreviewTable = defineComponent({
             : props.showTableAction.update ?? true),
           // @ts-ignore
           onClick() {
-            updateFileActualIds.value = record.actualId
+            updateFileRef.value.showFilePicker(record)
             console.log('上传')
           },
         },
@@ -367,25 +368,14 @@ export const PreviewTable = defineComponent({
     const showPreview = ref(false)
     const previewRecord = ref<FileItemType[]>([])
     // 更新文件的回调
+    const updateFileRef = ref()
     const updateFileChange = (record) => {
       if (props.handler && props.handler.updateItem) {
         props.handler.updateItem(record)
       }
-      updateFileActualIds.value = ''
     }
-    const updateFileFail = () => {
-      updateFileActualIds.value = ''
-    }
-    // 更新的文件真实id
-    let updateFileActualIds = ref('')
     return () => (
       <div class="ta-upload-preview-table">
-        <UpdateFile
-          accept={props.parentProps?.accept || ''}
-          fileActualIds={updateFileActualIds.value}
-          onUpdateSuccess={updateFileChange}
-          onUpdateFail={updateFileFail}
-        ></UpdateFile>
         <TaTablePro
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
@@ -405,6 +395,11 @@ export const PreviewTable = defineComponent({
           fillInner={false}
           checkboxConfig={{ enabled: false }}
         />
+        <UpdateFile
+          ref={updateFileRef}
+          accept={props.parentProps?.accept || ''}
+          onUpdateSuccess={updateFileChange}
+        ></UpdateFile>
         <TaFileView
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}
@@ -760,18 +755,15 @@ export const UpdateFile = defineComponent({
       default:
         '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.zip,.7z,.tar,.tar.gz,.tgz,.rar,.txt',
     },
-    fileActualIds: {
-      type: String as PropType<string>,
-      required: true,
-    },
     onUpdateFail: Function,
     onUpdateSuccess: Function,
   },
   etmis: ['updateSuccess'],
-  setup(props, { emit }) {
+  setup(props, { emit, expose }) {
     const config = useGlobalConfig('components')
     const { createMessage } = useMessage()
     const uploadRef = ref()
+    let fileActualIds = ''
     const fileChange = (event) => {
       const updateApi = config.value?.TaUpload?.updateFile
 
@@ -788,7 +780,7 @@ export const UpdateFile = defineComponent({
           return
         }
         formData.append('files', file)
-        formData.append('fileActualIds', props.fileActualIds)
+        formData.append('fileActualIds', fileActualIds)
       }
       updateApi(formData)
         .then((res) => {
@@ -801,14 +793,11 @@ export const UpdateFile = defineComponent({
           emit('updateFail', err)
         })
     }
-    watch(
-      () => props.fileActualIds,
-      (id) => {
-        if (id) {
-          uploadRef.value.click()
-        }
-      }
-    )
+    const showFilePicker = (file) => {
+      fileActualIds = file.actualId
+      uploadRef.value.click()
+    }
+    expose({ showFilePicker })
     return () => (
       <div style="position: absolute; z-index: -999;opacity: 0;">
         <input

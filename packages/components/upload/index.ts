@@ -1,7 +1,8 @@
 import { withInstall } from '@tav-ui/utils/with-install'
-import { UpdateFile } from './src/components'
+import { FileBranch, UpdateFile } from './src/components'
 import { default as Upload } from './src/Upload'
-export const TaUpdateFile = UpdateFile
+export const TaUpdateFile = withInstall(UpdateFile)
+export const TaFileBranch = withInstall(FileBranch)
 export const TaUpload = withInstall(Upload)
 export default TaUpload
 export * from './src/hooks'
