@@ -14,7 +14,6 @@ import type {
 } from '@tav-ui/components/table-pro'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { formatToDate } from '@tav-ui/utils'
 import { Popover, Select as TaSelect, Spin } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
 import { computed, defineComponent, reactive, ref, unref } from 'vue'
@@ -254,7 +253,7 @@ export const PreviewTable = defineComponent({
           title: props.coverColumnTitle?.createTime ?? '更新时间',
           field: 'createTime',
           visible: !props?.hideColumnFields!.includes('createTime'),
-          customRender: ({ row: { createTime } }) => formatToDate(createTime),
+          // customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
         {
           width: getActionColumnMaxWidth(labels),
@@ -864,10 +863,11 @@ export const FileBranch = defineComponent({
       {
         title: '更新时间',
         field: 'createTime',
-        customRender: ({ row: { createTime } }) => formatToDate(createTime),
+        minWidth: 150,
+        // customRender: ({ row: { createTime } }) => formatToDate(createTime),
       },
       {
-        width: '260px',
+        width: '240px',
         fixed: 'right',
         title: '操作',
         field: 'action',
