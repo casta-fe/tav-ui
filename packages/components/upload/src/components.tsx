@@ -16,7 +16,7 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { Popover, Select as TaSelect, Spin } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
-import { computed, defineComponent, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import { Input } from 'vxe-table'
 import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
 import type {
@@ -252,6 +252,7 @@ export const PreviewTable = defineComponent({
         {
           title: props.coverColumnTitle?.createTime ?? '更新时间',
           field: 'createTime',
+          minWidth: 150,
           visible: !props?.hideColumnFields!.includes('createTime'),
           // customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
@@ -928,7 +929,9 @@ export const FileBranch = defineComponent({
         .then((res) => {
           dataSource.value = res.data
           loading.value = false
-          console.log(dataSource.value)
+          nextTick(() => {
+            popVisible.value = true
+          })
         })
         .catch(() => {
           loading.value = false
@@ -936,7 +939,7 @@ export const FileBranch = defineComponent({
     }
     const popVisible = ref(false)
     const showPopover = () => {
-      popVisible.value = true
+      loading.value = true
       getData()
     }
     const hidePopover = () => {
