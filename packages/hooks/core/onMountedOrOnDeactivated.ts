@@ -1,22 +1,15 @@
-import { nextTick, onDeactivated, onUnmounted } from 'vue'
+import { onDeactivated, onUnmounted } from 'vue'
 
 interface Fn<T = any, R = T> {
   (...arg: T[]): R
 }
 
 export function onMountedOrOnDeactivated(hook: Fn) {
-  let mounted: boolean
+  onDeactivated(() => {
+    hook()
+  })
 
   onUnmounted(() => {
     hook()
-    nextTick(() => {
-      mounted = true
-    })
-  })
-
-  onDeactivated(() => {
-    if (mounted) {
-      hook()
-    }
   })
 }
