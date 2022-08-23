@@ -20,7 +20,7 @@ export interface NotifyApi {
 export declare type NotificationPlacement = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
 export declare type IconType = 'success' | 'info' | 'error' | 'warning'
 export interface ModalOptionsEx extends Omit<ModalFuncProps, 'iconType'> {
-  iconType: 'warning' | 'success' | 'error' | 'info'
+  iconType?: 'warning' | 'success' | 'error' | 'info'
 }
 export type ModalOptionsPartial = Partial<ModalOptionsEx> & Pick<ModalOptionsEx, 'content'>
 

@@ -1,5 +1,5 @@
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
-import type { VxeGridPropTypes } from 'vxe-table'
+import type { VxeGridPropTypes, VxeTablePropTypes } from 'vxe-table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties } from 'vue'
@@ -44,6 +44,9 @@ export type TableProApiParams = {
 export interface TableProApi<T> {
   (option: TableProApiParams): T
 }
+
+export type TableProEditRules = VxeTablePropTypes.EditRules
+export type TableProFooterMethod = VxeTablePropTypes.FooterMethod
 
 export interface TableProTagsConfig {
   /** label 对应的字段 */

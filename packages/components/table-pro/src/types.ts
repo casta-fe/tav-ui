@@ -8,7 +8,6 @@ import {
   ROW_KEY,
   buildTableId,
 } from './const'
-import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
 import type {
   VxeColumnPropTypes,
@@ -20,6 +19,7 @@ import type {
   VxeTablePropTypes,
 } from 'vxe-table'
 import type { FetchSetting } from './const'
+import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type {
   PagerConfig,
   TableProApi,
@@ -32,8 +32,12 @@ export type TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
-  // 因为是自定义属性，vxetable中不接收，所以在运行时取不到，通过vxetable提供的column.params传进去
-  // showTooltip?: boolean
+  /** 单元格编辑传入的props对应 editrender */
+  customEditRenderProp?: VxeColumnPropTypes.EditRender
+  /** customEditRender 用来传入编辑时单元格渲染逻辑 */
+  customEditRender?: (
+    params: VxeColumnPropTypes.EditSlotParams
+  ) => JSX.Element | VNode | string | null
 }
 /** table 实例 */
 export type TableProInstance = VxeGridInstance

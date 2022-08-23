@@ -1,11 +1,10 @@
 import { computed, defineComponent, unref } from 'vue'
-import { Tooltip } from 'ant-design-vue'
-import { CamelCaseToCls, ComponentCellName, TOOLTIP_PLACEMENT } from '../const'
+import { CamelCaseToCls, ComponentCellName, ComponentEditCellName } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import { useFormats } from '../utils/formats'
+import type { TableProColumn } from '../types'
 import type { RendererOptions } from 'vxe-table'
 import type { PropType } from 'vue'
-import type { TableProColumn } from '../types'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCellName)
 export const ContentPrefixCls = CamelCaseToCls(`${ComponentCellName}Content`)
@@ -21,48 +20,13 @@ export const Cell = defineComponent({
       type: Object as PropType<TableProColumn>,
       required: true,
     },
+    params: {
+      type: Object as any,
+      required: true,
+    },
   },
   setup(props, { slots, attrs }) {
-    const { tablePropsRef } = useTableContext()
-
-    const createTooltipTitle = (type = '') => {
-      if (!type) return <></>
-      return <span class={`${ComponentPrefixCls}--tooltip-title`}>{slots.default?.()}</span>
-    }
-
-    const createContent = (type = '', hasTooltip = false) => {
-      if (!type) return <></>
-      const clsPrefix = `${hasTooltip ? `${ComponentPrefixCls}--tooltip` : ''}`
-      return <div class={`${clsPrefix}`}>{slots.default?.()}</div>
-    }
-
-    const createCell = () => {
-      // const typeMapShowTooltip = {
-      //   header: 'showHeaderTooltip',
-      //   body: 'showTooltip',
-      //   footer: 'showFooterTooltip',
-      // }
-
-      const isTableHasTooltip = unref(tablePropsRef).showTooltip
-      // const isColumnHasTooltip = (unref(tablePropsRef).columns as TableProColumn[])?.find(
-      //   (column) => column.field === props.column.field
-      // )?.showTooltip
-      // const hasTooltip = isUnDef(isColumnHasTooltip) ? isTableHasTooltip : isColumnHasTooltip
-      const hasTooltip = isTableHasTooltip
-
-      if (hasTooltip) {
-        return (
-          <Tooltip placement={TOOLTIP_PLACEMENT} destroyTooltipOnHide={true}>
-            {{
-              title: () => createTooltipTitle(props.type),
-              default: () => createContent(props.type, true),
-            }}
-          </Tooltip>
-        )
-      } else {
-        return createContent(props.type)
-      }
-    }
+    const { tablePropsRef, customCell } = useTableContext()
 
     // 类名处理
     const getContentClass = computed(() => {
@@ -78,8 +42,12 @@ export const Cell = defineComponent({
 
     return () => {
       return (
-        <div class={ComponentPrefixCls} data-type={props.type}>
-          {/* {createCell()} */}
+        <div
+          class={ComponentPrefixCls}
+          data-type={props.type}
+          onMouseenter={(e) => customCell.onMouseenter({ ...props.params, cell: e.target })}
+          onMouseleave={(e) => customCell.onMouseleave({ ...props.params, cell: e.target })}
+        >
           <div class={unref(getContentClass)}>{slots.default?.()}</div>
         </div>
       )
@@ -87,20 +55,26 @@ export const Cell = defineComponent({
   },
 })
 
-export const VxeCellRenderer: {
-  name: string
-  options: RendererOptions
-} = {
-  name: ComponentCellName,
-  options: {
-    renderHeader() {
-      // eslint-disable-next-line prefer-rest-params
-      const params = arguments[1]
+function createOptions(type: 'normal' | 'edit'): RendererOptions {
+  const DEFAULT_OPTIONS: RendererOptions = {
+    renderHeader(opt, params) {
       const { column } = params
       return [
         column.visible ? (
-          <Cell type="header" column={column}>
+          <Cell type="header" column={column} params={params}>
             {column.title}
+          </Cell>
+        ) : (
+          <></>
+        ),
+      ]
+    },
+    renderFooter(opt, params) {
+      const { column, $columnIndex, items } = params
+      return [
+        items && items.length > 1 ? (
+          <Cell type="footer" column={column} params={params}>
+            {items[$columnIndex]}
           </Cell>
         ) : (
           <></>
@@ -114,12 +88,46 @@ export const VxeCellRenderer: {
 
       return [
         column.visible ? (
-          <Cell type="body" column={column}>
+          <Cell type="body" column={column} params={params}>
             {customRender ? customRender(params) : useFormats(params) || row[column.field]}
           </Cell>
         ) : (
           <></>
         ),
+      ]
+    },
+  }
+
+  if (type === 'edit') {
+    const renderCell = DEFAULT_OPTIONS.renderDefault
+    Reflect.deleteProperty(DEFAULT_OPTIONS, 'renderDefault')
+    return { ...DEFAULT_OPTIONS, renderCell }
+  }
+  return DEFAULT_OPTIONS
+}
+
+export const VxeCellRenderer: {
+  name: string
+  options: RendererOptions
+} = {
+  name: ComponentCellName,
+  options: createOptions('normal'),
+}
+
+export const VxeCellEditRenderer: {
+  name: string
+  options: RendererOptions
+} = {
+  name: ComponentEditCellName,
+  options: {
+    ...createOptions('edit'),
+    renderEdit(opt, params) {
+      const { options } = opt
+      const { customEditRender } = options![0]
+      const { row, column } = params
+
+      return [
+        column.visible ? customEditRender ? customEditRender(params) : row[column.field] : <></>,
       ]
     },
   },

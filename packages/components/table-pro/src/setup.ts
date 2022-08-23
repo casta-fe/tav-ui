@@ -1,5 +1,6 @@
 import VXETable from 'vxe-table'
-import { VxeCellRenderer } from './components/cell'
+import { VxeCellEditRenderer, VxeCellRenderer } from './components/cell'
+import VxeAntdPlugin from './vxe-antd-plugin'
 import type { App } from 'vue'
 import type { VXETableSetupOptions } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
@@ -271,9 +272,11 @@ export function setupVxeTable(app?: App) {
 
   // 自定义渲染 cell
   VXETable.renderer.add(VxeCellRenderer.name, VxeCellRenderer.options)
+  // 自定义渲染 edit cell
+  VXETable.renderer.add(VxeCellEditRenderer.name, VxeCellEditRenderer.options)
 
   // 注册插件
-  // VXETable.use(VXETablePluginAntd)
+  VXETable.use(VxeAntdPlugin)
 
   // 注册自定义组件
   // registerAllComponent()

@@ -132,8 +132,8 @@ export async function __post(url = '', data = {}) {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
       ai: '10002',
-      at: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNjYwOTczOTcwLCJpYXQiOjE2NTgzODE5NzB9.1uEZyERvYJquVubJ4zpHlNLXu5Ir0nrsiP0LjHUMm4k',
-      rd: '52856940235c45ce29b0c43c3a8b2b84e2d9db4f3',
+      at: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNjYzODE1NTAyLCJpYXQiOjE2NjEyMjM1MDJ9.yB3CK9pRhSn3h6VKjBETyN68IhZMftsSQ_IVbLe335U',
+      rd: '19662441760fd1f827c2b4c5fbb4de407ed5c88b5',
     },
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -167,4 +167,13 @@ export async function API__POE_CUSTOM_ALL(data, url = '/api/STARLIGHT-POE-WEB/cu
   await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
+}
+
+export async function API__POE_INDUSTRY_ALL(
+  url = '/api/STARLIGHT-CENTRE-WEB/baseinfo/industry/list'
+) {
+  // 复制 ai at rd cookie：guid
+  await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url)
 }

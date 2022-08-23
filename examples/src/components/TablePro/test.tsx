@@ -191,6 +191,8 @@ export default defineComponent({
               onCheckboxAll={handleCheckboxAll}
               onPageChange={handlePageChange}
               fillInner={false}
+              editConfig={{ trigger: 'click', mode: 'row', showStatus: true }}
+              // keepSource={true}
             >
               {{
                 // filterForm: () => (<div>123</div>),

@@ -21,9 +21,12 @@ const ROUNDRADIUS = '20px'
 const props = {
   data: {
     type: [Array, Object, String, null, undefined] as PropType<
-      Record<string, any>[] | Record<string, any> | string | null | undefined
+      Record<string, any>[] | Record<string, any> | string | null | undefined | number[] | string[]
     >,
     required: true,
+  },
+  dataset: {
+    type: Array as PropType<Record<string, any>[]>,
   },
   tagConfig: {
     type: Object as PropType<Partial<TableProTagsConfig>>,
@@ -66,7 +69,7 @@ export default defineComponent({
       return text.length > 6 ? `${text.slice(0, 5)}...` : text
     }
     const createTags = () => {
-      const { label } = unref(getConfig)
+      const { label, value } = unref(getConfig)
       // 先整理数据，如果非数组、字符串、对象返回 “-”
       let tagList: Record<string, any>[] = []
       if (isString(props.data)) {
@@ -76,9 +79,38 @@ export default defineComponent({
           }
         })
       } else if (isArray(props.data)) {
-        tagList = [...props.data]
+        if (props.dataset) {
+          tagList = props.data
+            .map((data) => {
+              const target = props.dataset?.find((item) => item[value] === data)
+              if (target) {
+                return {
+                  [label]: target[label],
+                  [value]: target[value],
+                }
+              }
+              return undefined
+            })
+            .filter(Boolean)
+        } else {
+          tagList = [...props.data]
+        }
       } else if (isObject(props.data)) {
-        tagList = [props.data]
+        if (props.dataset) {
+          const target = props.dataset?.find((item) => item[value] === data[value])
+          if (target) {
+            tagList = [
+              {
+                [label]: target[label],
+                [value]: target[value],
+              },
+            ]
+          } else {
+            tagList = []
+          }
+        } else {
+          tagList = [props.data]
+        }
       } else {
         return '-'
       }

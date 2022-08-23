@@ -9,6 +9,7 @@ export const ComponentCustomActionName = `${ComponentName}CustomAction`
 export const ComponentActionName = `${ComponentName}Action`
 export const ComponentTagsName = `${ComponentName}Tags`
 export const ComponentCellName = `${ComponentName}Cell`
+export const ComponentEditCellName = `${ComponentName}EditCell`
 
 /**
  * 示例：TaTablePro => ta-table-pro

@@ -1,4 +1,4 @@
-import { unref } from 'vue'
+import { onDeactivated, onUnmounted, unref } from 'vue'
 import { $Tooltip } from '@tav-ui/hooks/web/useTooltip'
 import { isBoolean } from '@tav-ui/utils/is'
 import { ContentPrefixCls } from '../components/cell'
@@ -12,13 +12,13 @@ function showCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { cell, column, _rowIndex, _columnIndex } = params
+  const { cell, column, $rowIndex, $columnIndex } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}`
+    const id = `${tableId}:row_${$rowIndex}-${$columnIndex}`
     const el = (cell as HTMLElement).querySelector(`.${ContentPrefixCls}`) as HTMLElement
     let title = ''
     let isCellOverflow = false
@@ -26,18 +26,28 @@ function showCellTooltip(
       title = ((column.type === 'html' ? el.innerText : el.textContent) ?? '').trim()
       isCellOverflow = el.scrollWidth > el.clientWidth
     }
-    let instance
-    if (!instances.has(id)) {
-      instance = $Tooltip(el as HTMLElement, {
-        placement: TOOLTIP_PLACEMENT,
-        title,
-        id,
-        delay: 100,
-      })
-      instances.set(id, instance)
-    } else {
-      instance = instances.get(id)
-    }
+
+    // 单击编辑后cell重新生成，如果还取缓存的instance则tooltip飘到最上方
+    // if (!instances.has(id)) {
+    //   instance = $Tooltip(el as HTMLElement, {
+    //     placement: TOOLTIP_PLACEMENT,
+    //     title,
+    //     id,
+    //     delay: 100,
+    //   })
+    //   instances.set(id, instance)
+    // } else {
+    //   instance = instances.get(id)
+    // }
+
+    const instance = $Tooltip(el as HTMLElement, {
+      placement: TOOLTIP_PLACEMENT,
+      title,
+      id,
+      delay: 100,
+    })
+    instances.set(id, instance)
+
     isCellOverflow && instance?.showTooltip()
   }
 }
@@ -47,13 +57,13 @@ function hideCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { column, _rowIndex, _columnIndex } = params
+  const { column, $rowIndex, $columnIndex } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}`
+    const id = `${tableId}:row_${$rowIndex}-${$columnIndex}`
     const instance = instances.get(id)
     instance?.hideTooltip()
   }
@@ -83,12 +93,12 @@ function deleteTitle(cellEl: HTMLElement) {
 }
 
 export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: TableProGridEmit) {
-  const instances = new Map<string, any>()
+  let instances: Map<string, any> | null = new Map<string, any>()
 
   const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams) => {
     // 详情可参考 vxetable body.ts triggerHeaderTooltipEvent/triggerBodyTooltipEvent/triggerFooterTooltipEvent
     if (!params) return
-    showCellTooltip(instances, tablePropsRef, params)
+    showCellTooltip(instances!, tablePropsRef, params)
     emit('CellMouseenter', params)
     setTimeout(() => {
       deleteTitle(params.cell)
@@ -97,16 +107,30 @@ export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: Ta
 
   const onCellMouseleave = (params?: VxeGridDefines.CellMouseleaveEventParams) => {
     if (!params) {
-      hideCellAllTooltip(instances)
+      hideCellAllTooltip(instances!)
     } else {
-      hideCellTooltip(instances, tablePropsRef, params)
+      hideCellTooltip(instances!, tablePropsRef, params)
       emit('CellMouseleave', params)
     }
+  }
+
+  const clearInstances = () => {
+    const clear = () => {
+      instances!.clear()
+      instances = null
+    }
+    onUnmounted(() => {
+      clear()
+    })
+    onDeactivated(() => {
+      clear()
+    })
   }
 
   return {
     onCellMouseenter,
     onCellMouseleave,
     instances,
+    clearInstances,
   }
 }

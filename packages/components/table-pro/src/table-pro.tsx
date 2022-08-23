@@ -1,10 +1,11 @@
-import { computed, defineComponent, onUnmounted, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, onDeactivated, onUnmounted, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
+import { useCellHover } from './hooks/useCellHover'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -14,11 +15,11 @@ import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
-import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
 import type { ComputedRef } from 'vue'
+import type { VxeGridDefines } from 'vxe-table'
+import type { TableProEvent, TableProInstance, TableProProps } from './types'
 // import { isBoolean } from '@tav-ui/utils/is'
 
 const _VXETable = setupVxeTable()
@@ -64,10 +65,21 @@ export default defineComponent({
     const { loading, setLoading } = useLoading(getProps)
 
     // 手动处理单元格 tooltip
-    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
+    const { onCellMouseenter, onCellMouseleave, instances, clearInstances } = useCellHover(
+      getProps,
+      emit
+    )
 
     // 监听全局鼠标滚动取消cell tooltip
     useHideTooltips(instances)
+
+    // 监听 edit active 关闭 tooltip
+    const onEditActived = (params: VxeGridDefines.EditActivedEventParams) => {
+      const { $columnIndex, $rowIndex } = params
+      const id = `${unref(getProps).id}:row_${$rowIndex}-${$columnIndex}`
+      const instance = instances.get(id)
+      instance?.hideTooltip()
+    }
 
     // merge v-bind value
     const getBindValues = computed<TableProProps & TableProEvent>(() => ({
@@ -75,8 +87,9 @@ export default defineComponent({
       ...unref(getColumns),
       ...unref(getAttrs),
       ...unref(getListeners),
-      onCellMouseenter,
-      onCellMouseleave,
+      // onCellMouseenter,
+      // onCellMouseleave,
+      onEditActived,
       loading: unref(loading),
     }))
 
@@ -87,7 +100,15 @@ export default defineComponent({
     useWatchDom(getProps, tableRef, tableEmitter)
 
     // 注入数据
-    createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
+    createTableContext({
+      tableRef,
+      tableEmitter,
+      tablePropsRef: getProps,
+      customCell: {
+        onMouseenter: onCellMouseenter,
+        onMouseleave: onCellMouseleave,
+      },
+    })
 
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
@@ -142,6 +163,13 @@ export default defineComponent({
     onUnmounted(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
+      clearInstances()
+    })
+
+    onDeactivated(() => {
+      // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
+      onCellMouseleave()
+      clearInstances()
     })
 
     return () => {

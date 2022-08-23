@@ -3,6 +3,7 @@ import { Checkbox } from 'ant-design-vue'
 import {
   ACTION_COLUMNS,
   ComponentCellName,
+  ComponentEditCellName,
   MIN_WIDTH,
   MIN_WIDTH_SMALL,
   SELECT_COMPONENTS,
@@ -21,8 +22,6 @@ function autoAddChoosenElement(
   emit: TableProGridEmit
 ) {
   const { columns = [], checkboxConfig, radioConfig } = unref(tablePropsRef)
-  // const hasCheckbox = Object.keys(checkboxConfig).length > 0
-  // const hasRadioConfig = Object.keys(radioConfig).length > 0
   const isColumnsHasCheckbox = columns?.find((column) => column.type === 'checkbox')
   const isColumnsHasRadio = columns?.find((column) => column.type === 'radio')
 
@@ -101,14 +100,37 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @returns
  */
 function wrapperColumnSlot(columns: TableProColumn[]) {
+  /** 包装单元格，解决tooltip错位问题 */
+  const cellRender = (column: TableProColumn) => {
+    const { customRender } = column
+    column['cellRender'] = {
+      name: ComponentCellName,
+      options: [{ customRender }],
+    }
+    return column
+  }
+  /** 包装可编辑单元格 */
+  const cellEditRender = (column: TableProColumn) => {
+    const { customEditRenderProp, customEditRender, customRender } = column
+    if (customEditRender) {
+      let editRender = {}
+      if (customEditRenderProp) {
+        editRender = customEditRenderProp
+      }
+      column['editRender'] = {
+        ...editRender,
+        name: ComponentEditCellName,
+        options: [{ customEditRender, customRender }],
+      }
+    }
+    return column
+  }
+
   return columns.length
     ? columns.map((column: TableProColumn) => {
-        const { customRender } = column
-        column['cellRender'] = {
-          name: ComponentCellName,
-          options: [{ customRender }],
-        }
-        return column
+        const wrapperCellRenderedColumn = cellRender(column)
+        const wrapperCellEditRenderedColumn = cellEditRender(wrapperCellRenderedColumn)
+        return wrapperCellEditRenderedColumn
       })
     : columns
 }
@@ -125,6 +147,5 @@ export function useColumns(
   const autoAddChoosenElementColumns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
   const setColumnMinWidthColumns = setColumnMinWidth(autoAddChoosenElementColumns)
   const columns = wrapperColumnSlot(setColumnMinWidthColumns)
-  // return setColumnMinWidthColumns
   return columns
 }
