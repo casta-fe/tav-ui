@@ -27,8 +27,9 @@ function handleExtendProxyConfig(tablePropsRef: ComputedRef<TableProProps>) {
     const hasProxyConfigProps = proxyConfig?.props && Object.keys(proxyConfig?.props).length > 0
     if (hasApiSetting) {
       const props = {
-        result: `data.${apiSetting.listField}`,
-        total: `data.${apiSetting.totalField}`,
+        list: apiSetting.listField ? `data.${apiSetting.listField}` : 'data',
+        result: apiSetting.listField ? `data.${apiSetting.listField}` : 'data',
+        total: apiSetting.totalField ? `data.${apiSetting.totalField}` : 'data',
       }
       if (!hasProxyConfigProps) {
         unref(tablePropsRef).proxyConfig = { props }
@@ -79,20 +80,40 @@ function handleExtenAfterApi(
  * @param emit
  * @returns
  */
-function handleExtenApi(tablePropsRef: ComputedRef<TableProProps>, emit: TableProGridEmit) {
-  const { api, beforeApi, afterApi } = unref(tablePropsRef)
+function handleExtenApi(
+  tablePropsRef: ComputedRef<TableProProps>,
+  tableRef: Ref<TableProInstance | null>,
+  emit: TableProGridEmit
+) {
+  const { api, beforeApi, afterApi, exportAllApi } = unref(tablePropsRef)
   const hasApi = api && isFunction(api)
+  const hasExportAllApi = exportAllApi && isFunction(exportAllApi)
 
+  /**  处理 vxetable proxy */
   if (hasApi) {
-    /**  处理 vxetable proxy */
+    // 要使用beforequery则query必须存在
+    unref(tablePropsRef).proxyConfig!['ajax'] = {
+      query: () => Promise.resolve({}),
+    }
+
     // 缓存api option
     let params: TableProApiParams = {
       filter: {},
       model: {},
     }
     let result: Record<string, any> = {}
-    // 关闭自动加载，自动加载使用commit实现
+
+    // 挂载vxetable 导出全部接口
+    if (hasExportAllApi) {
+      unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = () => {
+        params.model!['viewAll'] = true
+        return Promise.resolve(exportAllApi(params))
+      }
+    }
+
+    // 关闭自动加载，自动加载使用commit失效
     unref(tablePropsRef).proxyConfig!['autoLoad'] = false
+
     // 劫持proxy触发beforeapi修改参数
     unref(tablePropsRef).proxyConfig!['beforeQuery'] = async (
       vxeOption: VxeQueryParams,
@@ -112,6 +133,7 @@ function handleExtenApi(tablePropsRef: ComputedRef<TableProProps>, emit: TablePr
           ? { ...option, ...{ model }, ...option.model }
           : { ...option, ...{ model } }
         : { ...params, ...{ model } }
+
       try {
         if (beforeApi && isFunction(beforeApi)) {
           params = (await beforeApi(option)) || option
@@ -141,16 +163,12 @@ function handleExtenApi(tablePropsRef: ComputedRef<TableProProps>, emit: TablePr
         })
 
         // // 阻断 vue 对大数组的监听，避免 vue 绑定大数据造成短暂的卡顿, => 虚拟滚动-最大高度demo
-        // unref(tableRef.value)?.loadData(result)
+        // unref(tableRef)?.loadData(result)
         return Promise.resolve(result)
       } catch (error) {
         emit('ApiError', error)
         return Promise.resolve(DEF)
       }
-    }
-    // 要使用beforequery则query必须存在
-    unref(tablePropsRef).proxyConfig!['ajax'] = {
-      query: () => Promise.resolve({}),
     }
   }
 
@@ -171,7 +189,7 @@ function handleExtendProps(
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
   const handleExtenAfterApiResult = handleExtenAfterApi(handleExtendProxyConfigResult, tableRef)
-  const handleExtenApiResult = handleExtenApi(handleExtenAfterApiResult, emit)
+  const handleExtenApiResult = handleExtenApi(handleExtenAfterApiResult, tableRef, emit)
   return handleExtenApiResult
 }
 

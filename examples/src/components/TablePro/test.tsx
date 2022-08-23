@@ -1,8 +1,8 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from '@tav-ui/components/button'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import Button from '@tav-ui/components/button'
 import { columns2, filterForm2 } from './data'
 import type {
   ITableProInstance,
@@ -49,6 +49,11 @@ export default defineComponent({
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({
       add: {
         permission: 'test',
+        handleAction: (params) => {
+          console.log(params)
+        },
+      },
+      export: {
         handleAction: (params) => {
           console.log(params)
         },
@@ -191,6 +196,17 @@ export default defineComponent({
               onCheckboxAll={handleCheckboxAll}
               onPageChange={handlePageChange}
               fillInner={false}
+              exportAllApi={({ filter, model }) =>
+                API__POE_CUSTOM_ALL({
+                  filter,
+                  model: {
+                    ...model,
+                    page: 7,
+                    viewAll: true,
+                  },
+                })
+              }
+              // pagerConfig={{ enabled: false }}
             >
               {{
                 // filterForm: () => (<div>123</div>),

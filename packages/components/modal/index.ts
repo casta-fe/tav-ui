@@ -10,6 +10,7 @@ export type {
   ReturnInnerMethods,
   UseModalInnerReturnType,
   UseModalReturnType,
+  ModalReturnMethods,
 } from './src/types'
 export { TaModal }
 export default TaModal

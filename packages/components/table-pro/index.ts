@@ -11,4 +11,5 @@ export * from './src/types'
 export * from './src/typings'
 export * from './src/vxe-events'
 export * from './src/vxe-props-config'
+export * from './src/utils'
 export default TaTablePro

@@ -1,6 +1,6 @@
 import { Tag } from 'ant-design-vue'
 import { TableAction } from '@tav-ui/components/table'
-import { TaTableProAction, TaTableProTags } from '@tav-ui/components/table-pro'
+import { TaTableProAction, TaTableProTags, getTagsContent } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import type { FormSchema } from '@tav-ui/components/form'
 import type { TableProColumn, TableProFilterForm } from '@tav-ui/components/table-pro'
@@ -242,122 +242,169 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
   })
 
   return [
-    {
-      field: 'customerName',
-      title: '客户名称',
-      fixed: 'left',
-      customRender: ({ row: { customerName } }) => (
-        <a
-          href="javascript:;"
-          style="color: #3a67fc"
-          onClick={(e) => {
-            handleRoutePush(e, {
-              name: 'Test',
-            })
-          }}
-        >
-          {customerName}
-        </a>
-      ),
-    },
-    // { field: 'customerCode', title: '客户编号', fixed: 'left', params: { showTooltip: false } },
-    { field: 'customerCode', title: '客户编号', fixed: 'left' },
     // {
-    //   title: '集合',
+    //   field: 'customerName',
+    //   title: '客户名称',
     //   fixed: 'left',
-    //   width: 200,
-    //   children: [
-    //     { field: 'customerName', title: '客户名称', width: 100 },
-    //     { field: 'customerCode', title: '客户编号', width: 100 },
-    //   ]
+    //   customRender: ({ row: { customerName } }) => (
+    //     <a
+    //       href="javascript:;"
+    //       style="color: #3a67fc"
+    //       onClick={(e) => {
+    //         handleRoutePush(e, {
+    //           name: 'Test',
+    //         })
+    //       }}
+    //     >
+    //       {customerName}
+    //     </a>
+    //   ),
+    // },
+    // { field: 'customerCode', title: '客户编号', fixed: 'left' },
+    {
+      title: '集合1',
+      // fixed: 'left',
+      children: [
+        {
+          field: 'customerName',
+          title: '客户名称',
+          width: 100,
+          customRender: ({ row: { customerName } }) => (
+            <a
+              href="javascript:;"
+              style="color: #3a67fc"
+              onClick={(e) => {
+                handleRoutePush(e, {
+                  name: 'Test',
+                })
+              }}
+            >
+              {customerName}
+            </a>
+          ),
+        },
+        { field: 'customerCode', title: '客户编号', width: 100 },
+      ],
+    },
+    // {
+    //   field: 'classificationValue',
+    //   title: '客户分类',
+    //   width: 1000,
+    //   // showTooltip: true,
+    //   // visible: false,
+    //   // slots: {
+    //   //   default: ({ row: { classificationValue } }) => {
+    //   //     return [
+    //   //       <TaTableProTags
+    //   //         data={classificationValue}
+    //   //         tagConfig={{ color: 'blue', round: '50px' }}
+    //   //       />,
+    //   //     ]
+    //   //   },
+    //   // },
+    //   customRender: ({ row: { classificationValue } }) => (
+    //     <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
+    //   ),
+    //   params: {
+    //     exportContent: ({ row: { classificationValue } }) =>
+    //       getTagsContent(classificationValue, { color: 'blue' }),
+    //   },
+    // },
+    // {
+    //   field: 'customerType',
+    //   title: '客户类型',
+    //   // slots: {
+    //   //   default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
+    //   // },
+    //   customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
+    //   // slots: {
+    //   //   default: 'customerType'
+    //   // }
+    //   params: {
+    //     exportContent: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
+    //   },
+    // },
+    // {
+    //   field: 'industryList',
+    //   title: '行业',
+    //   // slots: {
+    //   //   default: ({ row: { industryList } }) => {
+    //   //     return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
+    //   //   },
+    //   // },
+    //   customRender: ({ row: { industryList } }) => (
+    //     <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
+    //   ),
+    //   params: {
+    //     exportContent: ({ row: { industryList } }) =>
+    //       getTagsContent(industryList, { color: 'green' }),
+    //   },
+    // },
+    // {
+    //   field: 'applicationList',
+    //   title: '应用领域',
+    //   // slots: {
+    //   //   default: ({ row: { applicationList } }) => {
+    //   //     return [<TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />]
+    //   //   },
+    //   // },
+    //   customRender: ({ row: { applicationList } }) => (
+    //     <TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />
+    //   ),
+    //   params: {
+    //     exportContent: ({ row: { applicationList } }) =>
+    //       getTagsContent(applicationList, { color: 'purple' }),
+    //   },
+    // },
+    // {
+    //   field: 'address',
+    //   title: '注册地',
+    // },
+    // {
+    //   field: 'ownerName',
+    //   title: '客户负责人',
+    // },
+    // {
+    //   field: 'sourceType',
+    //   title: '客户来源',
+    // },
+    // {
+    //   field: 'shareholder',
+    //   title: '主要股东',
+    // },
+    // {
+    //   field: 'valuation',
+    //   title: '最新估值（万元）',
     // },
     {
-      field: 'classificationValue',
-      title: '客户分类',
-      width: 1000,
-      // showTooltip: true,
-      // visible: false,
-      // slots: {
-      //   default: ({ row: { classificationValue } }) => {
-      //     return [
-      //       <TaTableProTags
-      //         data={classificationValue}
-      //         tagConfig={{ color: 'blue', round: '50px' }}
-      //       />,
-      //     ]
-      //   },
-      // },
-      customRender: ({ row: { classificationValue } }) => (
-        <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
-      ),
+      title: '集合2',
+      children: [
+        {
+          field: 'annualRevenue',
+          title: '年度营收（万元）',
+        },
+        {
+          field: 'latestFinancingAmount',
+          title: '最新融资金额（万元）',
+        },
+        {
+          field: 'createDate',
+          title: '创建时间',
+        },
+      ],
     },
-    {
-      field: 'customerType',
-      title: '客户类型',
-      // slots: {
-      //   default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
-      // },
-      customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
-      // slots: {
-      //   default: 'customerType'
-      // }
-    },
-    {
-      field: 'industryList',
-      title: '行业',
-      // slots: {
-      //   default: ({ row: { industryList } }) => {
-      //     return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
-      //   },
-      // },
-      customRender: ({ row: { industryList } }) => (
-        <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
-      ),
-    },
-    {
-      field: 'applicationList',
-      title: '应用领域',
-      // slots: {
-      //   default: ({ row: { applicationList } }) => {
-      //     return [<TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />]
-      //   },
-      // },
-      customRender: ({ row: { applicationList } }) => (
-        <TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />
-      ),
-    },
-    {
-      field: 'address',
-      title: '注册地',
-    },
-    {
-      field: 'ownerName',
-      title: '客户负责人',
-    },
-    {
-      field: 'sourceType',
-      title: '客户来源',
-    },
-    {
-      field: 'shareholder',
-      title: '主要股东',
-    },
-    {
-      field: 'valuation',
-      title: '最新估值（万元）',
-    },
-    {
-      field: 'annualRevenue',
-      title: '年度营收（万元）',
-    },
-    {
-      field: 'latestFinancingAmount',
-      title: '最新融资金额（万元）',
-    },
-    {
-      field: 'createDate',
-      title: '创建时间',
-    },
+    // {
+    //   field: 'annualRevenue',
+    //   title: '年度营收（万元）',
+    // },
+    // {
+    //   field: 'latestFinancingAmount',
+    //   title: '最新融资金额（万元）',
+    // },
+    // {
+    //   field: 'createDate',
+    //   title: '创建时间',
+    // },
     {
       field: 'action',
       title: '操作',
@@ -573,4 +620,66 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
       // },
     ],
   }
+}
+
+export const columns3 = async ({ handleRoutePush }): Promise<TableProColumn[]> => {
+  await API__POE_CUSTOM_ALL({
+    filter: { tab: 0 },
+    model: { page: 1, limit: 50 },
+  })
+
+  return [
+    {
+      field: 'name',
+      title: '名称',
+      width: 280,
+      fixed: 'left',
+      treeNode: true,
+    },
+    { field: 'type', title: '类型', width: 100 },
+    { field: 'icon', title: '图标', width: 80 },
+    { field: 'status', title: '启用/禁用', width: 120 },
+    { field: 'allowAuthz', title: '允许非超管授权', width: 120 },
+    { title: '排序号', field: 'seq', width: 80 },
+    { title: '编码', field: 'code' },
+    { title: '资源', field: 'resource' },
+    {
+      field: 'action',
+      title: '操作',
+      fixed: 'right',
+      customRender: () => (
+        <TaTableProAction
+          actions={[
+            {
+              label: '编辑',
+              onClick: () => {
+                console.log('edit')
+              },
+            },
+            {
+              label: '测试1',
+              onClick: () => {
+                console.log('test 1')
+              },
+            },
+            {
+              label: '测试2',
+              onClick: () => {
+                console.log('test 2')
+              },
+            },
+            {
+              label: '删除',
+              popConfirm: {
+                title: '删除后将无法恢复，确定删除吗？',
+                confirm: () => {
+                  console.log('del')
+                },
+              },
+            },
+          ]}
+        />
+      ),
+    },
+  ]
 }

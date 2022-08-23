@@ -3,15 +3,16 @@ import { computed, defineComponent, unref } from 'vue'
 import { TagsOutlined } from '@ant-design/icons-vue'
 import { Tag, Tooltip } from 'ant-design-vue'
 import Scrollbar from '@tav-ui/components/scrollbar'
-import { isArray, isBoolean, isNumber, isObject, isString } from '@tav-ui/utils/is'
+import { isBoolean, isNumber, isString } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentTagsName } from '../const'
+import { transformTagsData } from '../utils/tags'
 import type { ScrollbarProps } from '@tav-ui/components/scrollbar'
 import type { PropType } from 'vue'
 import type { TableProTagsConfig } from '../typings'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentTagsName)
 
-const DEFAULT_CONFIG: TableProTagsConfig = {
+export const DEFAULT_CONFIG: TableProTagsConfig = {
   label: 'name',
   value: 'id',
 }
@@ -66,22 +67,7 @@ export default defineComponent({
       return text.length > 6 ? `${text.slice(0, 5)}...` : text
     }
     const createTags = () => {
-      const { label } = unref(getConfig)
-      // 先整理数据，如果非数组、字符串、对象返回 “-”
-      let tagList: Record<string, any>[] = []
-      if (isString(props.data)) {
-        tagList = props.data.split(',').map((v) => {
-          return {
-            [label]: v,
-          }
-        })
-      } else if (isArray(props.data)) {
-        tagList = [...props.data]
-      } else if (isObject(props.data)) {
-        tagList = [props.data]
-      } else {
-        return '-'
-      }
+      const tagList: Record<string, any>[] = transformTagsData(props.data, getConfig)
       const maxNum = props.maxNum
       // maxNum为null或者大于tag数量，就全量展示，否则将多余的收起来
       if (maxNum === null || (isNumber(maxNum) && maxNum > tagList.length)) {

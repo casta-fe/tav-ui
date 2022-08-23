@@ -49,6 +49,7 @@
     "@vueuse/shared": "6.8.0",
     "@zxcvbn-ts/core": "1.0.0",
     "ant-design-vue": "2.2.8",
+    "exceljs": "4.2.0",
     "js-pinyin": "0.1.9",
     "lodash-es": "4.17.21",
     "qrcode": "1.4.4",

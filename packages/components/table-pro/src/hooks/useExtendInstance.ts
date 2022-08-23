@@ -104,10 +104,8 @@ function createExendApis(
       if (options.page && options.page > 0) {
         apiParams.model = { ...(options.model ?? {}), page: options.page }
       }
-      // unref(tableRef)!.commitProxy('query', { ...apiParams })
-    } else {
-      // unref(tableRef)!.commitProxy('query')
     }
+
     unref(tableRef)!.commitProxy('query', { ...apiParams })
   }
 

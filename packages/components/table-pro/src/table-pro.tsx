@@ -1,11 +1,12 @@
-import { computed, defineComponent, onUnmounted, ref, toRefs, unref } from 'vue'
-import { mitt } from '@tav-ui/utils/mitt'
-import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { onMountedOrOnDeactivated } from '@tav-ui/hooks/core/onMountedOrOnDeactivated'
+import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { mitt } from '@tav-ui/utils/mitt'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
+import { useCellHover } from './hooks/useCellHover'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -15,7 +16,6 @@ import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
-import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
@@ -144,11 +144,6 @@ export default defineComponent({
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
     })
-
-    // onUnmounted(() => {
-    //   // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
-    //   onCellMouseleave()
-    // })
 
     return () => {
       return (

@@ -27,14 +27,16 @@ import type {
   TableProFilterFormConfig,
 } from './typings'
 
-/** column 类型 */
-export type TableProColumn = VxeTableDefines.ColumnOptions & {
+type _TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
-  // 因为是自定义属性，vxetable中不接收，所以在运行时取不到，通过vxetable提供的column.params传进去
-  // showTooltip?: boolean
 }
+/** column 类型 */
+export type TableProColumn = _TableProColumn & {
+  children?: _TableProColumn[]
+}
+export type TableProColumnInfo = VxeTableDefines.ColumnInfo
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
 /** 扩展后的 table 实例 */
@@ -359,10 +361,10 @@ export const tableProProps = {
    * 复选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   checkboxConfig: {
-    type: Object as PropType<VxeTablePropTypes.CheckboxConfig & { enabled: boolean }>,
+    type: Object as PropType<VxeTablePropTypes.CheckboxConfig & { enabled?: boolean }>,
     default: () => ({
-      range: true,
       enabled: true,
+      range: true,
       highlight: true,
     }),
   },
@@ -546,9 +548,13 @@ export const tableProProps = {
   afterApi: {
     type: Function as PropType<(...arg: any[]) => any>,
   },
+  /** 导出全部异步数据接口 */
+  exportAllApi: {
+    type: Function as PropType<TableProApi<Promise<any>>>,
+  },
   /** 异步数据接口配置 */
   apiSetting: {
-    type: Object as PropType<FetchSetting>,
+    type: Object as PropType<Partial<FetchSetting>>,
     default: () => {
       return FETCH_SETTING
     },
@@ -578,11 +584,6 @@ export const tableProProps = {
     type: Boolean,
     default: true,
   },
-  // /** 设置pagerconfig enabled 在api模式下报错，这里单独配置分页的显隐藏 */
-  // pagination: {
-  //   type: Boolean,
-  //   default: true,
-  // }
   //:==================================================: 扩展配置 :==================================================://
 }
 /** table props 类型 */

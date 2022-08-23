@@ -18,7 +18,7 @@ import allUsers from '../allUserList'
 import FormPage from './Form/index.vue'
 import { TaUpload, taUploadProvideData } from './TaUpload'
 import SearchableApiSelect from './SearchableApiSelect.vue'
-import TablePro from './TablePro/test'
+import TablePro from './TablePro/testTree'
 
 export default defineComponent({
   name: 'Home',

@@ -1,8 +1,8 @@
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
-import type { VxeGridPropTypes } from 'vxe-table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties } from 'vue'
+import type { VxeGridPropTypes } from 'vxe-table'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -92,4 +92,12 @@ export interface TableProActionItem extends ButtonProps {
   enabled?: boolean | ((action: TableProActionItem) => boolean)
   tooltip?: string | TooltipProps
   permission?: string
+}
+
+export interface TreeDataItem {
+  value: string
+  key: string
+  title?: string
+  disabled?: boolean
+  children?: TreeDataItem[]
 }
