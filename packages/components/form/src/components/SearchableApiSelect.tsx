@@ -1,5 +1,15 @@
-import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, unref, watch } from 'vue'
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  unref,
+  watch,
+} from 'vue'
 import { Dropdown, Empty, Input, Menu, MenuItem, Spin } from 'ant-design-vue'
+import { useThrottleFn } from '@vueuse/core'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { getPopupContainer } from '@tav-ui/utils/basic'
 import type { PropType } from 'vue'
@@ -53,7 +63,7 @@ export default defineComponent({
     },
     panelMaxHeight: {
       type: String,
-      default: '200px',
+      default: '500px',
     },
     onSelect: Function as PropType<SearchableApiSelectBasicProps['onSelect']>,
     onChange: Function as PropType<SearchableApiSelectBasicProps['onChange']>,
@@ -61,6 +71,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { emit, attrs }) {
     const selfRef = ref<{ $el: HTMLElement }>()
+    const menuContainerRef = ref<HTMLElement>()
 
     const state = reactive({
       page: 1,
@@ -68,6 +79,7 @@ export default defineComponent({
       isEnter: false,
       visible: false,
       loading: false,
+      showLoadMore: true,
       loadMoreLoading: false,
       options: [] as LabelValueOption[],
     })
@@ -117,6 +129,12 @@ export default defineComponent({
       await props
         .api(keyword, 1)
         .then(({ data }) => {
+          if (data.length < 20) {
+            state.showLoadMore = false
+          } else {
+            state.showLoadMore = true
+          }
+
           state.options = data.map((el) => ({
             ...el,
             label: el[props.labelField],
@@ -130,6 +148,15 @@ export default defineComponent({
         })
         .finally(() => (state.loading = false))
     }
+
+    const throttleFetchCurrentKeyword = useThrottleFn(() => {
+      state.value.length >= 2 &&
+        fetchCurrentKeyword().then(() => {
+          if (!state.visible) {
+            state.visible = true
+          }
+        })
+    }, 400)
 
     onMounted(() => {
       // 移除鼠标后, 延时关闭选项弹窗
@@ -228,6 +255,7 @@ export default defineComponent({
             } else {
               emitValue(true)
             }
+            throttleFetchCurrentKeyword()
           }}
           onSearch={(keyword) => {
             // 直接点搜索或点击清除按钮
@@ -255,6 +283,7 @@ export default defineComponent({
                   </div>
                 ) : (
                   <div
+                    ref={menuContainerRef}
                     style={{
                       maxHeight: props.panelMaxHeight,
                       overflowY: 'auto' as const,
@@ -292,38 +321,53 @@ export default defineComponent({
                       </MenuItem>
                     ))}
                     {state.options.length ? (
-                      <MenuItem key={2147483647}>
-                        {state.loadMoreLoading ? (
-                          <div style="text-align: center">
-                            <Spin />
-                          </div>
-                        ) : (
-                          <div
-                            style="text-align: center"
-                            onClick={() => {
-                              state.page++
-                              state.loadMoreLoading = true
-                              props
-                                .api(state.value, state.page)
-                                .then(({ data }) => {
-                                  state.options.push(
-                                    ...data.map((el) => ({
-                                      ...el,
-                                      label: el[props.labelField],
-                                      value: el[props.valueField],
-                                      key: el[props.keyField],
-                                    }))
-                                  )
-                                })
-                                .finally(() => {
-                                  state.loadMoreLoading = false
-                                })
-                            }}
-                          >
-                            <a> 加载更多</a>
-                          </div>
-                        )}
-                      </MenuItem>
+                      state.showLoadMore ? (
+                        <MenuItem key={2147483647}>
+                          {state.loadMoreLoading ? (
+                            <div style="text-align: center">
+                              <Spin />
+                            </div>
+                          ) : (
+                            <div
+                              style="text-align: center"
+                              onClick={() => {
+                                state.loadMoreLoading = true
+                                props
+                                  .api(state.value, ++state.page)
+                                  .then(({ data }) => {
+                                    if (data.length < 20) {
+                                      state.showLoadMore = false
+                                    } else {
+                                      state.showLoadMore = true
+                                    }
+                                    const prevScrollTop = menuContainerRef.value?.scrollTop
+
+                                    state.options.push(
+                                      ...data.map((el) => ({
+                                        ...el,
+                                        label: el[props.labelField],
+                                        value: el[props.valueField],
+                                        key: el[props.keyField],
+                                      }))
+                                    )
+                                    prevScrollTop &&
+                                      nextTick(() => {
+                                        menuContainerRef.value!.scrollTop = prevScrollTop
+                                      })
+                                  })
+                                  .catch(() => {
+                                    state.showLoadMore = false
+                                  })
+                                  .finally(() => {
+                                    state.loadMoreLoading = false
+                                  })
+                              }}
+                            >
+                              <a> 加载更多</a>
+                            </div>
+                          )}
+                        </MenuItem>
+                      ) : null
                     ) : (
                       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     )}

@@ -1,10 +1,10 @@
 import { computed, nextTick, ref, watch } from 'vue'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { isFunction } from '@tav-ui/utils'
 import type { Ref } from 'vue'
-import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
 import type { FormActionType } from '../../form'
+import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
 
 // global variable beginRegion
 const { createMessage } = useMessage()
@@ -88,6 +88,8 @@ class Handler {
         this._props.removeFile) as ProvideDataType['removeFile'],
       uploadFile: (this._provide.value?.uploadFile ??
         this._props.uploadFile) as ProvideDataType['uploadFile'],
+      updateFile: (this._provide.value?.updateFile ??
+        this._props.updateFile) as ProvideDataType['updateFile'],
       uploadHyperlink: (this._provide.value?.uploadHyperlink ??
         this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
       download: (this._provide.value?.download ??
@@ -254,10 +256,27 @@ class Handler {
     this.emit('update:fileActualIds', this.getFileActualIds())
     this.emit('change', newRecord, this._uploadResponse)
   }
-
+  /**
+   * 更新一条数据
+   * @param {Recordable} record
+   * @memberof Handler
+   **/
+  updateItem = (record: FileItemType) => {
+    const { actualId } = record
+    // this._uploadResponse.length = 0
+    const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
+    this._uploadResponse.splice(index, 1, record)
+    this.fillDataSource()
+    console.log(this._uploadResponse)
+  }
   /**
    * 删除一条数据
    * @param record 需要删除的文件信息
+  /**
+   *
+   *
+   * @param {Recordable} record
+   * @memberof Handler
    */
   deleteItem = (record: Recordable) => {
     const { actualId } = record
@@ -361,6 +380,7 @@ class Handler {
    * 真正的上传请求
    */
   private realUpload = () => {
+    // 非更新时候 typecode必传
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
       this.resetFileList()
@@ -373,6 +393,7 @@ class Handler {
       formData.append('files', el)
     })
     this._params.typeCode = this._typeCode.value
+    // 将参数塞到formData里面去
     for (const k in this._params) {
       if (!this._relationBusinessId && ['businessId', 'businessKey'].includes(k)) continue
       if (!this._params[k]) continue

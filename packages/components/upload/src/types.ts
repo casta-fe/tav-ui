@@ -173,6 +173,7 @@ type DefaultColumnFields =
   | 'fileSize'
   | 'createByName'
   | 'createTime'
+  | 'version'
   | 'action'
 
 /**
@@ -214,6 +215,7 @@ type BasicPropsType = {
     preview?: boolean
     download?: boolean
     downloadWatermark?: boolean
+    update?: boolean
     delete?: boolean
   }
   /**
@@ -340,6 +342,8 @@ type ProvideDataType = {
   }) => Promise<Result<{ result: FileItemType[] }>>
   // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  // 更新文件
+  updateFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
   // 上传超链接接口
   uploadHyperlink?: (payload: {
     typeCode: string

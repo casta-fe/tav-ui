@@ -1,7 +1,7 @@
 import { defineComponent, toRefs } from 'vue'
 import { ButtonGroup, Upload } from 'ant-design-vue'
-import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components'
+import { TaButton } from '@tav-ui/components/button'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
 import type { PropType, Slot } from 'vue'
@@ -246,6 +246,8 @@ export default defineComponent({
           })) ||
           (showTable.value && (
             <PreviewTable
+              parentProps={props}
+              handler={handler}
               typeCodeRecord={handler.typeCodeRecord}
               dataSource={handler.dataSource.value}
               loading={handler.loading.value}

@@ -17,7 +17,7 @@ import { TaModal, useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
 import FormPage from './Form/index.vue'
 import { TaUpload, taUploadProvideData } from './TaUpload'
-// import SearchableApiSelect from './SearchableApiSelect.vue'
+import SearchableApiSelect from './SearchableApiSelect.vue'
 import TablePro from './TablePro/test'
 
 export default defineComponent({
@@ -28,7 +28,7 @@ export default defineComponent({
     TaModal,
     TaButton,
     TaUpload,
-    // SearchableApiSelect,
+    SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
@@ -92,6 +92,7 @@ export default defineComponent({
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
   <FormPage />
   <TaUpload />
+  <SearchableApiSelect />
   <TablePro />
   <TaModal
     :height="500"
@@ -116,7 +117,6 @@ export default defineComponent({
     <TaBasicTitle icon="ant-design:setting-filled" :help-message="['3', '4']">
       basic title
     </TaBasicTitle>
-    <SearchableApiSelect />
     <TaUpload />
     <TaLoading  :loading="true"></TaLoading>
     <TimeLineListPage /> -->
