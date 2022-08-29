@@ -1,10 +1,10 @@
-import { defineComponent, toRefs } from 'vue'
-import { ButtonGroup, Upload } from 'ant-design-vue'
 import { TaIcon } from '@tav-ui/components'
 import { TaButton } from '@tav-ui/components/button'
+import { ButtonGroup, Upload } from 'ant-design-vue'
+import type { PropType, Slot } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
-import type { PropType, Slot } from 'vue'
 import type { BasicPropsType } from './types'
 
 export default defineComponent({

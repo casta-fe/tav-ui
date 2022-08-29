@@ -56,6 +56,7 @@ export const PreviewTable = defineComponent({
       type: Boolean,
       required: true,
     },
+
     showTableAction: {
       type: Object as PropType<PreviewTablePropType['showTableAction']>,
       required: true,
@@ -86,6 +87,7 @@ export const PreviewTable = defineComponent({
   },
   emits: ['delete'],
   setup(props, { emit }) {
+    const hasBranch = computed(() => !!props.handler.apis.updateFile)
     const taTableProInstanceRef = ref<ITableProInstance>()
     // init begin
     const { getOptionsByTypeCodes } = useFileTypeCode(props.typeCodeRecord)
@@ -101,7 +103,6 @@ export const PreviewTable = defineComponent({
       // @ts-ignore
       () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
     )
-    console.log(typeCodeOptions)
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
         props.showTableAction.preview === false &&
@@ -230,7 +231,7 @@ export const PreviewTable = defineComponent({
         {
           title: props.coverColumnTitle?.version ?? '版本',
           field: 'version',
-          visible: !props?.hideColumnFields!.includes('version'),
+          visible: !props?.hideColumnFields!.includes('version') && hasBranch.value,
           minWidth: 100,
           customRender: ({ row }) => {
             return (
@@ -315,7 +316,7 @@ export const PreviewTable = defineComponent({
             ? false
             : props.readonly
             ? false
-            : props.showTableAction.update ?? true),
+            : (hasBranch.value && props.showTableAction.update) ?? true),
           // @ts-ignore
           onClick() {
             updateFileRef.value.showFilePicker(record)
@@ -763,10 +764,10 @@ export const UpdateFile = defineComponent({
     const config = useGlobalConfig('components')
     const { createMessage } = useMessage()
     const uploadRef = ref()
+    const updateApi = config.value?.TaUpload?.updateFile
     let fileActualIds = ''
-    const fileChange = (event) => {
-      const updateApi = config.value?.TaUpload?.updateFile
 
+    const fileChange = (event) => {
       const files = event.target.files
       const formData = new FormData()
       let updateFlag = true
