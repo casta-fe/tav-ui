@@ -87,7 +87,7 @@ export const PreviewTable = defineComponent({
   },
   emits: ['delete'],
   setup(props, { emit }) {
-    const hasBranch = computed(() => !!props.handler.apis.updateFile)
+    const hasBranch = computed(() => typeof props.handler?.apis.updateFile === 'function')
     const taTableProInstanceRef = ref<ITableProInstance>()
     // init begin
     const { getOptionsByTypeCodes } = useFileTypeCode(props.typeCodeRecord)
