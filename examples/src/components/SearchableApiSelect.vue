@@ -1,14 +1,19 @@
 <template>
-  <TaForm @register="formRegister" />
+  <div class="searchableapiselect">
+    <TaModal v-model:visible="visibleRef" width="860px" title="天眼查组件">
+      <TaForm @register="formRegister" />
+    </TaModal>
+    <TaButton @click="() => (visibleRef = true)"> 打开天眼查组件 </TaButton>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { TaForm, useForm } from '@tav-ui/components'
+import { defineComponent, ref } from 'vue'
+import { TaButton, TaForm, TaModal, useForm } from '@tav-ui/components'
 
 export default defineComponent({
   name: 'SearchableApiSelectExample',
-  components: { TaForm },
+  components: { TaForm, TaButton, TaModal },
   setup() {
     const [formRegister] = useForm({
       layout: 'vertical',
@@ -24,6 +29,7 @@ export default defineComponent({
           component: 'SearchableApiSelect',
           label: '企业名称',
           componentProps: {
+            getPopupContainer: () => document.body,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             api: (keyword: string, page: string | number) => {
               console.log(keyword, page)
@@ -325,7 +331,9 @@ export default defineComponent({
       ],
     })
 
-    return { formRegister }
+    const visibleRef = ref(false)
+
+    return { formRegister, visibleRef }
   },
 })
 </script>

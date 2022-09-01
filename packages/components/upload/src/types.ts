@@ -357,6 +357,24 @@ type ProvideDataType = {
     ...args: any[]
   ) => Promise<void>
   typeCodeRecord?: Recordable<LabelValueOptions>
+  queryFileType?: PromiseFn<
+    string[],
+    Result<
+      Recordable &
+        {
+          name: string
+          code: string
+
+          // appId?: number
+          // id?: number
+          // moduleId?: number
+          // parentId?: number
+          // remark?: string
+          // seq?: number
+          // sid?: string
+        }[]
+    >
+  >
 }
 
 /**

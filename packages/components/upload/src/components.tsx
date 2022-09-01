@@ -1,4 +1,7 @@
+import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
+import { Popover, Spin, Select as TaSelect } from 'ant-design-vue'
+import { Input } from 'vxe-table'
 import {
   TaButton,
   TaFileView,
@@ -7,18 +10,16 @@ import {
   TaTableProAction,
   useForm,
 } from '@tav-ui/components'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
+import type { PropType, Ref } from 'vue'
 import type {
   ITableProInstance,
   TableProActionItem,
   TableProColumn,
 } from '@tav-ui/components/table-pro'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { Popover, Select as TaSelect, Spin } from 'ant-design-vue'
-import type { PropType, Ref } from 'vue'
-import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
-import { Input } from 'vxe-table'
-import { getActionColumnMaxWidth, useFileTypeCode } from './hooks'
+import type { Handler } from './main'
 import type {
   BasicPropsType,
   FileItemType,
@@ -42,7 +43,8 @@ export const PreviewTable = defineComponent({
       type: Object as PropType<BasicPropsType>,
     },
     handler: {
-      type: Object,
+      type: Object as PropType<Handler>,
+      required: true,
     },
     dataSource: {
       type: Array as PropType<FileItemType[]>,
@@ -84,6 +86,7 @@ export const PreviewTable = defineComponent({
     },
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: { type: [Number, String], default: 300 },
+    moduleCode: { type: String, required: true },
   },
   emits: ['delete'],
   setup(props, { emit }) {
@@ -99,10 +102,24 @@ export const PreviewTable = defineComponent({
     const currentEditCellIsLoading = ref(false)
     let currentEditCell: null | Record<'rowIndex' | 'columnIndex', string | number> = null
 
-    const typeCodeOptions = computed(
+    const fetchedTypeCodeArray = ref([] as any[])
+    props.handler?.apis.queryFileType?.([props.moduleCode]).then(({ data }) => {
+      fetchedTypeCodeArray.value = data
+    })
+    const typeCodeOptions = computed(() => {
       // @ts-ignore
-      () => props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
-    )
+      const options = props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
+
+      for (const typeItem of fetchedTypeCodeArray.value)
+        options.some((el) => el.value == typeItem.code) ||
+          options.push({
+            ...typeItem,
+            label: typeItem.name,
+            value: typeItem.code,
+          })
+
+      return options
+    })
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
         props.showTableAction.preview === false &&
@@ -215,7 +232,7 @@ export const PreviewTable = defineComponent({
           visible: !props?.hideColumnFields!.includes('typeName'),
           minWidth: 100,
           customRender: ({ row: { typeCode } }) =>
-            typeCodeOptions.value.find((el) => el.value === typeCode)?.label || typeCode,
+            typeCodeOptions.value?.find((el) => el.value === typeCode)?.label || typeCode,
         },
         {
           title: props.coverColumnTitle?.fileSize ?? '文件大小',
@@ -423,7 +440,9 @@ export const TypeSelect = defineComponent({
       type: Object,
       required: true,
     },
-    queryFileType: Function as PropType<PromiseFn<any, Result<{ code: string }[]>>>,
+    queryFileType: Function as PropType<
+      PromiseFn<any, Result<(Recordable & { code: string; name: string })[]>>
+    >,
     onSelect: Function,
   },
   emits: ['update:selected'],
@@ -437,7 +456,7 @@ export const TypeSelect = defineComponent({
     if (!moduleCode.value) return null
 
     // 此角色有的fileTypeCode
-    const fetchedTypeCodeArray = ref<string[]>()
+    const fetchedTypeCodeArray = ref<(Recordable & { code: string; name: string })[]>()
 
     // 从字典中取 TypeCode 选项的对应关系
     const localTypeCodeOptions = computed(() => {
@@ -449,8 +468,16 @@ export const TypeSelect = defineComponent({
         return options
       }
       if (fetchedTypeCodeArray.value) {
-        // @ts-ignore
-        return options.filter((el) => fetchedTypeCodeArray.value!.includes(el.value))
+        for (const typeItem of fetchedTypeCodeArray.value) {
+          if (!options.some((el) => el.value == typeItem.code)) {
+            options.push({
+              ...typeItem,
+              label: typeItem.name,
+              value: typeItem.code,
+            })
+          }
+        }
+        return options
       }
       return []
     })
@@ -473,7 +500,7 @@ export const TypeSelect = defineComponent({
     props
       .queryFileType?.([moduleCode.value])
       .then(({ data }) => {
-        fetchedTypeCodeArray.value = data.map((el) => el.code!)
+        fetchedTypeCodeArray.value = data
         if (!unref(props.noDefaultValue) && defaultValue.value !== props.selected) {
           emit('update:selected', defaultValue.value)
         }

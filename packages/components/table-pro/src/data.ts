@@ -1,3 +1,5 @@
+import { JSEncrypt } from 'jsencrypt'
+
 // data: [
 //   {
 //     id: 10001,
@@ -72,6 +74,50 @@
 //     address: 'ShenzhenShenzhenShenzhenShenzhen',
 //   },
 // ]
+let at = ''
+let rd = ''
+const Encryptor = new JSEncrypt()
+
+export async function toLogin() {
+  const phone = '13999999999'
+  const password = '123456'
+  const ai = '10002'
+
+  await fetch('/api/TIANTA-SYSTEM/test.html', {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-store',
+    credentials: 'include',
+  })
+
+  const {
+    data: { keyId, publicKey },
+  } = await fetch('/api/TIANTA-SYSTEM/login/getKey', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ai,
+    },
+  }).then((r) => r.json())
+
+  Encryptor.setPublicKey(publicKey)
+
+  await fetch('/api/TIANTA-SYSTEM/login/enter', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ai,
+    },
+    body: JSON.stringify({
+      keyId,
+      phone,
+      password: Encryptor.encrypt(password) as string,
+    }),
+  }).then((r) => {
+    at = r.headers.get('at')!
+    rd = r.headers.get('rd')!
+  })
+}
 
 const address = [
   'Shenzhen',
@@ -132,8 +178,8 @@ export async function __post(url = '', data = {}) {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
       ai: '10002',
-      at: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNjYwOTczOTcwLCJpYXQiOjE2NTgzODE5NzB9.1uEZyERvYJquVubJ4zpHlNLXu5Ir0nrsiP0LjHUMm4k',
-      rd: '52856940235c45ce29b0c43c3a8b2b84e2d9db4f3',
+      at,
+      rd,
     },
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -157,14 +203,14 @@ export async function API__POE_INVEST_ALL(
   url = '/api/STARLIGHT-POE-WEB/invesinstitution/listPager'
 ) {
   // 复制 ai at rd cookie：guid
-  await __get('/api/TIANTA-SYSTEM/test.html')
+  // await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }
 
 export async function API__POE_CUSTOM_ALL(data, url = '/api/STARLIGHT-POE-WEB/customer/listPager') {
   // 复制 ai at rd cookie：guid
-  await __get('/api/TIANTA-SYSTEM/test.html')
+  // await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }

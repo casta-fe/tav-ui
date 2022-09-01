@@ -1,3 +1,6 @@
+import { promiseTimeout } from '@vueuse/shared'
+import type { ProvideDataType } from '@tav-ui/components/upload/src/types'
+
 const uploadArr: any[] = [
   {
     id: 9662,
@@ -286,22 +289,40 @@ const uploadArr: any[] = [
   },
 ]
 
-export const taUploadProvideData = {
-  typeCodeRecord: {
-    tg_invest: [
-      {
-        label: '文件类型1',
-        value: 'FILE_TYPE_1',
-      },
-      {
-        label: '文件类型2',
-        value: 'FILE_TYPE_2',
-      },
-      {
-        label: '基金管理人其他资料',
-        value: 'FUND_GLR_QTZL',
-      },
-    ],
+export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: any }> = {
+  // typeCodeRecord: {
+  //   tg_invest: [
+  //     {
+  //       label: '文件类型1',
+  //       value: 'FILE_TYPE_1',
+  //     },
+  //     {
+  //       label: '文件类型2',
+  //       value: 'FILE_TYPE_2',
+  //     },
+  //     {
+  //       label: '基金管理人其他资料',
+  //       value: 'FUND_GLR_QTZL',
+  //     },
+  //   ],
+  // },
+  queryFileType: async (moduleCodes: string[]) => {
+    await promiseTimeout(1000)
+
+    console.log('moduleCodes', moduleCodes)
+
+    return Promise.resolve({
+      data: [
+        {
+          name: '其他资料',
+          code: 'COMPANY_OTHER',
+        },
+        {
+          name: '类型二',
+          code: 'type2',
+        },
+      ],
+    })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   queryFile: (params: any): Promise<any> =>
@@ -378,10 +399,6 @@ export const taUploadProvideData = {
   },
   updateFileNameAndAddress: (v: any) => {
     console.error(v)
-    return new Promise((r) => {
-      setTimeout(() => {
-        r({ success: true, data: null })
-      }, 1000)
-    })
+    return promiseTimeout(1000)
   },
 }

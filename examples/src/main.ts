@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { toLogin } from '@tav-ui/components/table-pro/src/data'
 import { router } from './router'
 // import {
 //   TaBasicArrow,
@@ -41,4 +42,7 @@ app.use(TaVXETable)
 // app.use(TaFileView)
 // app.use(TaForm)
 // app.use(TaContainerCollapse)
-app.mount('#app')
+
+toLogin().finally(() => {
+  app.mount('#app')
+})

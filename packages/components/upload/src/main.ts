@@ -96,6 +96,8 @@ class Handler {
         this._props.download) as ProvideDataType['download'],
       updateFileNameAndAddress: (this._provide.value?.updateFileNameAndAddress ??
         this._props.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
+      queryFileType: (this._provide.value?.queryFileType ??
+        this._props.queryFileType) as ProvideDataType['queryFileType'],
     }
 
     if (
@@ -340,7 +342,7 @@ class Handler {
   clearResponse(): void {
     this._uploadResponse = []
     this.fillDataSource()
-    this._typeCode.value = this._props.params.typeCode
+    this._props.params.typeCode && (this._typeCode.value = this._props.params.typeCode)
   }
 
   /**

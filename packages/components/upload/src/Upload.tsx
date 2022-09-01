@@ -1,10 +1,10 @@
+import { defineComponent, toRefs } from 'vue'
+import { ButtonGroup, Upload } from 'ant-design-vue'
 import { TaIcon } from '@tav-ui/components'
 import { TaButton } from '@tav-ui/components/button'
-import { ButtonGroup, Upload } from 'ant-design-vue'
-import type { PropType, Slot } from 'vue'
-import { defineComponent, toRefs } from 'vue'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
+import type { PropType, Slot } from 'vue'
 import type { BasicPropsType } from './types'
 
 export default defineComponent({
@@ -85,6 +85,7 @@ export default defineComponent({
     uploadHyperlink: Function as PropType<BasicPropsType['uploadHyperlink']>,
     download: Function as PropType<BasicPropsType['download']>,
     updateFileNameAndAddress: Function as PropType<BasicPropsType['updateFileNameAndAddress']>,
+    queryFileType: Function as PropType<BasicPropsType['queryFileType']>,
     uploadIcon: {
       type: String as PropType<BasicPropsType['uploadIcon']>,
       default: 'ant-design:upload-outlined',
@@ -152,6 +153,7 @@ export default defineComponent({
                     handler.fillDataSource()
                   }}
                   onSelect={props.onSelect}
+                  queryFileType={handler.apis.queryFileType}
                 />
               )}
             </>
@@ -243,6 +245,7 @@ export default defineComponent({
             hideColumnFields: props.hideColumnFields,
             insertColumns: props.insertColumns,
             nameColumnWidth: props.nameColumnWidth,
+            moduleCode: params.value.moduleCode,
           })) ||
           (showTable.value && (
             <PreviewTable
@@ -264,6 +267,7 @@ export default defineComponent({
               hideColumnFields={props.hideColumnFields}
               insertColumns={props.insertColumns}
               nameColumnWidth={props.nameColumnWidth}
+              moduleCode={params.value.moduleCode}
             />
           ))}
       </section>
