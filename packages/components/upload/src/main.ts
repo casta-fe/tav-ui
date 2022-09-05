@@ -197,32 +197,49 @@ class Handler {
 
     // 一些请求的参数
     watch(
-      () => [
-        this._props.params.id,
-        this._props.params.endTime,
-        this._props.params.typeCode,
-        this._props.params.startTime,
-        this._props.params.businessKey,
-        this._props.params.searchValue,
-      ],
+      () =>
+        [
+          this._props.params.id,
+          this._props.params.endTime,
+          this._props.params.typeCode,
+          this._props.params.startTime,
+          this._props.params.moduleCode,
+          this._props.params.businessKey,
+          this._props.params.searchValue,
+        ] as const,
       (
-        [idVal, endTimeVal, typeCodeVal, startTimeVal, businessKeyVal, searchValueVal],
-        [idPrev, endTimePrev, typeCodePrev, startTimePrev, businessKeyPrev, searchValuePrev]
+        [
+          idVal,
+          endTimeVal,
+          typeCodeVal,
+          startTimeVal,
+          moduleCodeVal,
+          businessKeyVal,
+          searchValueVal,
+        ],
+        [
+          idPrev,
+          endTimePrev,
+          typeCodePrev,
+          startTimePrev,
+          moduleCodePrev,
+          businessKeyPrev,
+          searchValuePrev,
+        ]
       ) => {
-        idVal !== idPrev && (this._params.id = idVal as number | undefined)
+        idVal !== idPrev && (this._params.id = idVal)
 
-        endTimeVal !== endTimePrev && (this._params.endTime = endTimeVal as string | undefined)
+        endTimeVal !== endTimePrev && (this._params.endTime = endTimeVal)
 
-        typeCodeVal !== typeCodePrev && (this._typeCode.value = typeCodeVal as string | undefined)
+        typeCodeVal !== typeCodePrev && (this._typeCode.value = typeCodeVal)
 
-        startTimeVal !== startTimePrev &&
-          (this._params.startTime = startTimeVal as string | undefined)
+        startTimeVal !== startTimePrev && (this._params.startTime = startTimeVal)
 
-        businessKeyVal !== businessKeyPrev &&
-          (this._params.businessKey = businessKeyVal as string | undefined)
+        businessKeyVal !== businessKeyPrev && (this._params.businessKey = businessKeyVal)
 
-        searchValueVal !== searchValuePrev &&
-          (this._params.searchValue = searchValueVal as string | undefined)
+        moduleCodeVal !== moduleCodePrev && (this._params.moduleCode = moduleCodeVal)
+
+        searchValueVal !== searchValuePrev && (this._params.searchValue = searchValueVal)
       }
     )
   }

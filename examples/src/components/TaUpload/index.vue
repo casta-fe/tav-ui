@@ -25,12 +25,13 @@
         <TaButton :loading="loading">afterButton</TaButton>
       </template>
     </ta-upload>
+    <TaButton type="primary" @click="switchModule">switch moduleCode</TaButton>
   </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import { TaButton, TaUpload } from '@tav-ui/components'
 
 export default defineComponent({
@@ -39,12 +40,21 @@ export default defineComponent({
     TaButton,
   },
   setup() {
+    const params = reactive({
+      // moduleCode: 'tg_invest',
+      businessId: 'id0',
+    })
+
+    function switchModule() {
+      params.moduleCode = 'tg_invest' === params.moduleCode ? 'other_module' : 'tg_invest'
+    }
+
+    setTimeout(switchModule, 2000)
+
     return {
-      params: {
-        moduleCode: 'tg_invest',
-        businessId: 'id0',
-      },
+      params,
       onSelect: console.log,
+      switchModule,
     }
   },
 })

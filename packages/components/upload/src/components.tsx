@@ -1,4 +1,4 @@
-import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, reactive, ref, unref, watch } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { Popover, Spin, Select as TaSelect } from 'ant-design-vue'
 import { Input } from 'vxe-table'
@@ -103,12 +103,27 @@ export const PreviewTable = defineComponent({
     let currentEditCell: null | Record<'rowIndex' | 'columnIndex', string | number> = null
 
     const fetchedTypeCodeArray = ref([] as any[])
-    props.handler?.apis.queryFileType?.([props.moduleCode]).then(({ data }) => {
-      fetchedTypeCodeArray.value = data
-    })
+    watch(
+      () => props.moduleCode,
+      (moduleCode) => {
+        moduleCode &&
+          props.handler?.apis.queryFileType?.([moduleCode]).then(({ data }) => {
+            fetchedTypeCodeArray.value = data
+          })
+      },
+      { immediate: true }
+    )
     const typeCodeOptions = computed(() => {
       // @ts-ignore
       const options = props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
+
+      if (!options.length) {
+        return fetchedTypeCodeArray.value.map((typeItem) => ({
+          ...typeItem,
+          label: typeItem.name,
+          value: typeItem.code,
+        }))
+      }
 
       for (const typeItem of fetchedTypeCodeArray.value)
         options.some((el) => el.value == typeItem.code) ||
@@ -337,7 +352,7 @@ export const PreviewTable = defineComponent({
           // @ts-ignore
           onClick() {
             updateFileRef.value.showFilePicker(record)
-            console.log('上传')
+            // console.log('上传')
           },
         },
       ]
@@ -450,17 +465,14 @@ export const TypeSelect = defineComponent({
     // init begin
     const { mergeOptions } = useFileTypeCode(props.typeCodeRecord as Recordable)
     // init end
-    const moduleCode = computed(() => props.moduleCode)
     const typeCodeArray = computed(() => props.typeCodeArray)
-
-    if (!moduleCode.value) return null
 
     // 此角色有的fileTypeCode
     const fetchedTypeCodeArray = ref<(Recordable & { code: string; name: string })[]>()
 
     // 从字典中取 TypeCode 选项的对应关系
     const localTypeCodeOptions = computed(() => {
-      const options = props.customOptions ?? mergeOptions(moduleCode.value, typeCodeArray.value)
+      const options = props.customOptions ?? mergeOptions(props.moduleCode, typeCodeArray.value)
       /**
        * 未注入文件类型控制接口 -> 不需要控制 -> 所有文件类型
        */
@@ -468,6 +480,14 @@ export const TypeSelect = defineComponent({
         return options
       }
       if (fetchedTypeCodeArray.value) {
+        if (!options.length) {
+          return fetchedTypeCodeArray.value.map((typeItem) => ({
+            ...typeItem,
+            label: typeItem.name,
+            value: typeItem.code,
+          }))
+        }
+
         for (const typeItem of fetchedTypeCodeArray.value) {
           if (!options.some((el) => el.value == typeItem.code)) {
             options.push({
@@ -485,9 +505,9 @@ export const TypeSelect = defineComponent({
     /**
      * ***仅组件初始化时给予默认值***
      */
-    let isInit = true
+    const isInit = ref(true)
     const defaultValue = computed(() => {
-      if (unref(props.noDefaultValue) || !isInit) {
+      if (unref(props.noDefaultValue) || !isInit.value) {
         return props.selected || undefined
       } else {
         return props.selected &&
@@ -497,19 +517,29 @@ export const TypeSelect = defineComponent({
       }
     })
 
-    props
-      .queryFileType?.([moduleCode.value])
-      .then(({ data }) => {
-        fetchedTypeCodeArray.value = data
-        if (!unref(props.noDefaultValue) && defaultValue.value !== props.selected) {
+    watch(
+      () => props.moduleCode,
+      (moduleCode) => {
+        if (!(moduleCode && props.queryFileType)) {
           emit('update:selected', defaultValue.value)
+          isInit.value = false
+
+          return
         }
-      })
-      .finally(() => (isInit = false)) ||
-      (() => {
-        emit('update:selected', defaultValue.value)
-        isInit = false
-      })()
+
+        props
+          .queryFileType([moduleCode])
+          .then(({ data }) => {
+            isInit.value = true
+            fetchedTypeCodeArray.value = data
+            if (!unref(props.noDefaultValue) && defaultValue.value !== props.selected) {
+              emit('update:selected', defaultValue.value)
+            }
+          })
+          .finally(() => (isInit.value = false))
+      },
+      { immediate: true }
+    )
 
     return () =>
       (slots.default &&

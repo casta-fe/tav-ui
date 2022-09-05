@@ -68,6 +68,10 @@ export default defineComponent({
       type: Boolean as PropType<BasicPropsType['showUploadBtn']>,
       default: true,
     },
+    showUploadHyperlinkBtn: {
+      type: Boolean as PropType<BasicPropsType['showUploadHyperlinkBtn']>,
+      default: true,
+    },
     canResize: {
       type: Boolean as PropType<BasicPropsType['canResize']>,
       default: false,
@@ -211,7 +215,7 @@ export default defineComponent({
         </div>
 
         {/* 超链接 */}
-        {handler.currentTypeCodeIsHyperlink.value && (
+        {props.showUploadHyperlinkBtn && handler.currentTypeCodeIsHyperlink.value && (
           <HyperlinkForm
             name={handler.paramsName}
             onUpdate:name={(v) => (handler.paramsName = v)}

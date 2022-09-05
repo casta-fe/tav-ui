@@ -273,6 +273,11 @@ type BasicPropsType = {
    */
   showUploadBtn: boolean
   /**
+   * 显示超链接上传按钮
+   * @default true
+   */
+  showUploadHyperlinkBtn: boolean
+  /**
    * 点击文件名跳转...
    * @default undefined
    */

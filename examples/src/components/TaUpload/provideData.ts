@@ -312,16 +312,24 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
     console.log('moduleCodes', moduleCodes)
 
     return Promise.resolve({
-      data: [
-        {
-          name: '其他资料',
-          code: 'COMPANY_OTHER',
-        },
-        {
-          name: '类型二',
-          code: 'type2',
-        },
-      ],
+      data: {
+        tg_invest: [
+          {
+            name: '其他资料',
+            code: 'COMPANY_OTHER',
+          },
+          {
+            name: '类型二',
+            code: 'type2',
+          },
+        ],
+        other_module: [
+          {
+            name: '测试其他类型',
+            code: 'otherType',
+          },
+        ],
+      }[moduleCodes[0]],
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -345,8 +353,10 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
         900
       )
     ),
-  uploadFile: (payload: FormData): Promise<any> =>
-    new Promise((r) =>
+  uploadFile: (payload: FormData): Promise<any> => {
+    console.log('[uploadFile] parame', payload, Object.fromEntries(payload))
+
+    return new Promise((r) =>
       setTimeout(
         r.bind(null, {
           data: [...(payload.getAll('files') as File[])].map((el) => ({
@@ -360,7 +370,8 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
         }),
         900
       )
-    ),
+    )
+  },
   updateFile: (payload: FormData): Promise<any> => {
     return new Promise((r) =>
       setTimeout(
@@ -380,7 +391,7 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
     )
   },
   uploadHyperlink: (payload: any): Promise<any> => {
-    console.error('upload-hyperlink: ', payload)
+    console.error('[uploadHyperlink] parame', payload)
     return new Promise((r) =>
       setTimeout(
         r.bind(null, {
