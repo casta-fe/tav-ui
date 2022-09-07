@@ -108,6 +108,12 @@ export default defineComponent({
       }
     }
 
+    function clickOther() {
+      if (state.isEnter) return
+
+      state.visible = false
+    }
+
     const onMouseLeave = () => {
       state.isEnter = false
     }
@@ -163,6 +169,8 @@ export default defineComponent({
       selfRef.value!.$el.addEventListener('mouseleave', onMouseLeave)
       // 移除鼠标又移入后, 取消关闭
       selfRef.value!.$el.addEventListener('mouseenter', onMouseEnter)
+      // 点击非此组件其他位置, 关闭弹窗
+      window.addEventListener('click', clickOther)
 
       watch(
         () => props.value,
@@ -212,6 +220,8 @@ export default defineComponent({
     onBeforeUnmount(() => {
       selfRef.value!.$el.removeEventListener('mouseleave', onMouseLeave)
       selfRef.value!.$el.removeEventListener('mouseenter', onMouseEnter)
+
+      window.removeEventListener('click', clickOther)
     })
 
     return () => (
