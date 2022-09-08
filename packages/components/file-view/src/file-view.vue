@@ -76,7 +76,7 @@ export default defineComponent({
       state.filePath = ''
       state.pageLoading = true
 
-      globalConfig.value.TaFileView.previewFile(id)
+      globalConfig.value.TaFileView.previewFile(id, props.AppId)
         .then((res) => {
           state.pageLoading = false
           state.filePath = res.data
@@ -187,7 +187,9 @@ export default defineComponent({
         <template v-if="fileType === 'mpeg'">
           <iframe id="fileIframe" :src="filePath" frameborder="0" />
         </template>
-        <template v-if="fileType === 'pic'"> <img :src="filePath" alt="" /> </template>
+        <template v-if="fileType === 'pic'">
+          <img :src="filePath" alt="" />
+        </template>
         <template v-if="fileType === 'text'">
           <div class="text-page">
             <iframe id="fileIframe" :src="filePath" frameborder="0" />
