@@ -447,9 +447,6 @@ export const PreviewTable = defineComponent({
 // eslint-disable-next-line vue/one-component-per-file
 export const TypeSelect = defineComponent({
   props: {
-    parentProps: {
-      type: Object as PropType<BasicPropsType>,
-    },
     moduleCode: String as PropType<TypeSelectPropType['moduleCode']>,
     typeCodeArray: Array as PropType<TypeSelectPropType['typeCodeArray']>,
     selected: String as PropType<TypeSelectPropType['selected']>,
@@ -532,7 +529,7 @@ export const TypeSelect = defineComponent({
         }
 
         props
-          .queryFileType([moduleCode], props.parentProps?.AppId)
+          .queryFileType([moduleCode])
           .then(({ data }) => {
             isInit.value = true
             fetchedTypeCodeArray.value = data

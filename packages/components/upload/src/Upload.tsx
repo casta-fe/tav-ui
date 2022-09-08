@@ -133,7 +133,6 @@ export default defineComponent({
               noDefaultValue={props.noDefaultValue}
               typeCodeRecord={handler.typeCodeRecord}
               onSelect={props.onSelect}
-              parentProps={props}
             >
               {{
                 default: ({ typeCodeOptions }) =>
@@ -161,7 +160,6 @@ export default defineComponent({
                   }}
                   onSelect={props.onSelect}
                   queryFileType={handler.apis.queryFileType}
-                  parentProps={props}
                 />
               )}
             </>

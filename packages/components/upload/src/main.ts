@@ -82,22 +82,27 @@ class Handler {
 
   get apis() {
     const apis = {
-      queryFile: (this._provide.value?.queryFile ??
-        this._props.queryFile) as ProvideDataType['queryFile'],
-      removeFile: (this._provide.value?.removeFile ??
-        this._props.removeFile) as ProvideDataType['removeFile'],
-      uploadFile: (this._provide.value?.uploadFile ??
-        this._props.uploadFile) as ProvideDataType['uploadFile'],
-      updateFile: (this._provide.value?.updateFile ??
-        this._props.updateFile) as ProvideDataType['updateFile'],
-      uploadHyperlink: (this._provide.value?.uploadHyperlink ??
-        this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
-      download: (this._provide.value?.download ??
-        this._props.download) as ProvideDataType['download'],
-      updateFileNameAndAddress: (this._provide.value?.updateFileNameAndAddress ??
-        this._props.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
-      queryFileType: (this._provide.value?.queryFileType ??
-        this._props.queryFileType) as ProvideDataType['queryFileType'],
+      queryFile: (this._props.queryFile ??
+        this._provide.value?.queryFile) as ProvideDataType['queryFile'],
+      removeFile: (this._props.removeFile ??
+        this._provide.value?.removeFile) as ProvideDataType['removeFile'],
+      uploadFile: (this._props.uploadFile ??
+        this._provide.value?.uploadFile) as ProvideDataType['uploadFile'],
+      updateFile: (this._props.updateFile ??
+        this._provide.value?.updateFile) as ProvideDataType['updateFile'],
+      uploadHyperlink: (this._props.uploadHyperlink ??
+        this._provide.value?.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
+      download: (this._props.download ??
+        this._provide.value?.download) as ProvideDataType['download'],
+      updateFileNameAndAddress: (this._props.updateFileNameAndAddress ??
+        this._provide.value
+          ?.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
+      queryFileType: (this._props.queryFileType ??
+        this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
+    }
+
+    for (const key in apis) {
+      apis[key] = (...args: any[]) => apis[key](...args, this._props.AppId)
     }
 
     if (
