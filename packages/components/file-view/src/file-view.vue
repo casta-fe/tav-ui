@@ -75,7 +75,7 @@ export default defineComponent({
 
       state.filePath = ''
       state.pageLoading = true
-
+      console.log(props.AppId, 'qqqqq')
       globalConfig.value.TaFileView.previewFile(id, props.AppId)
         .then((res) => {
           state.pageLoading = false
