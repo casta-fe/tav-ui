@@ -64,7 +64,7 @@ class Handler {
   public currentTypeCodeIsHyperlink = ref(false)
   private _paramsName: string | undefined
   private _paramsAddress: string | undefined
-
+  private _apis: object | null = null
   //// getter begin
   get dataSource() {
     return this._dataSource
@@ -81,45 +81,45 @@ class Handler {
   }
 
   get apis() {
-    const apis = {
-      queryFile: (this._props.queryFile ??
-        this._provide.value?.queryFile) as ProvideDataType['queryFile'],
-      removeFile: (this._props.removeFile ??
-        this._provide.value?.removeFile) as ProvideDataType['removeFile'],
-      uploadFile: (this._props.uploadFile ??
-        this._provide.value?.uploadFile) as ProvideDataType['uploadFile'],
-      updateFile: (this._props.updateFile ??
-        this._provide.value?.updateFile) as ProvideDataType['updateFile'],
-      uploadHyperlink: (this._props.uploadHyperlink ??
-        this._provide.value?.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
-      download: (this._props.download ??
-        this._provide.value?.download) as ProvideDataType['download'],
-      updateFileNameAndAddress: (this._props.updateFileNameAndAddress ??
-        this._provide.value
-          ?.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
-      queryFileType: (this._props.queryFileType ??
-        this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
+    if (!this._apis) {
+      const apis = {
+        queryFile: (this._props.queryFile ??
+          this._provide.value?.queryFile) as ProvideDataType['queryFile'],
+        removeFile: (this._props.removeFile ??
+          this._provide.value?.removeFile) as ProvideDataType['removeFile'],
+        uploadFile: (this._props.uploadFile ??
+          this._provide.value?.uploadFile) as ProvideDataType['uploadFile'],
+        updateFile: (this._props.updateFile ??
+          this._provide.value?.updateFile) as ProvideDataType['updateFile'],
+        uploadHyperlink: (this._props.uploadHyperlink ??
+          this._provide.value?.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
+        download: (this._props.download ??
+          this._provide.value?.download) as ProvideDataType['download'],
+        updateFileNameAndAddress: (this._props.updateFileNameAndAddress ??
+          this._provide.value
+            ?.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
+        queryFileType: (this._props.queryFileType ??
+          this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
+      }
+      this._apis = {}
+      for (const key in apis) {
+        this._apis[key] = (...args: any[]) => apis[key](...args, this._props.AppId)
+      }
+      if (
+        !(
+          isFunction(apis.queryFile) &&
+          // 当使用 useFakeDelete 时不需要传removeFile
+          (this._useFakeDelete ? true : isFunction(apis.removeFile)) &&
+          isFunction(apis.uploadFile) &&
+          isFunction(apis.uploadHyperlink)
+        )
+      ) {
+        throw new Error(
+          '<queryFile, uploadFile, uploadHyperlink,typeCodeRecord, [removeFile]> 必须在TaUpload挂载前从app.vue注入, 或者传入同名props'
+        )
+      }
     }
-
-    for (const key in apis) {
-      apis[key] = (...args: any[]) => apis[key](...args, this._props.AppId)
-    }
-
-    if (
-      !(
-        isFunction(apis.queryFile) &&
-        // 当使用 useFakeDelete 时不需要传removeFile
-        (this._useFakeDelete ? true : isFunction(apis.removeFile)) &&
-        isFunction(apis.uploadFile) &&
-        isFunction(apis.uploadHyperlink)
-      )
-    ) {
-      throw new Error(
-        '<queryFile, uploadFile, uploadHyperlink,typeCodeRecord, [removeFile]> 必须在TaUpload挂载前从app.vue注入, 或者传入同名props'
-      )
-    }
-
-    return apis
+    return this._apis
   }
 
   //// getter end
