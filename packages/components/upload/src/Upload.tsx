@@ -99,6 +99,8 @@ export default defineComponent({
     hideColumnFields: Array as PropType<BasicPropsType['hideColumnFields']>,
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: [Number, String] as PropType<BasicPropsType['nameColumnWidth']>,
+    // eslint-disable-next-line vue/prop-name-casing
+    AppId: String as PropType<BasicPropsType['AppId']>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -131,6 +133,7 @@ export default defineComponent({
               noDefaultValue={props.noDefaultValue}
               typeCodeRecord={handler.typeCodeRecord}
               onSelect={props.onSelect}
+              parentProps={props}
             >
               {{
                 default: ({ typeCodeOptions }) =>
@@ -158,6 +161,7 @@ export default defineComponent({
                   }}
                   onSelect={props.onSelect}
                   queryFileType={handler.apis.queryFileType}
+                  parentProps={props}
                 />
               )}
             </>
@@ -250,6 +254,7 @@ export default defineComponent({
             insertColumns: props.insertColumns,
             nameColumnWidth: props.nameColumnWidth,
             moduleCode: params.value.moduleCode,
+            parentProps: props,
           })) ||
           (showTable.value && (
             <PreviewTable

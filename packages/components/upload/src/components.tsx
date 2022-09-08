@@ -434,6 +434,7 @@ export const PreviewTable = defineComponent({
           onUpdateSuccess={updateFileChange}
         ></UpdateFile>
         <TaFileView
+          AppId={props.parentProps?.AppId}
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}
           list={previewRecord.value as any}
@@ -446,6 +447,9 @@ export const PreviewTable = defineComponent({
 // eslint-disable-next-line vue/one-component-per-file
 export const TypeSelect = defineComponent({
   props: {
+    parentProps: {
+      type: Object as PropType<BasicPropsType>,
+    },
     moduleCode: String as PropType<TypeSelectPropType['moduleCode']>,
     typeCodeArray: Array as PropType<TypeSelectPropType['typeCodeArray']>,
     selected: String as PropType<TypeSelectPropType['selected']>,
@@ -528,7 +532,7 @@ export const TypeSelect = defineComponent({
         }
 
         props
-          .queryFileType([moduleCode])
+          .queryFileType([moduleCode], props.parentProps?.AppId)
           .then(({ data }) => {
             isInit.value = true
             fetchedTypeCodeArray.value = data
@@ -808,6 +812,9 @@ export const UpdateNameForm = defineComponent({
 export const UpdateFile = defineComponent({
   name: 'TaUpDateFile',
   props: {
+    parentProps: {
+      type: Object as PropType<BasicPropsType>,
+    },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
       default:
@@ -840,7 +847,7 @@ export const UpdateFile = defineComponent({
         formData.append('files', file)
         formData.append('fileActualIds', fileActualIds)
       }
-      updateApi(formData)
+      updateApi(formData, props.parentProps?.AppId)
         .then((res) => {
           createMessage.success('更新成功')
           uploadRef.value.value = ''
@@ -873,6 +880,9 @@ export const UpdateFile = defineComponent({
 export const FileBranch = defineComponent({
   name: 'TaFileBranch',
   props: {
+    parentProps: {
+      type: Object as PropType<BasicPropsType>,
+    },
     file: {
       type: Object as PropType<FileItemType>,
       required: true,
@@ -963,7 +973,7 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
           onClick() {
-            props.download?.(record, undefined, true)
+            props.download?.(record, undefined, true, props.parentProps?.AppId)
           },
         },
         {
@@ -974,7 +984,7 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.download ?? true) && record.sourceFileDownload),
           onClick() {
-            props.download?.(record)
+            props.download?.(record, undefined, undefined, props.parentProps?.AppId)
           },
         },
       ]
@@ -983,7 +993,7 @@ export const FileBranch = defineComponent({
     const getData = () => {
       const config = useGlobalConfig('components')
       const queryFileHistory = config.value?.TaUpload?.queryFileHistory
-      queryFileHistory({ fileActualIds: [props.file.actualId] })
+      queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
           dataSource.value = res.data
           loading.value = false

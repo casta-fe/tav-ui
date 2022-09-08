@@ -325,6 +325,7 @@ type BasicPropsType = {
     beforeOrAfter?: 'before' | 'after'
     column: TableProColumn
   }[]
+  AppId?: string
 } & ProvideDataType
 
 /**
