@@ -64,7 +64,7 @@ class Handler {
   public currentTypeCodeIsHyperlink = ref(false)
   private _paramsName: string | undefined
   private _paramsAddress: string | undefined
-  private _apis: object | null = null
+  private _apis: ProvideDataType = {}
   //// getter begin
   get dataSource() {
     return this._dataSource
@@ -81,7 +81,7 @@ class Handler {
   }
 
   get apis() {
-    if (!this._apis) {
+    if (!this._apis.queryFile) {
       const apis = {
         queryFile: (this._props.queryFile ??
           this._provide.value?.queryFile) as ProvideDataType['queryFile'],
@@ -101,7 +101,6 @@ class Handler {
         queryFileType: (this._props.queryFileType ??
           this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
       }
-      this._apis = {}
       for (const key in apis) {
         this._apis[key] = (...args: any[]) => apis[key](...args, this._props.AppId)
       }
