@@ -101,6 +101,9 @@ export default defineComponent({
     nameColumnWidth: [Number, String] as PropType<BasicPropsType['nameColumnWidth']>,
     // eslint-disable-next-line vue/prop-name-casing
     AppId: String as PropType<BasicPropsType['AppId']>,
+    fileBranchIsShowDeleteAction: Function as PropType<
+      BasicPropsType['fileBranchIsShowDeleteAction']
+    >,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {

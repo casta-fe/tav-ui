@@ -269,11 +269,12 @@ export const PreviewTable = defineComponent({
               <>
                 {row.hyperlink === 0 ? (
                   <FileBranch
+                    isShowDeleteAction={props.parentProps?.fileBranchIsShowDeleteAction}
                     tableActionPermission={props.tableActionPermission}
                     showTableAction={props.showTableAction}
                     download={props.download}
                     file={row}
-                    readonly={props.readonly}
+                    getPopupContainer={() => taTableProInstanceRef.value?.instance.$el}
                   />
                 ) : (
                   ''
@@ -897,12 +898,13 @@ export const FileBranch = defineComponent({
       required: true,
     },
     download: Function,
-    readonly: {
-      type: Boolean,
-      required: true,
-    },
+    isShowDeleteAction: Function as PropType<
+      PreviewTablePropType['parentProps']['fileBranchIsShowDeleteAction']
+    >,
+    getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
   },
   setup(props) {
+    const { createMessage } = useMessage()
     const config = useGlobalConfig('components') as Ref<{
       TaUpload?: { queryFileHistory?: PromiseFn<any, Recordable>; removeFileById?: PromiseFn }
     }>
@@ -1000,12 +1002,20 @@ export const FileBranch = defineComponent({
         {
           label: '删除',
           permission: props.tableActionPermission.delete,
-          enabled: !!(!props.readonly && (props.showTableAction.delete ?? true)),
+          enabled: !!(
+            (props.showTableAction.delete ?? true) &&
+            // @ts-ignore
+            record.version !== dataSource.value[dataSource.value.length - 1].version &&
+            props.isShowDeleteAction?.(record)
+          ),
           // @ts-ignore
           popConfirm: {
             title: '是否确认删除?',
             confirm: () => {
-              removeFileById?.(record.id, props.parentProps?.AppId)
+              removeFileById?.(record.id, props.parentProps?.AppId).then(() => {
+                createMessage.success('删除成功')
+                getData()
+              })
             },
           },
         },
@@ -1036,7 +1046,12 @@ export const FileBranch = defineComponent({
 
     return () => (
       <>
-        <Popover trigger="click" destroyTooltipOnHide visible={popVisible.value}>
+        <Popover
+          getPopupContainer={props.getPopupContainer}
+          trigger="click"
+          destroyTooltipOnHide
+          visible={popVisible.value}
+        >
           {{
             title: () => (
               <div class="file-branch-title">

@@ -13,6 +13,7 @@
       ]"
       :cover-column-title="{ fullName: '全称' }"
       :hide-column-fields="['createTime']"
+      :file-branch-is-show-delete-action="fileBranchIsShowDeleteAction"
       @select="onSelect"
     >
       <template #beforeButton="{ loading }">
@@ -55,6 +56,10 @@ export default defineComponent({
       params,
       onSelect: console.log,
       switchModule,
+      fileBranchIsShowDeleteAction(args) {
+        console.error(args)
+        return true
+      },
     }
   },
 })
