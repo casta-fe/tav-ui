@@ -58,7 +58,6 @@ export const PreviewTable = defineComponent({
       type: Boolean,
       required: true,
     },
-
     showTableAction: {
       type: Object as PropType<PreviewTablePropType['showTableAction']>,
       required: true,
@@ -274,6 +273,7 @@ export const PreviewTable = defineComponent({
                     showTableAction={props.showTableAction}
                     download={props.download}
                     file={row}
+                    readonly={props.readonly}
                   />
                 ) : (
                   ''
@@ -430,6 +430,7 @@ export const PreviewTable = defineComponent({
         />
         <UpdateFile
           ref={updateFileRef}
+          readonly={props.readonly}
           accept={props.parentProps?.accept || ''}
           onUpdateSuccess={updateFileChange}
         ></UpdateFile>
@@ -819,6 +820,9 @@ export const UpdateFile = defineComponent({
     },
     onUpdateFail: Function,
     onUpdateSuccess: Function,
+    readonly: {
+      type: Boolean,
+    },
   },
   etmis: ['updateSuccess'],
   setup(props, { emit, expose }) {
@@ -893,8 +897,17 @@ export const FileBranch = defineComponent({
       required: true,
     },
     download: Function,
+    readonly: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props) {
+    const config = useGlobalConfig('components') as Ref<{
+      TaUpload?: { queryFileHistory?: PromiseFn<any, Recordable>; removeFileById?: PromiseFn }
+    }>
+    const { queryFileHistory, removeFileById } = config.value?.TaUpload ?? {}
+
     const loading = ref(true)
     const dataSource = ref([])
     // 文件预览
@@ -970,7 +983,7 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
           onClick() {
-            props.download?.(record, undefined, true, props.parentProps?.AppId)
+            props.download?.(record, undefined, true)
           },
         },
         {
@@ -981,16 +994,26 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.download ?? true) && record.sourceFileDownload),
           onClick() {
-            props.download?.(record, undefined, undefined, props.parentProps?.AppId)
+            props.download?.(record, undefined, undefined)
+          },
+        },
+        {
+          label: '删除',
+          permission: props.tableActionPermission.delete,
+          enabled: !!(!props.readonly && (props.showTableAction.delete ?? true)),
+          // @ts-ignore
+          popConfirm: {
+            title: '是否确认删除?',
+            confirm: () => {
+              removeFileById?.(record.id, props.parentProps?.AppId)
+            },
           },
         },
       ]
       return actions
     }
     const getData = () => {
-      const config = useGlobalConfig('components')
-      const queryFileHistory = config.value?.TaUpload?.queryFileHistory
-      queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
+      queryFileHistory?.({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
           dataSource.value = res.data
           loading.value = false
