@@ -102,7 +102,10 @@ class Handler {
           this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
       }
       for (const key in apis) {
-        this._apis[key] = (...args: any[]) => apis[key]?.(...args, this._props.AppId)
+        this._apis[key] =
+          apis[key] && isFunction(apis[key])
+            ? (...args: any[]) => apis[key](...args, this._props.AppId)
+            : undefined
       }
       if (
         !(
