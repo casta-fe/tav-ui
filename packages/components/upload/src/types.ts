@@ -133,6 +133,7 @@ type QueryFileParamsType = {
  * @updateDate 2022/01/24
  */
 type PreviewTablePropType = {
+  parentProps: BasicPropsType
   dataSource: Recordable[]
   showTableAction: BasicPropsType['showTableAction']
   tableActionPermission: BasicPropsType['tableActionPermission']
@@ -326,6 +327,7 @@ type BasicPropsType = {
     column: TableProColumn
   }[]
   AppId?: string
+  fileBranchIsShowDeleteAction?: Fn<Recordable, boolean>
 } & ProvideDataType
 
 /**

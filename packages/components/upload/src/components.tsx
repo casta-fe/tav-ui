@@ -58,7 +58,6 @@ export const PreviewTable = defineComponent({
       type: Boolean,
       required: true,
     },
-
     showTableAction: {
       type: Object as PropType<PreviewTablePropType['showTableAction']>,
       required: true,
@@ -270,10 +269,12 @@ export const PreviewTable = defineComponent({
               <>
                 {row.hyperlink === 0 ? (
                   <FileBranch
+                    isShowDeleteAction={props.parentProps?.fileBranchIsShowDeleteAction}
                     tableActionPermission={props.tableActionPermission}
                     showTableAction={props.showTableAction}
                     download={props.download}
                     file={row}
+                    getPopupContainer={() => taTableProInstanceRef.value?.instance.$el}
                   />
                 ) : (
                   ''
@@ -430,6 +431,7 @@ export const PreviewTable = defineComponent({
         />
         <UpdateFile
           ref={updateFileRef}
+          readonly={props.readonly}
           accept={props.parentProps?.accept || ''}
           onUpdateSuccess={updateFileChange}
         ></UpdateFile>
@@ -819,6 +821,9 @@ export const UpdateFile = defineComponent({
     },
     onUpdateFail: Function,
     onUpdateSuccess: Function,
+    readonly: {
+      type: Boolean,
+    },
   },
   etmis: ['updateSuccess'],
   setup(props, { emit, expose }) {
@@ -893,8 +898,18 @@ export const FileBranch = defineComponent({
       required: true,
     },
     download: Function,
+    isShowDeleteAction: Function as PropType<
+      PreviewTablePropType['parentProps']['fileBranchIsShowDeleteAction']
+    >,
+    getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
   },
   setup(props) {
+    const { createMessage } = useMessage()
+    const config = useGlobalConfig('components') as Ref<{
+      TaUpload?: { queryFileHistory?: PromiseFn<any, Recordable>; removeFileById?: PromiseFn }
+    }>
+    const { queryFileHistory, removeFileById } = config.value?.TaUpload ?? {}
+
     const loading = ref(true)
     const dataSource = ref([])
     // 文件预览
@@ -970,7 +985,7 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
           onClick() {
-            props.download?.(record, undefined, true, props.parentProps?.AppId)
+            props.download?.(record, undefined, true)
           },
         },
         {
@@ -981,16 +996,34 @@ export const FileBranch = defineComponent({
             ? false
             : (props.showTableAction.download ?? true) && record.sourceFileDownload),
           onClick() {
-            props.download?.(record, undefined, undefined, props.parentProps?.AppId)
+            props.download?.(record, undefined, undefined)
+          },
+        },
+        {
+          label: '删除',
+          permission: props.tableActionPermission.delete,
+          enabled: !!(
+            (props.showTableAction.delete ?? true) &&
+            // @ts-ignore
+            record.version !== dataSource.value[dataSource.value.length - 1].version &&
+            props.isShowDeleteAction?.(record)
+          ),
+          // @ts-ignore
+          popConfirm: {
+            title: '是否确认删除?',
+            confirm: () => {
+              removeFileById?.(record.id, props.parentProps?.AppId).then(() => {
+                createMessage.success('删除成功')
+                getData()
+              })
+            },
           },
         },
       ]
       return actions
     }
     const getData = () => {
-      const config = useGlobalConfig('components')
-      const queryFileHistory = config.value?.TaUpload?.queryFileHistory
-      queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
+      queryFileHistory?.({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
           dataSource.value = res.data
           loading.value = false
@@ -1013,7 +1046,12 @@ export const FileBranch = defineComponent({
 
     return () => (
       <>
-        <Popover trigger="click" destroyTooltipOnHide visible={popVisible.value}>
+        <Popover
+          getPopupContainer={props.getPopupContainer}
+          trigger="click"
+          destroyTooltipOnHide
+          visible={popVisible.value}
+        >
           {{
             title: () => (
               <div class="file-branch-title">

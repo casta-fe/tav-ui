@@ -289,7 +289,9 @@ const uploadArr: any[] = [
   },
 ]
 
-export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: any }> = {
+export const taUploadProvideData: Partial<
+  ProvideDataType & { queryFileHistory: any; removeFileById: any }
+> = {
   // typeCodeRecord: {
   //   tg_invest: [
   //     {
@@ -329,7 +331,7 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
             code: 'otherType',
           },
         ],
-      }[moduleCodes[0]],
+      }[moduleCodes[0]]!,
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -354,7 +356,7 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
       )
     ),
   uploadFile: (payload: FormData): Promise<any> => {
-    console.log('[uploadFile] parame', payload, Object.fromEntries(payload))
+    console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
 
     return new Promise((r) =>
       setTimeout(
@@ -411,5 +413,8 @@ export const taUploadProvideData: Partial<ProvideDataType & { queryFileHistory: 
   updateFileNameAndAddress: (v: any) => {
     console.error(v)
     return promiseTimeout(1000)
+  },
+  removeFileById(id: number) {
+    console.error('removeFileById id', id)
   },
 }
