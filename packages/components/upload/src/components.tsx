@@ -1048,6 +1048,7 @@ export const FileBranch = defineComponent({
         </Popover>
 
         <TaFileView
+          AppId={props.parentProps?.AppId}
           show={showPreview.value}
           onUpdate:show={(v) => (showPreview.value = v)}
           list={previewRecord.value as any}
