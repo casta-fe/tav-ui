@@ -57,6 +57,7 @@ export function useFixHeight(
   onMounted(() => {
     tableEmitter.on('table-pro:filter-form-rendered', () => {
       const parentEl = unref(wrapperRef)?.parentElement
+      reCalculate() // 手动调用一次，因为异步传入schema后，监听的parentEl其实没有变化，并不会触发reCalculate
       addResizeListener(parentEl, reCalculate)
     })
   })
