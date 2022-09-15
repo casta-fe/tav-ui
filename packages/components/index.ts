@@ -39,3 +39,5 @@ export * from './virtual-scroll'
 export * from './count-button'
 
 export * from './table-pro'
+
+export * from './editor'

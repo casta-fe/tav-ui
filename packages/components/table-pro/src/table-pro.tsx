@@ -1,11 +1,12 @@
-import { computed, defineComponent, onUnmounted, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
-import { onMountedOrOnDeactivated } from '@tav-ui/hooks/core/onMountedOrOnDeactivated'
+import { onUnmountedOrDeactivated } from '@tav-ui/hooks/core/onUnmountedOrDeactivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
+import { useCellHover } from './hooks/useCellHover'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -15,11 +16,10 @@ import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
-import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
 import type { ComputedRef } from 'vue'
+import type { TableProEvent, TableProInstance, TableProProps } from './types'
 // import { isBoolean } from '@tav-ui/utils/is'
 
 const _VXETable = setupVxeTable()
@@ -140,7 +140,7 @@ export default defineComponent({
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
-    onMountedOrOnDeactivated(() => {
+    onUnmountedOrDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
     })

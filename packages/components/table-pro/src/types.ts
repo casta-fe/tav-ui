@@ -6,9 +6,8 @@ import {
   PAGE_SIZE,
   PAGE_SIZE_OPTIONS,
   ROW_KEY,
-  buildTableId,
+  buildComponentId,
 } from './const'
-import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
 import type {
   VxeColumnPropTypes,
@@ -20,6 +19,7 @@ import type {
   VxeTablePropTypes,
 } from 'vxe-table'
 import type { FetchSetting } from './const'
+import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type {
   PagerConfig,
   TableProApi,
@@ -64,7 +64,7 @@ export const tableProProps = {
   /** 唯一标识（被某些特定的功能所依赖） */
   id: {
     type: String as PropType<VxeTablePropTypes.ID>,
-    default: buildTableId(),
+    default: buildComponentId(),
   },
   /**
    * 表格高度（默认为铺满网页）https://vxetable.cn/#/table/base/autoHeight

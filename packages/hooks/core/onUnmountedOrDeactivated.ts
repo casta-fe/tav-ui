@@ -4,7 +4,7 @@ interface Fn<T = any, R = T> {
   (...arg: T[]): R
 }
 
-export function onMountedOrOnDeactivated(hook: Fn) {
+export function onUnmountedOrDeactivated(hook: Fn) {
   onDeactivated(() => {
     hook()
   })

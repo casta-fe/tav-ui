@@ -14,6 +14,7 @@ import { defineComponent, onMounted, reactive } from 'vue'
 // import BasicTablePage from './table/Basic.vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaModal, useModal } from '@tav-ui/components/modal'
+import Editor from '@tav-ui/components/editor'
 import allUsers from '../allUserList'
 import FormPage from './Form/index.vue'
 import { TaUpload, taUploadProvideData } from './TaUpload'
@@ -24,20 +25,21 @@ export default defineComponent({
   name: 'Home',
   components: {
     // TaConfigProvider,
-    TablePro,
-    TaModal,
-    TaButton,
-    TaUpload,
-    SearchableApiSelect,
+    // TablePro,
+    // TaModal,
+    // TaButton,
+    // TaUpload,
+    // SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    FormPage,
+    // FormPage,
     // TreePage,
     // ModalPage,
     // BasicTablePage,
     // FollewPage,
+    Editor,
   },
   setup() {
     // 函数方式调用loading
@@ -90,7 +92,7 @@ export default defineComponent({
 
 <template>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
-  <FormPage />
+  <!-- <FormPage />
   <TaUpload />
   <SearchableApiSelect />
   <TablePro />
@@ -107,7 +109,8 @@ export default defineComponent({
       <TaButton type="default" @click="CloseModal">取消</TaButton>
     </template>
   </TaModal>
-  <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
+  <TaButton type="default" @click="OpenModal">测试modalTable</TaButton> -->
+  <Editor />
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
     </TaButton>
