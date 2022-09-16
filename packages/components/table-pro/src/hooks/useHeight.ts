@@ -1,4 +1,4 @@
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref } from 'vue'
+import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, unref } from 'vue'
 import { addResizeListener, removeResizeListener } from '@tav-ui/utils/event'
 import type { TableProInstance } from '../types'
 import type { ComputedRef, Ref } from 'vue'
@@ -57,8 +57,14 @@ export function useFixHeight(
   onMounted(() => {
     tableEmitter.on('table-pro:filter-form-rendered', () => {
       const parentEl = unref(wrapperRef)?.parentElement
+      reCalculate() // 手动调用一次，因为异步传入schema后，监听的parentEl其实没有变化，并不会触发reCalculate
       addResizeListener(parentEl, reCalculate)
     })
+  })
+
+  onActivated(() => {
+    // keepalive 中需要重新布局
+    reCalculate()
   })
 
   onBeforeUnmount(() => {
