@@ -23,6 +23,7 @@ import { TaMemberSelect } from '@tav-ui/components/member-select'
 import { TaStrengthMeter as StrengthMeter } from '@tav-ui/components/strength-meter'
 import IconPicker from '@tav-ui/components/icon-picker'
 import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
+import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
 import ApiSelect from './components/ApiSelect.vue'
 import FormTitle from './components/FormTitle.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
@@ -33,7 +34,6 @@ import YearPicker from './components/YearPicker'
 import type { Component } from 'vue'
 // import { BasicUpload } from "/@/components/Upload";
 import type { ComponentType, EditableComponentType } from './types/index'
-
 const componentMap = new Map<ComponentType, Component>()
 
 componentMap.set('Input', Input)
@@ -77,6 +77,7 @@ add('MemberSelect', TaMemberSelect)
 add('SearchableApiSelect', SearchableApiSelect)
 add('TagSelect', TagSelect)
 add('YearPicker', YearPicker)
+add('InputNumberRange', TaInputNumberRange)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)
@@ -123,6 +124,7 @@ editableComponentTimeTypeMap.set('RangePicker', DatePicker.RangePicker)
 editableComponentTimeTypeMap.set('WeekPicker', DatePicker.WeekPicker)
 editableComponentTimeTypeMap.set('TimePicker', TimePicker)
 const editableComponentOtherTypeMap = new Map<EditableComponentType, Component>()
+editableComponentOtherTypeMap.set('InputNumberRange', TaInputNumberRange)
 
 /* EditableTableForm 支持组件列表 ----------  end  ---------- */
 

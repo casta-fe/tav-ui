@@ -106,14 +106,14 @@ const schemas: FormSchema[] = [
       options: [],
     },
   },
-  // {
-  //   field: 'field2',
-  //   component: 'Input',
-  //   label: '字段2',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  // },
+  {
+    field: 'field2',
+    component: 'InputNumberRange',
+    label: '字段2',
+    colProps: {
+      span: 8,
+    },
+  },
   // {
   //   field: 'field3',
   //   component: 'DatePicker',

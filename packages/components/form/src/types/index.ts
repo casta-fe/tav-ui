@@ -116,6 +116,7 @@ export type ComponentType =
   | 'SearchableApiSelect'
   | 'TagSelect'
   | 'YearPicker'
+  | 'InputNumberRange'
 
 export type EditableComponentType =
   | 'Input'
@@ -152,3 +153,4 @@ export type EditableComponentType =
   | 'SearchableApiSelect'
   | 'TagSelect'
   | 'YearPicker'
+  | 'InputNumberRange'
