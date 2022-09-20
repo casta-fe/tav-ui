@@ -5,7 +5,7 @@ import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDe
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
-import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
+import { CamelCaseToCls, ComponentName, ComponentOperationsName, buildTableId } from './const'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -42,7 +42,7 @@ export default defineComponent({
 
     // 表格 props
     const _getProps = computed(() => {
-      return { ...props } as TableProProps
+      return { ...props, id: buildTableId() } as TableProProps
     })
 
     // 根据 default 生成默认属性并与传入的 props 合并
@@ -150,7 +150,14 @@ export default defineComponent({
         <div class={unref(getWrapperClass)} ref={wrapperRef}>
           {createOperation()}
           <div class={ComponentPrefixCls} style={{ height: unref(getHeight) }}>
-            <Grid ref={tableRef} {...unref(getBindValues)}>
+            <Grid
+              ref={tableRef}
+              {...unref(getBindValues)}
+              onPageChange={(...args) => {
+                unref(getBindValues).onPageChange?.(...args)
+                instances.clear()
+              }}
+            >
               {{
                 empty: () => <ComponentEmpty />,
                 ...slots,

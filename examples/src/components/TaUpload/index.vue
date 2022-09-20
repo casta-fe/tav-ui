@@ -42,7 +42,7 @@ export default defineComponent({
   },
   setup() {
     const params = reactive({
-      // moduleCode: 'tg_invest',
+      moduleCode: 'tg_invest',
       businessId: 'id0',
     })
 
