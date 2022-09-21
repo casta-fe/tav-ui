@@ -32,9 +32,10 @@ export type TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
-  // 因为是自定义属性，vxetable中不接收，所以在运行时取不到，通过vxetable提供的column.params传进去
-  // showTooltip?: boolean
+  children?: TableProColumn[]
 }
+export type TableProColumnInfo = VxeTableDefines.ColumnInfo
+
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
 /** 扩展后的 table 实例 */

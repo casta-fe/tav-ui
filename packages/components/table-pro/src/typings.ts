@@ -31,6 +31,7 @@ export interface TableProCustomActionConfig {
   import?: CustomAction | boolean
   export?: CustomAction | boolean
   refresh?: CustomAction | boolean
+  column?: CustomAction | boolean
 }
 
 export type VxeQueryParams = VxeGridPropTypes.ProxyAjaxQueryParams
@@ -92,4 +93,12 @@ export interface TableProActionItem extends ButtonProps {
   enabled?: boolean | ((action: TableProActionItem) => boolean)
   tooltip?: string | TooltipProps
   permission?: string
+}
+
+export interface TreeDataItem {
+  value: string
+  key: string
+  title?: string
+  disabled?: boolean
+  children?: TreeDataItem[]
 }

@@ -242,35 +242,52 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
   })
 
   return [
-    {
-      field: 'customerName',
-      title: '客户名称',
-      fixed: 'left',
-      customRender: ({ row: { customerName } }) => (
-        <a
-          href="javascript:;"
-          style="color: #3a67fc"
-          onClick={(e) => {
-            handleRoutePush(e, {
-              name: 'Test',
-            })
-          }}
-        >
-          {customerName}
-        </a>
-      ),
-    },
-    // { field: 'customerCode', title: '客户编号', fixed: 'left', params: { showTooltip: false } },
-    { field: 'customerCode', title: '客户编号', fixed: 'left' },
     // {
-    //   title: '集合',
+    //   field: 'customerName',
+    //   title: '客户名称',
     //   fixed: 'left',
-    //   width: 200,
-    //   children: [
-    //     { field: 'customerName', title: '客户名称', width: 100 },
-    //     { field: 'customerCode', title: '客户编号', width: 100 },
-    //   ]
+    //   customRender: ({ row: { customerName } }) => (
+    //     <a
+    //       href="javascript:;"
+    //       style="color: #3a67fc"
+    //       onClick={(e) => {
+    //         handleRoutePush(e, {
+    //           name: 'Test',
+    //         })
+    //       }}
+    //     >
+    //       {customerName}
+    //     </a>
+    //   ),
     // },
+    // { field: 'customerCode', title: '客户编号', fixed: 'left' },
+    {
+      title: '集合',
+      field: 'collect1',
+      // fixed: 'left',
+      width: 200,
+      children: [
+        {
+          field: 'customerName',
+          title: '客户名称',
+          width: 100,
+          customRender: ({ row: { customerName } }) => (
+            <a
+              href="javascript:;"
+              style="color: #3a67fc"
+              onClick={(e) => {
+                handleRoutePush(e, {
+                  name: 'Test',
+                })
+              }}
+            >
+              {customerName}
+            </a>
+          ),
+        },
+        { field: 'customerCode', title: '客户编号', width: 100 },
+      ],
+    },
     {
       field: 'classificationValue',
       title: '客户分类',

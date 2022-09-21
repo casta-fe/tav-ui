@@ -101,14 +101,23 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @returns
  */
 function wrapperColumnSlot(columns: TableProColumn[]) {
+  const handleWrapper = (column: TableProColumn) => {
+    const { customRender } = column
+    column['cellRender'] = {
+      name: ComponentCellName,
+      options: [{ customRender }],
+    }
+    return column
+  }
   return columns.length
     ? columns.map((column: TableProColumn) => {
-        const { customRender } = column
-        column['cellRender'] = {
-          name: ComponentCellName,
-          options: [{ customRender }],
+        const { children } = column
+        if (children && children.length) {
+          column.children = children.map((_column: TableProColumn) => handleWrapper(_column))
+          return column
+        } else {
+          return handleWrapper(column)
         }
-        return column
       })
     : columns
 }

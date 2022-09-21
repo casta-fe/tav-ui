@@ -1,11 +1,13 @@
 import { defineComponent, reactive, unref } from 'vue'
-import Button from '@tav-ui/components/button'
+import { Tooltip } from 'ant-design-vue'
 import { isObject } from '@tav-ui/utils/is'
-import { CamelCaseToCls, ComponentCustomActionName } from '../const'
-import { useTableContext } from '../hooks/useTableContext'
+import Button from '@tav-ui/components/button'
+import { CamelCaseToCls, ComponentCustomActionName } from '../../const'
+import { useTableContext } from '../../hooks/useTableContext'
+import Settings from './settings'
 import type { PropType, Ref, Slots } from 'vue'
-import type { TableProInstance } from '../types'
-import type { TableProCustomActionConfig } from '../typings'
+import type { TableProInstance } from '../../types'
+import type { TableProCustomActionConfig } from '../../typings'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
@@ -35,12 +37,13 @@ export default defineComponent({
       state.filter = filter
     })
 
+    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
+
+    // 新增按钮配置
     const handleAdd = (e: Event) => {
       if (isObject(props.config?.add) && props.config?.add.handleAction)
         props.config?.add.handleAction(e)
     }
-
-    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
     const addButton = () =>
       props.config?.add ? (
@@ -55,6 +58,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 删除按钮配置
     const handleDelete = (e: Event) => {
       if (isObject(props.config?.delete) && props.config?.delete.handleAction)
         props.config?.delete.handleAction(e)
@@ -73,6 +77,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 导入按钮配置
     const handleImport = (e: Event) => {
       if (isObject(props.config?.import) && props.config?.import.handleAction)
         props.config?.import.handleAction(e)
@@ -91,6 +96,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 导出按钮配置
     const handleExport = (e: Event) => {
       if (isObject(props.config?.export) && props.config?.export.handleAction)
         props.config?.export.handleAction(e)
@@ -109,6 +115,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 刷新按钮配置
     const handleRefresh = (e: Event) => {
       if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
         props.config?.refresh.handleAction(e)
@@ -119,14 +126,48 @@ export default defineComponent({
 
     const refreshButton = () =>
       props.config?.refresh ? (
-        <Button
-          class={`${ComponentPrefixCls}-btn refresh`}
-          type="default"
-          preIcon={'ant-design:redo-outlined'}
-          onClick={handleRefresh}
-          permission={getPermission(props.config?.refresh)}
-        />
+        <Tooltip placement="bottom" title="刷新">
+          <Button
+            class={`${ComponentPrefixCls}-btn refresh`}
+            type="text"
+            preIcon={'ant-design:redo-outlined'}
+            iconSize={20}
+            onClick={handleRefresh}
+            permission={getPermission(props.config?.refresh)}
+          />
+        </Tooltip>
       ) : null
+
+    // 表格列按钮配置
+    const handleColumn = (e: Event) => {
+      if (isObject(props.config?.column) && props.config?.column.handleAction)
+        props.config?.column.handleAction(e)
+    }
+
+    const columnButton = () =>
+      props.config?.column ? (
+        <Tooltip placement="bottom" title="列设置">
+          <Button
+            class={`${ComponentPrefixCls}-btn column`}
+            type="text"
+            preIcon={'ant-design:appstore-outlined'}
+            iconSize={20}
+            onClick={handleColumn}
+            permission={getPermission(props.config?.column)}
+          />
+        </Tooltip>
+      ) : null
+
+    const settings = () => {
+      const isSettingsShow = props.config?.refresh || props.config?.column
+
+      return isSettingsShow ? (
+        <div class={`${ComponentPrefixCls}-settings`}>
+          {refreshButton()}
+          {columnButton()}
+        </div>
+      ) : null
+    }
 
     return () => {
       return props.config?.enabled ? (
@@ -136,7 +177,8 @@ export default defineComponent({
           {props.tableSlots?.customAction?.()}
           {importButton()}
           {exportButton()}
-          {refreshButton()}
+          {/* {settings()} */}
+          <Settings config={props.config} tableRef={props.tableRef} tableSlots={props.tableSlots} />
         </div>
       ) : null
     }
