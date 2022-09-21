@@ -178,8 +178,8 @@ export async function __post(url = '', data = {}) {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
       ai: '10002',
-      at: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNzQiLCJleHAiOjE2NjMyMjQ2OTksImlhdCI6MTY2MzIxMDI5OX0.UD4xArKRArYAUegkZ0p6ySPAvCHn4efpg5WfWXAvzsE',
-      rd: '1731242680d1b1e5760a64d1f9d3cc0820e30f8e4',
+      at,
+      rd,
     },
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
