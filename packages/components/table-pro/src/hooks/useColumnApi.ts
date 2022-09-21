@@ -64,7 +64,7 @@ export function useColumnApi(
     }
 
     if (columns) {
-      apiInfo.params.tableJson = JSON.stringify(columns)
+      apiInfo.params.tableJson = columns
     } else {
       Reflect.deleteProperty(apiInfo.params, 'tableJson')
     }

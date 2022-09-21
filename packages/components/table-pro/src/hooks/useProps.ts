@@ -262,7 +262,6 @@ export function useProps(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  debugger
   const defaultPropsRef = createDefaultPropsRef(tableProProps)
   const tablePropsRef = mergePropsRef(defaultPropsRef, paramPropsRef, tableRef, emit)
   return tablePropsRef
