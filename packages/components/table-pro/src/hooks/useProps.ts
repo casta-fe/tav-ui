@@ -114,7 +114,7 @@ function handleExtenApi(tablePropsRef: ComputedRef<TableProProps>, emit: TablePr
         : { ...params, ...{ model } }
       try {
         if (beforeApi && isFunction(beforeApi)) {
-          params = (await beforeApi(option)) || option
+          params = (await beforeApi(params)) || params
         }
 
         if (api && isFunction(api)) {
@@ -262,6 +262,7 @@ export function useProps(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
+  debugger
   const defaultPropsRef = createDefaultPropsRef(tableProProps)
   const tablePropsRef = mergePropsRef(defaultPropsRef, paramPropsRef, tableRef, emit)
   return tablePropsRef
