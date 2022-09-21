@@ -1,4 +1,4 @@
-import { defineComponent, reactive, watchEffect } from 'vue'
+import { defineComponent, reactive, unref, watchEffect } from 'vue'
 import { PushpinFilled } from '@ant-design/icons-vue'
 import { Checkbox, Popover, Tooltip, Tree, TreeNode } from 'ant-design-vue'
 import { cloneDeep, flatten } from 'lodash-es'
@@ -7,12 +7,14 @@ import TaScrollbar from '@tav-ui/components/scrollbar'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { getPopupContainer } from '@tav-ui/utils/basic'
 import { isFunction, isObject } from '@tav-ui/utils/is'
+import { warn } from '@tav-ui/utils/log'
 import {
   ACTION_COLUMNS,
   CamelCaseToCls,
   SELECT_COMPONENTS,
   ComponentCustomActionName as _ComponentCustomActionName,
 } from '../../../const'
+import { useTableContext } from '../../../hooks/useTableContext'
 import type { DropEvent, TreeDataItem } from 'ant-design-vue/es/tree/Tree'
 import type { PropType, Ref, Slots } from 'vue'
 import type { TableProColumnInfo, TableProInstance } from '../../../types'
@@ -72,6 +74,12 @@ export default defineComponent({
 
     const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
+    const { columnApiOptions } = useTableContext()
+    if (!columnApiOptions)
+      warn(
+        '请在业务中的 TaConfigProvider 组件，其属性 components 中配置 TaTablePro 所需数据。开启 column 后所需数据为 userInfo, columnsGetApi, columnsSetApi'
+      )
+
     const { createMessage } = useMessage()
 
     watchEffect(() => {
@@ -84,8 +92,7 @@ export default defineComponent({
 
     /** 使用tableid+filed的方式做唯一标识，方便持久化 */
     function getColumnId(column: TableProColumnInfo) {
-      const tableId = props.tableRef?.value?.id!
-      const tableIdUUID = tableId.split('-')[1]
+      const tableIdUUID = unref(columnApiOptions)!.getTableUUID()
       return `${tableIdUUID}_${column.field || column.type}`
     }
 
@@ -187,6 +194,8 @@ export default defineComponent({
       await props.tableRef?.value?.loadColumn(filteredColumns)
       await props.tableRef?.value?.refreshScroll()
       await props.tableRef?.value?.recalculate()
+
+      return filteredColumns
     }
 
     /** 初始化组件所需数据 */
@@ -231,7 +240,16 @@ export default defineComponent({
 
     /** 确定处理 */
     async function handleColumnSubmit() {
-      await useColumSetOptions(state.columnOptions as any, state.columnOptionsCheckedList)
+      const columns = await useColumSetOptions(
+        state.columnOptions as any,
+        state.columnOptionsCheckedList
+      )
+
+      const { api, params } = unref(columnApiOptions)!.getColumnApiInfo(columns, 'set')
+      if (api) {
+        const response = await api(params)
+        console.log(response)
+      }
     }
 
     /** 排序处理 */
@@ -373,7 +391,7 @@ export default defineComponent({
     }
 
     return () => {
-      return props.config?.column ? (
+      return props.config?.column && unref(columnApiOptions) ? (
         <Tooltip placement="bottomRight" title="列设置">
           <Popover
             placement="bottomRight"

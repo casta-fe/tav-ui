@@ -1,11 +1,14 @@
 import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import { CamelCaseToCls, ComponentName, ComponentOperationsName, buildTableId } from './const'
+import { useCellHover } from './hooks/useCellHover'
+import { useColumnApi } from './hooks/useColumnApi'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -15,12 +18,10 @@ import { useLoading } from './hooks/useLoading'
 import { useProps } from './hooks/useProps'
 import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
-import { useCellHover } from './hooks/useCellHover'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
 import type { ComputedRef } from 'vue'
-// import { isBoolean } from '@tav-ui/utils/is'
+import type { TableProEvent, TableProInstance, TableProProps } from './types'
 
 const _VXETable = setupVxeTable()
 const { Grid } = _VXETable
@@ -87,8 +88,14 @@ export default defineComponent({
     // 执行dom监听的处理
     useWatchDom(getProps, tableRef, tableEmitter)
 
+    // 列持久化处理
+    const columnApiOptions = useColumnApi(
+      { tableRef, tableEmitter, tablePropsRef: getBindValues },
+      useGlobalConfig()
+    )
+
     // 注入数据
-    createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
+    createTableContext({ tableRef, tableEmitter, tablePropsRef: getBindValues, columnApiOptions })
 
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
@@ -102,7 +109,6 @@ export default defineComponent({
         `${ComponentPrefixCls}-wrapper`,
         {
           [`${ComponentPrefixCls}--fill-inner`]: values.fillInner,
-          // [`${ComponentPrefixCls}--pagination-disabled`]: !values.pagination,
         },
       ]
     })
@@ -147,7 +153,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={unref(getWrapperClass)} ref={wrapperRef}>
+        <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
           {createOperation()}
           <div class={ComponentPrefixCls} style={{ height: unref(getHeight) }}>
             <Grid

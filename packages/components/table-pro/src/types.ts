@@ -579,11 +579,6 @@ export const tableProProps = {
     type: Boolean,
     default: true,
   },
-  // /** 设置pagerconfig enabled 在api模式下报错，这里单独配置分页的显隐藏 */
-  // pagination: {
-  //   type: Boolean,
-  //   default: true,
-  // }
   //:==================================================: 扩展配置 :==================================================://
 }
 /** table props 类型 */

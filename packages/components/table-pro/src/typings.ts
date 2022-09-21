@@ -46,6 +46,12 @@ export interface TableProApi<T> {
   (option: TableProApiParams): T
 }
 
+export interface TableProInnerInfo {
+  userInfo?: Record<string, any>
+  columnsInfoGet?: (...arg: any[]) => Promise<any>
+  columnsInfoSet?: (...arg: any[]) => Promise<any>
+}
+
 export interface TableProTagsConfig {
   /** label 对应的字段 */
   label?: string
