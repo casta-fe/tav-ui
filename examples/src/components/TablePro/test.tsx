@@ -1,7 +1,7 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
 import Button from '@tav-ui/components/button'
-import { TaTablePro } from '@tav-ui/components/table-pro'
+import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import { columns2, filterForm2 } from './data'
 import type {
@@ -15,6 +15,8 @@ import type {
 export default defineComponent({
   setup() {
     const router = useRouter()
+    const id = ref<string>('')
+    id.value = getTableProId(router, 'play')!
     const state = reactive({
       filterFormConfig: {},
       columns: [] as any[],
@@ -176,6 +178,7 @@ export default defineComponent({
           <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
             {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
             <TaTablePro
+              id={unref(id)}
               ref={tableRef}
               // pagerConfig={{ enabled: false }}
               rowConfig={{ keyField: 'id' }}

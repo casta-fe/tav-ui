@@ -22,6 +22,7 @@ import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import type { ComputedRef } from 'vue'
 import type { TableProEvent, TableProInstance, TableProProps } from './types'
+import type { CustomActionRef } from './typings'
 
 const _VXETable = setupVxeTable()
 const { Grid } = _VXETable
@@ -37,13 +38,14 @@ export default defineComponent({
     // 获取实例
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
+    const customActionRef = ref<CustomActionRef | null>(null)
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
 
     // 表格 props
     const _getProps = computed(() => {
-      return { ...props, id: buildTableId() } as TableProProps
+      return { ...props, id: props.id ?? buildTableId() } as TableProProps
     })
 
     // 根据 default 生成默认属性并与传入的 props 合并
@@ -53,6 +55,10 @@ export default defineComponent({
     const getColumns = computed(() => {
       return { columns: useColumns(getProps, tableRef, emit) }
     })
+
+    // 列持久化处理
+    const columnApiOptions = useColumnApi(getProps, useGlobalConfig())
+    columnApiOptions?.useCachedColumnCoverCurrentColumns(getColumns, customActionRef as any)
 
     // 透传 attr
     const getAttrs = computed(() => {
@@ -87,12 +93,6 @@ export default defineComponent({
 
     // 执行dom监听的处理
     useWatchDom(getProps, tableRef, tableEmitter)
-
-    // 列持久化处理
-    const columnApiOptions = useColumnApi(
-      { tableRef, tableEmitter, tablePropsRef: getBindValues },
-      useGlobalConfig()
-    )
 
     // 注入数据
     createTableContext({ tableRef, tableEmitter, tablePropsRef: getBindValues, columnApiOptions })
@@ -134,6 +134,7 @@ export default defineComponent({
             tableSlots={slots}
           />
           <ComponentCustomAction
+            ref={customActionRef}
             config={values.customActionConfig}
             tableRef={tableRef}
             tableSlots={slots}

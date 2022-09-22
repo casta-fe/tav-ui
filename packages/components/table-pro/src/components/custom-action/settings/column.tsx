@@ -10,6 +10,7 @@ import { isFunction, isObject } from '@tav-ui/utils/is'
 import { warn } from '@tav-ui/utils/log'
 import {
   ACTION_COLUMNS,
+  COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT,
   CamelCaseToCls,
   SELECT_COMPONENTS,
   ComponentCustomActionName as _ComponentCustomActionName,
@@ -17,16 +18,19 @@ import {
 import { useTableContext } from '../../../hooks/useTableContext'
 import type { DropEvent, TreeDataItem } from 'ant-design-vue/es/tree/Tree'
 import type { PropType, Ref, Slots } from 'vue'
-import type { TableProColumnInfo, TableProInstance } from '../../../types'
-import type { TableProCustomActionConfig } from '../../../typings'
+import type { TableProColumn, TableProInstance } from '../../../types'
+import type {
+  CustomActionSettingColumnOption as ColumnOption,
+  TableProCustomActionConfig,
+} from '../../../typings'
 
 interface IState {
   isInit: boolean
   checkAll: boolean
   indeterminate: boolean
-  columnOptions: TreeDataItem[]
+  columnOptions: ColumnOption[]
   columnOptionsCheckedList: string[]
-  cacheColumnOptions: TreeDataItem[]
+  cacheColumnOptions: ColumnOption[]
   cacheColumnOptionsCheckedList: string[]
 }
 
@@ -49,10 +53,14 @@ const props = {
   },
 }
 
+/**
+ * 需要注意的是，treedata 即 columnOptions 控制的是展示以及展示顺序
+ * 某一条不展示通过 columnOptionsCheckedList 来控制
+ */
 export default defineComponent({
   name: ComponentCustomActionName,
   props,
-  setup(props) {
+  setup(props, { expose }) {
     const state = reactive<IState>({
       /** 判断table数据是否加载完毕 */
       isInit: false,
@@ -74,7 +82,7 @@ export default defineComponent({
 
     const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
-    const { columnApiOptions } = useTableContext()
+    const { columnApiOptions, tablePropsRef } = useTableContext()
     if (!columnApiOptions)
       warn(
         '请在业务中的 TaConfigProvider 组件，其属性 components 中配置 TaTablePro 所需数据。开启 column 后所需数据为 userInfo, columnsGetApi, columnsSetApi'
@@ -83,26 +91,45 @@ export default defineComponent({
     const { createMessage } = useMessage()
 
     watchEffect(() => {
-      const tableRef = props.tableRef?.value
-      const columns = tableRef?.getTableColumn().collectColumn
+      const columns = tablePropsRef.value.columns
       if (columns && columns.length && !state.isInit) {
         init(columns)
       }
     })
 
+    /** 将treedataitem所需数据添加进column */
+    function handleColumnOptionDefault(columns: TableProColumn[]): ColumnOption[] {
+      const traverse = (columns: TableProColumn[]) => {
+        return columns.map((column: TableProColumn) => {
+          if (column.children && column.children.length) {
+            return {
+              ...COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT,
+              ...column,
+              children: traverse(column.children),
+            }
+          } else {
+            return { ...COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT, ...column }
+          }
+        })
+      }
+
+      return traverse(columns)
+    }
+
     /** 使用tableid+filed的方式做唯一标识，方便持久化 */
-    function getColumnId(column: TableProColumnInfo) {
-      const tableIdUUID = unref(columnApiOptions)!.getTableUUID()
+    function getColumnId(column: ColumnOption) {
+      const tableIdUUID = unref(columnApiOptions)!.getTableId()
       return `${tableIdUUID}_${column.field || column.type}`
     }
 
     /** 将默认不显示的列过滤 */
-    function filterDefaultInvisibleColumn(columns: TableProColumnInfo[]) {
+    function filterDefaultInvisibleColumn(columns: ColumnOption[]) {
       return columns.filter((column) => column.visible && !column.disabled)
     }
 
     /** 获取选中列 */
-    function getCheckedList(options: TreeDataItem[]) {
+    // function getCheckedList(options: TreeDataItem[]) {
+    function getCheckedList(options: ColumnOption[]) {
       return flatten(
         options.map((option) => {
           if (option.children && option.children.length) {
@@ -115,10 +142,11 @@ export default defineComponent({
     }
 
     /** 在获取时将列数据转为树节点所需数据 */
-    function handleColumnGetOption(column: TableProColumnInfo, pid: string) {
+    function handleColumnGetOption(column: ColumnOption, pid: string, parentColumn?: ColumnOption) {
       const { type, field, fixed, disabled: _disabled, visible } = column
       const id = getColumnId(column)
       const currentId = pid ? `${pid}-${id}` : id
+      const currentFixed = parentColumn ? parentColumn.fixed : fixed
       // 修改select的title
       if (visible && !_disabled && SELECT_COMPONENTS.includes(type!)) {
         column.title = '选中'
@@ -130,12 +158,12 @@ export default defineComponent({
         !disabled &&
         ((type && SELECT_COMPONENTS.includes(type!)) ||
           (field && ACTION_COLUMNS.includes(field!)) ||
-          fixed)
+          !!currentFixed)
       ) {
         disabled = true
       }
-      const option: TreeDataItem = {
-        ...(column as any),
+      const option: ColumnOption = {
+        ...column,
         title: column.title,
         key: currentId,
         disabled,
@@ -144,26 +172,34 @@ export default defineComponent({
     }
 
     /** 在获取时遍历列数据 */
-    function handleColumnGetOptionsTraverse(columns: TableProColumnInfo[], pid = '') {
+    function handleColumnGetOptionsTraverse(
+      columns: ColumnOption[],
+      pid = '',
+      parentColumn?: ColumnOption
+    ) {
       return columns.map((column) => {
         if (column.children && column.children.length) {
-          const current = handleColumnGetOption(column, pid)
-          const children = handleColumnGetOptionsTraverse(column.children, getColumnId(column))
+          const current = handleColumnGetOption(column, pid, parentColumn)
+          const children = handleColumnGetOptionsTraverse(
+            column.children,
+            getColumnId(column),
+            current
+          )
           return { ...current, children }
         } else {
-          return handleColumnGetOption(column, pid)
+          return handleColumnGetOption(column, pid, parentColumn)
         }
       })
     }
 
     /** 通过columns来创建checkboxgroup所需数据 */
-    function useColumGetOptions(columns: TableProColumnInfo[]) {
+    function useColumGetOptions(columns: ColumnOption[]) {
       const filteredColumns = filterDefaultInvisibleColumn(columns)
-      return handleColumnGetOptionsTraverse(filteredColumns)
+      return handleColumnGetOptionsTraverse(filteredColumns, '')
     }
 
-    /** 在设置时遍历列数据 */
-    function handleColumnSetOptionsTraverse(columns: TreeDataItem[], checkedList: string[]) {
+    /** 在设置时遍历列数据，筛选出选中数组 */
+    function handleColumnSetOptionsTraverse(columns: ColumnOption[], checkedList: string[]) {
       return columns
         .map((column) => {
           if (column.children && column.children.length) {
@@ -187,7 +223,7 @@ export default defineComponent({
     }
 
     /** 将改动后的options还原为column应用到table中 */
-    async function useColumSetOptions(columns: TableProColumnInfo[], checkedList: string[]) {
+    async function useColumSetOptions(columns: ColumnOption[], checkedList: string[]) {
       // 因为当前已经排好序了，所以只需要处理列是否展示即可
       const filteredColumns = handleColumnSetOptionsTraverse(columns as any, checkedList)
 
@@ -199,8 +235,9 @@ export default defineComponent({
     }
 
     /** 初始化组件所需数据 */
-    function init(columns: TableProColumnInfo[]) {
-      const options = useColumGetOptions(columns)
+    function init(columns: ColumnOption[]) {
+      const columnOptions = handleColumnOptionDefault(columns)
+      const options = useColumGetOptions(columnOptions)
       const checkedList = getCheckedList(options)
 
       if (!state.columnOptions.length) {
@@ -240,19 +277,26 @@ export default defineComponent({
 
     /** 确定处理 */
     async function handleColumnSubmit() {
-      const columns = await useColumSetOptions(
+      const filteredColumnOptions = await useColumSetOptions(
         state.columnOptions as any,
         state.columnOptionsCheckedList
       )
 
-      const { api, params } = unref(columnApiOptions)!.getColumnApiInfo(columns, 'set')
+      const { api, params } = unref(columnApiOptions)!.getColumnApiInfo(
+        { options: state.columnOptions, checkedList: state.columnOptionsCheckedList },
+        'set'
+      )
       if (api) {
-        const response = await api(params)
-        console.log(response)
+        await api(params)
       }
     }
 
-    /** 排序处理 */
+    /**
+     * 排序处理
+     * drop 拖入，drag 拖出
+     * @param info
+     * @returns
+     */
     function handleColumnOptionsSort(info: DropEvent) {
       const dropKey = info.node.eventKey
       const dragKey = info.dragNode.eventKey
@@ -270,6 +314,31 @@ export default defineComponent({
       }
       const data = cloneDeep(state.columnOptions)
 
+      // 找到drag节点
+      let dragObj: TreeDataItem = {
+        value: '',
+        key: '',
+      }
+      loop(data, dragKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+        arr.splice(index, 1)
+        dragObj = item
+      })
+
+      // 找到drop节点
+      let dropObj: TreeDataItem = {
+        value: '',
+        key: '',
+      }
+      loop(data, dropKey, (item: TreeDataItem) => {
+        dropObj = item
+      })
+
+      // drop 节点为固定列，不允许
+      if (dropObj.fixed) {
+        createMessage.warning('不允许拖入固定列')
+        return
+      }
+
       if (dropKey.includes('-')) {
         // 如果drop节点的父节点为fixed节点，那么不允许拖入children中
         const dropParentKey = dropKey.split('-')[0]
@@ -286,13 +355,6 @@ export default defineComponent({
         }
       } else {
         // 如果drop节点为fixed节点，那么不允许拖入
-        let dropObj: TreeDataItem = {
-          value: '',
-          key: '',
-        }
-        loop(data, dropKey, (item: TreeDataItem) => {
-          dropObj = item
-        })
         if (dropObj.fixed) {
           createMessage.warning('不允许拖入固定列')
           return
@@ -300,14 +362,15 @@ export default defineComponent({
       }
 
       // Find dragObject
-      let dragObj: TreeDataItem = {
-        value: '',
-        key: '',
-      }
-      loop(data, dragKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
-        arr.splice(index, 1)
-        dragObj = item
-      })
+      // let dragObj: TreeDataItem = {
+      //   value: '',
+      //   key: '',
+      // }
+      // loop(data, dragKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
+      //   arr.splice(index, 1)
+      //   dragObj = item
+      // })
+
       if (!info.dropToGap) {
         // Drop on the content
         loop(data, dropKey, (item: TreeDataItem) => {
@@ -355,12 +418,26 @@ export default defineComponent({
       }
     }
 
+    /** 应用从接口获得的持久化数据 */
+    function coverColumnsSetting(columns: ColumnOption[], checkedList: string[]) {
+      state.columnOptions = [...columns]
+      state.cacheColumnOptions = [...columns]
+      state.columnOptionsCheckedList = [...checkedList]
+      state.cacheColumnOptionsCheckedList = [...checkedList]
+
+      useColumSetOptions(state.columnOptions as any, state.columnOptionsCheckedList)
+    }
+
     function handleColumnClick(e: Event) {
       if (isObject(props.config?.column) && props.config?.column.handleAction)
         props.config?.column.handleAction(e)
     }
 
-    function createTreeNode(option: TreeDataItem, defaultSolt: any) {
+    expose({
+      coverColumnsSetting,
+    })
+
+    function createTreeNode(option: ColumnOption, defaultSolt: any) {
       return (
         <TreeNode key={option.key} disabled={option.disabled} class="column-popver-tree-option">
           {{
@@ -380,7 +457,7 @@ export default defineComponent({
       )
     }
 
-    function createTreeNodes(columns: TreeDataItem[]) {
+    function createTreeNodes(columns: ColumnOption[]) {
       return columns.map((option) => {
         if (option.children && option.children.length) {
           return createTreeNode(option, createTreeNodes)
@@ -392,9 +469,9 @@ export default defineComponent({
 
     return () => {
       return props.config?.column && unref(columnApiOptions) ? (
-        <Tooltip placement="bottomRight" title="列设置">
+        <Tooltip placement="bottomLeft" title="列设置">
           <Popover
-            placement="bottomRight"
+            placement="bottomLeft"
             trigger="click"
             onVisibleChange={handleColumnVisibleChange}
             overlayClassName={`column-popver`}

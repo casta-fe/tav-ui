@@ -2,7 +2,8 @@ import type { FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { VxeGridPropTypes } from 'vxe-table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
-import type { CSSProperties } from 'vue'
+import type { CSSProperties, Ref } from 'vue'
+import type { TableProColumn } from './types'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -107,4 +108,27 @@ export interface TreeDataItem {
   title?: string
   disabled?: boolean
   children?: TreeDataItem[]
+}
+
+/** 把tree需要的数据融合进column */
+export type CustomActionSettingColumnOption = TableProColumn & {
+  key?: string
+  // title: string // title 复用 column 中的配置即可
+  disabled?: boolean
+}
+export interface CustomActionSettingColumn {
+  coverColumnsSetting: (columns: CustomActionSettingColumnOption[], checkedList: string[]) => void
+}
+
+export interface CustomActionSetting {
+  refreshRef: null
+  columnRef: Ref<CustomActionSettingColumn>
+}
+
+export interface CustomActionRef {
+  addRef: null
+  deleteRef: null
+  importRef: null
+  exportRef: null
+  settingsRef: Ref<CustomActionSetting>
 }

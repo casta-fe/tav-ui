@@ -75,6 +75,11 @@ export const TOOLTIP_PLACEMENT = 'top'
 export const SELECT_COMPONENTS = ['checkbox', 'radio']
 export const ACTION_COLUMNS = ['actions', 'action']
 
+export const COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT = {
+  visible: true,
+  disabled: false,
+}
+
 export type FetchSetting = typeof componentSetting.table.fetchSetting
 
 export enum ETableProEmits {

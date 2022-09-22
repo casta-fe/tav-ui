@@ -370,10 +370,10 @@
 
       .refresh,
       .column {
-        min-width: auto;
+        min-width: auto !important;
         padding: 0 !important;
         margin: 0 0 0 @gap12 !important;
-        color: @primary-color;
+        color: @primary-color !important;
         // border-color: @primary-color;
         &:hover,
         &:active,
@@ -412,13 +412,17 @@
         }
 
         &-tree-option {
-          position: relative;
+          // position: relative;
 
-          span.anticon {
-            position: absolute;
-            top: 50%;
-            right: 28px;
-            transform: translateY(-50%);
+          .ant-tree-title {
+            position: relative;
+
+            & > span.anticon {
+              position: absolute;
+              top: 50%;
+              right: -70%;
+              transform: translateY(-50%);
+            }
           }
         }
       }

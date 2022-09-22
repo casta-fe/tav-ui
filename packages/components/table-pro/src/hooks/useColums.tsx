@@ -31,6 +31,7 @@ function autoAddChoosenElement(
 
   if (!isColumnsHasCheckbox && checkboxConfig.enabled) {
     columns.unshift({
+      field: 'checkboxField',
       type: 'checkbox',
       fixed: 'left',
       slots: {
@@ -66,6 +67,7 @@ function autoAddChoosenElement(
 
   if (!isColumnsHasRadio && radioConfig.enabled) {
     columns.unshift({
+      field: 'radioField',
       type: 'radio',
       fixed: 'left',
     })

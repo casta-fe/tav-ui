@@ -1,4 +1,4 @@
-import { defineComponent, unref } from 'vue'
+import { defineComponent, ref, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
 import Button from '@tav-ui/components/button'
 import { isObject } from '@tav-ui/utils/is'
@@ -9,7 +9,7 @@ import {
 import ColumnSetting from './column'
 import type { PropType, Ref, Slots } from 'vue'
 import type { TableProInstance } from '../../../types'
-import type { TableProCustomActionConfig } from '../../../typings'
+import type { CustomActionSettingColumn, TableProCustomActionConfig } from '../../../typings'
 
 const ComponentCustomActionName = `${_ComponentCustomActionName}Settings`
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
@@ -29,7 +29,8 @@ const props = {
 export default defineComponent({
   name: ComponentCustomActionName,
   props,
-  setup(props) {
+  setup(props, { expose }) {
+    const columnRef = ref<CustomActionSettingColumn | null>(null)
     const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
     // 刷新按钮配置
@@ -54,13 +55,19 @@ export default defineComponent({
           />
         </Tooltip>
       ) : null
+
+    expose({
+      refreshRef: null,
+      columnRef,
+    })
+
     return () => {
       const isSettingsShow = props.config?.refresh || props.config?.column
-
       return isSettingsShow ? (
         <div class={ComponentPrefixCls}>
           {refreshButton()}
           <ColumnSetting
+            ref={columnRef}
             config={props.config}
             tableRef={props.tableRef}
             tableSlots={props.tableSlots}

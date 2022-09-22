@@ -79,8 +79,8 @@ let rd = ''
 const Encryptor = new JSEncrypt()
 
 export async function toLogin() {
-  // const phone = '13999999999'
-  const phone = '13629273499'
+  const phone = '13999999999'
+  // const phone = '13629273499'
   const password = '123456'
   const ai = '10002'
 

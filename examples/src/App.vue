@@ -17,9 +17,9 @@ export default defineComponent({
       appId: '10002',
       userInfo: {
         id: 274,
-        name: 'i7eo',
+        name: 'admin',
         organizationId: 1,
-        phone: '13629273499',
+        phone: '13999999999',
       },
       permissions: {},
       components: {
