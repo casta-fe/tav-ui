@@ -203,11 +203,15 @@ export default defineComponent({
           res[cur] !== undefined &&
           res[cur] !== null &&
           JSON.stringify(res[cur]) !== '[]' &&
+          JSON.stringify(res[cur]) !== '["",""]' &&
+          JSON.stringify(res[cur]) !== '[null,""]' &&
+          JSON.stringify(res[cur]) !== '["",null]' &&
           JSON.stringify(res[cur]) !== '{}' &&
           res[cur] &&
           JSON.stringify(res[cur])
-        )
+        ) {
           result++
+        }
         return result
       }, 0)
       // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单

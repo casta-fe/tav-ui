@@ -27,7 +27,7 @@ export default defineComponent({
 
     const blurValueMin = (e) => {
       const value = e.target.value
-      if (value && state.max && value > state.max) {
+      if (value && state.max && Number(value) > Number(state.max)) {
         createMessage.warning('最小范围不得大于最大范围')
         emit('change', [null, state.max])
       } else {
@@ -37,7 +37,7 @@ export default defineComponent({
 
     const blurValueMax = (e) => {
       const value = e.target.value
-      if (state.min && value && state.min > value) {
+      if (state.min && value && Number(state.min) > Number(value)) {
         createMessage.warning('最大范围不得小于最小范围')
         emit('change', [state.min, null])
       } else {
