@@ -153,6 +153,9 @@ export const PreviewTable = defineComponent({
       }
       if (props.showTableAction.downloadWatermark !== false) labels.push('下载水印文件')
       if (props.showTableAction.delete !== false) labels.push('删除')
+
+      const hidePopoverRefs: Ref<{ hidePopover?: () => void }>[] = []
+
       // #endregion
       const columns: TableProColumn[] = [
         {
@@ -264,11 +267,19 @@ export const PreviewTable = defineComponent({
           field: 'version',
           visible: !props?.hideColumnFields!.includes('version') && hasBranch.value,
           minWidth: 100,
-          customRender: ({ row }) => {
+          customRender: ({ row, rowIndex }) => {
+            hidePopoverRefs[rowIndex] || (hidePopoverRefs[rowIndex] = ref({}))
+
             return (
               <>
                 {row.hyperlink === 0 ? (
                   <FileBranch
+                    onShowPopover={() => {
+                      hidePopoverRefs.forEach((el) => {
+                        el.value.hidePopover?.()
+                      })
+                    }}
+                    ref={hidePopoverRefs[rowIndex]}
                     isShowDeleteAction={props.parentProps?.fileBranchIsShowDeleteAction}
                     tableActionPermission={props.tableActionPermission}
                     showTableAction={props.showTableAction}
@@ -902,8 +913,9 @@ export const FileBranch = defineComponent({
       PreviewTablePropType['parentProps']['fileBranchIsShowDeleteAction']
     >,
     getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
+    onShowPopover: Function,
   },
-  setup(props) {
+  setup(props, { expose }) {
     const { createMessage } = useMessage()
     const config = useGlobalConfig('components') as Ref<{
       TaUpload?: { queryFileHistory?: PromiseFn<any, Recordable>; removeFileById?: PromiseFn }
@@ -1037,12 +1049,16 @@ export const FileBranch = defineComponent({
     }
     const popVisible = ref(false)
     const showPopover = () => {
+      if (popVisible.value) return
+      props.onShowPopover?.()
       loading.value = true
       getData()
     }
     const hidePopover = () => {
       popVisible.value = false
     }
+
+    expose({ hidePopover })
 
     return () => (
       <>
