@@ -51,3 +51,27 @@ defineOptions({
 1. 所有对象配置均改为 xxxconfig 和 vxetable 风格一致，例如: `filter => filterFormConfig`，使用前请先查看 vxegrid api 和 tablepro 下的 types
 2. ifShow 均改为 enable 和 vxetable 保持一致
 3. 按钮权限打散到每个按钮中
+
+tav-ui v8.0.0+ 改动：
+全局注入属性，需要添加 appId、userInfo。每个项目都需要加，appId、userInfo 与 components属性同层级。
+
+表格列配置使用方法：
+1. 项目入口 app.vue 中注入 columnsGetApi, columnsSetApi
+2. 具体页面使用时，引入 useRouter getTableProId，如下：
+
+```javascript
+import { useRouter } from "vue-router";
+import { getTableProId } from "tav-ui";
+```
+
+手动生成唯一 id，传递给 tablepro，如下：
+
+```javascript
+const router = useRouter();
+const tableProId = ref<string>("");
+tableProId.value = getTableProId(router, "all");
+```
+然后在tablepro的customactionconfig中设置column为true即可。
+
+需要注意的是：
+1. 持久化过程中需要给每个table生成唯一id，目前getTableProId逻辑的实现是取当前页面的router name，与传入的字符串组合，所以必须要保证每个router都有唯一的英文name。

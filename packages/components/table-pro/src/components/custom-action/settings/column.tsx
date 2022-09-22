@@ -91,8 +91,9 @@ export default defineComponent({
     const { createMessage } = useMessage()
 
     watchEffect(() => {
+      const isColumnOpen = tablePropsRef.value.customActionConfig.column
       const columns = tablePropsRef.value.columns
-      if (columns && columns.length && !state.isInit) {
+      if (isColumnOpen && columns && columns.length && !state.isInit) {
         init(columns)
       }
     })

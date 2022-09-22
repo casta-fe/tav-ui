@@ -145,7 +145,7 @@ export function useColumnApi(
       (val) => {
         if (val && val.value.columns && val.value.columns.length > 0) {
           // 在原本column载入后再加载接口中的列配置
-          coverCurrentColumns(val.value.columns)
+          unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
         }
       },
       { deep: true, immediate: true }
