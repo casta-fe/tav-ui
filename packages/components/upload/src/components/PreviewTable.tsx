@@ -163,10 +163,11 @@ export const PreviewTable = defineComponent({
           field: 'fullName',
           visible: !props?.hideColumnFields!.includes('fullName'),
           width: props.nameColumnWidth,
-          editRender: {},
+          ...(props.updateFileNameAndAddress ? { editRender: {} } : {}),
           slots: {
-            edit: ({ row, rowIndex, columnIndex }) => {
+            edit: ({ row, rowIndex, columnIndex, column }) => {
               currentEditCell = { rowIndex, columnIndex }
+              currentEditColumnField.value = column.field
 
               return [
                 <UpdateNameForm
@@ -467,7 +468,7 @@ export const PreviewTable = defineComponent({
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
           editConfig={
-            props.updateFileNameAndAddress && {
+            (props.updateFileNameAndAddress || props.handler.apis.updateFileType) && {
               // trigger: 'manual',
               trigger: 'click',
               mode: 'cell',
