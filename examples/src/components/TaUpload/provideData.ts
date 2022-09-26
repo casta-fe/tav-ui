@@ -414,6 +414,11 @@ export const taUploadProvideData: Partial<
     console.error(v)
     return promiseTimeout(1000)
   },
+  updateFileType: (id, typeCode) => {
+    console.log('updateFileType', id, typeCode)
+
+    return promiseTimeout(1000)
+  },
   removeFileById(id: number) {
     console.error('removeFileById id', id)
   },

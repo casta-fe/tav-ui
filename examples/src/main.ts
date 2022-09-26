@@ -42,7 +42,10 @@ app.use(TaVXETable)
 // app.use(TaFileView)
 // app.use(TaForm)
 // app.use(TaContainerCollapse)
-
-toLogin().finally(() => {
+if ('3000' === location.port) {
   app.mount('#app')
-})
+} else {
+  toLogin().finally(() => {
+    app.mount('#app')
+  })
+}

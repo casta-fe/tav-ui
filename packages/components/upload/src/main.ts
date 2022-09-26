@@ -82,7 +82,7 @@ class Handler {
 
   get apis() {
     if (!this._apis.queryFile) {
-      const apis = {
+      const apis: Partial<ProvideDataType> = {
         queryFile: (this._props.queryFile ??
           this._provide.value?.queryFile) as ProvideDataType['queryFile'],
         removeFile: (this._props.removeFile ??
@@ -98,6 +98,8 @@ class Handler {
         updateFileNameAndAddress: (this._props.updateFileNameAndAddress ??
           this._provide.value
             ?.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
+        updateFileType: (this._props.updateFileType ??
+          this._provide.value?.updateFileType) as ProvideDataType['updateFileType'],
         queryFileType: (this._props.queryFileType ??
           this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
       }
@@ -293,7 +295,7 @@ class Handler {
     const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
     this._uploadResponse.splice(index, 1, record)
     this.fillDataSource()
-    console.log(this._uploadResponse)
+    // console.log(this._uploadResponse)
   }
   /**
    * 删除一条数据

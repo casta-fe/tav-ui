@@ -50,7 +50,7 @@ export default defineComponent({
       params.moduleCode = 'tg_invest' === params.moduleCode ? 'other_module' : 'tg_invest'
     }
 
-    setTimeout(switchModule, 2000)
+    // setTimeout(switchModule, 2000)
 
     return {
       params,

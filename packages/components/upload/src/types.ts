@@ -364,6 +364,10 @@ type ProvideDataType = {
     file: Pick<FileItemType, 'id' | 'name' | 'address'>,
     ...args: any[]
   ) => Promise<void>
+  /**
+   * 更新文件类型(可编辑单元格中的选择框)
+   */
+  updateFileType?: (id: string | number, typeCode: string) => Promise<void>
   typeCodeRecord?: Recordable<LabelValueOptions>
   queryFileType?: PromiseFn<
     string[],
