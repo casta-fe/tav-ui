@@ -85,7 +85,7 @@ export const PreviewTable = defineComponent({
     // const nameColumnWidthRef = ref<number>(300)
     const currentEditCellIsLoading = ref(false)
     let currentEditCell: null | Record<'rowIndex' | 'columnIndex', string | number> = null
-    const currentEditColumnField = ref('')
+    // const currentEditColumnField = ref('')
 
     const fetchedTypeCodeArray = ref([] as any[])
     watch(
@@ -165,9 +165,9 @@ export const PreviewTable = defineComponent({
           width: props.nameColumnWidth,
           ...(props.updateFileNameAndAddress ? { editRender: {} } : {}),
           slots: {
-            edit: ({ row, rowIndex, columnIndex, column }) => {
+            edit: ({ row, rowIndex, columnIndex }) => {
               currentEditCell = { rowIndex, columnIndex }
-              currentEditColumnField.value = column.field
+              // currentEditColumnField.value = column.field
 
               return [
                 <UpdateNameForm
@@ -251,14 +251,14 @@ export const PreviewTable = defineComponent({
           minWidth: 100,
           ...(props.handler.apis.updateFileType ? { editRender: {} } : {}),
           slots: {
-            edit: ({ row, rowIndex, columnIndex, column }) => {
+            edit: ({ row, rowIndex, columnIndex }) => {
               currentEditCell = { rowIndex, columnIndex }
-              currentEditColumnField.value = column.field
+              // currentEditColumnField.value = column.field
 
               return [
                 <UpdateTypeForm
                   row={row}
-                  onSelect={clearEdit}
+                  onSelect={setTimeout.bind(null, clearEdit, 0)}
                   onChange={(option: LabelValueOption, promise: Promise<void>) => {
                     currentEditCellIsLoading.value = true
                     promise
@@ -472,7 +472,7 @@ export const PreviewTable = defineComponent({
               // trigger: 'manual',
               trigger: 'click',
               mode: 'cell',
-              autoClear: 'typeName' !== currentEditColumnField.value,
+              autoClear: true, //'typeName' !== currentEditColumnField.value,
             }
           }
           pagerConfig={{ enabled: false }}
