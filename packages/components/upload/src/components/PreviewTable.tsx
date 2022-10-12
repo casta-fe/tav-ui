@@ -248,7 +248,7 @@ export const PreviewTable = defineComponent({
           title: props.coverColumnTitle?.typeName ?? '文件类型',
           field: 'typeName',
           visible: !props?.hideColumnFields!.includes('typeName'),
-          minWidth: 100,
+          minWidth: 220,
           ...(props.handler.apis.updateFileType ? { editRender: {} } : {}),
           slots: {
             edit: ({ row, rowIndex, columnIndex }) => {

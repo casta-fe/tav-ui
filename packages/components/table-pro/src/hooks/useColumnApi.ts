@@ -140,12 +140,27 @@ export function useColumnApi(
       }
     }
 
+    // watch(
+    //   () => getColumns,
+    //   (val) => {
+    //     if (val && val.value.columns && val.value.columns.length > 0) {
+    //       // 在原本column载入后再加载接口中的列配置
+    //       unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
+    //     }
+    //   },
+    //   { deep: true, immediate: true }
+    // )
+
     watch(
       () => getColumns,
-      (val) => {
-        if (val && val.value.columns && val.value.columns.length > 0) {
-          // 在原本column载入后再加载接口中的列配置
-          unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
+      (val, prev) => {
+        // console.log(tablePropsRef)
+        if (JSON.stringify(val.value.columns) !== JSON.stringify(prev?.value?.columns)) {
+          // console.log('===========')
+          if (val && val.value.columns && val.value.columns.length > 0) {
+            // 在原本column载入后再加载接口中的列配置
+            unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
+          }
         }
       },
       { deep: true, immediate: true }
