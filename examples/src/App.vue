@@ -29,10 +29,10 @@ export default defineComponent({
             return { label: v.name, value: v.id, ...v }
           }),
         },
-        // TaTablePro: {
-        //   columnsGetApi,
-        //   columnsSetApi,
-        // },
+        TaTablePro: {
+          columnsGetApi,
+          columnsSetApi,
+        },
       },
     })
     setTimeout(() => {

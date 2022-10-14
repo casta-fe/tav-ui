@@ -92,12 +92,13 @@ export function useColumnApi(
       const columnsList = treeToList(columns, { id: 'key' })
 
       const handleColumn = (cachedColumn) => {
+        const { key } = cachedColumn
+        const keySplitResult = key.split('-')
+        const targetKey = keySplitResult[keySplitResult.length - 1]
+        const targetKeySplitResult = targetKey.split('_')
+        const field = targetKeySplitResult[targetKeySplitResult.length - 1]
+
         const targetColumn = columnsList.find((column) => {
-          const { key } = cachedColumn
-          const keySplitResult = key.split('-')
-          const targetKey = keySplitResult[keySplitResult.length - 1]
-          const targetKeySplitResult = targetKey.split('_')
-          const field = targetKeySplitResult[targetKeySplitResult.length - 1]
           return field === column.field
         })
 
@@ -114,7 +115,8 @@ export function useColumnApi(
       }
 
       const traverse = (cachedColumns) => {
-        return cachedColumns.map((cachedColumn) => {
+        //修改前逻辑
+        const datas = cachedColumns.map((cachedColumn) => {
           if (cachedColumn.children && cachedColumn.children.length) {
             const current = handleColumn(cachedColumn)
             const children = traverse(cachedColumn.children)
@@ -123,20 +125,27 @@ export function useColumnApi(
             return handleColumn(cachedColumn)
           }
         })
+        return datas
       }
 
-      return traverse(cachedColumns)
+      const data = traverse(cachedColumns)
+      console.log(data)
+      return data
     }
 
     const coverCurrentColumns = async (columns) => {
       const { api, params } = getColumnApiInfo(null, 'get')
       const { success, data } = await api(params)
       if (success && data && data.tableJson) {
-        const { options: cachedColumns, checkedList } = JSON.parse(data.tableJson)
+        const {
+          options: cachedColumns,
+          checkedList,
+          halfCheckedList = [],
+        } = JSON.parse(data.tableJson)
         const options = handleMerge(columns, cachedColumns)
         const coverColumnsSetting = (customActionRef.value?.settingsRef as any).columnRef
           .coverColumnsSetting
-        if (coverColumnsSetting) coverColumnsSetting(options, checkedList)
+        if (coverColumnsSetting) coverColumnsSetting(options, checkedList, halfCheckedList)
       }
     }
 

@@ -1,6 +1,7 @@
 <template>
   <div class="table_wrapper">
     <TaTablePro
+      id="Test1234567"
       ref="tableRef"
       :columns="state.columns"
       :api="handleApi"
@@ -9,12 +10,14 @@
         export: {
           handleAction: handleExport,
         },
+        column: true,
       }"
     />
   </div>
 </template>
 
 <script lang="ts">
+import { createVNode } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 // eslint-disable-next-line import/order
 import { defineComponent, reactive, ref, unref } from 'vue'
@@ -64,16 +67,49 @@ export default defineComponent({
       },
       columns: [
         {
-          field: 'customerName',
-          title: '客户名称',
-          // width: 200,
+          field: 'group1',
+          title: '分组1',
+
+          children: [
+            {
+              field: 'group11',
+              title: '分组1-1',
+              customRender: () => {
+                return 'sssss'
+              },
+            },
+            {
+              field: 'group12',
+              title: '分组1-2',
+            },
+          ],
         },
-      ],
-      dataList: [
         {
-          customerName: 'hahahahaha',
+          field: 'group2',
+          title: '分组2',
+          children: [
+            {
+              field: 'group21',
+              title: '分组2-1',
+              children: [
+                {
+                  field: 'group211',
+                  title: '分组2-1-1',
+                },
+                {
+                  field: 'group212',
+                  title: '分组2-1-2',
+                },
+              ],
+            },
+            {
+              field: 'group22',
+              title: '分组2-2',
+            },
+          ],
         },
       ],
+      dataList: [],
     })
 
     const tableRef = ref<ITableProInstance | null>(null)
@@ -89,6 +125,7 @@ export default defineComponent({
             result: [
               {
                 customerName: 'hahahahaha',
+                group1_1: 'ssssssssssss',
               },
             ],
           },

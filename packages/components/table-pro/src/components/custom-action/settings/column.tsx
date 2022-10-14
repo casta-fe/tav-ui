@@ -32,6 +32,8 @@ interface IState {
   columnOptionsCheckedList: string[]
   cacheColumnOptions: ColumnOption[]
   cacheColumnOptionsCheckedList: string[]
+  columnOptionsHalfCheckedList: string[]
+  cacheColumnOptionsHalfCheckedList: string[]
 }
 
 const ComponentCustomActionName = `${_ComponentCustomActionName}Settings`
@@ -76,6 +78,10 @@ export default defineComponent({
       cacheColumnOptions: [],
       /** 缓存选中树节点key */
       cacheColumnOptionsCheckedList: [],
+      /** 缓存半选中数据结构的列数据 */
+      columnOptionsHalfCheckedList: [],
+      /** 缓存半选中树节点key */
+      cacheColumnOptionsHalfCheckedList: [],
     })
     /** 避免未刷新页面重新渲染tree */
     let isPopverInit = false
@@ -224,9 +230,16 @@ export default defineComponent({
     }
 
     /** 将改动后的options还原为column应用到table中 */
-    async function useColumSetOptions(columns: ColumnOption[], checkedList: string[]) {
+    async function useColumSetOptions(
+      columns: ColumnOption[],
+      checkedList: string[],
+      halfCheckedList: string[]
+    ) {
       // 因为当前已经排好序了，所以只需要处理列是否展示即可
-      const filteredColumns = handleColumnSetOptionsTraverse(columns as any, checkedList)
+      const filteredColumns = handleColumnSetOptionsTraverse(columns as any, [
+        ...checkedList,
+        ...halfCheckedList,
+      ])
 
       await props.tableRef?.value?.loadColumn(filteredColumns)
       await props.tableRef?.value?.refreshScroll()
@@ -270,6 +283,8 @@ export default defineComponent({
     /** 重置处理 */
     function handleColumnReset() {
       state.columnOptionsCheckedList = [...state.cacheColumnOptionsCheckedList]
+      state.columnOptionsHalfCheckedList = []
+
       state.checkAll = true
       state.indeterminate = false
       state.columnOptions = [...state.cacheColumnOptions]
@@ -280,11 +295,16 @@ export default defineComponent({
     async function handleColumnSubmit() {
       const filteredColumnOptions = await useColumSetOptions(
         state.columnOptions as any,
-        state.columnOptionsCheckedList
+        state.columnOptionsCheckedList,
+        state.columnOptionsHalfCheckedList
       )
 
       const { api, params } = unref(columnApiOptions)!.getColumnApiInfo(
-        { options: state.columnOptions, checkedList: state.columnOptionsCheckedList },
+        {
+          options: state.columnOptions,
+          checkedList: state.columnOptionsCheckedList,
+          halfCheckedList: state.columnOptionsHalfCheckedList,
+        },
         'set'
       )
       if (api) {
@@ -406,9 +426,10 @@ export default defineComponent({
     }
 
     /** 列选择处理 */
-    function handleColumnOptionsChange(changedCheckedList: string[]) {
+    function handleColumnOptionsChange(changedCheckedList: string[], e) {
       state.columnOptionsCheckedList = [...changedCheckedList]
-
+      const halfList = e.halfCheckedKeys
+      state.columnOptionsHalfCheckedList = [...halfList]
       const checkedList = getCheckedList(state.cacheColumnOptions)
       if (changedCheckedList.length === checkedList.length) {
         state.indeterminate = false
@@ -420,13 +441,24 @@ export default defineComponent({
     }
 
     /** 应用从接口获得的持久化数据 */
-    function coverColumnsSetting(columns: ColumnOption[], checkedList: string[]) {
+    function coverColumnsSetting(
+      columns: ColumnOption[],
+      checkedList: string[],
+      halfCheckedList: string[]
+    ) {
       state.columnOptions = [...columns]
       state.cacheColumnOptions = [...columns]
       state.columnOptionsCheckedList = [...checkedList]
       state.cacheColumnOptionsCheckedList = [...checkedList]
+      //新增半节点存储
+      state.columnOptionsHalfCheckedList = [...halfCheckedList]
+      state.cacheColumnOptionsHalfCheckedList = [...halfCheckedList]
 
-      useColumSetOptions(state.columnOptions as any, state.columnOptionsCheckedList)
+      useColumSetOptions(
+        state.columnOptions as any,
+        state.columnOptionsCheckedList,
+        state.columnOptionsHalfCheckedList
+      )
     }
 
     function handleColumnClick(e: Event) {
@@ -469,6 +501,7 @@ export default defineComponent({
     }
 
     return () => {
+      // console.log(state.columnOptions)
       return props.config?.column && unref(columnApiOptions) ? (
         <Tooltip placement="bottomLeft" title="列设置">
           <Popover
