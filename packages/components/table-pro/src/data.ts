@@ -74,6 +74,7 @@ import { JSEncrypt } from 'jsencrypt'
 //     address: 'ShenzhenShenzhenShenzhenShenzhen',
 //   },
 // ]
+const ai = '10002'
 let at = ''
 let rd = ''
 const Encryptor = new JSEncrypt()
@@ -82,7 +83,6 @@ export async function toLogin() {
   const phone = '13999999999'
   // const phone = '13629273499'
   const password = '123456'
-  const ai = '10002'
 
   await fetch('/api/TIANTA-SYSTEM/test.html', {
     method: 'GET',
@@ -178,7 +178,7 @@ export async function __post(url = '', data = {}) {
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
-      ai: '10002',
+      ai,
       at,
       rd,
     },

@@ -56,7 +56,7 @@ export default defineComponent({
         },
       },
       refresh: true,
-      column: false,
+      column: true,
     })
 
     // const handleProxyConfig = (): TableProProxyConfig => ({
