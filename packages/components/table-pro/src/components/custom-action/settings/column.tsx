@@ -134,6 +134,27 @@ export default defineComponent({
       return columns.filter((column) => column.visible && !column.disabled)
     }
 
+    /** 获取默认选中列 */
+    function getDefaultCheckedList(options: ColumnOption[]) {
+      return flatten(
+        options.map((option) => {
+          if (option.children && option.children.length) {
+            if (option.visible && option.disabled) {
+              return [option.key, ...getCheckedList(option.children)]
+            } else {
+              return null
+            }
+          } else {
+            if (option.visible && option.disabled) {
+              return option.key
+            } else {
+              return null
+            }
+          }
+        })
+      ).filter(Boolean)
+    }
+
     /** 获取选中列 */
     // function getCheckedList(options: TreeDataItem[]) {
     function getCheckedList(options: ColumnOption[]) {
@@ -273,10 +294,14 @@ export default defineComponent({
     /** 全选处理 */
     function handleColumnCheckAllChange(e) {
       const checkList = getCheckedList(state.cacheColumnOptions)
+      state.indeterminate = false
       if (e.target.checked) {
         state.columnOptionsCheckedList = checkList
+        state.checkAll = true
       } else {
-        state.columnOptionsCheckedList = []
+        state.columnOptionsCheckedList = getDefaultCheckedList(state.cacheColumnOptions)
+        state.indeterminate = true
+        state.checkAll = false
       }
     }
 
@@ -446,6 +471,11 @@ export default defineComponent({
       checkedList: string[],
       halfCheckedList: string[]
     ) {
+      if (!columns.length) {
+        state.checkAll = false
+        state.indeterminate = false
+      }
+
       state.columnOptions = [...columns]
       state.cacheColumnOptions = [...columns]
       state.columnOptionsCheckedList = [...checkedList]
