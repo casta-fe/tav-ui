@@ -485,12 +485,12 @@ export default defineComponent({
       }
 
       state.columnOptions = [...columns]
-      state.cacheColumnOptions = [...columns]
+      // state.cacheColumnOptions = [...columns]
       state.columnOptionsCheckedList = [...checkedList]
-      state.cacheColumnOptionsCheckedList = [...checkedList]
+      // state.cacheColumnOptionsCheckedList = [...checkedList]
       //新增半节点存储
       state.columnOptionsHalfCheckedList = [...halfCheckedList]
-      state.cacheColumnOptionsHalfCheckedList = [...halfCheckedList]
+      // state.cacheColumnOptionsHalfCheckedList = [...halfCheckedList]
 
       useColumSetOptions(
         state.columnOptions as any,
