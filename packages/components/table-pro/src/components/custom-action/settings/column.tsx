@@ -142,13 +142,13 @@ export default defineComponent({
       return flatten(
         options.map((option) => {
           if (option.children && option.children.length) {
-            if (option.visible && option.disabled) {
+            if (option.disabled || option.fixed) {
               return [option.key, ...getCheckedList(option.children)]
             } else {
               return null
             }
           } else {
-            if (option.visible && option.disabled) {
+            if (option.disabled || option.fixed) {
               return option.key
             } else {
               return null
@@ -473,6 +473,15 @@ export default defineComponent({
       if (!columns.length) {
         state.checkAll = false
         state.indeterminate = false
+      } else {
+        const cacheCheckedList = getCheckedList(state.cacheColumnOptions)
+        if (checkedList.length === cacheCheckedList.length) {
+          state.checkAll = true
+          state.indeterminate = false
+        } else {
+          state.checkAll = false
+          state.indeterminate = true
+        }
       }
 
       state.columnOptions = [...columns]
@@ -571,7 +580,7 @@ export default defineComponent({
                 </div>
               ),
               content: () => (
-                <TaScrollbar backTopVisibilityHeight={80}>
+                <TaScrollbar>
                   <Tree
                     defaultCheckedKeys={state.cacheColumnOptionsCheckedList}
                     checkedKeys={state.columnOptionsCheckedList}
