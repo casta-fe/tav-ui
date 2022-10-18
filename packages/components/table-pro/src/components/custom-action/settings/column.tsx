@@ -571,7 +571,7 @@ export default defineComponent({
                 </div>
               ),
               content: () => (
-                <TaScrollbar backTop={true} backTopVisibilityHeight={80}>
+                <TaScrollbar backTopVisibilityHeight={80}>
                   <Tree
                     defaultCheckedKeys={state.cacheColumnOptionsCheckedList}
                     checkedKeys={state.columnOptionsCheckedList}
