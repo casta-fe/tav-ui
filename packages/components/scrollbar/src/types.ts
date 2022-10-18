@@ -53,6 +53,7 @@ export const scrollbarProps = {
     type: String,
     default: 'div',
   },
+  backTopVisibilityHeight: Number,
 }
 
 export type ScrollbarProps = ExtractPropTypes<typeof scrollbarProps>

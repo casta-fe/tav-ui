@@ -11,6 +11,7 @@ import {
   unref,
 } from 'vue'
 import { addResizeListener, removeResizeListener } from '@tav-ui/utils/event/index'
+import Button from '@tav-ui/components/button'
 import Bar from './bar'
 import { scrollbarProps } from './types'
 import { toObject } from './util'
@@ -18,7 +19,7 @@ import type { Emitter } from '@tav-ui/utils'
 
 export default defineComponent({
   name: 'TaScrollbar',
-  components: { Bar },
+  components: { Bar, Button },
   inheritAttrs: false,
   props: scrollbarProps,
   setup(props) {
@@ -28,6 +29,7 @@ export default defineComponent({
     const moveY = ref(0)
     const wrap = ref<any>({})
     const resize = ref()
+    const isBackTopShow = ref<boolean>(false)
 
     provide('scroll-bar-wrap', wrap)
 
@@ -41,6 +43,12 @@ export default defineComponent({
       if (!props.native) {
         moveY.value = (unref(wrap).scrollTop * 100) / unref(wrap).clientHeight
         moveX.value = (unref(wrap).scrollLeft * 100) / unref(wrap).clientWidth
+
+        if (props.backTopVisibilityHeight && moveY.value > props.backTopVisibilityHeight) {
+          isBackTopShow.value = true
+        } else {
+          isBackTopShow.value = false
+        }
       }
     }
 
@@ -51,6 +59,10 @@ export default defineComponent({
 
       sizeHeight.value = heightPercentage < 100 ? `${heightPercentage}%` : ''
       sizeWidth.value = widthPercentage < 100 ? `${widthPercentage}%` : ''
+    }
+
+    const handleBackTopClick = () => {
+      unref(wrap).scrollTop = 0
     }
 
     onMounted(() => {
@@ -86,6 +98,8 @@ export default defineComponent({
       resize,
       update,
       handleScroll,
+      isBackTopShow,
+      handleBackTopClick,
     }
   },
 })
@@ -100,6 +114,30 @@ export default defineComponent({
     >
       <component :is="tag" ref="resize" :class="['scrollbar__view', viewClass]" :style="viewStyle">
         <slot />
+        <Button
+          v-if="isBackTopShow"
+          type="text"
+          pre-icon="ant-design:vertical-align-top-outlined"
+          :icon-size="18"
+          style="
+            min-width: auto;
+            position: absolute;
+            right: 15px;
+            bottom: 7px;
+            width: 30px;
+            height: 30px !important;
+            overflow: hidden;
+            color: #fff;
+            background-color: #00000073;
+            border-radius: 50%;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          @click="handleBackTopClick"
+        />
       </component>
     </div>
     <template v-if="!native">

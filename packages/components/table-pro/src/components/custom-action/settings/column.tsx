@@ -26,6 +26,7 @@ import type {
 
 interface IState {
   isInit: boolean
+  visible: boolean
   checkAll: boolean
   indeterminate: boolean
   columnOptions: ColumnOption[]
@@ -66,6 +67,8 @@ export default defineComponent({
     const state = reactive<IState>({
       /** 判断table数据是否加载完毕 */
       isInit: false,
+      /** popver 显示或隐藏 */
+      visible: false,
       /** 全选控制 */
       checkAll: true,
       /** 全选样式控制 */
@@ -334,6 +337,7 @@ export default defineComponent({
       )
       if (api) {
         await api(params)
+        state.visible = false
       }
     }
 
@@ -407,15 +411,10 @@ export default defineComponent({
         }
       }
 
-      // Find dragObject
-      // let dragObj: TreeDataItem = {
-      //   value: '',
-      //   key: '',
-      // }
-      // loop(data, dragKey, (item: TreeDataItem, index: number, arr: TreeDataItem[]) => {
-      //   arr.splice(index, 1)
-      //   dragObj = item
-      // })
+      if (!info.dropToGap) {
+        createMessage.warning('不允许合并列')
+        return
+      }
 
       if (!info.dropToGap) {
         // Drop on the content
@@ -492,6 +491,8 @@ export default defineComponent({
     }
 
     function handleColumnClick(e: Event) {
+      state.visible = true
+      handleColumnVisibleChange()
       if (isObject(props.config?.column) && props.config?.column.handleAction)
         props.config?.column.handleAction(e)
     }
@@ -537,7 +538,7 @@ export default defineComponent({
           <Popover
             placement="bottomLeft"
             trigger="click"
-            onVisibleChange={handleColumnVisibleChange}
+            visible={state.visible}
             overlayClassName={`column-popver`}
             getPopupContainer={getPopupContainer}
           >
@@ -570,7 +571,7 @@ export default defineComponent({
                 </div>
               ),
               content: () => (
-                <TaScrollbar>
+                <TaScrollbar backTop={true} backTopVisibilityHeight={80}>
                   <Tree
                     defaultCheckedKeys={state.cacheColumnOptionsCheckedList}
                     checkedKeys={state.columnOptionsCheckedList}

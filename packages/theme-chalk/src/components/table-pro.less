@@ -401,14 +401,33 @@
           padding-left: 0;
           padding-right: 0;
           height: 300px;
+
+          .scroll-back-top {
+            position: fixed;
+            bottom: 40px;
+            right: 15px;
+            padding: 6px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            pointer-events: all;
+            border-radius: 50%;
+            z-index: 2;
+            background-color: #ccc;
+            user-select: none;
+          }
         }
 
         .ant-checkbox-group {
           width: 100%;
         }
 
-        .ant-tree > li:first-child {
-          padding-top: 0;
+        .ant-tree > li {
+          padding-right: 60px;
+
+          &:first-child {
+            padding-top: 0;
+          }
         }
 
         &-tree-option {
