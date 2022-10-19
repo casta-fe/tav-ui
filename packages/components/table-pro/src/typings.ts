@@ -1,8 +1,8 @@
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
-import type { VxeGridPropTypes } from 'vxe-table'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
-import type { CSSProperties, Ref } from 'vue'
+import type { CSSProperties, ComputedRef, Ref } from 'vue'
+import type { VxeGridPropTypes } from 'vxe-table'
 import type { TableProColumn } from './types'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
@@ -33,6 +33,7 @@ export interface TableProCustomActionConfig {
   export?: CustomAction | boolean
   refresh?: CustomAction | boolean
   column?: CustomAction | boolean
+  statistical?: CustomAction | boolean
 }
 
 export type VxeQueryParams = VxeGridPropTypes.ProxyAjaxQueryParams
@@ -131,4 +132,5 @@ export interface CustomActionRef {
   importRef: null
   exportRef: null
   settingsRef: Ref<CustomActionSetting>
+  actionRef: Ref<ComputedRef>
 }

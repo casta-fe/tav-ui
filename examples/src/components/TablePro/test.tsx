@@ -1,8 +1,8 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from '@tav-ui/components/button'
 import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import Button from '@tav-ui/components/button'
 import { columns2, filterForm2 } from './data'
 import type {
   ITableProInstance,
@@ -56,6 +56,11 @@ export default defineComponent({
         },
       },
       refresh: true,
+      statistical: {
+        handleAction: (params) => {
+          console.log(params)
+        },
+      },
       column: true,
     })
 
@@ -169,7 +174,7 @@ export default defineComponent({
         <div
           style={{
             width: '80%',
-            height: '968px',
+            height: '100%',
             backgroundColor: '#f6f8ff',
             margin: '0 auto',
             overflow: 'auto',
@@ -188,6 +193,7 @@ export default defineComponent({
               loading={loading.value}
               // filterFormConfig={handleFilterFormConfig()}
               filterFormConfig={state.filterFormConfig}
+              // filterFormConfig={{ enabled: false }}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
               api={handleApi}
@@ -197,7 +203,7 @@ export default defineComponent({
               fillInner={false}
             >
               {{
-                // filterForm: () => (<div>123</div>),
+                // filterForm: () => <div>123</div>,
                 customAction: () => (
                   <>
                     <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
@@ -213,6 +219,9 @@ export default defineComponent({
                 //   {customerType}
                 //   </>
                 // )
+                statisticalList: () => (
+                  <div style={{ height: '200px', backgroundColor: '#ccc' }}>12</div>
+                ),
               }}
             </TaTablePro>
           </div>

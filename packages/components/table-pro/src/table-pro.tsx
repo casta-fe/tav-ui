@@ -2,6 +2,7 @@ import { computed, defineComponent, ref, toRefs, unref } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+// import TaCollapseTransition from '@tav-ui/components/transition'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
@@ -92,7 +93,7 @@ export default defineComponent({
     useDataSource(getProps, tableRef)
 
     // 执行dom监听的处理
-    useWatchDom(getProps, tableRef, tableEmitter)
+    useWatchDom(getProps, tableRef, customActionRef, tableEmitter)
 
     // 注入数据
     createTableContext({ tableRef, tableEmitter, tablePropsRef: getBindValues, columnApiOptions })
@@ -112,6 +113,15 @@ export default defineComponent({
         },
       ]
     })
+
+    // 统计面板
+    const statisticalShow = ref(false)
+    const triggerStatistical = () => {
+      statisticalShow.value = !statisticalShow.value
+      setTimeout(() => {
+        setHeight()
+      }, 0)
+    }
 
     // components
     function createOperation() {
@@ -138,7 +148,13 @@ export default defineComponent({
             config={values.customActionConfig}
             tableRef={tableRef}
             tableSlots={slots}
+            onTriggerStatistical={triggerStatistical}
           />
+          {/* <TaCollapseTransition> */}
+          <div v-show={statisticalShow.value} class={`${ComponentOperationsPrefixCls}-statistical`}>
+            {slots?.statisticalList?.()}
+          </div>
+          {/* </TaCollapseTransition> */}
         </div>
       ) : null
     }
@@ -153,7 +169,7 @@ export default defineComponent({
     })
 
     return () => {
-      console.log(getBindValues)
+      // console.log(getBindValues)
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
           {createOperation()}

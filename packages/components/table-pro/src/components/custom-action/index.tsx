@@ -4,7 +4,7 @@ import { isObject } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentCustomActionName } from '../../const'
 import { useTableContext } from '../../hooks/useTableContext'
 import Settings from './settings'
-import type { PropType, Ref, Slots } from 'vue'
+import type { ComputedRef, PropType, Ref, Slots } from 'vue'
 import type { TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig } from '../../typings'
 
@@ -25,8 +25,10 @@ const props = {
 export default defineComponent({
   name: ComponentCustomActionName,
   props,
-  setup(props, { expose }) {
+  emits: ['triggerStatistical'],
+  setup(props, { emit, expose }) {
     const settingsRef = ref<CustomActionSetting | null>(null)
+    const actionRef = ref<ComputedRef | null>(null)
     const { tableEmitter } = useTableContext()
 
     const state = reactive({
@@ -38,6 +40,25 @@ export default defineComponent({
     })
 
     const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
+
+    // 统计按钮配置
+    const handleStatistical = (e: Event) => {
+      emit('triggerStatistical')
+      if (isObject(props.config?.statistical) && props.config?.statistical.handleAction)
+        props.config?.statistical.handleAction(e)
+    }
+    const statisticalButton = () =>
+      props.config?.statistical ? (
+        <Button
+          class={`${ComponentPrefixCls}-btn statistical`}
+          type="primary"
+          preIcon={'ant-design:calculator-outlined'}
+          onClick={handleStatistical}
+          permission={getPermission(props.config?.statistical)}
+        >
+          统计
+        </Button>
+      ) : null
 
     // 新增按钮配置
     const handleAdd = (e: Event) => {
@@ -130,11 +151,13 @@ export default defineComponent({
       importRef: null,
       exportRef: null,
       settingsRef,
+      actionRef,
     })
 
     return () => {
       return props.config?.enabled ? (
-        <div class={ComponentPrefixCls}>
+        <div class={ComponentPrefixCls} ref={actionRef}>
+          {statisticalButton()}
           {addButton()}
           {deleteButton()}
           {props.tableSlots?.customAction?.()}
