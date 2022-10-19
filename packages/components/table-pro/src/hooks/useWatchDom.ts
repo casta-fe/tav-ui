@@ -120,7 +120,7 @@ function useDataTableProObserver(
 export function useWatchDom(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
-  customActionRef: Ref<CustomActionRef | null>,
+  customActionRef: Ref<any | null>,
   tableEmitter: Emitter
 ) {
   watchEffect(() => {
