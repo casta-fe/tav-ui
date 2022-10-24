@@ -1,9 +1,10 @@
-import { defineComponent, nextTick, ref } from 'vue'
+import { computed, defineComponent, nextTick, ref } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { Popover } from 'ant-design-vue'
 import { TaButton, TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
 import type {
@@ -48,6 +49,20 @@ export const FileBranch = defineComponent({
 
     const loading = ref(true)
     const dataSource = ref([])
+    const computedTableHeight = computed(() => {
+      // 表格显示的行数(加上表头一行)
+      let lineCount = dataSource.value.length + 1
+
+      if (lineCount > 8) {
+        return '400px'
+      }
+
+      if (lineCount < 5) {
+        lineCount++
+      }
+
+      return `${DEFAULT_LINE_HEIGTH * lineCount}px`
+    })
     // 文件预览
     const showPreview = ref(false)
     const previewRecord = ref<FileItemType[]>([])
@@ -204,7 +219,12 @@ export const FileBranch = defineComponent({
               </div>
             ),
             content: () => (
-              <div style="width:800px; height:400px">
+              <div
+                style={{
+                  width: '840px',
+                  height: computedTableHeight.value,
+                }}
+              >
                 <TaTablePro
                   pagerConfig={{ enabled: false }}
                   showOperations={false}

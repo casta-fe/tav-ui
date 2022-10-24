@@ -350,7 +350,7 @@ export const taUploadProvideData: Partial<
     new Promise((r) =>
       setTimeout(
         r.bind(null, {
-          data: uploadArr,
+          data: Math.random() > 0.5 ? uploadArr.slice(0, 2) : uploadArr,
         }),
         900
       )

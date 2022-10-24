@@ -1,6 +1,7 @@
 import { computed, defineComponent, ref, unref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
+import { Cell } from '@tav-ui/components/table-pro/src/components/cell'
 import { getActionColumnMaxWidth, useFileTypeCode } from '../hooks'
 import { UpdateTypeForm } from '../components/UpdateTypeForm'
 import { UpdateNameForm } from './UpdateNameForm'
@@ -209,24 +210,29 @@ export const PreviewTable = defineComponent({
                 row.hyperlink != 1
                   ? [
                       // 普通文件
-                      <span>{row.fullName}</span>,
+                      <Cell column={{ field: 'fullName' }} type="body">
+                        <span>{row.fullName}</span>,
+                      </Cell>,
                     ]
                   : [
-                      // 超链接
-                      <span>{row.name}</span>,
-                      <br />,
-                      <a
-                        onClick={() => {
-                          window
-                            .open(row.address.includes('//') ? row.address : `//${row.address}`)
-                            ?.focus()
-                          setTimeout(() => {
-                            clearEdit()
-                          }, 0)
-                        }}
-                      >
-                        {row.address}
-                      </a>,
+                      <Cell column={{ field: 'fullName' }} type="body">
+                        {/* // 超链接 */}
+                        {/* eslint-disable-next-line no-irregular-whitespace */}
+                        <span>{row.name}</span>　
+                        <br />
+                        <a
+                          onClick={() => {
+                            window
+                              .open(row.address.includes('//') ? row.address : `//${row.address}`)
+                              ?.focus()
+                            setTimeout(() => {
+                              clearEdit()
+                            }, 0)
+                          }}
+                        >
+                          {row.address}
+                        </a>
+                      </Cell>,
                     ]
 
               if (currentEditCellIsLoading.value) {
@@ -290,7 +296,11 @@ export const PreviewTable = defineComponent({
                 }
               }
 
-              return res
+              return [
+                <Cell column={{ field: 'fullName' }} type="body">
+                  {...res}
+                </Cell>,
+              ]
             },
           },
         },
