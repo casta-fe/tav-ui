@@ -39,6 +39,7 @@ export const FileBranch = defineComponent({
     >,
     getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
     onShowPopover: Function,
+    width: { type: String, default: '840px' },
   },
   setup(props, { expose }) {
     const { createMessage } = useMessage()
@@ -221,7 +222,7 @@ export const FileBranch = defineComponent({
             content: () => (
               <div
                 style={{
-                  width: '840px',
+                  width: props.width,
                   height: computedTableHeight.value,
                 }}
               >

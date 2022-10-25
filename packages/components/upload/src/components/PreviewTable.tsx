@@ -314,6 +314,7 @@ export const PreviewTable = defineComponent({
               <>
                 {row.hyperlink === 0 ? (
                   <FileBranch
+                    width={taTableProInstanceRef.value?.instance?.$el?.offsetWidth || undefined}
                     onShowPopover={() => {
                       hidePopoverRefs.forEach((el) => {
                         el.value.hidePopover?.()
