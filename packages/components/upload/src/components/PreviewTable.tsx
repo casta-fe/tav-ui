@@ -1,7 +1,7 @@
 import { computed, defineComponent, ref, unref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
-import { Cell } from '@tav-ui/components/table-pro/src/components/cell'
+import { Cell } from '../../../table-pro/src/components/cell'
 import { getActionColumnMaxWidth, useFileTypeCode } from '../hooks'
 import { UpdateTypeForm } from '../components/UpdateTypeForm'
 import { UpdateNameForm } from './UpdateNameForm'
@@ -120,19 +120,6 @@ export const PreviewTable = defineComponent({
           })
 
       return options
-    })
-
-    const customOptions = ref(
-      (props.customOptions ??
-        (props.moduleCode ? props.handler.typeCodeRecord?.[props.moduleCode] : undefined) ??
-        []) as any
-    )
-
-    props.handler?.apis?.queryFileType?.([props.moduleCode]).then((r) => {
-      customOptions.value = r.data.map((el) => ({
-        label: el.name,
-        value: el.code,
-      }))
     })
 
     const getActionColumn = computed<TableProColumn[]>(() => {
@@ -275,7 +262,7 @@ export const PreviewTable = defineComponent({
                       .finally(() => (currentEditCellIsLoading.value = false))
                   }}
                   handler={props.handler}
-                  customOptions={customOptions.value}
+                  customOptions={typeCodeOptions.value}
                 />,
               ]
             },
