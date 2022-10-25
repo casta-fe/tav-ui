@@ -38,7 +38,7 @@ function showCellTooltip(
     } else {
       instance = instances.get(id)
     }
-    isCellOverflow && instance?.showTooltip()
+    isCellOverflow && instance?.showTooltip(el)
   }
 }
 

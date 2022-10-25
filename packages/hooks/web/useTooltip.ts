@@ -66,9 +66,10 @@ export const $Tooltip = (el: HTMLElement, props: any) => {
     })
   }
 
-  function showTooltip() {
+  function showTooltip(newEl?: HTMLElement) {
     setTimeout(() => {
       document.body.appendChild(tooltipEl)
+      newEl && (el = newEl)
       update()
     }, props.delay)
   }
