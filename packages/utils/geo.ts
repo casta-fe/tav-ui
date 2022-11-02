@@ -15254,7 +15254,6 @@ export function getAddressByCodeList(_data) {
   _data.forEach((item, index) => {
     const sameOption = optionsList.filter((aitem) => aitem.value == item)[0]
     if (!sameOption) {
-      // console.log("异常");
       return
     }
     const children = sameOption && sameOption.children

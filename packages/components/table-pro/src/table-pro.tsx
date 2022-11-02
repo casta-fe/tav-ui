@@ -169,7 +169,6 @@ export default defineComponent({
     })
 
     return () => {
-      // console.log(getBindValues)
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
           {createOperation()}
