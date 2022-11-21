@@ -37,6 +37,7 @@ import { TaUpload } from '@tav-ui/components/upload'
 import { TaVerify, TaVerifyRotate } from '@tav-ui/components/verify'
 import { TaVirtualScroll } from '@tav-ui/components/virtual-scroll'
 import { TaCountButton } from '@tav-ui/components/count-button'
+import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
 
 import type { Plugin } from 'vue'
 
@@ -86,4 +87,5 @@ export default [
   TaVerifyRotate,
   TaVirtualScroll,
   TaCountButton,
+  TaCascadeProSelect,
 ] as Plugin[]
