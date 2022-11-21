@@ -87,12 +87,37 @@ import { defineComponent } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import type { FormSchema } from '@tav-ui/components/form'
-const aaaaa = [
-  { label: '用户1', value: 99 },
-  { label: '用户2', value: 100 },
-  { label: '用户3', value: 3 },
-]
+// const aaaaa = [
+//   { label: '用户1', value: 99 },
+//   { label: '用户2', value: 100 },
+//   { label: '用户3', value: 3 },
+// ]
 const schemas: FormSchema[] = [
+  {
+    field: 'field0',
+    component: 'CascadeProSelect',
+    label: '字段0',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      // placeholder: '自定义placeholder',
+      // firstLetterTitle: 'aaa',
+      // generateHotList: (options) => {
+      //   return options
+      // }
+      defaultValue: [
+        {
+          city: '130100',
+          cityName: '石家庄市',
+          district: '130104',
+          districtName: '桥西区',
+          province: '130000',
+          provinceName: '河北省',
+        },
+      ],
+    },
+  },
   {
     field: 'field1',
     component: 'MemberSelect',
@@ -251,10 +276,13 @@ export default defineComponent({
       actionColOptions: {
         span: 24,
       },
+      showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
     setTimeout(() => {
-      setFieldsValue({ field1: 99 })
+      setFieldsValue({
+        field1: 99,
+      })
     }, 500)
     async function handleLoad() {
       const promiseFn = function () {

@@ -24,6 +24,7 @@ import { TaStrengthMeter as StrengthMeter } from '@tav-ui/components/strength-me
 import IconPicker from '@tav-ui/components/icon-picker'
 import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
 import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
+import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
 import ApiSelect from './components/ApiSelect.vue'
 import FormTitle from './components/FormTitle.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
@@ -78,6 +79,7 @@ add('SearchableApiSelect', SearchableApiSelect)
 add('TagSelect', TagSelect)
 add('YearPicker', YearPicker)
 add('InputNumberRange', TaInputNumberRange)
+add('CascadeProSelect', TaCascadeProSelect)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)
@@ -123,8 +125,10 @@ editableComponentTimeTypeMap.set('MonthPicker', DatePicker.MonthPicker)
 editableComponentTimeTypeMap.set('RangePicker', DatePicker.RangePicker)
 editableComponentTimeTypeMap.set('WeekPicker', DatePicker.WeekPicker)
 editableComponentTimeTypeMap.set('TimePicker', TimePicker)
+
 const editableComponentOtherTypeMap = new Map<EditableComponentType, Component>()
 editableComponentOtherTypeMap.set('InputNumberRange', TaInputNumberRange)
+editableComponentOtherTypeMap.set('CascadeProSelect', TaCascadeProSelect)
 
 /* EditableTableForm 支持组件列表 ----------  end  ---------- */
 

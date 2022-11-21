@@ -117,6 +117,7 @@ export type ComponentType =
   | 'TagSelect'
   | 'YearPicker'
   | 'InputNumberRange'
+  | 'CascadeProSelect'
 
 export type EditableComponentType =
   | 'Input'
@@ -154,3 +155,4 @@ export type EditableComponentType =
   | 'TagSelect'
   | 'YearPicker'
   | 'InputNumberRange'
+  | 'CascadeProSelect'
