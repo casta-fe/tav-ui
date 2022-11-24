@@ -35,9 +35,6 @@ export default defineComponent({
   setup(props, { emit, expose }) {
     const { /*hot,*/ options, selectRecords, fields } = useCascadeProContext()
     const selectedHots = ref<CascadeProOption[]>([])
-    const list = ref<CascadeProOption[]>(
-      props.generateHotList(unref(options).list, props.hotKeyWords)
-    )
 
     const cascadeProHot = computed(() => {
       return {
@@ -94,6 +91,13 @@ export default defineComponent({
       selectedHots.value = []
     }
 
+    const filterFromHots = (options: CascadeProOption[]) => {
+      const currentAllHots = unref(cascadeProHot).list
+      return options.filter(
+        (option) => !!currentAllHots.find((_option) => _option.idPath === option.idPath)
+      )
+    }
+
     expose({
       handleHotClearAll,
     })
@@ -103,11 +107,15 @@ export default defineComponent({
       (newSelectRecords, oldSelectRecords) => {
         if (newSelectRecords.length === 0) handleHotClearAll()
 
+        if (newSelectRecords && unref(selectedHots).length === 0) {
+          selectedHots.value = [...filterFromHots(newSelectRecords)]
+        }
+
         if (newSelectRecords && oldSelectRecords) {
           const { added, deleted } = getAddAndDeleteOptions(newSelectRecords, oldSelectRecords)
 
           if (added.length > 0) {
-            selectedHots.value = [...unref(selectedHots), ...added]
+            selectedHots.value = [...unref(selectedHots), ...filterFromHots(added)]
           }
 
           if (deleted.length > 0) {

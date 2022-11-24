@@ -194,6 +194,7 @@ export default defineComponent({
       }
 
       await nextTick()
+
       if (
         unref(defaultValue).selectRecord.id !== '' &&
         unref(defaultValue).selectRecord.idPath !== ''

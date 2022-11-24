@@ -12,7 +12,7 @@ export const DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG: Record<string, any> = {
 }
 
 /** 默认为地址数据 */
-export const DEFAULT_HOT: string[] = ['北京', '上海', '广州', '深圳', '天津', '杭州']
+export const DEFAULT_HOT: string[] = ['北京市', '上海', '广州', '深圳', '天津', '杭州']
 
 /** 默认为地址数据 */
 export const DEFAULT_CASCADE_PRO_PLACEHOLDER = '请输入地址'

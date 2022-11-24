@@ -187,12 +187,11 @@ export function getDefaultValue(
 
       for (let i = 0; i < fields.length; i++) {
         const key = fields[i]
-        idPath = idPath ? `${idPath}-${option[key]}` : option[key]
-        namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
-
-        if (i === fields.length - 1) {
+        if (option[key]) {
           name = option[`${key}Name`]
           id = option[key]
+          idPath = idPath ? `${idPath}-${option[key]}` : option[key]
+          namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
         }
       }
 
