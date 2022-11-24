@@ -4,7 +4,8 @@
       v-for="cascade in cascadeProHot.list"
       :key="cascade.id"
       :checked="
-        selectedHots.filter((selectedCascade) => selectedCascade.id === cascade.id).length > 0
+        selectedHots.filter((selectedCascade) => selectedCascade.idPath === cascade.idPath).length >
+        0
       "
       @change="(checked) => handleHotChange(cascade, checked)"
     >
@@ -32,7 +33,7 @@ export default defineComponent({
   props: cascadeProHotProps,
   emits: ['change'],
   setup(props, { emit, expose }) {
-    const { /*hot,*/ options, selectRecords } = useCascadeProContext()
+    const { /*hot,*/ options, selectRecords, fields } = useCascadeProContext()
     const selectedHots = ref<CascadeProOption[]>([])
     const list = ref<CascadeProOption[]>(
       props.generateHotList(unref(options).list, props.hotKeyWords)
@@ -45,28 +46,41 @@ export default defineComponent({
       }
     })
 
-    const handleHotChange = (cascade: CascadeProOption, checked: boolean) => {
-      const nextSelectedHots = checked
-        ? [...unref(selectedHots), cascade]
-        : unref(selectedHots).filter((selectedCascade) => selectedCascade.idPath !== cascade.idPath)
-
+    const getAddAndDeleteOptions = (
+      newOptions: CascadeProOption[],
+      oldOptions: CascadeProOption[]
+    ) => {
       const added: CascadeProOption[] = []
       const deleted: CascadeProOption[] = []
-      if (nextSelectedHots.length > unref(selectedHots).length) {
-        nextSelectedHots.forEach((hot) => {
-          const isExist = unref(selectedHots).find((_hot) => _hot.idPath === hot.idPath)
+      if (newOptions.length > oldOptions.length) {
+        newOptions.forEach((hot) => {
+          const isExist = oldOptions.find((_hot) => _hot.idPath === hot.idPath)
           if (!isExist) {
             added.push(hot)
           }
         })
       } else {
-        unref(selectedHots).forEach((hot) => {
-          const isExist = nextSelectedHots.find((_hot) => _hot.idPath === hot.idPath)
+        oldOptions.forEach((hot) => {
+          const isExist = newOptions.find((_hot) => _hot.idPath === hot.idPath)
           if (!isExist) {
-            deleted.push(hot)
+            const isLastField = hot.idPath.split('-').length === unref(fields).length
+            deleted.push({ ...hot, type: isLastField ? 'lastField' : 'middleField' })
           }
         })
       }
+
+      return {
+        added,
+        deleted,
+      }
+    }
+
+    const handleHotChange = (cascade: CascadeProOption, checked: boolean) => {
+      const nextSelectedHots = checked
+        ? [...unref(selectedHots), cascade]
+        : unref(selectedHots).filter((selectedCascade) => selectedCascade.idPath !== cascade.idPath)
+
+      const { added, deleted } = getAddAndDeleteOptions(nextSelectedHots, unref(selectedHots))
 
       selectedHots.value = nextSelectedHots
 
@@ -85,22 +99,32 @@ export default defineComponent({
     })
 
     watch(
-      () => unref(selectRecords).length,
-      () => {
-        if (unref(selectRecords).length === 0) handleHotClearAll
+      () => unref(selectRecords),
+      (newSelectRecords, oldSelectRecords) => {
+        if (newSelectRecords.length === 0) handleHotClearAll()
 
-        if (unref(selectRecords).length > 0) {
-          unref(list).forEach((option) => {
-            const target = unref(selectRecords).find((_option) => _option.idPath === option.idPath)
-            const isExist = unref(selectedHots).find((_option) => _option.idPath === option.idPath)
-            if (target && !isExist) {
-              selectedHots.value = [...unref(selectedHots), target]
-            }
-          })
+        if (newSelectRecords && oldSelectRecords) {
+          const { added, deleted } = getAddAndDeleteOptions(newSelectRecords, oldSelectRecords)
+
+          if (added.length > 0) {
+            selectedHots.value = [...unref(selectedHots), ...added]
+          }
+
+          if (deleted.length > 0) {
+            const remainHots = unref(selectedHots).filter((option) => {
+              if (deleted.find((_option) => _option.idPath === option.idPath)) {
+                return false
+              }
+              return true
+            })
+
+            selectedHots.value = [...unref(remainHots)]
+          }
         }
       },
       {
-        immediate: true,
+        // immediate: true,
+        deep: true,
       }
     )
 

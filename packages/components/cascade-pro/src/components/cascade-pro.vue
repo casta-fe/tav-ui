@@ -142,7 +142,7 @@ export default defineComponent({
 
       if (info.deleted && info.deleted.length > 0) {
         for (let i = 0; i < info.deleted.length; i++) {
-          unref(selectResultRef)?.handleClear(info.deleted[i])
+          unref(selectResultRef)?.handleClear(info.deleted[i], info.deleted[i].type)
           await nextTick()
         }
       }

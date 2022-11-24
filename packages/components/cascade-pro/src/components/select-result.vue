@@ -30,7 +30,7 @@ import type { CascadeProOption } from '../types'
 import type { Ref } from 'vue'
 
 export interface CascadeProSelectResultInstance {
-  handleClear: (option: CascadeProOption) => void
+  handleClear: (option: CascadeProOption, type?: 'middleField' | 'lastField') => void
   options: Ref<CascadeProOption[]>
 }
 
@@ -78,7 +78,8 @@ export default defineComponent({
 
     const filterOptionsByOptionRecursive = (
       target: CascadeProOption,
-      result: CascadeProOption[]
+      result: CascadeProOption[],
+      type: 'middleField' | 'lastField'
     ) => {
       // 去重
       if (!result.find((option) => option.idPath === target.idPath)) {
@@ -86,11 +87,21 @@ export default defineComponent({
       }
 
       // option.idPath.split("-").length === target.idPath.split("-").length - 1 是为了兼容北京与北京市id相同的情况
-      const filterResult = unref(selectRecords).filter(
-        (option) =>
-          option.id === target.pid &&
-          option.idPath.split('-').length === target.idPath.split('-').length - 1
-      )
+      // lastField 指的是一级一级正向按顺序选择数据的情况（只需一层一层反向找父级），middleField 是兼容hot组件，直接跨级选择数据的情况（不仅找父级还得找子级别）
+      const filterResult =
+        type === 'lastField'
+          ? unref(selectRecords).filter(
+              (option) =>
+                option.id === target.pid &&
+                option.idPath.split('-').length === target.idPath.split('-').length - 1
+            )
+          : unref(selectRecords).filter(
+              (option) =>
+                (option.id === target.pid &&
+                  option.idPath.split('-').length === target.idPath.split('-').length - 1) ||
+                (option.pid === target.id &&
+                  option.idPath.split('-').length === target.idPath.split('-').length + 1)
+            )
       if (filterResult.length > 0) {
         // option.idPath.split("-").length === target.idPath.split("-").length 是为了兼容北京与北京市id相同的情况
         const isOtherSameLevelRecord =
@@ -108,14 +119,17 @@ export default defineComponent({
               result.push(option)
             }
           })
-          filterOptionsByOptionRecursive(filterResult[0], result)
+          filterOptionsByOptionRecursive(filterResult[0], result, type)
         }
       }
     }
 
-    const handleClear = (option: CascadeProOption) => {
+    const handleClear = (
+      option: CascadeProOption,
+      type: 'middleField' | 'lastField' = 'lastField'
+    ) => {
       const shouldDeleteSelectRecords: CascadeProOption[] = []
-      filterOptionsByOptionRecursive(option, shouldDeleteSelectRecords)
+      filterOptionsByOptionRecursive(option, shouldDeleteSelectRecords, type)
       const remainSelectRecords = unref(selectRecords).filter((option) => {
         if (shouldDeleteSelectRecords.find((_option) => _option.idPath === option.idPath)) {
           return false

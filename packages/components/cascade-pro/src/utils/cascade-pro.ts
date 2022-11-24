@@ -180,26 +180,19 @@ export function getDefaultValue(
   if (defaultValue && defaultValue.length > 0) {
     const selectRecords = defaultValue.map((option) => {
       let name = ''
-      let originName = ''
       let id = ''
-      let originId = ''
       let pid = ''
       let idPath = ''
       let namePath = ''
 
-      for (let i = fields.length - 1; i >= 0; i--) {
+      for (let i = 0; i < fields.length; i++) {
         const key = fields[i]
-        id = option[key] || ''
-        name = option[`${key}Name`] || ''
-        idPath = idPath ? `${id}-${idPath}` : id
-        namePath = namePath ? `${name}-${namePath}` : name
+        idPath = idPath ? `${idPath}-${option[key]}` : option[key]
+        namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
 
-        if (i > 0) {
-          if (id) originId = id
-          if (name) originName = name
-        } else {
-          if (!originId) originId = id
-          if (!originName) originName = name
+        if (i === fields.length - 1) {
+          name = option[`${key}Name`]
+          id = option[key]
         }
       }
 
@@ -209,8 +202,8 @@ export function getDefaultValue(
         : ''
 
       return {
-        name: originName,
-        id: originId,
+        name,
+        id,
         pid,
         idPath,
         namePath,

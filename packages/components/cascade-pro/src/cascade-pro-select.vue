@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, ref, unref, watch } from 'vue'
 import { Tag } from 'ant-design-vue'
 import Modal from '@tav-ui/components/modal'
 import Button from '@tav-ui/components/button'
@@ -43,44 +43,13 @@ export default defineComponent({
   props: cascadeProSelectProps,
   emits: ['change'],
   setup(props, { attrs, emit }) {
-    setTimeout(() => {
-      console.log(props.value)
-    }, 1500)
     const cascadeProRef = ref<CascadeProInstance | null>(null)
-
     const visible = ref<boolean>(false)
     const selectValue = ref<CascadeProOption[]>([])
     const selectDefaultValue = ref<CascadeProOption[]>(props.value)
 
-    const handleConfirm = async () => {
-      const result = (unref(cascadeProRef)?.selectResultRef?.options || []) as CascadeProOption[]
-
-      selectValue.value = unref(result).map((option) => {
-        const temp: CascadeProOption = { ...option }
-        for (const [k, v] of Object.entries(DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG)) {
-          if (option[k]) {
-            temp[v] = option[k]
-          }
-        }
-
-        const idPathSplitResult = temp.idPath.split('-')
-        const namePathSplitResult = temp.namePath.split('-')
-        for (let i = 0; i < props.fields.length; i++) {
-          const key = props.fields[i]
-          temp[key] = idPathSplitResult[i]
-          temp[`${key}Name`] = namePathSplitResult[i]
-        }
-        return temp
-      })
-
-      await nextTick()
-
-      selectDefaultValue.value = unref(selectValue)
-      handleCancel()
-    }
-
-    const selectOptions = computed(() => {
-      if (unref(selectValue).length > props.maxTagCount) {
+    const handleFormItemResult = (options: CascadeProOption[]) => {
+      if (unref(options).length > props.maxTagCount) {
         const rest = unref(selectValue).slice(0, props.maxTagCount)
         const ellipse: CascadeProOption = {
           id: 'cascade-prop-ellipse',
@@ -92,7 +61,63 @@ export default defineComponent({
         return [...rest, ellipse]
       }
 
-      return unref(selectValue)
+      return unref(options)
+    }
+
+    const handleSelectResult = (options: CascadeProOption[], type: 'inner' | 'outer' = 'inner') => {
+      if (type === 'inner') {
+        return unref(options).map((option) => {
+          const temp: CascadeProOption = { ...option }
+          for (const [k, v] of Object.entries(DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG)) {
+            if (option[k]) {
+              temp[v] = option[k]
+            }
+          }
+
+          const idPathSplitResult = temp.idPath.split('-')
+          const namePathSplitResult = temp.namePath.split('-')
+          for (let i = 0; i < props.fields.length; i++) {
+            const key = props.fields[i]
+            temp[key] = idPathSplitResult[i]
+            temp[`${key}Name`] = namePathSplitResult[i]
+          }
+          return temp
+        })
+      } else {
+        return unref(options).map((option) => {
+          const temp: CascadeProOption = { ...option }
+          const fields = props.fields
+          let idPath = ''
+          let namePath = ''
+          for (let i = 0; i < fields.length; i++) {
+            const field = fields[i]
+            if (option[field]) {
+              idPath = idPath ? `${idPath}-${option[field]}` : option[field]
+              namePath = namePath ? `${namePath}-${option[`${field}Name`]}` : option[`${field}Name`]
+            }
+          }
+
+          return {
+            ...temp,
+            idPath,
+            namePath,
+          }
+        })
+      }
+    }
+
+    const handleConfirm = () => {
+      handleCancel()
+    }
+
+    const selectOptions = computed(() => {
+      if (unref(selectValue).length) {
+        // 内部选中
+        return handleFormItemResult(unref(selectValue))
+      } else {
+        // 外部传入
+        return handleFormItemResult(handleSelectResult(props.value, 'outer'))
+      }
     })
 
     const getBindValue = computed(() => ({
@@ -101,9 +126,15 @@ export default defineComponent({
       defaultValue: selectDefaultValue as any,
     }))
 
-    const handleCancel = () => {
+    const handleCancel = async () => {
       if (!props.disabled) {
         visible.value = false
+
+        const result = (unref(cascadeProRef)?.selectResultRef?.options || []) as CascadeProOption[]
+        selectValue.value = handleSelectResult(result)
+        selectDefaultValue.value = unref(selectValue)
+        await nextTick()
+
         emit('change', unref(selectDefaultValue))
       }
     }
