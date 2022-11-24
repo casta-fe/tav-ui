@@ -89,8 +89,8 @@ export default defineComponent({
       //   },
       // ]
       return getDefaultValue(
-        unref(props.defaultValue),
-        // unref(props.defaultValue || DEFAULT_CASCADE_PRO_SELECT_RECORDS),
+        unref(props.value),
+        // unref(props.value || DEFAULT_CASCADE_PRO_SELECT_RECORDS),
         unref(fields)
       )
     })
@@ -158,13 +158,8 @@ export default defineComponent({
       // console.log('handlePannelOptionClick')
     }
 
-    const handleSearchResultClear = (info: Record<string, any>) => {
-      if (info.type === 'normal') {
-        unref(pannelRef)?.handleFieldClear([info.option])
-      } else {
-        const result = unref(pannelRef)?.result
-        unref(pannelRef)?.handleFieldClear(result![info.idx], info.idx)
-      }
+    const handleSearchResultClear = (newSelectRecords: CascadeProOption[]) => {
+      unref(pannelRef)?.handleFieldClear(newSelectRecords)
     }
 
     const handleSearchResultClearAll = () => {

@@ -79,14 +79,37 @@ export default defineComponent({
       ) : null
     }
 
-    const isAllSelected = (fieldIndex: number) => {
+    const isAllSelected = (options: CascadeProOption[], fieldIndex: number) => {
       const _selectRecord = unref(selectRecord)
       if (!_selectRecord.id && fieldIndex === 0) {
         return true
       } else {
-        return _selectRecord.idPath.split('-').length === fieldIndex
+        if (fieldIndex === 0) {
+          if (unref(selectRecords).length > 0) {
+            return false
+          } else {
+            return true
+          }
+        } else {
+          if (unref(selectRecords).length <= 0) return false
+
+          const optionsIds = options.map((option) => ({
+            current: `-${option.id}`,
+          }))
+          const hasSelectRecords: CascadeProOption[] = []
+          for (let i = 0; i < unref(selectRecords).length; i++) {
+            const selectRecordIdPath = unref(selectRecords)[i].idPath
+            for (let j = 0; j < optionsIds.length; j++) {
+              const { current } = optionsIds[j]
+              const isDelete = selectRecordIdPath.indexOf(current) > -1
+              if (isDelete) {
+                hasSelectRecords.push(unref(selectRecords)[i])
+              }
+            }
+          }
+          return hasSelectRecords.length > 0 ? false : true
+        }
       }
-      // return !!unref(selectRecords).find((selectRecord) => selectRecord.idPath === idPath)
     }
 
     const isOptionSelected = (idPath: string) => {
@@ -120,13 +143,8 @@ export default defineComponent({
      */
     const handleFieldClear = async (options: CascadeProOption[], idx?: number) => {
       if (idx === undefined) {
-        const option = options[0]
-        const coveredSelectRecords = unref(selectRecords).filter((_option) => {
-          if (option.idPath === _option.idPath) {
-            return false
-          }
-          return true
-        })
+        // 兼容select-result删除，把删除逻辑放在一起好管理。
+        const coveredSelectRecords = options
         setSelectRecords(coveredSelectRecords, 'recover')
       } else {
         if (idx === 0) {
@@ -161,7 +179,7 @@ export default defineComponent({
 
           setSelectRecords(coveredSelectRecords, 'recover')
           await nextTick()
-          handleOptionClick(unref(selectRecords).slice(-1)[0])
+          // handleOptionClick(unref(selectRecords).slice(-1)[0]) // 回到最新的selectrecord
         }
       }
     }
@@ -179,9 +197,9 @@ export default defineComponent({
                 <ContainerScroll ref={setContainerScrollRefs}>
                   <div
                     class={`ant-select-item ant-select-item-option ${
-                      isAllSelected(idx) ? 'ant-select-item-option-selected' : ''
+                      isAllSelected(options, idx) ? 'ant-select-item-option-selected' : ''
                     }`}
-                    data-is-selected={isAllSelected(idx)}
+                    data-is-selected={isAllSelected(options, idx)}
                     onClick={() => handleFieldClear(options, idx)}
                   >
                     全部
@@ -197,8 +215,12 @@ export default defineComponent({
                           onClick={() => handleOptionClick(option)}
                         >
                           <div class="ant-select-item-option-content">
-                            {option.firstLetter && option.firstLetterGroup ? (
-                              <div class="first-letter-group">{option.firstLetterGroup}</div>
+                            {idx === 0 ? (
+                              <div class="first-letter-group">
+                                {option.firstLetter && option.firstLetterGroup
+                                  ? option.firstLetterGroup
+                                  : null}
+                              </div>
                             ) : null}
                             <div>{option.name}</div>
                           </div>

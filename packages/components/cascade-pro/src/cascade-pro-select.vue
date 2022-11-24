@@ -43,11 +43,14 @@ export default defineComponent({
   props: cascadeProSelectProps,
   emits: ['change'],
   setup(props, { attrs, emit }) {
+    setTimeout(() => {
+      console.log(props.value)
+    }, 1500)
     const cascadeProRef = ref<CascadeProInstance | null>(null)
 
     const visible = ref<boolean>(false)
     const selectValue = ref<CascadeProOption[]>([])
-    const selectDefaultValue = ref<CascadeProOption[]>(props.defaultValue)
+    const selectDefaultValue = ref<CascadeProOption[]>(props.value)
 
     const handleConfirm = async () => {
       const result = (unref(cascadeProRef)?.selectResultRef?.options || []) as CascadeProOption[]

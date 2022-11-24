@@ -72,7 +72,7 @@ export type CascadeProSelectResultProps = ExtractPropTypes<typeof cascadeProSele
 
 export const cascadeProProps = {
   /** 默认值 */
-  defaultValue: {
+  value: {
     type: Array as PropType<any[]>,
     default: () => [] as any[],
   },
@@ -80,13 +80,11 @@ export const cascadeProProps = {
   fields: {
     type: Array as PropType<string[]>,
     default: () => DEFAULT_CASCADE_PRO_FIELDS,
-    required: true,
   },
   /** 组件所需的源数据，树结构。*/
   options: {
     type: Array as PropType<any[]>,
     default: () => DEFAULT_CASCADE_PRO_OPTIONS,
-    required: true,
   },
   /** 内部处理数据，这里传key的对应关系。具体数据结构请查看 CascadeProOption */
   optionsKeyConfig: {
@@ -107,7 +105,6 @@ export const cascadeProSelectProps = {
   title: {
     type: String,
     default: DEFAULT_CASCADE_PRO_TITLE,
-    required: true,
   },
   /** form input placeholder */
   placeholder: {

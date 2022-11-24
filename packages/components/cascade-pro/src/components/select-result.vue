@@ -40,10 +40,28 @@ export default defineComponent({
   // props: cascadeProSelectResultProps,
   emits: ['clear', 'clearAll'],
   setup(props, { emit, expose }) {
-    const { selectRecords } = useCascadeProContext()
+    const { selectRecords, setSelectRecords, fields } = useCascadeProContext()
 
     const visible = ref<boolean>(false)
     const options = ref<CascadeProOption[]>([])
+
+    const filterOptionsByRecursive = (group: CascadeProOption[], result: CascadeProOption[]) => {
+      for (let i = 0; i < group.length; i++) {
+        const item = group[i]
+        // option.idPath !== item.idPath 是为了兼容北京与北京市id相同的情况
+        const filterResult = unref(selectRecords).filter(
+          (option) => option.pid === item.id && option.idPath !== item.idPath
+        )
+        if (filterResult.length > 0) {
+          filterOptionsByRecursive(filterResult, result)
+        } else {
+          // 去重
+          if (!result.find((option) => option.idPath === item.idPath)) {
+            result.push(item)
+          }
+        }
+      }
+    }
 
     const handler = (_selectRecords: CascadeProOption[]) => {
       if (_selectRecords.length > 0) {
@@ -52,117 +70,59 @@ export default defineComponent({
         visible.value = false
       }
 
-      const getMaxLevelInfo = _selectRecords.reduce((result, cur) => {
-        const idPath = cur.idPath
-        const idPathSplitResult = idPath.split('-')
-        const isRoot = !idPath.includes('-')
-        if (!result[idPath] && isRoot) {
-          result[idPath] = {
-            records: [cur],
-            idPathLengths: [idPathSplitResult.length],
-            maxLevel: Math.max(...[idPathSplitResult.length]),
-          }
-        } else {
-          const root = idPathSplitResult[0]
-          result[root].records.push(cur)
-          result[root].idPathLengths.push(idPathSplitResult.length)
-          result[root].maxLevel = Math.max(...result[root].idPathLengths)
-        }
-        return result
-      }, {} as Record<string, any>)
-
-      // 根据最大值maxlevel 把要展示的数据筛选出来
-      const filterMaxLevelSelectRecords =
-        Object.keys(getMaxLevelInfo).length > 0
-          ? Object.keys(getMaxLevelInfo).reduce((result, id) => {
-              const { maxLevel, records } = getMaxLevelInfo[id]
-              if (!result[id]) {
-                result[id] = []
-              }
-              result[id].push(
-                ...records.filter((record) => {
-                  const idPathSplitResult = record.idPath.split('-')
-                  if (idPathSplitResult.length === maxLevel) {
-                    return true
-                  }
-                  return false
-                })
-              )
-              return result
-            }, {} as Record<string, any>)
-          : ({} as Record<string, any>)
-
-      // 遍历 _selectRecords 生成新数据，这一步是确保显示顺序
-      let result: CascadeProOption[] = []
-      for (let i = 0; i < _selectRecords.length; i++) {
-        const target = filterMaxLevelSelectRecords[_selectRecords[i].idPath]
-        if (target) {
-          result = [...result, ...target]
-        }
-      }
+      const result: CascadeProOption[] = []
+      filterOptionsByRecursive(unref(selectRecords), result)
 
       options.value = result
     }
 
-    const handleClear = (option: CascadeProOption) => {
-      const ensureSelectRecordsCorrect = (idPathSplitResult: string[]) => {
-        if (idPathSplitResult.length <= 1) {
-          // 筛选一级
-          const rootLevelRecords = unref(selectRecords).filter(
-            (record) => record.id === record.idPath
-          )
-          if (rootLevelRecords.length > 1) {
-            const _option = rootLevelRecords.find(
-              (record) => record.idPath === idPathSplitResult.join('-')
-            )
-            emit('clear', {
-              type: 'normal',
-              option: _option,
-            })
-          } else {
-            emit('clear', {
-              type: 'fieldClear',
-              idx: 0,
-            })
-          }
-          return
-        }
-
-        for (let i = idPathSplitResult.length - 1 - 1; i >= 0; i--) {
-          const pid = idPathSplitResult[i]
-          const next = `${pid}-`
-          const num = unref(selectRecords).filter((record) => {
-            const _idPathSplitResult = record.idPath.split('-')
-            return (
-              _idPathSplitResult.length === idPathSplitResult.length &&
-              record.idPath.indexOf(next) > -1
-            )
-          }).length
-
-          if (num === 1) {
-            emit('clear', {
-              type: 'fieldClear',
-              idx: i + 1,
-            })
-            ensureSelectRecordsCorrect(idPathSplitResult.slice(0, i + 1))
-            return
-          } else if (num > 1) {
-            const _option = unref(selectRecords).find(
-              (record) => record.idPath === idPathSplitResult.join('-')
-            )
-            emit('clear', {
-              type: 'normal',
-              option: _option,
-            })
-            return
-          } else {
-            console.warn('ta-cascade-pro select-result handler has error')
-            return
-          }
-        }
+    const filterOptionsByOptionRecursive = (
+      target: CascadeProOption,
+      result: CascadeProOption[]
+    ) => {
+      // 去重
+      if (!result.find((option) => option.idPath === target.idPath)) {
+        result.push(target)
       }
 
-      ensureSelectRecordsCorrect(option.idPath.split('-'))
+      // option.idPath.split("-").length === target.idPath.split("-").length - 1 是为了兼容北京与北京市id相同的情况
+      const filterResult = unref(selectRecords).filter(
+        (option) =>
+          option.id === target.pid &&
+          option.idPath.split('-').length === target.idPath.split('-').length - 1
+      )
+      if (filterResult.length > 0) {
+        // option.idPath.split("-").length === target.idPath.split("-").length 是为了兼容北京与北京市id相同的情况
+        const isOtherSameLevelRecord =
+          unref(selectRecords).filter(
+            (option) =>
+              option.pid === target.pid &&
+              option.idPath.split('-').length === target.idPath.split('-').length
+          ).length > 1
+
+        // 有同级不删除，无同级再删除
+        if (!isOtherSameLevelRecord) {
+          filterResult.forEach((option) => {
+            // 去重
+            if (!result.find((_option) => _option.idPath === option.idPath)) {
+              result.push(option)
+            }
+          })
+          filterOptionsByOptionRecursive(filterResult[0], result)
+        }
+      }
+    }
+
+    const handleClear = (option: CascadeProOption) => {
+      const shouldDeleteSelectRecords: CascadeProOption[] = []
+      filterOptionsByOptionRecursive(option, shouldDeleteSelectRecords)
+      const remainSelectRecords = unref(selectRecords).filter((option) => {
+        if (shouldDeleteSelectRecords.find((_option) => _option.idPath === option.idPath)) {
+          return false
+        }
+        return true
+      })
+      emit('clear', remainSelectRecords)
     }
 
     const handleClearAll = () => {
