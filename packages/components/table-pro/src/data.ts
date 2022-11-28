@@ -235,3 +235,13 @@ export async function API__SYSTEM_USER_TABLE_INFO_SET(
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }
+
+export async function API__CENTER_INDUSTRY_TAG(
+  data,
+  url = '/api/STARLIGHT-CENTRE-WEB/baseinfo/industry/list/incl_tags'
+) {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}

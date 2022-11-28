@@ -26,13 +26,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, unref, watch } from 'vue'
+import { computed, defineComponent, nextTick, ref, unref, watch } from 'vue'
 import { Tag } from 'ant-design-vue'
 import Modal from '@tav-ui/components/modal'
 import Button from '@tav-ui/components/button'
 import { cascadeProSelectProps } from './types'
 import CascadePro from './components/cascade-pro.vue'
-import { DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG } from './constants'
+import { DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG, buildCascadeProId } from './constants'
 import type { CascadeProOption } from './types'
 import type { CascadeProInstance } from './components/cascade-pro.vue'
 
@@ -43,6 +43,7 @@ export default defineComponent({
   props: cascadeProSelectProps,
   emits: ['change'],
   setup(props, { attrs, emit }) {
+    const id = props.id ?? buildCascadeProId()
     const cascadeProRef = ref<CascadeProInstance | null>(null)
     const visible = ref<boolean>(false)
     const selectValue = ref<CascadeProOption[]>([])
@@ -128,7 +129,7 @@ export default defineComponent({
     watch(
       () => props.value,
       (_new, _old) => {
-        if (_new && _old && JSON.stringify(_new) !== JSON.stringify(_old)) {
+        if (_new && JSON.stringify(_new) !== JSON.stringify(_old)) {
           selectValue.value = handleSelectResult(props.value, 'outer')
           selectDefaultValue.value = unref(selectValue)
           // 外部传入
@@ -142,6 +143,7 @@ export default defineComponent({
       return {
         ...props,
         ...attrs,
+        id,
         value: selectDefaultValue as any,
       }
     })

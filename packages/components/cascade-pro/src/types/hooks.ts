@@ -21,6 +21,8 @@ export interface IUseCascadeProContext {
   selectRecords: IUseSelectRecordsReturn['selectRecords']
   /** 设置选中的所有数据 */
   setSelectRecords: IUseSelectRecordsReturn['setSelectRecords']
+  /** cascade id */
+  id: ComputedRef<string>
 }
 
 export interface IUseLoadingReturn {
@@ -74,6 +76,7 @@ export interface ISearchData {
   selectRecordFibers: IUseSelectRecordReturn['selectRecordFibers']
   setSelectRecords: IUseSelectRecordsReturn['setSelectRecords']
   options: IUseCascadeProContext['options']
+  id: IUseCascadeProContext['id']
 }
 
 export interface IUseFieldRequest extends IUseLoadingReturn {
@@ -84,5 +87,6 @@ export interface IUseFieldRequest extends IUseLoadingReturn {
   setSelectRecords: IUseSelectRecordsReturn['setSelectRecords']
   fields: IUseCascadeProContext['fields']
   options: IUseCascadeProContext['options']
+  id: IUseCascadeProContext['id']
   immediate: boolean
 }

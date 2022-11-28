@@ -4,11 +4,12 @@ import {
   DEFAULT_CASCADE_PRO_OPTIONS,
   DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG,
   DEFAULT_CASCADE_PRO_PLACEHOLDER,
+  DEFAULT_CASCADE_PRO_SEARCH_PLACEHOLDER,
   DEFAULT_CASCADE_PRO_TITLE,
   DEFAULT_HOT,
-  getHotAddressNames,
+  getHots,
 } from '../constants'
-import type { GenerateHotList } from './cascade-pro'
+import type { GenerateHotList, GeneratePannelItem } from './cascade-pro'
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export const cascadeProSearchProps = {
@@ -16,6 +17,10 @@ export const cascadeProSearchProps = {
   searchVisible: {
     type: Boolean,
     default: true,
+  },
+  searchPlaceholder: {
+    type: String,
+    default: DEFAULT_CASCADE_PRO_SEARCH_PLACEHOLDER,
   },
 } as const
 
@@ -56,13 +61,18 @@ export const cascadeProHotProps = {
   /** 生成热门数据 */
   generateHotList: {
     type: Function as PropType<GenerateHotList>,
-    default: getHotAddressNames,
+    default: getHots,
   },
 } as const
 
 export type CascadeProHotProps = ExtractPropTypes<typeof cascadeProHotProps>
 
-export const cascadeProPannelProps = {} as const
+export const cascadeProPannelProps = {
+  /** 生成面板数据 */
+  generatePannelItem: {
+    type: Function as PropType<GeneratePannelItem>,
+  },
+} as const
 
 export type CascadeProPannelProps = ExtractPropTypes<typeof cascadeProPannelProps>
 
@@ -71,9 +81,13 @@ export const cascadeProSelectResultProps = {} as const
 export type CascadeProSelectResultProps = ExtractPropTypes<typeof cascadeProSelectResultProps>
 
 export const cascadeProProps = {
-  /** 默认值 */
+  /** 唯一标识（被某些特定的功能所依赖） */
+  id: {
+    type: String,
+  },
+  /** 默认值，数组结构 */
   value: {
-    type: Array as PropType<any[]>,
+    type: Object as PropType<any>,
     default: () => [] as any[],
   },
   /** 这里必须放置与传入options层级对应的数据，例如geo中的省-市-区，这里传入 ['province', 'city', 'district'] 数组中的顺序一定要与option对应⚠️ 这个值也会作为回传字段*/

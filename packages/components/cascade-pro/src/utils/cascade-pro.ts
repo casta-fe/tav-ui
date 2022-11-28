@@ -91,6 +91,7 @@ export function handleOptions(
   ) {
     for (let i = 0; i < options.length; i++) {
       const temp = {
+        ...options[i],
         name: options[i][name],
         id: options[i][id],
         pid: pid ? pid : '',

@@ -1,3 +1,5 @@
+import type { VNode } from 'vue'
+
 export interface CascadeProOption {
   name: string
   id: string
@@ -21,3 +23,5 @@ export type CascadeProFunction = (...args: any) => any
 export type CascadeProPromiseFunction = (...args: any) => Promise<any>
 
 export type GenerateHotList = (list: CascadeProOption[], hot: string[]) => CascadeProOption[]
+
+export type GeneratePannelItem = (...args: any) => VNode

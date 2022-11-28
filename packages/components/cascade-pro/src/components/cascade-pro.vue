@@ -1,7 +1,11 @@
 <template>
   <div class="ta-cascade-pro">
     <div class="ta-cascade-pro-header">
-      <Search :search-visible="searchVisible" @search="handleSearch" />
+      <Search
+        :search-visible="searchVisible"
+        :search-placeholder="searchPlaceholder"
+        @search="handleSearch"
+      />
       <Hot
         ref="hotRef"
         :hot-visible="hotVisible"
@@ -17,7 +21,11 @@
         :title="firstLetterTitle"
         @change="handleFirstLetterChange"
       />
-      <Pannel ref="pannelRef" @click="handlePannelOptionClick" />
+      <Pannel
+        ref="pannelRef"
+        :generate-pannel-item="generatePannelItem"
+        @click="handlePannelOptionClick"
+      />
     </div>
     <div class="ta-cascade-pro-footer">
       <SelectResult
@@ -109,6 +117,7 @@ export default defineComponent({
       selectRecordFibers,
       selectRecords,
       setSelectRecords,
+      id: computed(() => props.id!),
     })
 
     const handleSearch = async (option: CascadeProOption) => {

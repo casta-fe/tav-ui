@@ -83,9 +83,11 @@
   </TaContainerCollapse>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, h } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { API__CENTER_INDUSTRY_TAG } from '@tav-ui/components/table-pro/src/data'
+import tag from '@tav-ui/components/time-line/src/components/tag'
 import type { FormSchema } from '@tav-ui/components/form'
 // const aaaaa = [
 //   { label: '用户1', value: 99 },
@@ -93,6 +95,44 @@ import type { FormSchema } from '@tav-ui/components/form'
 //   { label: '用户3', value: 3 },
 // ]
 const schemas: FormSchema[] = [
+  {
+    field: 'field00',
+    component: 'CascadeProSelect',
+    label: '字段00',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      title: '标签选择',
+      placeholder: '请选择标签',
+      searchPlaceholder: '请输入标签名称',
+      fields: ['tag', 'subTag'],
+      optionsKeyConfig: {
+        name: 'name',
+        id: 'id',
+        children: 'children',
+        pid: 'pid',
+      },
+      // hotKeyWords: ['光子', '半导体', '人工智能', '先进制造', '军工'],
+      hotKeyWords: [
+        '484d222e04a711ec8b830242ac110002',
+        '484e1d9a04a711ec8b830242ac110002',
+        '4853fcb504a711ec8b830242ac110002',
+        '4852cb2b04a711ec8b830242ac110002',
+        '48562dce04a711ec8b830242ac110002',
+      ],
+      generatePannelItem(option, level) {
+        if (level === 0) {
+          return h('div', null, option.name)
+        } else {
+          return h('div', null, [
+            h('span', null, option.name),
+            h('span', null, option.type === 1 ? '技术' : '应用'),
+          ])
+        }
+      },
+    },
+  },
   {
     field: 'field0',
     component: 'CascadeProSelect',
@@ -269,6 +309,54 @@ export default defineComponent({
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
+
+    API__CENTER_INDUSTRY_TAG({}).then((res) => {
+      const { success, data } = res
+      if (success && data) {
+        const result = data.map((option) => {
+          const { applicationTags, technicalTags } = option
+          const atags = applicationTags.map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            pid: tag.industryId,
+            type: tag.type,
+          }))
+          const ttags = technicalTags.map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            pid: tag.industryId,
+            type: tag.type,
+          }))
+
+          return {
+            id: option.id,
+            name: option.name,
+            children: [...atags, ...ttags],
+          }
+        })
+
+        updateSchema({
+          field: 'field00',
+          componentProps: {
+            options: result,
+          },
+        })
+
+        // setFieldsValue({
+        //   field00: [
+        //     {
+        //       city: '130100',
+        //       cityName: '石家庄市',
+        //       district: '130104',
+        //       districtName: '桥西区',
+        //       province: '130000',
+        //       provinceName: '河北省',
+        //     },
+        //   ],
+        // })
+      }
+    })
+
     setTimeout(() => {
       setFieldsValue({
         field1: 99,
@@ -284,6 +372,7 @@ export default defineComponent({
         ],
       })
     }, 500)
+
     async function handleLoad() {
       const promiseFn = function () {
         return new Promise((resolve) => {

@@ -2,7 +2,7 @@ import { type ComputedRef, defineComponent, nextTick, ref, unref } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
 // import { debounce } from 'lodash-es'
 import ContainerScroll from '@tav-ui/components/container-scroll'
-// import { cascadeProPannelProps } from '../types'
+import { cascadeProPannelProps } from '../types'
 import { useCascadeProContext, useFieldRequest, useLoading } from '../hooks'
 // import { DebounceDely } from '../constants'
 import { DEFAULT_CASCADE_PRO_SELECT_RECORD } from '../utils'
@@ -18,7 +18,7 @@ export interface CascadeProPannelInstance {
 
 export default defineComponent({
   name: 'TaCascadeProPannel',
-  // props: cascadeProPannelProps,
+  props: cascadeProPannelProps,
   emits: ['click'],
   setup(props, { emit, expose }) {
     const {
@@ -30,6 +30,7 @@ export default defineComponent({
       selectRecordFibers,
       selectRecords,
       setSelectRecords,
+      id,
     } = useCascadeProContext()
 
     const containerScrollRefs = ref<any[]>([])
@@ -49,6 +50,7 @@ export default defineComponent({
       selectRecordFibers,
       fields,
       options,
+      id,
       immediate: unref(selectRecords).length > 0 ? false : true,
     })
 
@@ -222,7 +224,11 @@ export default defineComponent({
                                   : null}
                               </div>
                             ) : null}
-                            <div>{option.name}</div>
+                            {props.generatePannelItem ? (
+                              props.generatePannelItem(option, idx)
+                            ) : (
+                              <div>{option.name}</div>
+                            )}
                           </div>
                         </div>
                       ))

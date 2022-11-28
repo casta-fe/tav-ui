@@ -9,7 +9,7 @@ import type {
 } from '../types'
 
 /** 缓存 */
-const CASCADE_PRO_CACHE: Record<string, any> = {}
+const CASCADE_PRO_CACHE: Map<string, any> = new Map()
 
 /**
  * 根据得到的 fields 数据与当前选中数据，把当前数据的所有父级取出来，放入selectrecords 方便做选中状态处理
@@ -93,17 +93,21 @@ function searchData(param: ISearchData): CascadeProOption[][] | null {
   // 初始化 selectRecord idPath = ''
   if (id === '' && pid === '' && lastFieldIndex === 0) {
     if (firstLetterVisible) {
-      if (!CASCADE_PRO_CACHE['firstFieldFirstLetterResult']) {
-        CASCADE_PRO_CACHE['firstFieldFirstLetterResult'] = handleOptionsWithFirstLetterVisible(tree)
+      if (!CASCADE_PRO_CACHE.has(unref(param.id))) {
+        CASCADE_PRO_CACHE.set(unref(param.id), {
+          firstFieldFirstLetterResult: handleOptionsWithFirstLetterVisible(tree),
+        })
       }
+      const cache = CASCADE_PRO_CACHE.get(unref(param.id))
+
       handleSelectRecordsAfterGetFields(
-        [CASCADE_PRO_CACHE['firstFieldFirstLetterResult']],
+        [cache['firstFieldFirstLetterResult']],
         unref(param.selectRecord),
         idPathSplitResult,
         param.setSelectRecords,
         'init'
       )
-      return [CASCADE_PRO_CACHE['firstFieldFirstLetterResult']]
+      return [cache['firstFieldFirstLetterResult']]
     } else {
       handleSelectRecordsAfterGetFields(
         [tree],
@@ -124,11 +128,14 @@ function searchData(param: ISearchData): CascadeProOption[][] | null {
     for (let i = 0; i < nextFieldLength; i++) {
       if (i === 0) {
         if (firstLetterVisible) {
-          if (!CASCADE_PRO_CACHE['firstFieldFirstLetterResult']) {
-            CASCADE_PRO_CACHE['firstFieldFirstLetterResult'] =
-              handleOptionsWithFirstLetterVisible(tree)
+          if (!CASCADE_PRO_CACHE.has(unref(param.id))) {
+            CASCADE_PRO_CACHE.set(unref(param.id), {
+              firstFieldFirstLetterResult: handleOptionsWithFirstLetterVisible(tree),
+            })
           }
-          records.push(CASCADE_PRO_CACHE['firstFieldFirstLetterResult'])
+          const cache = CASCADE_PRO_CACHE.get(unref(param.id))
+
+          records.push(cache['firstFieldFirstLetterResult'])
         } else {
           records.push(tree)
         }
@@ -174,6 +181,7 @@ export function useFieldRequest(param: IUseFieldRequest) {
       setSelectRecords: param.setSelectRecords,
       selectRecordFibers: param.selectRecordFibers,
       options: param.options,
+      id: param.id,
     })
     if (Array.isArray(response)) {
       resultRef.value = response

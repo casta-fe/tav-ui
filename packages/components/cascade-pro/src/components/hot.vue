@@ -103,15 +103,14 @@ export default defineComponent({
     })
 
     watch(
-      () => unref(selectRecords),
-      (newSelectRecords, oldSelectRecords) => {
-        if (newSelectRecords.length === 0) handleHotClearAll()
+      () => selectRecords,
+      (newVal) => {
+        const newSelectRecords = unref(newVal)
+        const oldSelectRecords = unref(selectedHots)
 
-        if (newSelectRecords && unref(selectedHots).length === 0) {
-          selectedHots.value = [...filterFromHots(newSelectRecords)]
-        }
-
-        if (newSelectRecords && oldSelectRecords) {
+        if (newSelectRecords.length === 0) {
+          handleHotClearAll()
+        } else {
           const { added, deleted } = getAddAndDeleteOptions(newSelectRecords, oldSelectRecords)
 
           if (added.length > 0) {

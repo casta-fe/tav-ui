@@ -4,7 +4,7 @@
     v-model:value="value"
     class="ta-cascade-pro-search"
     show-search
-    :placeholder="DEFAULT_CASCADE_PRO_PLACEHOLDER"
+    :placeholder="searchPlaceholder"
     :default-active-first-option="false"
     :show-arrow="false"
     :filter-option="false"
@@ -30,7 +30,7 @@ import { defineComponent, ref, unref } from 'vue'
 import { Select, SelectOption } from 'ant-design-vue'
 import { debounce } from 'lodash-es'
 import { type CascadeProOption, cascadeProSearchProps } from '../types'
-import { DEFAULT_CASCADE_PRO_PLACEHOLDER, DebounceDely } from '../constants'
+import { DebounceDely } from '../constants'
 import { useCascadeProContext } from '../hooks'
 
 export default defineComponent({
@@ -66,7 +66,6 @@ export default defineComponent({
       handleChange,
       handleSearch,
       options,
-      DEFAULT_CASCADE_PRO_PLACEHOLDER,
     }
   },
 })
