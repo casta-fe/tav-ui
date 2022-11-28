@@ -25,3 +25,5 @@ export type CascadeProPromiseFunction = (...args: any) => Promise<any>
 export type GenerateHotList = (list: CascadeProOption[], hot: string[]) => CascadeProOption[]
 
 export type GeneratePannelItem = (...args: any) => VNode
+
+export type GenerateSearchItem = (...args: any) => VNode

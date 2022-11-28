@@ -16,11 +16,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    
+
     .ant-tag {
-      background: #e6edff63;
-      border: 1px solid #3c6cfe;
-      color: #3351c7;
+      font-size: 14px;
     }
   }
 
@@ -30,6 +28,22 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+      }
+
+      &-name,
+      &-name-path {
+        width: 40%;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      &-name {
+        width: 50%;
+      }
+      &-name-path {
+        text-align: right;
       }
     }
   }
@@ -113,7 +127,7 @@
 
     .@{prefix-cls-cascade-pro} {
       &-search {
-        width: 45%;
+        width: 50%;
         min-width: 200px;
       }
 

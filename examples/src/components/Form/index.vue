@@ -131,6 +131,10 @@ const schemas: FormSchema[] = [
           ])
         }
       },
+      maxTagCount: 999,
+      // generateSearchItem(option) {
+      //   return h('div', null, option.namePath)
+      // },
     },
   },
   {

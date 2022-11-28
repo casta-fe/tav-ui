@@ -4,6 +4,7 @@
       <Search
         :search-visible="searchVisible"
         :search-placeholder="searchPlaceholder"
+        :generate-search-item="generateSearchItem"
         @search="handleSearch"
       />
       <Hot

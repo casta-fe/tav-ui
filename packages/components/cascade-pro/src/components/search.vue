@@ -18,9 +18,20 @@
       :value="option.idPath"
       class="ta-cascade-pro-search-option"
     >
-      <span>{{ option.name }}</span>
-      <!-- <span>{{ option.id }}</span> -->
-      <span>{{ option.namePath }}</span>
+      <template v-if="!generateSearchItem">
+        <span class="ta-cascade-pro-search-option-name">{{ option.name }}</span>
+        <span class="ta-cascade-pro-search-option-name-path">
+          {{
+            option.namePath
+              .split('-')
+              .slice(0, option.namePath.split('-').length - 1)
+              .join('-')
+          }}
+        </span>
+      </template>
+      <template v-else>
+        <component :is="generateSearchItem(option)" />
+      </template>
     </SelectOption>
   </Select>
 </template>

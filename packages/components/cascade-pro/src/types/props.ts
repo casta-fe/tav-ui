@@ -9,7 +9,7 @@ import {
   DEFAULT_HOT,
   getHots,
 } from '../constants'
-import type { GenerateHotList, GeneratePannelItem } from './cascade-pro'
+import type { GenerateHotList, GeneratePannelItem, GenerateSearchItem } from './cascade-pro'
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export const cascadeProSearchProps = {
@@ -21,6 +21,10 @@ export const cascadeProSearchProps = {
   searchPlaceholder: {
     type: String,
     default: DEFAULT_CASCADE_PRO_SEARCH_PLACEHOLDER,
+  },
+  /** 生成搜索数据 */
+  generateSearchItem: {
+    type: Function as PropType<GenerateSearchItem>,
   },
 } as const
 

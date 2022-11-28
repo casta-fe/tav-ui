@@ -15,19 +15,33 @@
     </template>
   </Modal>
 
-  <div class="ta-cascade-pro-select ant-input" @click="handleClick">
-    <span v-if="!selectOptions.length" style="color: rgba(60, 60, 60, 0.33)">
-      {{ getBindValue.placeholder }}
-    </span>
-    <Tag v-for="option in selectOptions" v-else :key="option.idPath">
-      {{ option.namePath }}
-    </Tag>
+  <div
+    :class="[
+      'ta-cascade-pro-select',
+      selectOptions.length ? 'ant-select-selector ant-select-multiple' : 'ant-input',
+    ]"
+    @click="handleClick"
+  >
+    <div class="ant-select-selection-overflow">
+      <span v-if="!selectOptions.length" class="ant-select-selection-placeholder">
+        {{ getBindValue.placeholder }}
+      </span>
+      <div
+        v-for="option in selectOptions"
+        v-else
+        :key="option.idPath"
+        class="ant-select-selection-overflow-item"
+      >
+        <div class="ant-select-selection-item">
+          <div class="ant-select-selection-item-content">{{ option.namePath }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, nextTick, ref, unref, watch } from 'vue'
-import { Tag } from 'ant-design-vue'
 import Modal from '@tav-ui/components/modal'
 import Button from '@tav-ui/components/button'
 import { cascadeProSelectProps } from './types'
@@ -38,7 +52,7 @@ import type { CascadeProInstance } from './components/cascade-pro.vue'
 
 export default defineComponent({
   name: 'TaCascadeProSelect',
-  components: { Tag, Modal, Button, CascadePro },
+  components: { Modal, Button, CascadePro },
   inheritAttrs: false,
   props: cascadeProSelectProps,
   emits: ['change'],
