@@ -198,7 +198,7 @@ export const PreviewTable = defineComponent({
                   ? [
                       // 普通文件
                       <Cell column={{ field: 'fullName' }} type="body">
-                        <span>{row.fullName}</span>,
+                        <span>{row.fullName}</span>
                       </Cell>,
                     ]
                   : [
