@@ -140,7 +140,7 @@ export default defineComponent({
     }
 
     const handleClearAll = () => {
-      unref(selectRecords).length > 1 && emit('clearAll')
+      unref(selectRecords).length > 0 && emit('clearAll')
     }
 
     watch(
