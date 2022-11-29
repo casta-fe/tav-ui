@@ -147,7 +147,16 @@ export default defineComponent({
       }
     }
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
+      visible.value = true
+      const result = (unref(cascadeProRef)?.selectResultRef?.options || []) as CascadeProOption[]
+      selectValue.value = handleSelectResult(result)
+      selectDefaultValue.value = unref(selectValue)
+      // 内部选中
+      selectOptions.value = handleFormItemResult(unref(selectValue))
+      await nextTick()
+
+      emit('change', unref(selectDefaultValue))
       handleCancel()
     }
 
@@ -175,25 +184,12 @@ export default defineComponent({
       }
     })
 
-    const handleCancel = async () => {
-      if (!props.disabled) {
-        visible.value = false
-
-        const result = (unref(cascadeProRef)?.selectResultRef?.options || []) as CascadeProOption[]
-        selectValue.value = handleSelectResult(result)
-        selectDefaultValue.value = unref(selectValue)
-        // 内部选中
-        selectOptions.value = handleFormItemResult(unref(selectValue))
-        await nextTick()
-
-        emit('change', unref(selectDefaultValue))
-      }
+    const handleCancel = () => {
+      visible.value = false
     }
 
     const handleClick = () => {
-      if (!props.disabled) {
-        visible.value = true
-      }
+      visible.value = true
     }
 
     return {

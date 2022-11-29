@@ -133,11 +133,6 @@ export const cascadeProSelectProps = {
     type: Boolean,
     default: false,
   },
-  /** form input disable */
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
   maxTagCount: {
     type: Number,
     default: 3,
