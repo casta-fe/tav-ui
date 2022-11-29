@@ -129,6 +129,10 @@ export const cascadeProSelectProps = {
     type: String,
     default: DEFAULT_CASCADE_PRO_PLACEHOLDER,
   },
+  showPlaceholder: {
+    type: Boolean,
+    default: false,
+  },
   /** form input disable */
   disabled: {
     type: Boolean,

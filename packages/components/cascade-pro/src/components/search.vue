@@ -9,12 +9,14 @@
     :show-arrow="false"
     :filter-option="false"
     :not-found-content="null"
+    option-label-prop="label"
     @change="handleChange"
     @search="handleSearch"
   >
     <SelectOption
       v-for="option in options"
       :key="option.idPath"
+      :label="option.namePath"
       :value="option.idPath"
       class="ta-cascade-pro-search-option"
     >

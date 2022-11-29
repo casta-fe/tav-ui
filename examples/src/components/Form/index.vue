@@ -104,7 +104,7 @@ const schemas: FormSchema[] = [
     },
     componentProps: {
       title: '标签选择',
-      placeholder: '请选择标签',
+      // placeholder: '请选择标签',
       searchPlaceholder: '请输入标签名称',
       fields: ['tag', 'subTag'],
       optionsKeyConfig: {

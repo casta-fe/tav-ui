@@ -20,12 +20,20 @@
       'ta-cascade-pro-select',
       selectOptions.length ? 'ant-select-selector ant-select-multiple' : 'ant-input',
     ]"
+    :style="!getBindValue.showPlaceholder ? { border: 'none', paddingLeft: '0' } : {}"
     @click="handleClick"
   >
     <div class="ant-select-selection-overflow">
-      <span v-if="!selectOptions.length" class="ant-select-selection-placeholder">
-        {{ getBindValue.placeholder }}
-      </span>
+      <template v-if="!selectOptions.length">
+        <Button
+          v-if="!getBindValue.showPlaceholder"
+          pre-icon="ant-design:plus-outlined"
+          style="min-width: 80px"
+        />
+        <span v-else class="ant-select-selection-placeholder">
+          {{ getBindValue.placeholder }}
+        </span>
+      </template>
       <div
         v-for="option in selectOptions"
         v-else
