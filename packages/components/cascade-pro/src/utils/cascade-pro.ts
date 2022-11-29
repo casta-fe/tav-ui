@@ -191,8 +191,8 @@ export function getDefaultValue(
         if (option[key]) {
           name = option[`${key}Name`]
           id = option[key]
-          idPath = idPath ? `${idPath}-${option[key]}` : option[key]
-          namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
+          idPath = idPath ? `${option[key]}-${idPath}` : option[key]
+          namePath = namePath ? `${option[`${key}Name`]}-${namePath}` : option[`${key}Name`]
         }
       }
 

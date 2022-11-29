@@ -40,7 +40,7 @@
         :key="option.idPath"
         class="ant-select-selection-overflow-item"
       >
-        <div class="ant-select-selection-item">
+        <div class="ant-select-selection-item" style="cursor: pointer">
           <div class="ant-select-selection-item-content">{{ option.namePath }}</div>
         </div>
       </div>
@@ -122,8 +122,8 @@ export default defineComponent({
             if (option[key]) {
               name = option[`${key}Name`]
               id = option[key]
-              idPath = idPath ? `${idPath}-${option[key]}` : option[key]
-              namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
+              idPath = idPath ? `${option[key]}-${idPath}` : option[key]
+              namePath = namePath ? `${option[`${key}Name`]}-${namePath}` : option[`${key}Name`]
             }
           }
 
