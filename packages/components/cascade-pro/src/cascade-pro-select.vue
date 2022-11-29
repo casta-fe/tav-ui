@@ -88,6 +88,9 @@ export default defineComponent({
       return unref(options)
     }
 
+    // TODO
+    // 1. 把options和defaultvalue处理前移
+    // 2. 选中标签加删除
     const handleSelectResult = (options: CascadeProOption[], type: 'inner' | 'outer' = 'inner') => {
       if (type === 'inner') {
         return unref(options).map((option) => {
@@ -122,8 +125,8 @@ export default defineComponent({
             if (option[key]) {
               name = option[`${key}Name`]
               id = option[key]
-              idPath = idPath ? `${option[key]}-${idPath}` : option[key]
-              namePath = namePath ? `${option[`${key}Name`]}-${namePath}` : option[`${key}Name`]
+              idPath = idPath ? `${idPath}-${option[key]}` : option[key]
+              namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
             }
           }
 
@@ -156,6 +159,8 @@ export default defineComponent({
           selectDefaultValue.value = unref(selectValue)
           // 外部传入
           selectOptions.value = handleFormItemResult(unref(selectValue))
+
+          emit('change', unref(selectDefaultValue))
         }
       },
       { immediate: true, deep: true }

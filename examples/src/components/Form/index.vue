@@ -374,6 +374,15 @@ export default defineComponent({
             provinceName: '河北省',
           },
         ],
+        field00: [
+          {
+            tag: '484d222e04a711ec8b830242ac110002',
+            tagName: '光子',
+            subTag: 'f62db7c1bbe14b928e2430830f74581a',
+            subTagName: '光子陀螺',
+            type: 2,
+          },
+        ],
       })
     }, 500)
 

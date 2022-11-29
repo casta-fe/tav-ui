@@ -180,6 +180,7 @@ export function getDefaultValue(
 } {
   if (defaultValue && defaultValue.length > 0) {
     const selectRecords = defaultValue.map((option) => {
+      const temp: CascadeProOption = { ...option }
       let name = ''
       let id = ''
       let pid = ''
@@ -191,8 +192,8 @@ export function getDefaultValue(
         if (option[key]) {
           name = option[`${key}Name`]
           id = option[key]
-          idPath = idPath ? `${option[key]}-${idPath}` : option[key]
-          namePath = namePath ? `${option[`${key}Name`]}-${namePath}` : option[`${key}Name`]
+          idPath = idPath ? `${idPath}-${option[key]}` : option[key]
+          namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
         }
       }
 
@@ -202,6 +203,7 @@ export function getDefaultValue(
         : ''
 
       return {
+        ...temp,
         name,
         id,
         pid,
