@@ -310,11 +310,14 @@ export const PreviewTable = defineComponent({
           customRender: ({ row, rowIndex }) => {
             hidePopoverRefs[rowIndex] || (hidePopoverRefs[rowIndex] = ref({}))
 
+            let width = taTableProInstanceRef.value?.instance?.$el?.offsetWidth
+            width && (width = `${width}px`)
+
             return (
               <>
                 {row.hyperlink === 0 ? (
                   <FileBranch
-                    width={taTableProInstanceRef.value?.instance?.$el?.offsetWidth || undefined}
+                    width={width || undefined}
                     onShowPopover={() => {
                       hidePopoverRefs.forEach((el) => {
                         el.value.hidePopover?.()

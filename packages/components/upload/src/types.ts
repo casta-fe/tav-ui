@@ -181,7 +181,7 @@ type DefaultColumnFields =
  * @author mxs
  * @name TaUploadBasciProps
  * @createDate 2022/01/12
- * @updateDate 2022/06/28
+ * @updateDate 2022/11/30
  */
 type BasicPropsType = {
   /**
@@ -326,8 +326,12 @@ type BasicPropsType = {
     beforeOrAfter?: 'before' | 'after'
     column: TableProColumn
   }[]
-  AppId?: string
+  AppId?: string | number
   fileBranchIsShowDeleteAction?: Fn<Recordable, boolean>
+  /**
+   * [最多上传多少个文件](./types.ts "组件被销毁前一直记录")
+   */
+  maxCount?: number
 } & ProvideDataType
 
 /**

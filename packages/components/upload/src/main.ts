@@ -394,6 +394,14 @@ class Handler {
       this.resetFileList()
       return
     }
+    if (
+      this._props.maxCount &&
+      this._uploadResponse.length + this._refFileList.length > this._props.maxCount
+    ) {
+      createMessage.warn(`文件最多上传 ${this._props.maxCount}个`)
+      this.resetFileList()
+      return
+    }
     this._refFileListPushEnd = true
     this.realUpload()
   }

@@ -100,10 +100,11 @@ export default defineComponent({
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: [Number, String] as PropType<BasicPropsType['nameColumnWidth']>,
     // eslint-disable-next-line vue/prop-name-casing
-    AppId: String as PropType<BasicPropsType['AppId']>,
+    AppId: [String, Number] as PropType<BasicPropsType['AppId']>,
     fileBranchIsShowDeleteAction: Function as PropType<
       BasicPropsType['fileBranchIsShowDeleteAction']
     >,
+    maxCount: Number as PropType<BasicPropsType['maxCount']>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {

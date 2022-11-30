@@ -259,34 +259,6 @@ const uploadArr: any[] = [
     typeName: '其他资料',
     createTime: '2022-08-18 15:33:41',
   },
-  {
-    id: 9661,
-    appId: 10001,
-    actualId: 'c2feb54f41db4b72af2f29c92d87bfab',
-    moduleId: 7,
-    businessKey: null,
-    businessId: '91100000101619881W',
-    type: 5,
-    deleted: 0,
-    version: 4,
-    name: '投管联调计划第二版-贾旭鹏xlsx',
-    suffix: 'xlsx',
-    fullName: '投管联调计划第二版-贾旭鹏xlsx.xlsx',
-    size: 12261,
-    address: '/20220818/16608037441049063.xlsx',
-    runtime: null,
-    hyperlink: 0,
-    sourceFileDownload: 1,
-    watermarkFileDownload: 2,
-    fileSize: '11KB',
-    createBy: '1',
-    createByName: '系统管理员',
-    moduleCode: 'tg_company',
-    moduleName: '企业库',
-    typeCode: 'COMPANY_OTHER',
-    typeName: '其他资料',
-    createTime: '2022-08-18 14:22:24',
-  },
 ]
 
 export const taUploadProvideData: Partial<
@@ -311,7 +283,7 @@ export const taUploadProvideData: Partial<
   queryFileType: async (moduleCodes: string[]) => {
     await promiseTimeout(1000)
 
-    console.log('moduleCodes', moduleCodes)
+    // console.log('moduleCodes', moduleCodes)
 
     return Promise.resolve({
       data: {

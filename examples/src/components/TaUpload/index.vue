@@ -1,6 +1,7 @@
 <template>
   <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
     <ta-upload
+      :max-count="10"
       :params="params"
       :insert-columns="[
         { column: { field: 'abc', title: '默认新增列' } },
