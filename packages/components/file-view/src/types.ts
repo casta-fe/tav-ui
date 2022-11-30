@@ -18,7 +18,7 @@ export const fileViewProps = {
     default: null,
   },
   AppId: {
-    type: String,
+    type: [String, Number],
     default: '',
   },
 }
