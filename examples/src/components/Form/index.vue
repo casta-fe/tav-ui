@@ -364,14 +364,32 @@ export default defineComponent({
     setTimeout(() => {
       setFieldsValue({
         field1: 99,
+        // field0: [
+        //   {
+        //     city: '130100',
+        //     cityName: '石家庄市',
+        //     district: '130104',
+        //     districtName: '桥西区',
+        //     province: '130000',
+        //     provinceName: '河北省',
+        //   },
+        // ],
         field0: [
           {
-            city: '130100',
-            cityName: '石家庄市',
-            district: '130104',
-            districtName: '桥西区',
-            province: '130000',
-            provinceName: '河北省',
+            city: null,
+            cityName: null,
+            district: null,
+            districtName: null,
+            province: 110000,
+            provinceName: '北京',
+          },
+          {
+            city: null,
+            cityName: null,
+            district: null,
+            districtName: null,
+            province: 500000,
+            provinceName: '重庆',
           },
         ],
         field00: [

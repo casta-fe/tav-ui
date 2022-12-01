@@ -92,11 +92,11 @@ export function handleOptions(
     for (let i = 0; i < options.length; i++) {
       const temp = {
         ...options[i],
-        name: options[i][name],
-        id: options[i][id],
-        pid: pid ? pid : '',
-        idPath: idPath ? `${idPath}-${options[i][id]}` : options[i][id],
-        namePath: namePath ? `${namePath}-${options[i][name]}` : options[i][name],
+        name: `${options[i][name]}`,
+        id: `${options[i][id]}`,
+        pid: pid ? `${pid}` : '',
+        idPath: idPath ? `${idPath}-${options[i][id]}` : `${options[i][id]}`,
+        namePath: namePath ? `${namePath}-${options[i][name]}` : `${options[i][name]}`,
         isIdSameAsOnlyOneChild:
           options[i][children] &&
           options[i][children].length &&
@@ -190,10 +190,10 @@ export function getDefaultValue(
       for (let i = 0; i < fields.length; i++) {
         const key = fields[i]
         if (option[key]) {
-          name = option[`${key}Name`]
-          id = option[key]
-          idPath = idPath ? `${idPath}-${option[key]}` : option[key]
-          namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
+          name = `${option[`${key}Name`]}`
+          id = `${option[key]}`
+          idPath = idPath ? `${idPath}-${option[key]}` : `${option[key]}`
+          namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : `${option[`${key}Name`]}`
         }
       }
 

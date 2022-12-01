@@ -123,10 +123,12 @@ export default defineComponent({
           for (let i = 0; i < fields.length; i++) {
             const key = fields[i]
             if (option[key]) {
-              name = option[`${key}Name`]
-              id = option[key]
-              idPath = idPath ? `${idPath}-${option[key]}` : option[key]
-              namePath = namePath ? `${namePath}-${option[`${key}Name`]}` : option[`${key}Name`]
+              name = `${option[`${key}Name`]}`
+              id = `${option[key]}`
+              idPath = idPath ? `${idPath}-${option[key]}` : `${option[key]}`
+              namePath = namePath
+                ? `${namePath}-${option[`${key}Name`]}`
+                : `${option[`${key}Name`]}`
             }
           }
 
