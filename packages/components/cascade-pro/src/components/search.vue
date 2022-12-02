@@ -10,7 +10,7 @@
     :filter-option="false"
     :not-found-content="null"
     option-label-prop="label"
-    @change="handleChange"
+    @select="handleSelect"
     @search="handleSearch"
   >
     <SelectOption
@@ -59,12 +59,14 @@ export default defineComponent({
 
     const value = ref<string | undefined>(undefined)
     const options = ref<CascadeProOption[]>([])
-    const handleChange = (value: string) => {
+
+    const handleSelect = (value: string) => {
       const result = unref(dataSource).list.find((option) => {
         return option.idPath === value
       })
       result && emit('search', result)
     }
+
     const handleSearch = debounce((value: string) => {
       if (!value) return
       const result = unref(dataSource).list.filter((option) => {
@@ -76,7 +78,7 @@ export default defineComponent({
     return {
       // search,
       value,
-      handleChange,
+      handleSelect,
       handleSearch,
       options,
     }

@@ -64,7 +64,7 @@ export default defineComponent({
       }
     })
 
-    // // TODO 根据不同级数据动态显示首字母 lastFieldIndex 从 selectrecordfibers 来
+    // // TODO 根据不同级数据动态显示首字母 fieldIndex 从 selectrecordfibers 来
     // const handler = () => {
     //   const _selectRecord = unref(selectRecord)
     //   const _fields = unref(fields)

@@ -5,16 +5,14 @@
       <Button type="link" size="small" @click="handleClearAll">清空</Button>
     </div>
     <div class="ta-cascade-pro-search-result-list">
-      <ContainerScroll>
-        <Tag
-          v-for="option in options"
-          :key="option.idPath"
-          closable
-          @close="() => handleClear(option)"
-        >
-          {{ option.namePath }}
-        </Tag>
-      </ContainerScroll>
+      <Tag
+        v-for="option in options"
+        :key="option.idPath"
+        closable
+        @close="() => handleClear(option)"
+      >
+        {{ option.namePath }}
+      </Tag>
     </div>
   </div>
 </template>
@@ -23,9 +21,9 @@
 import { defineComponent, ref, unref, watch } from 'vue'
 import { Tag } from 'ant-design-vue'
 import Button from '@tav-ui/components/button'
-import ContainerScroll from '@tav-ui/components/container-scroll'
 // import { cascadeProSelectResultProps } from '../types'
 import { useCascadeProContext } from '../hooks'
+// import { findChilds, findParents } from '../utils'
 import type { CascadeProOption } from '../types'
 import type { Ref } from 'vue'
 
@@ -36,15 +34,21 @@ export interface CascadeProSelectResultInstance {
 
 export default defineComponent({
   name: 'TaCascadeProSelectResult',
-  components: { Button, Tag, ContainerScroll },
+  components: { Button, Tag },
   // props: cascadeProSelectResultProps,
   emits: ['clear', 'clearAll'],
   setup(props, { emit, expose }) {
-    const { selectRecords, setSelectRecords, fields } = useCascadeProContext()
+    const { selectRecords, fields } = useCascadeProContext()
 
     const visible = ref<boolean>(false)
     const options = ref<CascadeProOption[]>([])
 
+    /**
+     * 新增选中结果时，只需要显示最深的子级即可（但是其每一个父级都放在了selectrecords中）
+     *
+     * @param group
+     * @param result
+     */
     const filterOptionsByRecursive = (group: CascadeProOption[], result: CascadeProOption[]) => {
       for (let i = 0; i < group.length; i++) {
         const item = group[i]
@@ -76,10 +80,17 @@ export default defineComponent({
       options.value = result
     }
 
+    /**
+     * 删除时不仅要删除点击的元素，还需要删除点击元素的父级或者子级
+     *
+     * @param target
+     * @param result
+     * @param fieldType
+     */
     const filterOptionsByOptionRecursive = (
       target: CascadeProOption,
       result: CascadeProOption[],
-      type: 'middleField' | 'lastField'
+      fieldType: 'first' | 'middle' | 'last'
     ) => {
       // 去重
       if (!result.find((option) => option.idPath === target.idPath)) {
@@ -87,29 +98,37 @@ export default defineComponent({
       }
 
       // option.idPath.split("-").length === target.idPath.split("-").length - 1 是为了兼容北京与北京市id相同的情况
-      // lastField 指的是一级一级正向按顺序选择数据的情况（只需一层一层反向找父级），middleField 是兼容hot组件，直接跨级选择数据的情况（不仅找父级还得找子级别）
-      const filterResult =
-        type === 'lastField'
-          ? unref(selectRecords).filter(
-              (option) =>
-                option.id === target.pid &&
-                option.idPath.split('-').length === target.idPath.split('-').length - 1
-            )
-          : unref(selectRecords).filter(
-              (option) =>
-                (option.id === target.pid &&
-                  option.idPath.split('-').length === target.idPath.split('-').length - 1) ||
-                (option.pid === target.id &&
-                  option.idPath.split('-').length === target.idPath.split('-').length + 1)
-            )
+      // last 指的是一级一级正向按顺序选择数据的情况（只需一层一层反向找父级），middleField 是兼容hot组件，直接跨级选择数据的情况（不仅找父级还得找子级别）
+      let filterResult: CascadeProOption[] = []
+      if (fieldType === 'first') {
+        filterResult = unref(selectRecords).filter((option) =>
+          option.idPath.includes(`${target.id}-`)
+        )
+      } else if (fieldType === 'last') {
+        filterResult = unref(selectRecords).filter(
+          (option) =>
+            option.id === target.pid &&
+            option.idPath.split('-').length === target.idPath.split('-').length - 1
+        )
+      } else {
+        filterResult = unref(selectRecords).filter(
+          (option) =>
+            (option.id === target.pid &&
+              option.idPath.split('-').length === target.idPath.split('-').length - 1) ||
+            (option.pid === target.id &&
+              option.idPath.split('-').length === target.idPath.split('-').length + 1)
+        )
+      }
       if (filterResult.length > 0) {
         // option.idPath.split("-").length === target.idPath.split("-").length 是为了兼容北京与北京市id相同的情况
         const isOtherSameLevelRecord =
-          unref(selectRecords).filter(
-            (option) =>
-              option.pid === target.pid &&
-              option.idPath.split('-').length === target.idPath.split('-').length
-          ).length > 1
+          fieldType !== 'first'
+            ? unref(selectRecords).filter(
+                (option) =>
+                  option.pid === target.pid &&
+                  option.idPath.split('-').length === target.idPath.split('-').length
+              ).length > 1
+            : false
 
         // 有同级不删除，无同级再删除
         if (!isOtherSameLevelRecord) {
@@ -119,17 +138,39 @@ export default defineComponent({
               result.push(option)
             }
           })
-          filterOptionsByOptionRecursive(filterResult[0], result, type)
+
+          if (fieldType !== 'first') {
+            let _fieldType: 'first' | 'middle' | 'last' = 'last'
+            if (filterResult[0].idPath.split('-').length === 1) {
+              _fieldType = 'first'
+            } else if (filterResult[0].idPath.split('-').length === unref(fields).length) {
+              _fieldType = 'last'
+            } else {
+              _fieldType = 'middle'
+            }
+            filterOptionsByOptionRecursive(filterResult[0], result, _fieldType)
+          }
+
+          // // 避免爆栈，提前返回
+          // if (result.length !== unref(selectRecords).length) {
+          //   filterOptionsByOptionRecursive(filterResult[0], result, fieldType)
+          // }
         }
       }
     }
 
-    const handleClear = (
-      option: CascadeProOption,
-      type: 'middleField' | 'lastField' = 'lastField'
-    ) => {
+    const handleClear = (option: CascadeProOption) => {
+      let fieldType: 'first' | 'middle' | 'last' = 'last'
+      if (option.idPath.split('-').length === 1) {
+        fieldType = 'first'
+      } else if (option.idPath.split('-').length === unref(fields).length) {
+        fieldType = 'last'
+      } else {
+        fieldType = 'middle'
+      }
+
       const shouldDeleteSelectRecords: CascadeProOption[] = []
-      filterOptionsByOptionRecursive(option, shouldDeleteSelectRecords, type)
+      filterOptionsByOptionRecursive(option, shouldDeleteSelectRecords, fieldType)
       const remainSelectRecords = unref(selectRecords).filter((option) => {
         if (shouldDeleteSelectRecords.find((_option) => _option.idPath === option.idPath)) {
           return false

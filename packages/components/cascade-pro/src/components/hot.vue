@@ -60,8 +60,7 @@ export default defineComponent({
         oldOptions.forEach((hot) => {
           const isExist = newOptions.find((_hot) => _hot.idPath === hot.idPath)
           if (!isExist) {
-            const isLastField = hot.idPath.split('-').length === unref(fields).length
-            deleted.push({ ...hot, type: isLastField ? 'lastField' : 'middleField' })
+            deleted.push({ ...hot })
           }
         })
       }

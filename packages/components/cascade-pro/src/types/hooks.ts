@@ -44,7 +44,7 @@ export interface IUseSelectRecordReturn {
   selectRecordFibers: ComputedRef<{
     id: string
     pid: string
-    lastFieldIndex: number
+    fieldIndex: number
     idPathSplitResult: string[]
   }>
   // setSelectRecordFibers: (selectRecord: string) => void
@@ -59,7 +59,7 @@ export interface IUseSelectFibersReturn {
   selectRecordFibers: ComputedRef<{
     id: string
     pid: string
-    lastFieldIndex: number
+    fieldIndex: number
     idPathSplitResult: string[]
   }>
   setSelectRecordFibers: () => void

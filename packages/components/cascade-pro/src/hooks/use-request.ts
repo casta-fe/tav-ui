@@ -87,11 +87,11 @@ function handleOptionsWithFirstLetterVisible(options: CascadeProOption[]) {
 
 function searchData(param: ISearchData): CascadeProOption[][] | null {
   const firstLetterVisible = unref(param.firstLetterVisible)
-  const { id, pid, lastFieldIndex, idPathSplitResult } = unref(param.selectRecordFibers)
+  const { id, pid, fieldIndex, idPathSplitResult } = unref(param.selectRecordFibers)
   const tree = unref(param.options).tree
 
   // 初始化 selectRecord idPath = ''
-  if (id === '' && pid === '' && lastFieldIndex === 0) {
+  if (id === '' && pid === '' && fieldIndex === 0) {
     if (firstLetterVisible) {
       if (!CASCADE_PRO_CACHE.has(unref(param.id))) {
         CASCADE_PRO_CACHE.set(unref(param.id), {

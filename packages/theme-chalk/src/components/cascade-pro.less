@@ -10,6 +10,22 @@
     font-size: 12px;
   }
 
+  &-modal {
+    .ant-modal-body {
+      min-height: 380px; // 只有pannel和 result
+      max-height: 560px; // header/pannel/result（4行）
+      overflow: hidden;
+    }
+
+    .scrollbar__wrap {
+      overflow: hidden;
+    }
+
+    .scrollbar__bar.is-vertical {
+      opacity: 0 !important;
+    }
+  }
+
   &-select {
     width: 100%;
     display: inline-flex;
@@ -72,7 +88,7 @@
     &-field {
       flex: 1;
       flex: 0 1 0%;
-      min-width: 140px;
+      min-width: 160px;
 
       &:last-child {
         flex: 1 1 0%;
@@ -105,8 +121,11 @@
     }
 
     &-list {
+      position: relative;
       margin-top: calc(@gap16 / 4);
-      max-height: 80px;
+      min-height: 0;
+      max-height: 100px;
+      overflow-y: auto;
 
       .ant-tag {
         margin-right: 12px;
@@ -159,7 +178,9 @@
 
       &-pannel {
         &-field {
+          position: relative;
           height: 300px;
+          overflow-y: scroll;
           padding: calc(@gap16 / 4) 0;
 
           .ant-select-item-option {
@@ -184,10 +205,6 @@
                 background-color: #f0f7ff;
               }
             }
-          }
-
-          .scrollbar__bar {
-            opacity: 100%;
           }
         }
 

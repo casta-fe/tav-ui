@@ -13,12 +13,12 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
   const selectRecordFibersRef = ref<{
     id: string
     pid: string
-    lastFieldIndex: number
+    fieldIndex: number
     idPathSplitResult: string[]
   }>({
     id: '',
     pid: '',
-    lastFieldIndex: 0,
+    fieldIndex: 0,
     idPathSplitResult: [],
   })
 
@@ -28,7 +28,7 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
     setSelectRecordFibers(selectRecord.idPath)
     selectRecordRef.value = {
       ...selectRecord,
-      lastFieldIndex: unref(selectRecordFibers).lastFieldIndex,
+      fieldIndex: unref(selectRecordFibers).fieldIndex,
     }
   }
 
@@ -39,7 +39,7 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
       selectRecordFibersRef.value = {
         id: '',
         pid: '',
-        lastFieldIndex: 0,
+        fieldIndex: 0,
         idPathSplitResult: [],
       }
     } else {
@@ -50,7 +50,7 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
         selectRecordFibersRef.value = {
           id: '',
           pid: '',
-          lastFieldIndex: 0,
+          fieldIndex: 0,
           idPathSplitResult: [],
         }
       }
@@ -60,14 +60,14 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
           selectRecordFibersRef.value = {
             id: '',
             pid: '',
-            lastFieldIndex: 0,
+            fieldIndex: 0,
             idPathSplitResult: [],
           }
         } else {
           selectRecordFibersRef.value = {
             id: result[0],
             pid: '',
-            lastFieldIndex: 0,
+            fieldIndex: 0,
             idPathSplitResult: result,
           }
         }
@@ -75,7 +75,7 @@ export function useSelectRecord(param: IUseSelectRecord): IUseSelectRecordReturn
         selectRecordFibersRef.value = {
           id: result[result.length - 1],
           pid: result[result.length - 1 - 1],
-          lastFieldIndex: result.length - 1,
+          fieldIndex: result.length - 1,
           idPathSplitResult: result,
         }
       }

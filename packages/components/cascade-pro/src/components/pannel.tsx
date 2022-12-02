@@ -1,7 +1,6 @@
-import { type ComputedRef, defineComponent, nextTick, ref, unref } from 'vue'
+import { type ComputedRef, defineComponent, nextTick, onBeforeUnmount, ref, unref } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
 // import { debounce } from 'lodash-es'
-import ContainerScroll from '@tav-ui/components/container-scroll'
 import { cascadeProPannelProps } from '../types'
 import { useCascadeProContext, useFieldRequest, useLoading } from '../hooks'
 // import { DebounceDely } from '../constants'
@@ -33,9 +32,10 @@ export default defineComponent({
       id,
     } = useCascadeProContext()
 
-    const containerScrollRefs = ref<any[]>([])
-    const setContainerScrollRefs = (scrollRef: any) => {
-      containerScrollRefs.value.push(scrollRef)
+    const pannelFieldElRefs = ref<any[]>([])
+    const setPannelFieldElRefs = (pannelFieldEf: any) => {
+      if (pannelFieldEf && !unref(pannelFieldElRefs).find((field) => field.id === pannelFieldEf.id))
+        pannelFieldElRefs.value.push(pannelFieldEf)
     }
 
     const { loading, setLoading } = useLoading()
@@ -57,12 +57,11 @@ export default defineComponent({
     const handlePannelFieldScrollToLetter = async (letter: string) => {
       await nextTick()
       // 取第一个ref，因为目前只做了第一级数据的首字母
-      const scrollRef = unref(containerScrollRefs)[0]
-      const scrollEl = scrollRef.$el
-      const target: HTMLElement | null = scrollEl.querySelector(
+      const pannelFieldEf = unref(pannelFieldElRefs)[0]
+      const target: HTMLElement | null = pannelFieldEf.querySelector(
         `[data-first-letter-group="${letter}"]`
       )
-      target && scrollRef.scrollTo(target.offsetTop)
+      if (target) pannelFieldEf.scrollTop = target.offsetTop
     }
 
     const createLoading = () => {
@@ -192,54 +191,56 @@ export default defineComponent({
           {unref(result).map((options, idx) => {
             return (
               <div
-                class={`ta-cascade-pro-pannel-field ta-cascade-pro-pannel-field--${
-                  unref(fields)[idx]
-                }`}
+                id={`${unref(fields)[idx]}`}
+                class="ta-cascade-pro-pannel-field"
+                ref={setPannelFieldElRefs}
               >
-                <ContainerScroll ref={setContainerScrollRefs}>
-                  <div
-                    class={`ant-select-item ant-select-item-option ${
-                      isAllSelected(options, idx) ? 'ant-select-item-option-selected' : ''
-                    }`}
-                    data-is-selected={isAllSelected(options, idx)}
-                    onClick={() => handleFieldClear(options, idx)}
-                  >
-                    全部
-                  </div>
-                  {unref(options) && unref(options).length
-                    ? unref(options).map((option) => (
-                        <div
-                          class={`ant-select-item ant-select-item-option ${
-                            isOptionSelected(option.idPath) ? 'ant-select-item-option-selected' : ''
-                          }`}
-                          data-is-selected={isOptionSelected(option.idPath)}
-                          data-first-letter-group={option.firstLetterGroup}
-                          onClick={() => handleOptionClick(option)}
-                        >
-                          <div class="ant-select-item-option-content">
-                            {idx === 0 ? (
-                              <div class="first-letter-group">
-                                {option.firstLetter && option.firstLetterGroup
-                                  ? option.firstLetterGroup
-                                  : null}
-                              </div>
-                            ) : null}
-                            {props.generatePannelItem ? (
-                              props.generatePannelItem(option, idx)
-                            ) : (
-                              <div>{option.name}</div>
-                            )}
-                          </div>
+                <div
+                  class={`ant-select-item ant-select-item-option ${
+                    isAllSelected(options, idx) ? 'ant-select-item-option-selected' : ''
+                  }`}
+                  data-is-selected={isAllSelected(options, idx)}
+                  onClick={() => handleFieldClear(options, idx)}
+                >
+                  全部
+                </div>
+                {unref(options) && unref(options).length
+                  ? unref(options).map((option) => (
+                      <div
+                        class={`ant-select-item ant-select-item-option ${
+                          isOptionSelected(option.idPath) ? 'ant-select-item-option-selected' : ''
+                        }`}
+                        data-is-selected={isOptionSelected(option.idPath)}
+                        data-first-letter-group={option.firstLetterGroup}
+                        onClick={() => handleOptionClick(option)}
+                      >
+                        <div class="ant-select-item-option-content">
+                          {idx === 0 ? (
+                            <div class="first-letter-group">
+                              {option.firstLetter && option.firstLetterGroup
+                                ? option.firstLetterGroup
+                                : null}
+                            </div>
+                          ) : null}
+                          {props.generatePannelItem ? (
+                            props.generatePannelItem(option, idx)
+                          ) : (
+                            <div>{option.name}</div>
+                          )}
                         </div>
-                      ))
-                    : null}
-                </ContainerScroll>
+                      </div>
+                    ))
+                  : null}
               </div>
             )
           })}
         </div>
       ) : null
     }
+
+    onBeforeUnmount(() => {
+      pannelFieldElRefs.value = []
+    })
 
     expose({
       handlePannelFieldScrollToLetter,
