@@ -430,6 +430,10 @@ export const tableProProps = {
   clipConfig: {
     type: Object as PropType<VxeTablePropTypes.ClipConfig>,
   },
+  /**  表格筛选组件modal类名  */
+  filterModalClassName: {
+    type: String,
+  },
   //:==================================================: 需付费，使用时请查看文档 :==================================================://
   /**
    * 展开行配置项（不支持虚拟滚动）（详情查看：https://vxetable.cn/#/grid/api）

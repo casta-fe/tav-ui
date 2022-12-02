@@ -142,6 +142,7 @@ export default defineComponent({
             config={values.filterFormConfig}
             tableRef={tableRef}
             tableSlots={slots}
+            filterModalClassName={values.filterModalClassName}
           />
           <ComponentCustomAction
             ref={customActionRef}

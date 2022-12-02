@@ -27,6 +27,7 @@ const props = {
   tableSlots: {
     type: Object as PropType<Slots>,
   },
+  filterModalClassName: { type: String, default: '' },
 }
 
 export default defineComponent({
@@ -290,6 +291,7 @@ export default defineComponent({
               </Button>
               <BasicModal
                 title={'更多筛选'}
+                wrapClassName={props.filterModalClassName}
                 style={state.dialogStyle}
                 width={state.dialogStyle.width}
                 maskStyle={{ background: 'rgba(0,0,0,0)' }}
