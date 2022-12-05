@@ -42,6 +42,12 @@
       >
         <div class="ant-select-selection-item" style="cursor: pointer">
           <div class="ant-select-selection-item-content">{{ option.namePath }}</div>
+          <!-- <Icon
+            icon="ant-design:close-outlined"
+            :size="12"
+            class="ant-select-item-option-close-icon"
+            @click.stop="() => handleClear(option)"
+          /> -->
         </div>
       </div>
     </div>
@@ -52,6 +58,7 @@
 import { computed, defineComponent, nextTick, ref, unref, watch } from 'vue'
 import Modal from '@tav-ui/components/modal'
 import Button from '@tav-ui/components/button'
+// import Icon from '@tav-ui/components/icon'
 import { cascadeProSelectProps } from './types'
 import CascadePro from './components/cascade-pro.vue'
 import { DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG, buildCascadeProId } from './constants'
@@ -194,6 +201,16 @@ export default defineComponent({
       visible.value = true
     }
 
+    const handleClear = (option: CascadeProOption) => {
+      selectValue.value = unref(selectValue).filter((_option) => _option.idPath !== option.idPath)
+      selectDefaultValue.value = unref(selectDefaultValue).filter(
+        (_option) => _option.idPath !== option.idPath
+      )
+      selectOptions.value = unref(selectOptions).filter(
+        (_option) => _option.idPath !== option.idPath
+      )
+    }
+
     return {
       cascadeProRef,
       getBindValue,
@@ -203,6 +220,7 @@ export default defineComponent({
       handleConfirm,
       handleCancel,
       handleClick,
+      handleClear,
     }
   },
 })

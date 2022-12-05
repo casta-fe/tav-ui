@@ -53,7 +53,7 @@ import type { CascadeProFirstLetterInstance } from './first-letter.vue'
 import type { CascadeProPannelInstance } from './pannel'
 import type { CascadeProSelectResultInstance } from './select-result.vue'
 import type { CascadeProOption } from '../types'
-import type { ComputedRef, Ref } from 'vue'
+import type { Ref } from 'vue'
 
 export interface CascadeProInstance {
   selectResultRef: Ref<CascadeProSelectResultInstance | null>

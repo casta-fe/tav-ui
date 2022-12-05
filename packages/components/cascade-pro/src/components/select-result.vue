@@ -28,7 +28,7 @@ import type { CascadeProOption } from '../types'
 import type { Ref } from 'vue'
 
 export interface CascadeProSelectResultInstance {
-  handleClear: (option: CascadeProOption, type?: 'middleField' | 'lastField') => void
+  handleClear: (option: CascadeProOption) => void
   options: Ref<CascadeProOption[]>
 }
 
