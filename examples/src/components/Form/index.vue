@@ -189,28 +189,32 @@ const schemas: FormSchema[] = [
   //     span: 8,
   //   },
   // },
-  // {
-  //   field: 'field4',
-  //   component: 'Select',
-  //   label: '字段4',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   componentProps: {
-  //     options: [
-  //       {
-  //         label: '选项1',
-  //         value: '1',
-  //         key: '1',
-  //       },
-  //       {
-  //         label: '选项2',
-  //         value: '2',
-  //         key: '2',
-  //       },
-  //     ],
-  //   },
-  // },
+  {
+    field: 'field4',
+    component: 'Select',
+    label: '字段4',
+    colProps: {
+      span: 8,
+    },
+    // editable: true,
+    componentProps: {
+      // onEditableFormItemVisible(v) {
+      //   console.log(v)
+      // },
+      options: [
+        {
+          label: '选项1',
+          value: '1',
+          key: '1',
+        },
+        {
+          label: '选项2',
+          value: '2',
+          key: '2',
+        },
+      ],
+    },
+  },
   // {
   //   field: 'field5',
   //   component: 'CheckboxGroup',

@@ -292,7 +292,11 @@ export default defineComponent({
 
     function showEditableDom(componentMap, schema) {
       const hide = () => {
-        if (componentMap.has(schema.component)) isEditableItemClicked.value = false
+        if (componentMap.has(schema.component)) {
+          isEditableItemClicked.value = false
+          unref(getComponentsProps).onEditableFormItemVisible &&
+            unref(getComponentsProps).onEditableFormItemVisible(unref(isEditableItemClicked))
+        }
       }
       if (schema.required) {
         // if (props.schema.field === "purposeInvestScale") {
@@ -729,7 +733,13 @@ export default defineComponent({
               }
               title={editableItemValue.value}
               onClick={() => {
-                if (unref(isEditable)) isEditableItemClicked.value = true
+                if (unref(isEditable)) {
+                  isEditableItemClicked.value = true
+                  unref(getComponentsProps).onEditableFormItemVisible &&
+                    unref(getComponentsProps).onEditableFormItemVisible(
+                      unref(isEditableItemClicked)
+                    )
+                }
               }}
             >
               {getEditableFormContent()}
