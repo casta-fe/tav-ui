@@ -292,7 +292,7 @@ export default defineComponent({
 
     function showEditableDom(componentMap, schema) {
       const hide = () => {
-        if (componentMap.has(schema.component)) {
+        if (componentMap.has(schema.component) && unref(isEditableItemClicked)) {
           isEditableItemClicked.value = false
           unref(getComponentsProps).onEditableFormItemVisible &&
             unref(getComponentsProps).onEditableFormItemVisible(unref(isEditableItemClicked))

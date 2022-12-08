@@ -95,84 +95,84 @@ import type { FormSchema } from '@tav-ui/components/form'
 //   { label: '用户3', value: 3 },
 // ]
 const schemas: FormSchema[] = [
-  {
-    field: 'field00',
-    component: 'CascadeProSelect',
-    label: '字段00',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      title: '标签选择',
-      // placeholder: '请选择标签',
-      searchPlaceholder: '请输入标签名称',
-      fields: ['tag', 'subTag'],
-      optionsKeyConfig: {
-        name: 'name',
-        id: 'id',
-        children: 'children',
-        pid: 'pid',
-      },
-      // hotKeyWords: ['光子', '半导体', '人工智能', '先进制造', '军工'],
-      hotKeyWords: [
-        '484d222e04a711ec8b830242ac110002',
-        '484e1d9a04a711ec8b830242ac110002',
-        '4853fcb504a711ec8b830242ac110002',
-        '4852cb2b04a711ec8b830242ac110002',
-        '48562dce04a711ec8b830242ac110002',
-      ],
-      generatePannelItem(option, level) {
-        if (level === 0) {
-          return h('div', null, option.name)
-        } else {
-          return h('div', null, [
-            h('span', null, option.name),
-            h('span', null, option.type === 1 ? '技术' : '应用'),
-          ])
-        }
-      },
-      maxTagCount: 999,
-      // generateSearchItem(option) {
-      //   return h('div', null, option.namePath)
-      // },
-    },
-  },
-  {
-    field: 'field0',
-    component: 'CascadeProSelect',
-    label: '字段0',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      // placeholder: '自定义placeholder',
-      // firstLetterTitle: 'aaa',
-      // generateHotList: (options) => {
-      //   return options
-      // }
-    },
-  },
-  {
-    field: 'field1',
-    component: 'MemberSelect',
-    label: '字段1',
-    colProps: {
-      span: 8,
-    },
-    editable: true,
-    componentProps: {
-      placeholder: '自定义placeholder',
-      options: [],
-    },
-  },
-  {
-    field: 'field2',
-    component: 'InputNumberRange',
-    label: '字段2',
-    colProps: {
-      span: 8,
-    },
-  },
+  // {
+  //   field: 'field00',
+  //   component: 'CascadeProSelect',
+  //   label: '字段00',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     title: '标签选择',
+  //     // placeholder: '请选择标签',
+  //     searchPlaceholder: '请输入标签名称',
+  //     fields: ['tag', 'subTag'],
+  //     optionsKeyConfig: {
+  //       name: 'name',
+  //       id: 'id',
+  //       children: 'children',
+  //       pid: 'pid',
+  //     },
+  //     // hotKeyWords: ['光子', '半导体', '人工智能', '先进制造', '军工'],
+  //     hotKeyWords: [
+  //       '484d222e04a711ec8b830242ac110002',
+  //       '484e1d9a04a711ec8b830242ac110002',
+  //       '4853fcb504a711ec8b830242ac110002',
+  //       '4852cb2b04a711ec8b830242ac110002',
+  //       '48562dce04a711ec8b830242ac110002',
+  //     ],
+  //     generatePannelItem(option, level) {
+  //       if (level === 0) {
+  //         return h('div', null, option.name)
+  //       } else {
+  //         return h('div', null, [
+  //           h('span', null, option.name),
+  //           h('span', null, option.type === 1 ? '技术' : '应用'),
+  //         ])
+  //       }
+  //     },
+  //     maxTagCount: 999,
+  //     // generateSearchItem(option) {
+  //     //   return h('div', null, option.namePath)
+  //     // },
+  //   },
+  // },
+  // {
+  //   field: 'field0',
+  //   component: 'CascadeProSelect',
+  //   label: '字段0',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     // placeholder: '自定义placeholder',
+  //     // firstLetterTitle: 'aaa',
+  //     // generateHotList: (options) => {
+  //     //   return options
+  //     // }
+  //   },
+  // },
+  // {
+  //   field: 'field1',
+  //   component: 'MemberSelect',
+  //   label: '字段1',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   editable: true,
+  //   componentProps: {
+  //     placeholder: '自定义placeholder',
+  //     options: [],
+  //   },
+  // },
+  // {
+  //   field: 'field2',
+  //   component: 'InputNumberRange',
+  //   label: '字段2',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
   // {
   //   field: 'field3',
   //   component: 'DatePicker',
@@ -196,11 +196,11 @@ const schemas: FormSchema[] = [
     colProps: {
       span: 8,
     },
-    // editable: true,
+    editable: true,
     componentProps: {
-      // onEditableFormItemVisible(v) {
-      //   console.log(v)
-      // },
+      onEditableFormItemVisible(v) {
+        console.log(v)
+      },
       options: [
         {
           label: '选项1',
