@@ -63,7 +63,7 @@ export const UpdateFile = defineComponent({
     return () => (
       <div style="position: absolute; z-index: -999;opacity: 0;">
         <input
-          multiple
+          // multiple
           ref={uploadRef}
           type="file"
           accept={props.accept}

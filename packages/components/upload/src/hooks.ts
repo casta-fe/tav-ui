@@ -1,6 +1,7 @@
 import { computed } from 'vue'
+// import { clone } from 'xe-utils'
 import type { Handler } from './main'
-import type { LabelValueOptions, Recordable } from './types'
+import type { FileItemType, LabelValueOptions, Recordable } from './types'
 
 /**
  * ***begin***
@@ -146,4 +147,44 @@ export function getActionColumnMaxWidth(
   // 表格td 自带 padding(左[10]+右[10])
   l += 20
   return l + appendWidth
+}
+
+export function useFileFormatter() {
+  const versionRecord: Partial<Recordable<FileItemType[]>> = {}
+
+  function upadteVersion(file: FileItemType) {
+    if (versionRecord[file.actualId!]) {
+      // 维护文件唯一性
+      if (versionRecord[file.actualId!]?.some((el) => file.id === el.id)) return
+
+      versionRecord[file.actualId!]!.push(file)
+    } else {
+      versionRecord[file.actualId!] = [file]
+    }
+  }
+
+  function formatToApi(files: FileItemType[]) {
+    const currentFileActualIds: string[] = []
+
+    for (const file of files) {
+      upadteVersion(file)
+
+      currentFileActualIds.push(file.actualId!)
+    }
+
+    for (const actualId in versionRecord) {
+      // 有删除操作时
+      currentFileActualIds.includes(actualId) || Reflect.deleteProperty(versionRecord, actualId)
+    }
+
+    // const cloneVersionRecord = clone(versionRecord, true)
+    // versionRecord = {}
+
+    return Object.keys(versionRecord).map((k) => ({
+      actualId: k,
+      versionList: versionRecord[k],
+    }))
+  }
+
+  return { formatToApi, upadteVersion }
 }

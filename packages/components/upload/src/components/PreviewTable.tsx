@@ -69,7 +69,7 @@ export const PreviewTable = defineComponent({
       default: () => [],
     },
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
-    nameColumnWidth: { type: [Number, String], default: 300 },
+    nameColumnWidth: { type: [Number, String], default: 200 },
     moduleCode: { type: String, required: true },
   },
   emits: ['delete'],
@@ -149,6 +149,7 @@ export const PreviewTable = defineComponent({
         {
           title: props.coverColumnTitle?.fullName ?? '文件名称',
           field: 'fullName',
+          fixed: 'left',
           visible: !props?.hideColumnFields!.includes('fullName'),
           width: props.nameColumnWidth,
           ...(props.updateFileNameAndAddress ? { editRender: {} } : {}),
@@ -241,7 +242,7 @@ export const PreviewTable = defineComponent({
           title: props.coverColumnTitle?.typeName ?? '文件类型',
           field: 'typeName',
           visible: !props?.hideColumnFields!.includes('typeName'),
-          minWidth: 220,
+          minWidth: 100,
           ...(props.handler.apis.updateFileType ? { editRender: {} } : {}),
           slots: {
             edit: ({ row, rowIndex, columnIndex }) => {
@@ -311,7 +312,12 @@ export const PreviewTable = defineComponent({
             hidePopoverRefs[rowIndex] || (hidePopoverRefs[rowIndex] = ref({}))
 
             let width = taTableProInstanceRef.value?.instance?.$el?.offsetWidth
-            width && (width = `${width}px`)
+
+            if (width) {
+              width -= 40
+
+              width = `${width}px`
+            }
 
             return (
               <>

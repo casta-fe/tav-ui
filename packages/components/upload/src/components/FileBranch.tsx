@@ -151,26 +151,26 @@ export const FileBranch = defineComponent({
             props.download?.(record, undefined, undefined)
           },
         },
-        {
-          label: '删除',
-          permission: props.tableActionPermission.delete,
-          enabled: !!(
-            (props.showTableAction.delete ?? true) &&
-            // @ts-ignore
-            record.version !== dataSource.value[dataSource.value.length - 1].version &&
-            props.isShowDeleteAction?.(record)
-          ),
-          // @ts-ignore
-          popConfirm: {
-            title: '是否确认删除?',
-            confirm: () => {
-              removeFileById?.(record.id, props.parentProps?.AppId).then(() => {
-                createMessage.success('删除成功')
-                getData()
-              })
-            },
-          },
-        },
+        // {
+        //   label: '删除',
+        //   permission: props.tableActionPermission.delete,
+        //   enabled: !!(
+        //     (props.showTableAction.delete ?? true) &&
+        //     // @ts-ignore
+        //     record.version !== dataSource.value[dataSource.value.length - 1].version &&
+        //     props.isShowDeleteAction?.(record)
+        //   ),
+        //   // @ts-ignore
+        //   popConfirm: {
+        //     title: '是否确认删除?',
+        //     confirm: () => {
+        //       removeFileById?.(record.id, props.parentProps?.AppId).then(() => {
+        //         createMessage.success('删除成功')
+        //         getData()
+        //       })
+        //     },
+        //   },
+        // },
       ]
       return actions
     }

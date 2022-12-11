@@ -25,10 +25,6 @@ export default defineComponent({
       type: Boolean as PropType<BasicPropsType['showSelect']>,
       default: true,
     },
-    relationBusinessId: {
-      type: Boolean as PropType<BasicPropsType['relationBusinessId']>,
-      default: false,
-    },
     showTable: {
       type: Boolean as PropType<BasicPropsType['showTable']>,
       default: true,
@@ -58,10 +54,6 @@ export default defineComponent({
     controlInOuter: {
       type: Boolean as PropType<BasicPropsType['controlInOuter']>,
       default: false,
-    },
-    useFakeDelete: {
-      type: Boolean as PropType<BasicPropsType['useFakeDelete']>,
-      default: true,
     },
     uploadResponse: Array as PropType<BasicPropsType['uploadResponse']>,
     showUploadBtn: {
@@ -105,6 +97,7 @@ export default defineComponent({
       BasicPropsType['fileBranchIsShowDeleteAction']
     >,
     maxCount: Number as PropType<BasicPropsType['maxCount']>,
+    immediate: { type: Boolean as PropType<BasicPropsType['immediate']>, default: true },
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {

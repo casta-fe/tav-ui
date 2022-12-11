@@ -1,6 +1,10 @@
 <template>
-  <div style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc">
+  <!-- 812px -->
+  <div
+    style="margin: 16px; padding: 16px; border-radius: 8px; border: 1px solid #ccc; width: unset"
+  >
     <ta-upload
+      ref="uploadRef"
       :max-count="10"
       :params="params"
       :insert-columns="[
@@ -28,13 +32,15 @@
       </template>
     </ta-upload>
     <TaButton type="primary" @click="switchModule">switch moduleCode</TaButton>
+    <TaButton type="dashed" @click="getRes">getRes</TaButton>
   </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import { TaButton, TaUpload } from '@tav-ui/components'
+import type { Handler } from '@tav-ui/components/upload/src/main'
 
 export default defineComponent({
   components: {
@@ -42,6 +48,8 @@ export default defineComponent({
     TaButton,
   },
   setup() {
+    const uploadRef = ref<Handler>()
+
     const params = reactive({
       moduleCode: 'tg_invest',
       businessId: 'id0',
@@ -51,10 +59,16 @@ export default defineComponent({
       params.moduleCode = 'tg_invest' === params.moduleCode ? 'other_module' : 'tg_invest'
     }
 
+    function getRes() {
+      console.error('uploadRef.value?.getResult', uploadRef.value?.getResult())
+    }
+
     // setTimeout(switchModule, 2000)
 
     return {
+      uploadRef,
       params,
+      getRes,
       onSelect: console.log,
       switchModule,
       fileBranchIsShowDeleteAction(args) {

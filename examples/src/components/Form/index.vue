@@ -343,12 +343,12 @@ export default defineComponent({
           }
         })
 
-        updateSchema({
-          field: 'field00',
-          componentProps: {
-            options: result,
-          },
-        })
+        // updateSchema({
+        //   field: 'field00',
+        //   componentProps: {
+        //     options: result,
+        //   },
+        // })
 
         // setFieldsValue({
         //   field00: [

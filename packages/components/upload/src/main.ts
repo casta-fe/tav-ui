@@ -2,6 +2,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { isFunction } from '@tav-ui/utils'
+import { useFileFormatter } from './hooks'
 import type { Ref } from 'vue'
 import type { FormActionType } from '../../form'
 import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
@@ -51,9 +52,9 @@ class Handler {
   private _refFileList: File[] = []
   private _uploadResponse: FileItemType[] = []
   private _refFileListPushEnd = false
-  private _relationBusinessId = false
-  private _useFakeDelete = false
+  private _immediate = false
   private _controlInOuter = false
+  private _fileFormatter = useFileFormatter()
 
   /**
    * newest typeCode
@@ -112,8 +113,8 @@ class Handler {
       if (
         !(
           isFunction(apis.queryFile) &&
-          // 当使用 useFakeDelete 时不需要传removeFile
-          (this._useFakeDelete ? true : isFunction(apis.removeFile)) &&
+          // 当使用 false === immediate 时不需要传removeFile
+          (this._immediate ? isFunction(apis.removeFile) : true) &&
           isFunction(apis.uploadFile) &&
           isFunction(apis.uploadHyperlink)
         )
@@ -164,20 +165,9 @@ class Handler {
 
     // 动态控制上传同时携带businessId
     watch(
-      () => this._props.relationBusinessId,
+      () => this._props.immediate,
       (val) => {
-        this._relationBusinessId = val
-      },
-      {
-        immediate: true,
-      }
-    )
-
-    // 掉接口删除?
-    watch(
-      () => this._props.useFakeDelete,
-      (val) => {
-        this._useFakeDelete = val
+        this._immediate = val
       },
       {
         immediate: true,
@@ -262,6 +252,8 @@ class Handler {
    */
   private getFileActualIds = () => this._uploadResponse.map((el) => el.actualId)
 
+  getResult = () => this._fileFormatter.formatToApi(this._uploadResponse)
+
   /**
    * 将列表数据填到表格上
    */
@@ -293,7 +285,7 @@ class Handler {
     const { actualId } = record
     // this._uploadResponse.length = 0
     const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
-    this._uploadResponse.splice(index, 1, record)
+    this._fileFormatter.upadteVersion(this._uploadResponse.splice(index, 1, record)[0])
     this.fillDataSource()
     // console.log(this._uploadResponse)
   }
@@ -318,9 +310,8 @@ class Handler {
     }
 
     this._isLoading.value = true
-    if (this._useFakeDelete) {
+    if (!this._immediate) {
       spliceData()
-      // 用户体验拉满😏
       setTimeout(() => {
         this._isLoading.value = false
       }, 300)
@@ -431,7 +422,7 @@ class Handler {
     this._params.typeCode = this._typeCode.value
     // 将参数塞到formData里面去
     for (const k in this._params) {
-      if (!this._relationBusinessId && ['businessId', 'businessKey'].includes(k)) continue
+      if (!this._immediate && ['businessId', 'businessKey'].includes(k)) continue
       if (!this._params[k]) continue
       this._params[k] != undefined && formData.append(k, this._params[k])
     }
@@ -472,7 +463,7 @@ class Handler {
       name: this._paramsName,
       address: this._paramsAddress,
     }
-    if (!this._relationBusinessId) {
+    if (!this._immediate) {
       Reflect.deleteProperty(payload, 'businessId')
       Reflect.deleteProperty(payload, 'businessKey')
     }

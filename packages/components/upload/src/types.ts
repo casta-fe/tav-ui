@@ -181,7 +181,7 @@ type DefaultColumnFields =
  * @author mxs
  * @name TaUploadBasciProps
  * @createDate 2022/01/12
- * @updateDate 2022/11/30
+ * @updateDate 2022/12/11
  */
 type BasicPropsType = {
   /**
@@ -201,10 +201,6 @@ type BasicPropsType = {
    * 默认的select选择框
    */
   showSelect: boolean
-  /**
-   * 上传同时添加businessId
-   */
-  relationBusinessId: boolean
   /**
    * 默认的文件列表
    */
@@ -256,14 +252,6 @@ type BasicPropsType = {
    * 双向绑定文件真实id的代码提示
    */
   'onUpdate:fileActualIds'?: Fn<string[], void>
-  /**
-   * 假删除
-   * change会调用 文件真实id也会变
-   * 如果不点提交,数据就不变
-   * 编辑点了提交,文件真实id列表变了=>后台会执行真删除
-   * @default true
-   */
-  useFakeDelete: boolean
   /**
    * 回填传入列表数据就不再发起请求
    */
@@ -332,6 +320,11 @@ type BasicPropsType = {
    * [最多上传多少个文件](./types.ts "组件被销毁前一直记录")
    */
   maxCount?: number
+  /**
+   * 操作直接调接口生效
+   * @default true
+   */
+  immediate: boolean
 } & ProvideDataType
 
 /**
@@ -408,11 +401,9 @@ type HasDefaultPropType =
   | 'showTable'
   | 'showSelect'
   | 'showUploadBtn'
-  | 'useFakeDelete'
   | 'controlInOuter'
   | 'noDefaultValue'
   | 'showTableAction'
-  | 'relationBusinessId'
   | 'tableActionPermission'
 
 /**
