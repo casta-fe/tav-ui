@@ -25,10 +25,6 @@ export const FileBranch = defineComponent({
       type: Object as PropType<FileItemType>,
       required: true,
     },
-    tableActionPermission: {
-      type: Object as PropType<PreviewTablePropType['tableActionPermission']>,
-      required: true,
-    },
     showTableAction: {
       type: Object as PropType<PreviewTablePropType['showTableAction']>,
       required: true,
@@ -119,8 +115,7 @@ export const FileBranch = defineComponent({
       const actions: TableProActionItem[] = [
         {
           label: '查看',
-          permission: props.tableActionPermission.preview,
-          enabled: record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
+          enabled: record.hyperlink !== 1,
           onClick() {
             if (record.hyperlink === 1) {
               window.open(record.address)?.focus()
@@ -132,7 +127,6 @@ export const FileBranch = defineComponent({
         },
         {
           label: '下载水印文件',
-          permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
@@ -143,7 +137,6 @@ export const FileBranch = defineComponent({
         {
           // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
           label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
-          permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
             : (props.showTableAction.download ?? true) && record.sourceFileDownload),

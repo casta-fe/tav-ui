@@ -198,9 +198,13 @@ type BasicPropsType = {
    */
   params: RequestFilterType
   /**
+   * 默认的Title
+   */
+  showTitle: boolean | 'unset'
+  /**
    * 默认的select选择框
    */
-  showSelect: boolean
+  showSelect: boolean | 'unset'
   /**
    * 默认的文件列表
    */
@@ -209,7 +213,6 @@ type BasicPropsType = {
    * 默认的文件列表的action列
    */
   showTableAction: {
-    preview?: boolean
     download?: boolean
     downloadWatermark?: boolean
     update?: boolean
@@ -260,12 +263,12 @@ type BasicPropsType = {
    * 显示上传按钮(用于仅显示列表不上传的地方)
    * @default true
    */
-  showUploadBtn: boolean
+  showUploadBtn: boolean | 'unset'
   /**
    * 显示超链接上传按钮
    * @default true
    */
-  showUploadHyperlinkBtn: boolean
+  showUploadHyperlinkBtn: boolean | 'unset'
   /**
    * 点击文件名跳转...
    * @default undefined

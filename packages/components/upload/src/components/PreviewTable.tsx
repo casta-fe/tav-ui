@@ -124,7 +124,6 @@ export const PreviewTable = defineComponent({
 
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
-        props.showTableAction.preview === false &&
         props.showTableAction.download === false &&
         props.showTableAction.downloadWatermark === false &&
         props.showTableAction.delete === false
@@ -134,7 +133,7 @@ export const PreviewTable = defineComponent({
       const labels: string[] = []
 
       // #region 配置显示的操作列
-      if (props.showTableAction.preview !== false) labels.push('查看')
+      labels.push('查看')
       if (props.showTableAction.download !== false) {
         if (props.showTableAction.downloadWatermark === false) labels.push('下载')
         else labels.push('下载源文件')
@@ -331,7 +330,6 @@ export const PreviewTable = defineComponent({
                     }}
                     ref={hidePopoverRefs[rowIndex]}
                     isShowDeleteAction={props.parentProps?.fileBranchIsShowDeleteAction}
-                    tableActionPermission={props.tableActionPermission}
                     showTableAction={props.showTableAction}
                     download={props.download}
                     file={row}
@@ -394,7 +392,7 @@ export const PreviewTable = defineComponent({
         {
           label: '查看',
           permission: props.tableActionPermission.preview,
-          enabled: record.hyperlink === 1 ? false : props.showTableAction.preview ?? true,
+          enabled: record.hyperlink !== 1,
           onClick() {
             if (record.hyperlink === 1) {
               window.open(record.address)?.focus()
