@@ -467,10 +467,10 @@ export default defineComponent({
       }
     )
     onMountedOrActivated(() => {
-      cacheActionWidths.value = []
+      cacheActionWidths.value = {}
     })
     onUnmountedOrOnDeactivated(() => {
-      cacheActionWidths.value = []
+      cacheActionWidths.value = {}
     })
     const tableAction: TableActionType = {
       reload,
