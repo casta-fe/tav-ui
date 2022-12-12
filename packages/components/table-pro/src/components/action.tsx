@@ -146,7 +146,7 @@ export default defineComponent({
               {action.tooltip ? (
                 <Tooltip {...getTooltip(action.tooltip)}>
                   {/* {modalButton(action.tooltip as string)} */}
-                  <Button type="link" size="small">
+                  <Button {...action} type="link" size="small">
                     {action.icon ? <Icon icon={action.icon} /> : null}
                     {action.label}
                   </Button>

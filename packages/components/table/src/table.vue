@@ -80,6 +80,7 @@ import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
+import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
@@ -460,6 +461,9 @@ export default defineComponent({
         flush: 'post',
       }
     )
+    onUnmountedOrOnDeactivated(() => {
+      cacheActionWidths.value = []
+    })
     const tableAction: TableActionType = {
       reload,
       getSelectRows,
