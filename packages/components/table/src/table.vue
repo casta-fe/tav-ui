@@ -152,7 +152,7 @@ export default defineComponent({
     const formRef = ref(null)
     const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
-    const cacheActionWidths = ref<number[]>([])
+    const cacheActionWidths = ref<Record<string, any>>({})
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -437,15 +437,18 @@ export default defineComponent({
       return filterElRef.value.pannelFormRef
     }
     // 统计 action 渲染数据，动态设置宽度
-    const setCacheActionWidths = (width: number) => {
-      unref(cacheActionWidths).push(width)
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
     }
     const closeCacheActionWidthsWatch = watch(
-      () => unref(cacheActionWidths).length,
-      async (len) => {
+      () => cacheActionWidths,
+      (value) => {
         const _tableData = unref(tableData)
-        if (len && _tableData && len === _tableData.length) {
-          const maxWidth = Math.max(...unref(cacheActionWidths))
+        const len = Object.keys(unref(value)).length
+        if (len > 0 && _tableData && len === _tableData.length) {
+          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
           const columns = unref(getColumns()).map((column) => {
             if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
               column.width = Math.ceil(maxWidth)
@@ -454,11 +457,12 @@ export default defineComponent({
             }
             return column
           })
-          await setColumns(columns)
+          setColumns(columns)
           closeCacheActionWidthsWatch()
         }
       },
       {
+        deep: true,
         flush: 'post',
       }
     )

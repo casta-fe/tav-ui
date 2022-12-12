@@ -6,7 +6,12 @@ import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
-import { CamelCaseToCls, ComponentActionName, MAX_ACTION_NUMBER } from '../const'
+import {
+  CamelCaseToCls,
+  ComponentActionName,
+  MAX_ACTION_NUMBER,
+  buildTableActionId,
+} from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import { useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
 import type { TooltipProps } from 'ant-design-vue'
@@ -63,6 +68,7 @@ export default defineComponent({
     let { tableRef, setCacheActionWidths } = useTableContext()
     if (!props.outside) tableRef = ref(null)
     const actionEl = ref(null)
+    const id = buildTableActionId()
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
@@ -103,17 +109,22 @@ export default defineComponent({
         if (actions.length <= MAX_ACTION_NUMBER) {
           restActions = []
           const handleActions = limitActionLabel(actions)
+
+          const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+          setCacheActionWidths({ key: id, value: total })
+
           return handleActions
         } else {
           const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
           restActions = actions.slice(MAX_ACTION_NUMBER - 1)
           const handleActions = limitActionLabel(_actions)
+
+          const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+          setCacheActionWidths({ key: id, value: total })
+
           return handleActions
         }
       })
-
-      const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-      setCacheActionWidths(total)
 
       return computed(() =>
         unref(Actions).map((action) => ({
@@ -229,7 +240,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div ref={actionEl} class={ComponentPrefixCls} onClick={onCellClick}>
+        <div ref={actionEl} id={id} class={ComponentPrefixCls} onClick={onCellClick}>
           {createActions()}
           {createDropdownList()}
         </div>

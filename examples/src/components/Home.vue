@@ -90,6 +90,7 @@ export default defineComponent({
 
 <template>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
+  <!-- <BasicTablePage /> -->
   <FormPage />
   <TaUpload />
   <SearchableApiSelect />
@@ -108,6 +109,7 @@ export default defineComponent({
     </template>
   </TaModal>
   <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
+
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
     </TaButton>
@@ -126,7 +128,6 @@ export default defineComponent({
   <FileViewPage />
   <TreePage />
   <ModalPage />
-  <FormPage />
-  <BasicTablePage /> -->
+  <FormPage /> -->
   <!-- </TaConfigProvider> -->
 </template>

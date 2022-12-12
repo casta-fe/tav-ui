@@ -47,7 +47,7 @@ export default defineComponent({
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
-    const cacheActionWidths = ref<number[]>([])
+    const cacheActionWidths = ref<Record<string, any>>({})
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -104,15 +104,18 @@ export default defineComponent({
     useWatchDom(getProps, tableRef, customActionRef, tableEmitter)
 
     // 统计 action 渲染数据，动态设置宽度
-    const setCacheActionWidths = (width: number) => {
-      unref(cacheActionWidths).push(width)
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
     }
     const closeCacheActionWidthsWatch = watch(
-      () => unref(cacheActionWidths).length,
-      async (len) => {
+      () => cacheActionWidths,
+      (value) => {
         const tableData = unref(tableRef)?.getTableData().tableData
-        if (len && tableData && len === tableData.length) {
-          const maxWidth = Math.max(...unref(cacheActionWidths))
+        const len = Object.keys(unref(value)).length
+        if (len > 0 && tableData && len === tableData.length) {
+          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
           const columns = unref(getColumns).columns.map((column) => {
             if (column.field && ACTION_COLUMNS.includes(column.field)) {
               column.width = Math.ceil(maxWidth)
@@ -121,11 +124,12 @@ export default defineComponent({
             }
             return column
           })
-          await unref(tableRef)?.loadColumn(columns)
+          unref(tableRef)?.loadColumn(columns)
           closeCacheActionWidthsWatch()
         }
       },
       {
+        deep: true,
         flush: 'post',
       }
     )
@@ -206,14 +210,14 @@ export default defineComponent({
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
     onMountedOrActivated(() => {
-      cacheActionWidths.value = []
+      cacheActionWidths.value = {}
     })
 
     onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
 
-      cacheActionWidths.value = []
+      cacheActionWidths.value = {}
     })
 
     return () => {

@@ -1,5 +1,5 @@
 <template>
-  <div :class="[prefixCls, getAlign]" @click="onCellClick">
+  <div :id="id" :class="[prefixCls, getAlign]" @click="onCellClick">
     <template v-for="(action, index) in getActions" :key="`${index}-${action.label}`">
       <Tooltip v-if="action.tooltip" v-bind="getTooltip(action.tooltip)">
         <a-button v-bind="action" type="link" size="small">
@@ -50,7 +50,7 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { usePermission } from "@tav-ui/hooks/web/usePermission";
 import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
-import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER } from '../const'
+import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER, buildTableActionId } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import { limitActionLabel, useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
 import type { TooltipProps } from 'ant-design-vue'
@@ -88,6 +88,7 @@ export default defineComponent({
     if (!props.outside) {
       table = useTableContext()
     }
+    const id = buildTableActionId()
 
     function isIfShow(action: ActionItem): boolean {
       const ifShow = action.ifShow
@@ -124,7 +125,7 @@ export default defineComponent({
         const handleActions = limitActionLabel(actions)
 
         const total = useColumnActionAutoWidth(unref(getPermissonFilterActions))
-        table.setCacheActionWidths!(total)
+        table.setCacheActionWidths!({ key: id, value: total })
 
         return handleActions
       } else {
@@ -133,7 +134,7 @@ export default defineComponent({
         const handleActions = limitActionLabel(_actions)
 
         const total = useColumnActionAutoWidth(unref(getPermissonFilterActions))
-        table.setCacheActionWidths!(total)
+        table.setCacheActionWidths!({ key: id, value: total })
 
         return handleActions
       }
@@ -217,6 +218,7 @@ export default defineComponent({
     }
 
     return {
+      id,
       prefixCls,
       getActions,
       getDropdownList,
