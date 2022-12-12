@@ -4,6 +4,7 @@ import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import TaCollapseTransition from '@tav-ui/components/transition'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
+import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -203,6 +204,10 @@ export default defineComponent({
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
+
+    onMountedOrActivated(() => {
+      cacheActionWidths.value = []
+    })
 
     onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
