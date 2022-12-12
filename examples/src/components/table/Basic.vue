@@ -26,17 +26,24 @@
             {{ !striped ? '显示斑马纹' : '隐藏斑马纹' }}
           </a-button>
         </template> -->
+        <template #action="{ record }">
+          <TableAction :actions="getTableActionsButton(record)" />
+        </template>
       </TaTable>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { TaTable, TableAction } from '@tav-ui/components/table'
 import { getBasicColumns, getBasicData } from './tableData'
-import type { ColumnChangeParam } from '../../../../dist/tav-ui/es/components/table'
+import type { ColumnChangeParam } from '@tav-ui/components/table'
 
 export default defineComponent({
-  components: {},
+  components: {
+    TaTable,
+    TableAction,
+  },
   setup() {
     const canResize = ref(true)
     const loading = ref(false)
@@ -143,6 +150,30 @@ export default defineComponent({
     const state = reactive({
       filterForms,
     })
+    const getTableActionsButton = (record) => {
+      return [
+        // {
+        //   label: '查看',
+        //   // permission: 'bpmn_list_design',
+        // },
+        // {
+        //   label: '删除',
+        //   // permission: 'bpmn_list_design',
+        // },
+        {
+          label: '部署',
+          // permission: 'bpmn_list_deploy',
+        },
+        {
+          label: '更新XML',
+          // permission: 'bpmn_list_design',
+        },
+        {
+          label: '下载源文件',
+          // permission: 'bpmn_list_design',
+        },
+      ]
+    }
     return {
       columns: getBasicColumns(),
       data: getBasicData(),
@@ -156,6 +187,7 @@ export default defineComponent({
       toggleBorder,
       pagination,
       handleColumnChange,
+      getTableActionsButton,
       ...toRefs(state),
     }
   },

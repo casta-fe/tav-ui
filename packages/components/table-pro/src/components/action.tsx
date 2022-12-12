@@ -8,6 +8,7 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
 import { CamelCaseToCls, ComponentActionName, MAX_ACTION_NUMBER } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
+import { useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
 import type { TooltipProps } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem } from '../typings'
@@ -38,12 +39,30 @@ const props = {
   },
 }
 
+/**
+ * @description 如果内容长度大于3，则修改为 xx.. 基于字体是12px的基础之下长度为32px。
+ * @param actions
+ * @param labelMaxLength
+ * @returns
+ */
+export function limitActionLabel(actions: TableProActionItem[], labelMaxLength = 3) {
+  return actions.map((action) => {
+    const { label } = action
+    if (label && label.length > labelMaxLength) {
+      action.tooltip = label
+      action.label = `${label.substring(0, 2)}..`
+    }
+    return action
+  })
+}
+
 export default defineComponent({
   name: ComponentActionName,
   props,
   setup(props, { slots }) {
-    let { tableRef } = useTableContext()
+    let { tableRef, setCacheActionWidths } = useTableContext()
     if (!props.outside) tableRef = ref(null)
+    const actionEl = ref(null)
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
@@ -83,13 +102,18 @@ export default defineComponent({
         const actions = unref(permissonFilterActions)
         if (actions.length <= MAX_ACTION_NUMBER) {
           restActions = []
-          return actions
+          const handleActions = limitActionLabel(actions)
+          return handleActions
         } else {
           const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
           restActions = actions.slice(MAX_ACTION_NUMBER - 1)
-          return _actions
+          const handleActions = limitActionLabel(_actions)
+          return handleActions
         }
       })
+
+      const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+      setCacheActionWidths(total)
 
       return computed(() =>
         unref(Actions).map((action) => ({
@@ -117,12 +141,19 @@ export default defineComponent({
               }}
             </ModalButton>
           )
-
-          const tooltip = () => <Tooltip {...getTooltip(action)}>{modalButton()}</Tooltip>
-
           return (
             <>
-              {action.tooltip ? tooltip() : modalButton()}
+              {action.tooltip ? (
+                <Tooltip {...getTooltip(action.tooltip)}>
+                  {/* {modalButton(action.tooltip as string)} */}
+                  <Button type="link" size="small">
+                    {action.icon ? <Icon icon={action.icon} /> : null}
+                    {action.label}
+                  </Button>
+                </Tooltip>
+              ) : (
+                modalButton()
+              )}
               {props.divider && index < unref(Actions).length - 1 ? (
                 <Divider class={`${ComponentPrefixCls}-divider`} type={'vertical'}></Divider>
               ) : null}
@@ -181,7 +212,7 @@ export default defineComponent({
 
     function getTooltip(data: string | TooltipProps): TooltipProps {
       return {
-        getPopupContainer: () => (unref(tableRef) as any).$el ?? document.body,
+        getPopupContainer: () => unref(actionEl) || (unref(tableRef) as any)?.$el || document.body,
         placement: 'bottom',
         ...(isString(data) ? { title: data } : data),
       }
@@ -198,7 +229,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={ComponentPrefixCls} onClick={onCellClick}>
+        <div ref={actionEl} class={ComponentPrefixCls} onClick={onCellClick}>
           {createActions()}
           {createDropdownList()}
         </div>

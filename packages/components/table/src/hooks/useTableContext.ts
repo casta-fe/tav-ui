@@ -8,6 +8,7 @@ type Recordable<T = any> = Record<string, T>
 type Instance = TableActionType & {
   wrapRef: Ref<Nullable<HTMLElement>>
   getBindValues: ComputedRef<Recordable>
+  setCacheActionWidths: (...args: any) => void
 }
 
 type RetInstance = Omit<Instance, 'getBindValues'> & {

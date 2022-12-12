@@ -137,9 +137,9 @@ export const PreviewTable = defineComponent({
       if (props.showTableAction.preview !== false) labels.push('查看')
       if (props.showTableAction.download !== false) {
         if (props.showTableAction.downloadWatermark === false) labels.push('下载')
-        else labels.push('下载源文件')
+        else labels.push('下载..')
       }
-      if (props.showTableAction.downloadWatermark !== false) labels.push('下载水印文件')
+      if (props.showTableAction.downloadWatermark !== false) labels.push('下载..')
       if (props.showTableAction.delete !== false) labels.push('删除')
 
       const hidePopoverRefs: Ref<{ hidePopover?: () => void }>[] = []

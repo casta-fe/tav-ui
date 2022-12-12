@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, toRefs, unref } from 'vue'
+import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -7,7 +7,13 @@ import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDe
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
-import { CamelCaseToCls, ComponentName, ComponentOperationsName, buildTableId } from './const'
+import {
+  ACTION_COLUMNS,
+  CamelCaseToCls,
+  ComponentName,
+  ComponentOperationsName,
+  buildTableId,
+} from './const'
 import { useCellHover } from './hooks/useCellHover'
 import { useColumnApi } from './hooks/useColumnApi'
 import { useColumns } from './hooks/useColums'
@@ -40,6 +46,7 @@ export default defineComponent({
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
+    const cacheActionWidths = ref<number[]>([])
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -95,8 +102,41 @@ export default defineComponent({
     // 执行dom监听的处理
     useWatchDom(getProps, tableRef, customActionRef, tableEmitter)
 
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = (width: number) => {
+      unref(cacheActionWidths).push(width)
+    }
+    const closeCacheActionWidthsWatch = watch(
+      () => unref(cacheActionWidths).length,
+      async (len) => {
+        const tableData = unref(tableRef)?.getTableData().tableData
+        if (len && tableData && len === tableData.length) {
+          const maxWidth = Math.max(...unref(cacheActionWidths))
+          const columns = unref(getColumns).columns.map((column) => {
+            if (column.field && ACTION_COLUMNS.includes(column.field)) {
+              column.width = Math.ceil(maxWidth)
+              column.minWidth = Math.ceil(maxWidth)
+              return column
+            }
+            return column
+          })
+          await unref(tableRef)?.loadColumn(columns)
+          closeCacheActionWidthsWatch()
+        }
+      },
+      {
+        flush: 'post',
+      }
+    )
+
     // 注入数据
-    createTableContext({ tableRef, tableEmitter, tablePropsRef: getBindValues, columnApiOptions })
+    createTableContext({
+      tableRef,
+      tableEmitter,
+      tablePropsRef: getBindValues,
+      columnApiOptions,
+      setCacheActionWidths,
+    })
 
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
@@ -167,6 +207,8 @@ export default defineComponent({
     onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
+
+      cacheActionWidths.value = []
     })
 
     return () => {

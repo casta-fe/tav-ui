@@ -61,7 +61,17 @@
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  ref,
+  toRaw,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue'
 import { omit } from 'lodash-es'
 import { Table } from 'ant-design-vue'
 import { mitt } from '@tav-ui/utils/mitt'
@@ -140,6 +150,7 @@ export default defineComponent({
     const formRef = ref(null)
     const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
+    const cacheActionWidths = ref<number[]>([])
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -423,6 +434,32 @@ export default defineComponent({
       //@ts-ignore
       return filterElRef.value.pannelFormRef
     }
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = (width: number) => {
+      unref(cacheActionWidths).push(width)
+    }
+    const closeCacheActionWidthsWatch = watch(
+      () => unref(cacheActionWidths).length,
+      async (len) => {
+        const _tableData = unref(tableData)
+        if (len && _tableData && len === _tableData.length) {
+          const maxWidth = Math.max(...unref(cacheActionWidths))
+          const columns = unref(getColumns()).map((column) => {
+            if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
+              column.width = Math.ceil(maxWidth)
+              column.minWidth = Math.ceil(maxWidth)
+              return column
+            }
+            return column
+          })
+          await setColumns(columns)
+          closeCacheActionWidthsWatch()
+        }
+      },
+      {
+        flush: 'post',
+      }
+    )
     const tableAction: TableActionType = {
       reload,
       getSelectRows,
@@ -461,7 +498,7 @@ export default defineComponent({
         return unref(getBindValues).size as SizeType
       },
     }
-    createTableContext({ ...tableAction, wrapRef, getBindValues })
+    createTableContext({ ...tableAction, wrapRef, getBindValues, setCacheActionWidths })
 
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
     watchEffect(() => {
