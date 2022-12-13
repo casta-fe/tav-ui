@@ -13,7 +13,7 @@ import {
   buildTableActionId,
 } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
-import { useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
+import { isOverMaxWidth, useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
 import type { TooltipProps } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem } from '../typings'
@@ -108,21 +108,31 @@ export default defineComponent({
         const actions = unref(permissonFilterActions)
         if (actions.length <= MAX_ACTION_NUMBER) {
           restActions = []
-          const handleActions = limitActionLabel(actions)
-
-          const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-          setCacheActionWidths({ key: id, value: total })
-
-          return handleActions
+          const isOverMax = isOverMaxWidth(actions)
+          if (isOverMax) {
+            const handleActions = limitActionLabel(actions)
+            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+            setCacheActionWidths!({ key: id, value: total })
+            return handleActions
+          } else {
+            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
+            setCacheActionWidths!({ key: id, value: total })
+            return actions
+          }
         } else {
           const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
           restActions = actions.slice(MAX_ACTION_NUMBER - 1)
-          const handleActions = limitActionLabel(_actions)
-
-          const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-          setCacheActionWidths({ key: id, value: total })
-
-          return handleActions
+          const isOverMax = isOverMaxWidth(actions)
+          if (isOverMax) {
+            const handleActions = limitActionLabel(_actions)
+            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+            setCacheActionWidths!({ key: id, value: total })
+            return handleActions
+          } else {
+            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
+            setCacheActionWidths!({ key: id, value: total })
+            return _actions
+          }
         }
       })
 

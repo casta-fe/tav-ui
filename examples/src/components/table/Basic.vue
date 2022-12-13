@@ -161,17 +161,17 @@ export default defineComponent({
         //   // permission: 'bpmn_list_design',
         // },
         {
-          label: '部署',
+          label: '下载源文件',
           // permission: 'bpmn_list_deploy',
         },
-        {
-          label: '更新XML',
-          // permission: 'bpmn_list_design',
-        },
-        {
-          label: '下载源文件',
-          // permission: 'bpmn_list_design',
-        },
+        // {
+        //   label: '更新XML',
+        //   // permission: 'bpmn_list_design',
+        // },
+        // {
+        //   label: '下载源文件',
+        //   // permission: 'bpmn_list_design',
+        // },
       ]
     }
     return {
