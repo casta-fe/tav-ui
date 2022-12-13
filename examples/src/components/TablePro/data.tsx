@@ -235,7 +235,7 @@ export const filterForm1 = (): TableProFilterForm => ({
   ] as FormSchema[],
 })
 
-export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> => {
+export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TableProColumn[]> => {
   await API__POE_CUSTOM_ALL({
     filter: { tab: 0 },
     model: { page: 1, limit: 50 },
@@ -422,7 +422,7 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
             {
               label: '编辑',
               onClick: () => {
-                console.log('edit')
+                OpenModal()
               },
             },
             {

@@ -4,7 +4,6 @@ import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import TaCollapseTransition from '@tav-ui/components/transition'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
-import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -29,7 +28,7 @@ import { useWatchDom } from './hooks/useWatchDom'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import type { ComputedRef } from 'vue'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
+import type { TableProColumn, TableProEvent, TableProInstance, TableProProps } from './types'
 import type { CustomActionRef } from './typings'
 
 const _VXETable = setupVxeTable()
@@ -48,6 +47,7 @@ export default defineComponent({
     const filterRef = ref<ComputedRef | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
     const cacheActionWidths = ref<Record<string, any>>({})
+    const columnsForAction = ref<TableProColumn[]>([])
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -62,7 +62,11 @@ export default defineComponent({
 
     // 扩展 columns
     const getColumns = computed(() => {
-      return { columns: useColumns(getProps, tableRef, emit) }
+      let columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
+      if (unref(columnsForAction) && unref(columnsForAction).length > 0) {
+        columns = unref(columnsForAction)
+      }
+      return { columns }
     })
 
     // 列持久化处理
@@ -109,7 +113,7 @@ export default defineComponent({
         cacheActionWidths.value[key] = value
       }
     }
-    const closeCacheActionWidthsWatch = watch(
+    watch(
       () => cacheActionWidths,
       (value) => {
         const tableData = unref(tableRef)?.getTableData().tableData
@@ -124,13 +128,11 @@ export default defineComponent({
             }
             return column
           })
-          unref(tableRef)?.loadColumn(columns)
-          closeCacheActionWidthsWatch()
+          columnsForAction.value = columns
         }
       },
       {
         deep: true,
-        flush: 'post',
       }
     )
 
@@ -209,15 +211,12 @@ export default defineComponent({
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
-    onMountedOrActivated(() => {
-      cacheActionWidths.value = {}
-    })
-
     onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
 
       cacheActionWidths.value = {}
+      columnsForAction.value = []
     })
 
     return () => {
