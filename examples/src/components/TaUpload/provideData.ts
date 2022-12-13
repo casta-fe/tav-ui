@@ -3,63 +3,6 @@ import type { ProvideDataType } from '@tav-ui/components/upload/src/types'
 
 const uploadArr: any[] = [
   {
-    id: 9662,
-    appId: 10001,
-    actualId: '7f14e527f0344896a969ec046bea11a0',
-    moduleId: 7,
-    businessKey: null,
-    businessId: '91100000101619881W',
-    type: 5,
-    deleted: 0,
-    version: 1,
-    name: 'ces',
-    suffix: null,
-    fullName: null,
-    size: null,
-    address:
-      'http://192.168.10.52/#/project/exitProject/detail/TC-20220802000113/91330106396310952P',
-    runtime: null,
-    hyperlink: 1,
-    sourceFileDownload: 1,
-    watermarkFileDownload: 2,
-    fileSize: null,
-    createBy: '1',
-    createByName: '系统管理员',
-    moduleCode: 'tg_company',
-    moduleName: '企业库',
-    typeCode: 'COMPANY_OTHER',
-    typeName: '其他资料',
-    createTime: '2022-08-18 15:33:41',
-  },
-  {
-    id: 9661,
-    appId: 10001,
-    actualId: 'c2feb54f41db4b72af2f29c92d87bfab',
-    moduleId: 7,
-    businessKey: null,
-    businessId: '91100000101619881W',
-    type: 5,
-    deleted: 0,
-    version: 4,
-    name: '投管联调计划第二版-贾旭鹏xlsx',
-    suffix: 'xlsx',
-    fullName: '投管联调计划第二版-贾旭鹏xlsx.xlsx',
-    size: 12261,
-    address: '/20220818/16608037441049063.xlsx',
-    runtime: null,
-    hyperlink: 0,
-    sourceFileDownload: 1,
-    watermarkFileDownload: 2,
-    fileSize: '11KB',
-    createBy: '1',
-    createByName: '系统管理员',
-    moduleCode: 'tg_company',
-    moduleName: '企业库',
-    typeCode: 'COMPANY_OTHER',
-    typeName: '其他资料',
-    createTime: '2022-08-18 14:22:24',
-  },
-  {
     id: 9661,
     appId: 10001,
     actualId: 'c2feb54f41db4b72af2f29c92d87bfac',
@@ -135,8 +78,10 @@ export const taUploadProvideData: Partial<
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  queryFile: (params: any): Promise<any> =>
-    new Promise((r) =>
+  queryFile: (params: any): Promise<any> => {
+    console.log(params, 'queryFile')
+
+    return new Promise((r) =>
       setTimeout(
         r.bind(null, {
           data: {
@@ -145,7 +90,8 @@ export const taUploadProvideData: Partial<
         }),
         900
       )
-    ),
+    )
+  },
   queryFileHistory: (): Promise<any> =>
     new Promise((r) =>
       setTimeout(

@@ -207,6 +207,7 @@ type BasicPropsType = {
   showSelect: boolean | 'unset'
   /**
    * 默认的文件列表
+   * @default true
    */
   showTable: boolean
   /**
@@ -328,6 +329,10 @@ type BasicPropsType = {
    * @default true
    */
   immediate: boolean
+  /**
+   * 表格数据为空时展示方式
+   */
+  emptyState: 'none' | 'header' | 'normal'
 } & ProvideDataType
 
 /**

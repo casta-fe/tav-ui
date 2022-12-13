@@ -168,7 +168,12 @@ export const FileBranch = defineComponent({
       return actions
     }
     const getData = () => {
-      queryFileHistory?.({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
+      if (!queryFileHistory) {
+        console.warn('请在APP.vue注入 queryFileHistory')
+        return
+      }
+
+      queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
           dataSource.value = res.data
           loading.value = false

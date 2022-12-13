@@ -66,6 +66,9 @@ class Handler {
   private _paramsName: string | undefined
   private _paramsAddress: string | undefined
   private _apis: ProvideDataType = {}
+  public currentIsUpdateFile = false
+  public currentUpload = null as null | Promise<any> | FileItemType[]
+
   //// getter begin
   get dataSource() {
     return this._dataSource
@@ -285,7 +288,9 @@ class Handler {
     const { actualId } = record
     // this._uploadResponse.length = 0
     const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
-    this._fileFormatter.upadteVersion(this._uploadResponse.splice(index, 1, record)[0])
+    const _oldRecord = this._uploadResponse.splice(index, 1, record)[0]
+    // this._fileFormatter.upadteVersion(oldRecord)
+    this._fileFormatter.upadteVersion(record)
     this.fillDataSource()
     // console.log(this._uploadResponse)
   }
@@ -429,11 +434,15 @@ class Handler {
     // fillFormData end
 
     this._isLoading.value = true
-    this.apis.uploadFile!(formData)
+    this.currentUpload = this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
-        this._uploadResponse.unshift(...r)
-        this.throwResponse(r)
-        nextTick(() => this.fillDataSource())
+        if (this.currentIsUpdateFile) {
+          return (this.currentUpload = r)
+        } else {
+          this._uploadResponse.unshift(...r)
+          this.throwResponse(r)
+          nextTick(() => this.fillDataSource())
+        }
         createMessage.success('上传成功')
       })
       .catch(() => {

@@ -1,5 +1,6 @@
 import { computed, defineComponent, ref, unref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
+import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { Cell } from '../../../table-pro/src/components/cell'
 import { getActionColumnMaxWidth, useFileTypeCode } from '../hooks'
@@ -20,6 +21,7 @@ import type {
   LabelValueOption,
   PreviewTablePropType,
   PromiseFn,
+  Recordable,
 } from '../types'
 
 export const PreviewTable = defineComponent({
@@ -71,6 +73,7 @@ export const PreviewTable = defineComponent({
     insertColumns: Array as PropType<BasicPropsType['insertColumns']>,
     nameColumnWidth: { type: [Number, String], default: 200 },
     moduleCode: { type: String, required: true },
+    uploadBtnRef: Object as PropType<Recordable>,
   },
   emits: ['delete'],
   setup(props, { emit }) {
@@ -267,10 +270,7 @@ export const PreviewTable = defineComponent({
               ]
             },
             default: ({ row, rowIndex, columnIndex }) => {
-              const res = [
-                typeCodeOptions.value?.find((el) => el.value === row.typeCode)?.label ||
-                  row.typeCode,
-              ]
+              const res = [row.typeName]
 
               if (currentEditCellIsLoading.value) {
                 if (currentEditCell) {
@@ -422,9 +422,9 @@ export const PreviewTable = defineComponent({
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
-            : props.readonly
-            ? false
-            : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
+            : // : props.readonly
+              // ? false
+              (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
           onClick() {
             props.download?.(record, undefined, true)
           },
@@ -435,9 +435,9 @@ export const PreviewTable = defineComponent({
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
-            : props.readonly
-            ? false
-            : (props.showTableAction.download ?? true) && record.sourceFileDownload),
+            : // : props.readonly
+              // ? false
+              (props.showTableAction.download ?? true) && record.sourceFileDownload),
           onClick() {
             props.download?.(record)
           },

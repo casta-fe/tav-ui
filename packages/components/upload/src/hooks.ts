@@ -154,10 +154,32 @@ export function getActionColumnMaxWidth(
   return l
 }
 
-export function useFileFormatter() {
+export type UseFileFormatterParamsType = {
+  /**
+   * 更新时保存多少文件历史版本
+   *
+   * `"newest"` 仅保留最后一次更新
+   *
+   * `"all"` 保留当前版本往后所有更新
+   * @default "newest"
+   */
+  fileVersionCount?: 'newest' | 'all'
+}
+
+export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatterParamsType = {}) {
   const versionRecord: Partial<Recordable<FileItemType[]>> = {}
 
-  function upadteVersion(file: FileItemType) {
+  function upadteVersion(file: FileItemType, callOnFormatToApi = false) {
+    if (fileVersionCount === 'newest') {
+      if (callOnFormatToApi) {
+        versionRecord[file.actualId!] || (versionRecord[file.actualId!] = [file])
+      } else {
+        versionRecord[file.actualId!] = [file]
+      }
+
+      return
+    }
+
     if (versionRecord[file.actualId!]) {
       // 维护文件唯一性
       if (versionRecord[file.actualId!]?.some((el) => file.id === el.id)) return
@@ -172,7 +194,7 @@ export function useFileFormatter() {
     const currentFileActualIds: string[] = []
 
     for (const file of files) {
-      upadteVersion(file)
+      upadteVersion(file, true)
 
       currentFileActualIds.push(file.actualId!)
     }
@@ -187,6 +209,7 @@ export function useFileFormatter() {
 
     return Object.keys(versionRecord).map((k) => ({
       actualId: k,
+      moduleCode: versionRecord[k]![0].moduleCode,
       versionList: versionRecord[k],
     }))
   }

@@ -44,7 +44,7 @@ export const UpdateFile = defineComponent({
         formData.append('files', file)
         formData.append('fileActualIds', fileActualIds)
       }
-      updateApi(formData, props.parentProps?.AppId)
+      updateApi(formData, props.parentProps?.AppId, props.parentProps?.immediate)
         .then((res) => {
           createMessage.success('更新成功')
           uploadRef.value.value = ''
