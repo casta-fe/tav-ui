@@ -1,20 +1,23 @@
 <script lang="ts">
-import { computed, defineComponent, h, unref } from 'vue'
+import { computed, defineComponent, h, ref, unref } from 'vue'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
-import { Modal } from 'ant-design-vue'
+import { Modal, Tooltip } from 'ant-design-vue'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Button from '@tav-ui/components/button'
 import Icon from '@tav-ui/components/icon'
+import { isString } from '@tav-ui/utils/is'
 import { buttonModalProps } from './types'
+import type { TooltipProps } from 'ant-design-vue'
 
 declare type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
   name: 'TaButtonModal',
-  components: { Button },
+  components: { Button, Tooltip },
   inheritAttrs: false,
   props: buttonModalProps,
   setup(props) {
+    const actionEl = ref(null)
     const attrs = useAttrs()
 
     // get inherit binding value
@@ -30,6 +33,14 @@ export default defineComponent({
         }
       )
     })
+
+    function getTooltip(data: string | TooltipProps): TooltipProps {
+      return {
+        getPopupContainer: () => unref(actionEl) || document.body,
+        placement: 'bottom',
+        ...(isString(data) ? { title: data } : data),
+      }
+    }
 
     const handleButtonClick = () => {
       const _getBindValues = unref(getBindValues)
@@ -57,22 +68,44 @@ export default defineComponent({
     return {
       getBindValues,
       handleButtonClick,
+      getTooltip,
     }
   },
 })
 </script>
 
 <template>
-  <div v-if="isInDropDown" class="ta-button-modal dropdown-modal-button" @click="handleButtonClick">
-    <slot />
+  <div>
+    <div
+      v-if="isInDropDown"
+      class="ta-button-modal dropdown-modal-button"
+      @click="handleButtonClick"
+    >
+      <slot />
+    </div>
+    <template v-else>
+      <template v-if="getBindValues.tooltip">
+        <Tooltip v-bind="getTooltip(getBindValues.tooltip)">
+          <Button
+            :type="getBindValues.type"
+            :size="getBindValues.size"
+            class="ta-button-modal"
+            @click="handleButtonClick"
+          >
+            <slot />
+          </Button>
+        </Tooltip>
+      </template>
+      <template v-else>
+        <Button
+          :type="getBindValues.type"
+          :size="getBindValues.size"
+          class="ta-button-modal"
+          @click="handleButtonClick"
+        >
+          <slot />
+        </Button>
+      </template>
+    </template>
   </div>
-  <Button
-    v-else
-    :type="getBindValues.type"
-    :size="getBindValues.size"
-    class="ta-button-modal"
-    @click="handleButtonClick"
-  >
-    <slot />
-  </Button>
 </template>

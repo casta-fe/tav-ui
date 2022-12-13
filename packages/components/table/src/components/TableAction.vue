@@ -1,21 +1,7 @@
 <template>
   <div :id="id" :class="[prefixCls, getAlign]" @click="onCellClick">
     <template v-for="(action, index) in getActions" :key="`${index}-${action.label}`">
-      <Tooltip v-if="action.tooltip" v-bind="getTooltip(action.tooltip)">
-        <a-button v-bind="action" type="link" size="small">
-          <Icon v-if="action.icon" :icon="action.icon" :class="{ 'mr-1': !!action.label }" />
-          <template v-if="action.label">{{ action.label }}</template>
-        </a-button>
-        <!-- <PopConfirmButton v-bind="action">
-          <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
-          <template v-if="action.label">{{ action.label }}</template>
-        </PopConfirmButton> -->
-      </Tooltip>
-      <!-- <PopConfirmButton v-else v-bind="action">
-        <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
-        <template v-if="action.label">{{ action.label }}</template>
-      </PopConfirmButton> -->
-      <ModalButton v-else v-bind="action">
+      <ModalButton v-bind="action">
         <Icon v-if="action.icon" :icon="action.icon" :class="{ 'mr-1': !!action.label }" />
         <template v-if="action.label">{{ action.label }}</template>
       </ModalButton>
@@ -42,7 +28,7 @@
 <script lang="ts">
 import { computed, defineComponent, toRaw, unref } from 'vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
-import { Button, Divider, Tooltip } from 'ant-design-vue'
+import { Button, Divider } from 'ant-design-vue'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
@@ -69,7 +55,6 @@ export default defineComponent({
     Divider,
     Dropdown,
     MoreOutlined,
-    Tooltip,
     ModalButton,
     AButton: Button,
   },
