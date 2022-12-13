@@ -426,9 +426,12 @@ export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TablePro
               },
             },
             {
-              label: '测试1',
-              onClick: () => {
-                console.log('test 1')
+              label: '测试112321321321321',
+              popConfirm: {
+                title: '删除后将无法恢复，确定删除吗？',
+                confirm: () => {
+                  console.log('del')
+                },
               },
             },
             {

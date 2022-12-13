@@ -161,8 +161,14 @@ export default defineComponent({
         //   // permission: 'bpmn_list_design',
         // },
         {
-          label: '下载源文件',
+          label: '下载源文件12321321321',
           // permission: 'bpmn_list_deploy',
+          popConfirm: {
+            title: '删除后将无法恢复，确定删除吗？',
+            confirm: () => {
+              console.log('del')
+            },
+          },
         },
         // {
         //   label: '更新XML',

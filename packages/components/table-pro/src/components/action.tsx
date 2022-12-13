@@ -1,6 +1,6 @@
 import { computed, defineComponent, ref, toRaw, unref } from 'vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
-import { Button, Divider, Tooltip } from 'ant-design-vue'
+import { Button, Divider } from 'ant-design-vue'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
@@ -164,17 +164,7 @@ export default defineComponent({
           )
           return (
             <>
-              {action.tooltip ? (
-                <Tooltip {...getTooltip(action.tooltip)}>
-                  {/* {modalButton(action.tooltip as string)} */}
-                  <Button {...action} type="link" size="small">
-                    {action.icon ? <Icon icon={action.icon} /> : null}
-                    {action.label}
-                  </Button>
-                </Tooltip>
-              ) : (
-                modalButton()
-              )}
+              {modalButton()}
               {props.divider && index < unref(Actions).length - 1 ? (
                 <Divider class={`${ComponentPrefixCls}-divider`} type={'vertical'}></Divider>
               ) : null}
