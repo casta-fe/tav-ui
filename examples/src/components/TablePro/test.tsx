@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import Button from '@tav-ui/components/button'
+import { TaModal, useModal } from '@tav-ui/components/modal'
 import { columns2, filterForm2 } from './data'
 import type {
   ITableProInstance,
@@ -43,9 +44,11 @@ export default defineComponent({
     //   ...filterForm2(),
     // })
 
+    const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
+
     onMounted(async () => {
       state.filterFormConfig = await filterForm2()
-      state.columns = await columns2({ handleRoutePush })
+      state.columns = await columns2({ handleRoutePush, OpenModal })
     })
 
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({
@@ -226,6 +229,15 @@ export default defineComponent({
             </TaTablePro>
           </div>
           {/* </div> */}
+          <TaModal
+            height={500}
+            title="新增"
+            width={864}
+            destroy-on-close={true}
+            onRegister={ModalRegister}
+          >
+            123
+          </TaModal>
         </div>
       )
     }

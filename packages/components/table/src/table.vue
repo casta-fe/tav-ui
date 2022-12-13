@@ -81,7 +81,6 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
-import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
@@ -153,6 +152,7 @@ export default defineComponent({
     const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
     const cacheActionWidths = ref<Record<string, any>>({})
+    const columnsForAction = ref<any[]>([])
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -379,6 +379,14 @@ export default defineComponent({
     const { getFormProps, replaceFormSlotKey, getFormSlotKeys, handleSearchInfoChange } =
       useTableForm(getProps, slots, fetch, getLoading)
 
+    const _getColumns = computed(() => {
+      let columns = unref(getViewColumns)
+      if (unref(columnsForAction) && unref(columnsForAction).length > 0) {
+        columns = unref(columnsForAction)
+      }
+      return columns
+    })
+
     const getBindValues = computed(() => {
       const dataSource = unref(getDataSourceRef)
       let propsData: Recordable = {
@@ -394,7 +402,8 @@ export default defineComponent({
         tableLayout: 'fixed',
         rowSelection: unref(getRowSelectionRef),
         rowKey: unref(getRowKey),
-        columns: toRaw(unref(getViewColumns)),
+        // columns: toRaw(unref(getViewColumns)),
+        columns: unref(_getColumns),
         pagination: toRaw(unref(getPaginationInfo)),
         dataSource,
         footer: unref(getFooterProps),
@@ -442,7 +451,7 @@ export default defineComponent({
         cacheActionWidths.value[key] = value
       }
     }
-    const closeCacheActionWidthsWatch = watch(
+    watch(
       () => cacheActionWidths,
       (value) => {
         const _tableData = unref(tableData)
@@ -457,20 +466,17 @@ export default defineComponent({
             }
             return column
           })
-          setColumns(columns)
-          closeCacheActionWidthsWatch()
+          columnsForAction.value = columns
         }
       },
       {
         deep: true,
-        flush: 'post',
       }
     )
-    onMountedOrActivated(() => {
-      cacheActionWidths.value = {}
-    })
+
     onUnmountedOrOnDeactivated(() => {
       cacheActionWidths.value = {}
+      columnsForAction.value = []
     })
     const tableAction: TableActionType = {
       reload,
