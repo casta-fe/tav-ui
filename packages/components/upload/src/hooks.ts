@@ -169,10 +169,11 @@ export type UseFileFormatterParamsType = {
 export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatterParamsType = {}) {
   const versionRecord: Partial<Recordable<FileItemType[]>> = {}
 
-  function upadteVersion(file: FileItemType, callOnFormatToApi = false) {
+  function upadteVersion(file: FileItemType) {
     if (fileVersionCount === 'newest') {
-      if (callOnFormatToApi) {
-        versionRecord[file.actualId!] || (versionRecord[file.actualId!] = [file])
+      if (versionRecord[file.actualId!]) {
+        file.version = versionRecord[file.actualId!]![0].version + 1
+        versionRecord[file.actualId!]![1] = file
       } else {
         versionRecord[file.actualId!] = [file]
       }
@@ -194,7 +195,7 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
     const currentFileActualIds: string[] = []
 
     for (const file of files) {
-      upadteVersion(file, true)
+      upadteVersion(file)
 
       currentFileActualIds.push(file.actualId!)
     }

@@ -3,7 +3,7 @@ import { CloseOutlined } from '@ant-design/icons-vue'
 import { Popover } from 'ant-design-vue'
 import { TaButton, TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
+// import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
@@ -38,11 +38,11 @@ export const FileBranch = defineComponent({
     width: { type: String, default: '840px' },
   },
   setup(props, { expose }) {
-    const { createMessage } = useMessage()
+    // const { createMessage } = useMessage()
     const config = useGlobalConfig('components') as Ref<{
       TaUpload?: { queryFileHistory?: PromiseFn<any, Recordable>; removeFileById?: PromiseFn }
     }>
-    const { queryFileHistory, removeFileById } = config.value?.TaUpload ?? {}
+    const { queryFileHistory /* removeFileById */ } = config.value?.TaUpload ?? {}
 
     const loading = ref(true)
     const dataSource = ref([])
@@ -175,6 +175,15 @@ export const FileBranch = defineComponent({
 
       queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
+          // if (res.data.some((el) => el.version === 0)) {
+          // }
+          res.data = res.data.map((el, idx, arr) => {
+            if (el.version === 0) {
+              el.version = arr[0].version + idx
+            }
+            return el
+          })
+
           dataSource.value = res.data
           loading.value = false
           nextTick(() => {

@@ -276,7 +276,12 @@ class Handler {
    * @param newRecord 新上传成功的文件
    */
   private throwResponse(newRecord: Recordable[]): void {
-    this.emit('update:fileActualIds', this.getFileActualIds())
+    this.emit(
+      'update:fileActualIds',
+      !this._props.immediate && (this._params.businessId || this._params.businessKey)
+        ? this.getResult()
+        : this.getFileActualIds()
+    )
     this.emit('change', newRecord, this._uploadResponse)
   }
   /**
@@ -286,21 +291,18 @@ class Handler {
    **/
   updateItem = (record: FileItemType) => {
     const { actualId } = record
-    // this._uploadResponse.length = 0
     const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
-    const _oldRecord = this._uploadResponse.splice(index, 1, record)[0]
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const oldRecord = this._uploadResponse.splice(index, 1, record)[0]
     // this._fileFormatter.upadteVersion(oldRecord)
+    record.version = oldRecord.version + 1
     this._fileFormatter.upadteVersion(record)
     this.fillDataSource()
-    // console.log(this._uploadResponse)
+    this.throwResponse([record])
   }
   /**
    * 删除一条数据
-   * @param record 需要删除的文件信息
-  /**
-   *
-   *
-   * @param {Recordable} record
+   * @param {Recordable} record 需要删除的文件信息
    * @memberof Handler
    */
   deleteItem = (record: Recordable) => {
@@ -352,6 +354,7 @@ class Handler {
         },
       }).finally(() => (this._isLoading.value = false))
       this._uploadResponse.push(...response.data.result)
+      this._fileFormatter.formatToApi(this._uploadResponse)
 
       this.throwResponse(response.data.result)
     }

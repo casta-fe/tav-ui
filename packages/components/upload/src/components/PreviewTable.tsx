@@ -1,6 +1,6 @@
 import { computed, defineComponent, ref, unref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
-import { promiseTimeout } from '@vueuse/shared'
+// import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { Cell } from '../../../table-pro/src/components/cell'
 import { getActionColumnMaxWidth, useFileTypeCode } from '../hooks'
