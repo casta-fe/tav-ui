@@ -1,4 +1,5 @@
 import componentSetting from '@tav-ui/settings/src/componentSetting'
+import { buildUUID } from '@tav-ui/utils/uuid'
 
 const { table } = componentSetting
 
@@ -41,3 +42,8 @@ export const ACTION_COLUMN_FLAG = 'ACTION'
 // 大于三个则显示俩个元素加... 宽度建议 140
 // 小于三个全部展示 俩个宽度建议 100，一个宽度建议 60
 export const MAX_ACTION_NUMBER = 3
+
+export function buildTableActionId() {
+  const uuid = buildUUID()
+  return `TaTableAction-${uuid}`
+}

@@ -27,6 +27,11 @@ export function buildTableId() {
   return `${ComponentName}-${uuid}`
 }
 
+export function buildTableActionId() {
+  const uuid = buildUUID()
+  return `${ComponentActionName}-${uuid}`
+}
+
 const { table } = componentSetting
 
 const {

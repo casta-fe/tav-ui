@@ -61,7 +61,17 @@
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  ref,
+  toRaw,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue'
 import { omit } from 'lodash-es'
 import { Table } from 'ant-design-vue'
 import { mitt } from '@tav-ui/utils/mitt'
@@ -70,6 +80,8 @@ import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
+import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
+import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
@@ -140,6 +152,7 @@ export default defineComponent({
     const formRef = ref(null)
     const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
+    const cacheActionWidths = ref<Record<string, any>>({})
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -423,6 +436,42 @@ export default defineComponent({
       //@ts-ignore
       return filterElRef.value.pannelFormRef
     }
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
+    }
+    const closeCacheActionWidthsWatch = watch(
+      () => cacheActionWidths,
+      (value) => {
+        const _tableData = unref(tableData)
+        const len = Object.keys(unref(value)).length
+        if (len > 0 && _tableData && len === _tableData.length) {
+          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+          const columns = unref(getColumns()).map((column) => {
+            if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
+              column.width = Math.ceil(maxWidth)
+              column.minWidth = Math.ceil(maxWidth)
+              return column
+            }
+            return column
+          })
+          setColumns(columns)
+          closeCacheActionWidthsWatch()
+        }
+      },
+      {
+        deep: true,
+        flush: 'post',
+      }
+    )
+    onMountedOrActivated(() => {
+      cacheActionWidths.value = {}
+    })
+    onUnmountedOrOnDeactivated(() => {
+      cacheActionWidths.value = {}
+    })
     const tableAction: TableActionType = {
       reload,
       getSelectRows,
@@ -461,7 +510,7 @@ export default defineComponent({
         return unref(getBindValues).size as SizeType
       },
     }
-    createTableContext({ ...tableAction, wrapRef, getBindValues })
+    createTableContext({ ...tableAction, wrapRef, getBindValues, setCacheActionWidths })
 
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
     watchEffect(() => {
