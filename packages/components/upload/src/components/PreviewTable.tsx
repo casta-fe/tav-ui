@@ -334,6 +334,9 @@ export const PreviewTable = defineComponent({
                     download={props.download}
                     file={row}
                     getPopupContainer={() => taTableProInstanceRef.value?.instance.$el}
+                    getAppendNewestFile={() =>
+                      props.handler.getFileFormatter.getNewestFileByActualId(row.actualId)!
+                    }
                   />
                 ) : (
                   ''
@@ -468,8 +471,11 @@ export const PreviewTable = defineComponent({
       }
     }
     return () => (
-      <div class="ta-upload-preview-table">
+      <div
+        class={{ 'ta-upload-preview-table': true, 'no-margin-top': props.parentProps?.readonly }}
+      >
         <TaTablePro
+          maxHeight={props.parentProps?.tableMaxHeight ?? 300}
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
           editConfig={

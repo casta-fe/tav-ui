@@ -36,7 +36,7 @@ export const FileBranch = defineComponent({
     getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
     onShowPopover: Function,
     width: { type: String, default: '840px' },
-    appendVersion: Object,
+    getAppendNewestFile: Function as PropType<() => Recordable>,
   },
   setup(props, { expose }) {
     // const { createMessage } = useMessage()
@@ -46,7 +46,7 @@ export const FileBranch = defineComponent({
     const { queryFileHistory /* removeFileById */ } = config.value?.TaUpload ?? {}
 
     const loading = ref(true)
-    const dataSource = ref([])
+    const dataSource = ref([] as any[])
     const computedTableHeight = computed(() => {
       // 表格显示的行数(加上表头一行)
       let lineCount = dataSource.value.length + 1
@@ -176,13 +176,14 @@ export const FileBranch = defineComponent({
 
       queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
-          if (props.appendVersion && props.appendVersion.version === 0) {
+          let newestFile: undefined | Recordable = undefined
+
+          if ((newestFile = props.getAppendNewestFile?.())) {
             res.data.push({
-              ...props.appendVersion,
+              ...newestFile,
               version: res.data[0].version + res.data.length,
             })
           }
-
           dataSource.value = res.data
           loading.value = false
           nextTick(() => {
@@ -232,6 +233,7 @@ export const FileBranch = defineComponent({
                   height: computedTableHeight.value,
                 }}
               >
+                {/* {JSON.stringify(dataSource.value)} */}
                 <TaTablePro
                   pagerConfig={{ enabled: false }}
                   showOperations={false}

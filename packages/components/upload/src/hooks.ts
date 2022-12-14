@@ -219,5 +219,37 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
     }))
   }
 
-  return { formatToApi, upadteVersion }
+  /**
+   * @param actualId
+   * @returns
+   */
+  function getFilesByActualId(actualId: string) {
+    return versionRecord[actualId]
+  }
+
+  /**
+   * 初始化时的文件
+   * @param actualId
+   * @returns
+   */
+  function getBasicFileByActualId(actualId: string) {
+    return getFilesByActualId(actualId)?.[0]
+  }
+
+  /**
+   * 最后一次点击更新后的文件
+   * @param actualId
+   * @returns
+   */
+  function getNewestFileByActualId(actualId: string) {
+    return getFilesByActualId(actualId)?.[1]
+  }
+
+  return {
+    formatToApi,
+    upadteVersion,
+    getFilesByActualId,
+    getBasicFileByActualId,
+    getNewestFileByActualId,
+  }
 }

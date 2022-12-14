@@ -304,7 +304,7 @@ type BasicPropsType = {
    * 文件类型 选择框 onSelect
    */
   onSelect?: Fn
-  coverColumnTitle?: Record<DefaultColumnFields, string>
+  coverColumnTitle?: Partial<Record<DefaultColumnFields, string>>
   hideColumnFields?: DefaultColumnFields[]
   nameColumnWidth?: number | string
   insertColumns?: {
@@ -333,6 +333,10 @@ type BasicPropsType = {
    * 表格数据为空时展示方式
    */
   emptyState: 'none' | 'header' | 'normal'
+  /**
+   * 默认表格 `maxHeight` 属性
+   */
+  tableMaxHeight?: number
 } & ProvideDataType
 
 /**

@@ -34,6 +34,14 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
+      },
+      {
+        immediate: true,
+      }
+    )
+    watch(
+      () => this._uploadResponse,
+      (v) => {
         this.throwResponse(this.uploadResponse!)
       },
       {
@@ -129,6 +137,10 @@ class Handler {
       }
     }
     return this._apis
+  }
+
+  get getFileFormatter() {
+    return this._fileFormatter
   }
 
   //// getter end
