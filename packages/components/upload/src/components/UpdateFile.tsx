@@ -1,7 +1,7 @@
 import { type PropType, defineComponent, ref } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import type { BasicPropsType } from '../types'
+import type { BasicPropsType, Recordable } from '../types'
 
 export const UpdateFile = defineComponent({
   name: 'TaUpDateFile',
@@ -26,12 +26,36 @@ export const UpdateFile = defineComponent({
     const { createMessage } = useMessage()
     const uploadRef = ref()
     const updateApi = config.value?.TaUpload?.updateFile
+    const uploadFile = config.value?.TaUpload?.uploadFile
     let fileActualIds = ''
+    let rawFile: Recordable = {}
 
     const fileChange = (event) => {
       const files = event.target.files
       const formData = new FormData()
       let updateFlag = true
+
+      const isAdd = !(props.parentProps?.params.businessId || props.parentProps?.params.businessKey)
+
+      if (isAdd) {
+        formData.append('typeCode', rawFile.typeCode)
+        formData.append('moduleCode', rawFile.moduleCode)
+        formData.append('files', files[0])
+
+        uploadFile(formData, props.parentProps?.AppId)
+          .then((res) => {
+            createMessage.success('更新成功')
+            uploadRef.value.value = ''
+            emit('updateSuccess', res.data[0], fileActualIds)
+          })
+          .catch((err) => {
+            uploadRef.value.value = ''
+            emit('updateFail', err)
+          })
+
+        return
+      }
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
         if (file.size / 1024 / 1024 > 1024) {
@@ -48,7 +72,7 @@ export const UpdateFile = defineComponent({
         .then((res) => {
           createMessage.success('更新成功')
           uploadRef.value.value = ''
-          emit('updateSuccess', res.data[0])
+          emit('updateSuccess', res.data[0], fileActualIds)
         })
         .catch((err) => {
           uploadRef.value.value = ''
@@ -56,6 +80,8 @@ export const UpdateFile = defineComponent({
         })
     }
     const showFilePicker = (file) => {
+      rawFile = file
+
       fileActualIds = file.actualId
       uploadRef.value.click()
     }

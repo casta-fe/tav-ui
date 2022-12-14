@@ -178,10 +178,13 @@ export const FileBranch = defineComponent({
         .then((res) => {
           let newestFile: undefined | Recordable = undefined
 
-          if ((newestFile = props.getAppendNewestFile?.())) {
+          if (
+            (newestFile = props.getAppendNewestFile?.()) &&
+            !res.data.some((el) => el.id === newestFile?.id)
+          ) {
             res.data.push({
               ...newestFile,
-              version: res.data[0].version + res.data.length,
+              version: res.data[0] ? res.data[0].version + res.data.length : 1,
             })
           }
           dataSource.value = res.data

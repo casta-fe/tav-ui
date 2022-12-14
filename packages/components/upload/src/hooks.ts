@@ -176,7 +176,18 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
 
     if (fileVersionCount === 'newest') {
       if (versionRecord[file.actualId!]) {
-        file.version = versionRecord[file.actualId!]![0].version + 1
+        if (
+          file.version === 0 &&
+          getBasicFileByActualId(file.actualId!)!.version === 1 &&
+          !(
+            getBasicFileByActualId(file.actualId!)!.businessId ||
+            getBasicFileByActualId(file.actualId!)!.businessKey
+          )
+        ) {
+          file.version = 1
+        } else {
+          file.version = versionRecord[file.actualId!]![0].version + 1
+        }
         versionRecord[file.actualId!]![1] = file
       } else {
         versionRecord[file.actualId!] = [file]
@@ -215,7 +226,7 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
     return Object.keys(versionRecord).map((k) => ({
       actualId: k,
       moduleCode: versionRecord[k]![0].moduleCode,
-      versionList: versionRecord[k],
+      versionList: [versionRecord[k]![1] || versionRecord[k]![0]],
     }))
   }
 

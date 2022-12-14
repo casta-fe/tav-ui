@@ -34,15 +34,7 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
-      },
-      {
-        immediate: true,
-      }
-    )
-    watch(
-      () => this._uploadResponse,
-      (v) => {
-        this.throwResponse(this.uploadResponse!)
+        this.throwResponse(v!)
       },
       {
         immediate: true,
@@ -75,7 +67,6 @@ class Handler {
   private _paramsName: string | undefined
   private _paramsAddress: string | undefined
   private _apis: ProvideDataType = {}
-  public currentIsUpdateFile = false
   public currentUpload = null as null | Promise<any> | FileItemType[]
 
   //// getter begin
@@ -302,9 +293,9 @@ class Handler {
    * @param {Recordable} record
    * @memberof Handler
    **/
-  updateItem = (record: FileItemType) => {
-    const { actualId } = record
-    const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
+  updateItem = (record: FileItemType, oldFileActualIds: string) => {
+    // const { actualId } = record
+    const index = this._uploadResponse.findIndex((el) => el.actualId === oldFileActualIds)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const oldRecord = this._uploadResponse.splice(index, 1, record)[0]
     // this._fileFormatter.upadteVersion(oldRecord)
@@ -377,9 +368,9 @@ class Handler {
    * 在弹窗关闭时调用
    */
   clearResponse(): void {
-    this._uploadResponse = []
-    this.fillDataSource()
+    this.uploadResponse = []
     this._props.params.typeCode && (this._typeCode.value = this._props.params.typeCode)
+    this.throwResponse([])
   }
 
   /**
@@ -451,13 +442,13 @@ class Handler {
     this._isLoading.value = true
     this.currentUpload = this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
-        if (this.currentIsUpdateFile) {
-          return (this.currentUpload = r)
-        } else {
-          this._uploadResponse.unshift(...r)
-          this.throwResponse(r)
-          nextTick(() => this.fillDataSource())
-        }
+        this._uploadResponse.unshift(...r)
+        this.throwResponse(r)
+        nextTick(() => this.fillDataSource())
+        r.forEach((el) => {
+          this._fileFormatter.upadteVersion(el)
+        })
+
         createMessage.success('上传成功')
       })
       .catch(() => {
@@ -495,6 +486,7 @@ class Handler {
     this.apis.uploadHyperlink!(payload)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(r)
+        this._fileFormatter.upadteVersion(r)
         this.throwResponse([r])
         nextTick(() => this.fillDataSource())
         createMessage.success('上传成功')

@@ -335,7 +335,8 @@ export const PreviewTable = defineComponent({
                     file={row}
                     getPopupContainer={() => taTableProInstanceRef.value?.instance.$el}
                     getAppendNewestFile={() =>
-                      props.handler.getFileFormatter.getNewestFileByActualId(row.actualId)!
+                      props.handler.getFileFormatter.getNewestFileByActualId(row.actualId) ??
+                      props.handler.getFileFormatter.getBasicFileByActualId(row.actualId)!
                     }
                   />
                 ) : (
@@ -465,9 +466,9 @@ export const PreviewTable = defineComponent({
     const previewRecord = ref<FileItemType[]>([])
     // 更新文件的回调
     const updateFileRef = ref()
-    const updateFileChange = (record) => {
+    const updateFileChange = (record, oldFileActualIds) => {
       if (props.handler && props.handler.updateItem) {
-        props.handler.updateItem(record)
+        props.handler.updateItem(record, oldFileActualIds)
       }
     }
     return () => (
@@ -499,6 +500,7 @@ export const PreviewTable = defineComponent({
           readonly={props.readonly}
           accept={props.parentProps?.accept || ''}
           onUpdateSuccess={updateFileChange}
+          parentProps={props.parentProps}
         />
         <TaFileView
           AppId={props.parentProps?.AppId}
