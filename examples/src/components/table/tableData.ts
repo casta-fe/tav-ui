@@ -43,6 +43,7 @@ export function getBasicColumns(): BasicColumn[] {
       width: 150,
       sorter: true,
       dataIndex: 'endTime',
+      format: 'date|YYYY-MM-DD',
     },
     {
       width: 150,

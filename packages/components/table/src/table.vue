@@ -458,7 +458,7 @@ export default defineComponent({
         const len = Object.keys(unref(value)).length
         if (len > 0 && _tableData && len === _tableData.length) {
           const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-          const columns = unref(getColumns()).map((column) => {
+          const columns = unref(getViewColumns).map((column) => {
             if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
               column.width = Math.ceil(maxWidth)
               column.minWidth = Math.ceil(maxWidth)
