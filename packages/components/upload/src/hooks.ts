@@ -170,6 +170,10 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
   const versionRecord: Partial<Recordable<FileItemType[]>> = {}
 
   function upadteVersion(file: FileItemType) {
+    if (versionRecord[file.actualId!]?.some((el) => el.id === file.id)) {
+      return
+    }
+
     if (fileVersionCount === 'newest') {
       if (versionRecord[file.actualId!]) {
         file.version = versionRecord[file.actualId!]![0].version + 1
@@ -192,17 +196,17 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
   }
 
   function formatToApi(files: FileItemType[]) {
-    const currentFileActualIds: string[] = []
+    const currentFileActualIdsSet = new Set<string>()
 
     for (const file of files) {
       upadteVersion(file)
 
-      currentFileActualIds.push(file.actualId!)
+      currentFileActualIdsSet.add(file.actualId!)
     }
 
     for (const actualId in versionRecord) {
       // 有删除操作时
-      currentFileActualIds.includes(actualId) || Reflect.deleteProperty(versionRecord, actualId)
+      currentFileActualIdsSet.has(actualId) || Reflect.deleteProperty(versionRecord, actualId)
     }
 
     // const cloneVersionRecord = clone(versionRecord, true)

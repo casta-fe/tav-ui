@@ -34,6 +34,7 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
+        this.throwResponse(this.uploadResponse!)
       },
       {
         immediate: true,
@@ -295,10 +296,9 @@ class Handler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const oldRecord = this._uploadResponse.splice(index, 1, record)[0]
     // this._fileFormatter.upadteVersion(oldRecord)
-    record.version = oldRecord.version + 1
     this._fileFormatter.upadteVersion(record)
     this.fillDataSource()
-    this.throwResponse([record])
+    this.throwResponse([{ ...record, version: oldRecord.version + 1 }])
   }
   /**
    * 删除一条数据

@@ -36,6 +36,7 @@ export const FileBranch = defineComponent({
     getPopupContainer: Function as PropType<({ parentElement: Element }) => Element>,
     onShowPopover: Function,
     width: { type: String, default: '840px' },
+    appendVersion: Object,
   },
   setup(props, { expose }) {
     // const { createMessage } = useMessage()
@@ -175,14 +176,12 @@ export const FileBranch = defineComponent({
 
       queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
         .then((res) => {
-          // if (res.data.some((el) => el.version === 0)) {
-          // }
-          res.data = res.data.map((el, idx, arr) => {
-            if (el.version === 0) {
-              el.version = arr[0].version + idx
-            }
-            return el
-          })
+          if (props.appendVersion && props.appendVersion.version === 0) {
+            res.data.push({
+              ...props.appendVersion,
+              version: res.data[0].version + res.data.length,
+            })
+          }
 
           dataSource.value = res.data
           loading.value = false
