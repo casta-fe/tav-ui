@@ -35,12 +35,24 @@ export const UpdateFile = defineComponent({
       const formData = new FormData()
       let updateFlag = true
 
-      const isAdd = !(props.parentProps?.params.businessId || props.parentProps?.params.businessKey)
+      const isAdd = !(rawFile.businessId || rawFile.businessKey)
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        if (file.size / 1024 / 1024 > 1024) {
+          updateFlag = false
+          createMessage.warn(`${file.name}:${Math.floor(file.size / 1024 / 1024)}MB大于1GB`)
+        }
+        if (!updateFlag) {
+          return
+        }
+        formData.append('files', file)
+        isAdd || formData.append('fileActualIds', fileActualIds)
+      }
 
       if (isAdd) {
         formData.append('typeCode', rawFile.typeCode)
         formData.append('moduleCode', rawFile.moduleCode)
-        formData.append('files', files[0])
 
         uploadFile(formData, props.parentProps?.AppId)
           .then((res) => {
@@ -56,18 +68,6 @@ export const UpdateFile = defineComponent({
         return
       }
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        if (file.size / 1024 / 1024 > 1024) {
-          updateFlag = false
-          createMessage.warn(`${file.name}:${Math.floor(file.size / 1024 / 1024)}MB大于1GB`)
-        }
-        if (!updateFlag) {
-          return
-        }
-        formData.append('files', file)
-        formData.append('fileActualIds', fileActualIds)
-      }
       updateApi(formData, props.parentProps?.AppId, props.parentProps?.immediate)
         .then((res) => {
           createMessage.success('更新成功')
