@@ -124,6 +124,7 @@ export interface FormProps {
   submitFunc?: () => Promise<void>
   transformDateFunc?: (date: any) => string
   colon?: boolean
+  editable?: boolean
 }
 export interface FormSchema {
   // Field name

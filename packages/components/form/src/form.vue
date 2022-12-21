@@ -51,9 +51,14 @@ export default defineComponent({
     const getFormClass = computed(() => {
       // ::==================== i7eo：更新 ///// start ///// ====================:: //
       const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any)
+      const isEditable = unref(getProps).editable
       let hasEditableFormItemNums = 0
-      for (const schema of schemas) {
-        if (Reflect.has(schema, 'editable')) hasEditableFormItemNums++
+      if (isEditable) {
+        hasEditableFormItemNums++
+      } else {
+        for (const schema of schemas) {
+          if (Reflect.has(schema, 'editable')) hasEditableFormItemNums++
+        }
       }
 
       return [
@@ -79,6 +84,7 @@ export default defineComponent({
 
     const getSchema = computed((): FormSchema[] => {
       const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any)
+      const isEditable = unref(getProps).editable
       for (const schema of schemas) {
         const { defaultValue, component } = schema
 
@@ -94,6 +100,8 @@ export default defineComponent({
             schema.defaultValue = def
           }
         }
+
+        if (isEditable) schema.editable = true
       }
       if (unref(getProps).showAdvancedButton)
         return schemas.filter((schema) => schema.component !== 'Divider') as FormSchema[]

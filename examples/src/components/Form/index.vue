@@ -152,43 +152,46 @@ const schemas: FormSchema[] = [
   //     // }
   //   },
   // },
-  // {
-  //   field: 'field1',
-  //   component: 'MemberSelect',
-  //   label: '字段1',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   editable: true,
-  //   componentProps: {
-  //     placeholder: '自定义placeholder',
-  //     options: [],
-  //   },
-  // },
-  // {
-  //   field: 'field2',
-  //   component: 'InputNumberRange',
-  //   label: '字段2',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  // },
-  // {
-  //   field: 'field3',
-  //   component: 'DatePicker',
-  //   label: '字段3',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  // },
-  // {
-  //   field: 'fieldTime',
-  //   component: 'RangePicker',
-  //   label: '时间字段',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  // },
+  {
+    field: 'field1',
+    component: 'MemberSelect',
+    label: '字段1',
+    colProps: {
+      span: 8,
+    },
+    // editable: true,
+    componentProps: {
+      placeholder: '自定义placeholder',
+      options: [],
+    },
+  },
+  {
+    field: 'field2',
+    component: 'InputNumberRange',
+    label: '字段2',
+    // editable: true,
+    colProps: {
+      span: 8,
+    },
+  },
+  {
+    field: 'field3',
+    component: 'DatePicker',
+    // editable: true,
+    label: '字段3',
+    colProps: {
+      span: 8,
+    },
+  },
+  {
+    field: 'fieldTime',
+    component: 'RangePicker',
+    label: '时间字段',
+    // editable: true,
+    colProps: {
+      span: 8,
+    },
+  },
   {
     field: 'field4',
     component: 'Select',
@@ -314,6 +317,7 @@ export default defineComponent({
       actionColOptions: {
         span: 24,
       },
+      editable: true,
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })

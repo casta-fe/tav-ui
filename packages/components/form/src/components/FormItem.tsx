@@ -42,6 +42,9 @@ type Nullable<T> = T | null
 const NUMBER_MAX = 9999999999
 export default defineComponent({
   name: 'BasicFormItem',
+  directives: {
+    clickOutside,
+  },
   inheritAttrs: false,
   props: {
     schema: {
@@ -70,9 +73,6 @@ export default defineComponent({
     formActionType: {
       type: Object as PropType<FormActionType>,
     },
-  },
-  directives: {
-    clickOutside,
   },
   setup(props, { slots }) {
     // 测试 memberselect
