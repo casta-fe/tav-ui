@@ -731,9 +731,17 @@ export default defineComponent({
                   ? 'ta-form-item__cell number-cell'
                   : 'ta-form-item__cell'
               }
+              style={
+                unref(getDisable)
+                  ? {
+                      cursor: 'not-allowed',
+                      color: 'rgba(0, 0, 0, 0.25)',
+                    }
+                  : {}
+              }
               title={editableItemValue.value}
               onClick={() => {
-                if (unref(isEditable)) {
+                if (!unref(getDisable) && unref(isEditable)) {
                   isEditableItemClicked.value = true
                   unref(getComponentsProps).onEditableFormItemVisible &&
                     unref(getComponentsProps).onEditableFormItemVisible(

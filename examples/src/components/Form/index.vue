@@ -318,6 +318,7 @@ export default defineComponent({
         span: 24,
       },
       editable: true,
+      disabled: true,
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
