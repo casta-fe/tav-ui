@@ -81,6 +81,11 @@ export const taUploadProvideData: Partial<
   queryFile: (params: any): Promise<any> => {
     console.log(params, 'queryFile')
 
+    fetch('/queryFile', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    })
+
     return new Promise((r) =>
       setTimeout(
         r.bind(null, {

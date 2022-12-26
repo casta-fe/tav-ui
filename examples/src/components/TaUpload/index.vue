@@ -52,8 +52,12 @@ export default defineComponent({
 
     const params = reactive({
       moduleCode: 'tg_invest',
-      businessId: 'id0',
+      // businessId: 'id0',
     })
+
+    setTimeout(() => {
+      params.businessKey = 'abc'
+    }, 1000)
 
     function switchModule() {
       params.moduleCode = 'tg_invest' === params.moduleCode ? 'other_module' : 'tg_invest'

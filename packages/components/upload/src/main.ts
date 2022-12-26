@@ -201,6 +201,26 @@ class Handler {
       }
     )
 
+    // 用 businessKey 控制回填与清空
+    watch(
+      () => this._props.params.businessKey,
+      (val) => {
+        this._params.businessKey = val
+        // 外部控制 -> 不请求,不自动清除
+        if (this._controlInOuter) return
+        if (undefined === val) {
+          this.clearResponse()
+          return
+        }
+        // 传入文件列表 -> 不请求
+        if (this._props.uploadResponse) return
+        this.backfill()
+      },
+      {
+        immediate: true,
+      }
+    )
+
     // 一些请求的参数
     watch(
       () =>
