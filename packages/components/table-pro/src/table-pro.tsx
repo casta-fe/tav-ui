@@ -48,6 +48,7 @@ export default defineComponent({
     const customActionRef = ref<CustomActionRef | null>(null)
     const cacheActionWidths = ref<Record<string, any>>({})
     const columnsForAction = ref<TableProColumn[]>([])
+    const maxWidthForAction = ref<number>(0)
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -115,11 +116,10 @@ export default defineComponent({
     }
     watch(
       () => cacheActionWidths,
-      (value) => {
+      () => {
         const tableData = unref(tableRef)?.getTableData().tableData
-        const len = Object.keys(unref(value)).length
-        if (len > 0 && tableData && len === tableData.length) {
-          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        if (tableData && maxWidth > unref(maxWidthForAction)) {
           const columns = unref(getColumns).columns.map((column) => {
             if (column.field && ACTION_COLUMNS.includes(column.field)) {
               column.width = Math.ceil(maxWidth)
@@ -129,6 +129,7 @@ export default defineComponent({
             return column
           })
           columnsForAction.value = columns
+          maxWidthForAction.value = maxWidth
         }
       },
       {
@@ -217,6 +218,7 @@ export default defineComponent({
 
       cacheActionWidths.value = {}
       columnsForAction.value = []
+      maxWidthForAction.value = 0
     })
 
     return () => {

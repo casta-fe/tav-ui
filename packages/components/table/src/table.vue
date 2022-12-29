@@ -153,6 +153,7 @@ export default defineComponent({
     const innerPropsRef = ref<Partial<BasicTableProps>>()
     const cacheActionWidths = ref<Record<string, any>>({})
     const columnsForAction = ref<any[]>([])
+    const maxWidthForAction = ref<number>(0)
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -453,11 +454,10 @@ export default defineComponent({
     }
     watch(
       () => cacheActionWidths,
-      (value) => {
+      () => {
         const _tableData = unref(tableData)
-        const len = Object.keys(unref(value)).length
-        if (len > 0 && _tableData && len === _tableData.length) {
-          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        if (_tableData && maxWidth > unref(maxWidthForAction)) {
           const columns = unref(getViewColumns).map((column) => {
             if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
               column.width = Math.ceil(maxWidth)
@@ -467,6 +467,7 @@ export default defineComponent({
             return column
           })
           columnsForAction.value = columns
+          maxWidthForAction.value = maxWidth
         }
       },
       {
@@ -477,6 +478,7 @@ export default defineComponent({
     onUnmountedOrOnDeactivated(() => {
       cacheActionWidths.value = {}
       columnsForAction.value = []
+      maxWidthForAction.value = 0
     })
     const tableAction: TableActionType = {
       reload,
