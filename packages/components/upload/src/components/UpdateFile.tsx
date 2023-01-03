@@ -35,7 +35,14 @@ export const UpdateFile = defineComponent({
       const formData = new FormData()
       let updateFlag = true
 
-      const isAdd = !(rawFile.businessId || rawFile.businessKey)
+      /**
+       * ***新上传文件***
+       *
+       * 返回值: upload 接口 version==1, updateFile 接口 version==0
+       *
+       * 调用上传接口 && 未绑定 id/key -> 新上传文件
+       */
+      const isAdd = 1 === rawFile.version && !(rawFile.businessId || rawFile.businessKey)
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
