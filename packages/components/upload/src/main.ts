@@ -5,7 +5,14 @@ import { isFunction } from '@tav-ui/utils'
 import { useFileFormatter } from './hooks'
 import type { Ref } from 'vue'
 import type { FormActionType } from '../../form'
-import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
+import type {
+  BasicPropsType,
+  ChangeType,
+  FileItemType,
+  Fn,
+  ProvideDataType,
+  Recordable,
+} from './types'
 
 // global variable beginRegion
 const { createMessage } = useMessage()
@@ -34,7 +41,7 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
-        this.throwResponse(v!)
+        this.throwResponse(v!, 'init')
       },
       {
         immediate: true,
@@ -299,14 +306,14 @@ class Handler {
    * 请求文件列表成功和上传成功时触发
    * @param newRecord 新上传成功的文件
    */
-  private throwResponse(newRecord: Recordable[]): void {
+  private throwResponse(newRecord: Recordable[], type: ChangeType): void {
     this.emit(
       'update:fileActualIds',
       !this._props.immediate && (this._params.businessId || this._params.businessKey)
         ? this.getResult()
         : this.getFileActualIds()
     )
-    this.emit('change', newRecord, this._uploadResponse)
+    this.emit('change', newRecord, this._uploadResponse, type)
   }
   /**
    * 更新一条数据
@@ -321,7 +328,7 @@ class Handler {
     // this._fileFormatter.upadteVersion(oldRecord)
     this._fileFormatter.upadteVersion(record)
     this.fillDataSource()
-    this.throwResponse([{ ...record, version: oldRecord.version + 1 }])
+    this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
   }
   /**
    * 删除一条数据
@@ -336,7 +343,7 @@ class Handler {
     const spliceData = () => {
       this._uploadResponse.splice(index, 1)
       this.fillDataSource()
-      this.throwResponse([newRecord])
+      this.throwResponse([newRecord], 'delete')
     }
 
     this._isLoading.value = true
@@ -379,7 +386,7 @@ class Handler {
       this._uploadResponse.push(...response.data.result)
       this._fileFormatter.formatToApi(this._uploadResponse)
 
-      this.throwResponse(response.data.result)
+      this.throwResponse(response.data.result, 'init')
     }
     this.fillDataSource()
   }
@@ -390,7 +397,7 @@ class Handler {
   clearResponse(): void {
     this.uploadResponse = []
     this._props.params.typeCode && (this._typeCode.value = this._props.params.typeCode)
-    this.throwResponse([])
+    this.throwResponse([], 'delete')
   }
 
   /**
@@ -463,7 +470,7 @@ class Handler {
     this.currentUpload = this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(...r)
-        this.throwResponse(r)
+        this.throwResponse(r, 'upload')
         nextTick(() => this.fillDataSource())
         r.forEach((el) => {
           this._fileFormatter.upadteVersion(el)
@@ -507,7 +514,7 @@ class Handler {
       .then(({ data: r }) => {
         this._uploadResponse.unshift(r)
         this._fileFormatter.upadteVersion(r)
-        this.throwResponse([r])
+        this.throwResponse([r], 'upload')
         nextTick(() => this.fillDataSource())
         createMessage.success('上传成功')
       })

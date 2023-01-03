@@ -427,11 +427,14 @@ type HasDefaultPropType =
 type OmitHasDefaultPropType<T = HasDefaultPropType> = Partial<BasicPropsType> &
   Omit<BasicPropsType, T extends string | number | symbol ? T : ''>
 
+type ChangeType = 'init' | 'upload' | 'delete' | 'update'
+
 export type {
   Fn,
   Result,
   IHandle,
   PromiseFn,
+  ChangeType,
   Recordable,
   FileItemType,
   BasicPropsType,
