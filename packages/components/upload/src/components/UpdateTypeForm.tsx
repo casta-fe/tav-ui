@@ -20,7 +20,9 @@ export const UpdateTypeForm = defineComponent({
         options={props.customOptions}
         onSelect={props.onSelect}
         onChange={(typeCode, option) => {
-          props.onChange?.(option, props.handler?.apis.updateFileType?.(props.row.id!, typeCode))
+          props.onChange?.(option, () =>
+            props.handler?.apis.updateFileType?.(props.row.id!, typeCode)
+          )
         }}
         getPopupContainer={(target) => target.parentElement}
       />

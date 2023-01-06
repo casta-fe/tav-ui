@@ -170,7 +170,26 @@ export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatt
   const versionRecord: Partial<Recordable<FileItemType[]>> = {}
 
   function upadteVersion(file: FileItemType) {
-    if (versionRecord[file.actualId!]?.some((el) => el.id === file.id)) {
+    const existFile = versionRecord[file.actualId!]?.find((el) => el.id === file.id)
+
+    if (existFile) {
+      /**
+       * 文件名更新 || 超链接更新
+       */
+      if (existFile.name !== file.name || existFile.address !== file.address) {
+        /**
+         * ```ts
+         * [v1File, v2File] as const
+         * ```
+         */
+        const fileArr = versionRecord[existFile.actualId!]
+
+        if (fileArr) {
+          const lastIndex = fileArr.length - 1
+
+          fileArr[lastIndex] = file
+        }
+      }
       return
     }
 

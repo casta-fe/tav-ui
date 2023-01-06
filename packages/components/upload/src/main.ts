@@ -121,13 +121,14 @@ class Handler {
             : undefined
       }
       if (
-        !(
-          isFunction(apis.queryFile) &&
-          // 当使用 false === immediate 时不需要传removeFile
-          (this._immediate ? isFunction(apis.removeFile) : true) &&
-          isFunction(apis.uploadFile) &&
-          isFunction(apis.uploadHyperlink)
-        )
+        !(isFunction(apis.queryFile) &&
+        // 当使用 false === immediate 时不需要传removeFile
+        (this._immediate ? isFunction(apis.removeFile) : true) &&
+        isFunction(apis.uploadFile) &&
+        (this._props.showUploadHyperlinkBtn === 'unset' ||
+          false === this._props.showUploadHyperlinkBtn)
+          ? true
+          : isFunction(apis.uploadHyperlink))
       ) {
         throw new Error(
           '<queryFile, uploadFile, uploadHyperlink,typeCodeRecord, [removeFile]> 必须在TaUpload挂载前从app.vue注入, 或者传入同名props'

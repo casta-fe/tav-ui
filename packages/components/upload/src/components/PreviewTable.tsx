@@ -1,9 +1,9 @@
-import { computed, defineComponent, ref, unref, watch } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { Spin } from 'ant-design-vue'
 // import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { Cell } from '../../../table-pro/src/components/cell'
-import { getActionColumnMaxWidth, useFileTypeCode } from '../hooks'
+import { getActionColumnMaxWidth } from '../hooks'
 import { UpdateTypeForm } from '../components/UpdateTypeForm'
 import { UpdateNameForm } from './UpdateNameForm'
 import { UpdateFile } from './UpdateFile'
@@ -34,15 +34,15 @@ export const PreviewTable = defineComponent({
       required: true,
     },
     dataSource: {
-      type: Array as PropType<FileItemType[]>,
+      type: Array as PropType<PreviewTablePropType['dataSource']>,
       required: true,
     },
     loading: {
-      type: Boolean,
+      type: Boolean as PropType<PreviewTablePropType['loading']>,
       default: false,
     },
     readonly: {
-      type: Boolean,
+      type: Boolean as PropType<PreviewTablePropType['readonly']>,
       required: true,
     },
     showTableAction: {
@@ -50,10 +50,6 @@ export const PreviewTable = defineComponent({
       required: true,
     },
     onClickName: Function,
-    canResize: {
-      type: Boolean,
-      required: true,
-    },
     tableActionPermission: {
       type: Object as PropType<PreviewTablePropType['tableActionPermission']>,
       required: true,
@@ -61,10 +57,6 @@ export const PreviewTable = defineComponent({
     customOptions: Array as PropType<PreviewTablePropType['customOptions']>,
     download: Function,
     updateFileNameAndAddress: Function as PropType<PromiseFn>,
-    typeCodeRecord: {
-      type: Object,
-      required: true,
-    },
     coverColumnTitle: Object as PropType<BasicPropsType['coverColumnTitle']>,
     hideColumnFields: {
       type: Array as PropType<BasicPropsType['hideColumnFields']>,
@@ -80,50 +72,13 @@ export const PreviewTable = defineComponent({
     const hasBranch = computed(() => typeof props.handler?.apis.updateFile === 'function')
     const taTableProInstanceRef = ref<ITableProInstance>()
     const clearEdit = () => taTableProInstanceRef.value?.instance.clearEdit()
-    // init begin
-    const { getOptionsByTypeCodes } = useFileTypeCode(props.typeCodeRecord)
-    // init end
-
-    const typeCodeArray = computed(() => props.dataSource.map((el) => el.typeCode))
 
     // const nameColumnWidthRef = ref<number>(300)
     const currentEditCellIsLoading = ref(false)
     let currentEditCell: null | Record<'rowIndex' | 'columnIndex', string | number> = null
     // const currentEditColumnField = ref('')
 
-    const fetchedTypeCodeArray = ref([] as any[])
-    watch(
-      () => props.moduleCode,
-      (moduleCode) => {
-        moduleCode &&
-          props.handler?.apis.queryFileType?.([moduleCode]).then(({ data }) => {
-            fetchedTypeCodeArray.value = data
-          })
-      },
-      { immediate: true }
-    )
-    const typeCodeOptions = computed(() => {
-      // @ts-ignore
-      const options = props.customOptions ?? unref(getOptionsByTypeCodes(typeCodeArray.value))
-
-      if (!options.length) {
-        return fetchedTypeCodeArray.value.map((typeItem) => ({
-          ...typeItem,
-          label: typeItem.name,
-          value: typeItem.code,
-        }))
-      }
-
-      for (const typeItem of fetchedTypeCodeArray.value)
-        options.some((el) => el.value == typeItem.code) ||
-          options.push({
-            ...typeItem,
-            label: typeItem.name,
-            value: typeItem.code,
-          })
-
-      return options
-    })
+    const typeCodeOptions = computed(() => props.customOptions)
 
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
@@ -178,6 +133,17 @@ export const PreviewTable = defineComponent({
 
                     if (!props.updateFileNameAndAddress) {
                       console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
+                      return
+                    }
+
+                    if (!props.parentProps?.immediate) {
+                      row.name = payload.name
+                      row.hyperlink
+                        ? (row.address = payload.address)
+                        : (row.fullName = `${payload.name}.${row.suffix}`)
+
+                      props.handler.updateItem(row, row.actualId)
+
                       return
                     }
 
@@ -255,9 +221,18 @@ export const PreviewTable = defineComponent({
                 <UpdateTypeForm
                   row={row}
                   onSelect={setTimeout.bind(null, clearEdit, 0)}
-                  onChange={(option: LabelValueOption, promise: Promise<void>) => {
+                  onChange={(option: LabelValueOption, callPromise: () => Promise<void>) => {
+                    if (!props.parentProps?.immediate) {
+                      row.typeName = option.label
+                      row.typeCode = option.value
+
+                      props.handler.updateItem(row, row.actualId)
+
+                      return
+                    }
+
                     currentEditCellIsLoading.value = true
-                    promise
+                    callPromise()
                       .then(() => {
                         row.typeName = option.label
                         row.typeCode = option.value
@@ -493,7 +468,14 @@ export const PreviewTable = defineComponent({
           loading={props.loading}
           columns={getActionColumn.value}
           fillInner={false}
-          checkboxConfig={{ enabled: false }}
+          checkboxConfig={props.parentProps?.checkboxConfig ?? { enabled: false }}
+          v-slots={
+            props.parentProps?.emptyState === 'header'
+              ? {
+                  empty: () => <span></span>,
+                }
+              : undefined
+          }
         />
         <UpdateFile
           ref={updateFileRef}

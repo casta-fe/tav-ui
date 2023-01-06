@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { VxeTablePropTypes } from 'vxe-table'
 import type { TableProColumn } from '../../table-pro'
 import type { Handler } from './main'
 
@@ -134,7 +135,7 @@ type QueryFileParamsType = {
  */
 type PreviewTablePropType = {
   parentProps: BasicPropsType
-  dataSource: Recordable[]
+  dataSource: FileItemType[]
   showTableAction: BasicPropsType['showTableAction']
   tableActionPermission: BasicPropsType['tableActionPermission']
   loading?: boolean
@@ -143,26 +144,18 @@ type PreviewTablePropType = {
   customOptions: BasicPropsType['customOptions']
 }
 
-type NeedHideElType = {
-  hideSelect: boolean
-  hideTable: boolean
-}
-
 type TypeSelectPropType = {
   moduleCode: string
   selected?: string
   typeCodeArray?: string[]
   noDefaultValue: boolean | Ref<boolean>
   customOptions?: BasicPropsType['customOptions']
-}
-
-interface IHandle {
-  backfill(): Promise<void>
-  realUpload(): void
-  beforeUpload(file: File): void
-  throwResponse(newRecord: Recordable[]): void
-  customRequest(): void
-  appendResultToTable(): void
+  typeCodeRecord?: BasicPropsType['typeCodeRecord']
+  queryFileType?: ProvideDataType['queryFileType']
+  onSelect?: Fn
+  queryFileTypeRecursion?: BasicPropsType['queryFileTypeRecursion']
+  'onUpdate:options': Fn
+  'onUpdate:selected': Fn
 }
 
 /**
@@ -337,6 +330,15 @@ type BasicPropsType = {
    * 默认表格 `maxHeight` 属性
    */
   tableMaxHeight?: number
+  /**
+   * 调用 `queryFileType` 接口时 `recursion` 参数值
+   * @default false
+   */
+  queryFileTypeRecursion: boolean
+  /**
+   * 默认文件列表的选择列配置
+   */
+  checkboxConfig: VxeTablePropTypes.CheckboxConfig & { enabled: boolean }
 } & ProvideDataType
 
 /**
@@ -398,51 +400,19 @@ type ProvideDataType = {
   >
 }
 
-/**
- * 有默认值的props
- * @author mxs
- * @createDate  2022/01/22
- * @updateDate  2022/03/09
- */
-type HasDefaultPropType =
-  | 'accept'
-  // | "maxSize"
-  | 'readonly'
-  | 'readonly'
-  | 'canResize'
-  | 'showTable'
-  | 'showSelect'
-  | 'showUploadBtn'
-  | 'controlInOuter'
-  | 'noDefaultValue'
-  | 'showTableAction'
-  | 'tableActionPermission'
-
-/**
- * 外部非必传的props
- * @author mxs
- * @createDate 2022/...
- * @updateDate 2022/01/22
- */
-type OmitHasDefaultPropType<T = HasDefaultPropType> = Partial<BasicPropsType> &
-  Omit<BasicPropsType, T extends string | number | symbol ? T : ''>
-
 type ChangeType = 'init' | 'upload' | 'delete' | 'update'
 
 export type {
   Fn,
   Result,
-  IHandle,
   PromiseFn,
   ChangeType,
   Recordable,
   FileItemType,
   BasicPropsType,
-  NeedHideElType,
   ProvideDataType,
   LabelValueOption,
   LabelValueOptions,
   TypeSelectPropType,
   PreviewTablePropType,
-  OmitHasDefaultPropType,
 }

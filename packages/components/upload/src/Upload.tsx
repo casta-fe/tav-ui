@@ -5,7 +5,7 @@ import { TaButton } from '@tav-ui/components/button'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
 import type { PropType, Slot } from 'vue'
-import type { BasicPropsType, Recordable } from './types'
+import type { BasicPropsType, LabelValueOptions, Recordable } from './types'
 
 export default defineComponent({
   name: 'TaUpload',
@@ -103,6 +103,14 @@ export default defineComponent({
     maxCount: Number as PropType<BasicPropsType['maxCount']>,
     immediate: { type: Boolean as PropType<BasicPropsType['immediate']>, default: false },
     emptyState: { type: String as PropType<BasicPropsType['emptyState']>, default: 'normal' },
+    queryFileTypeRecursion: {
+      type: Boolean as PropType<BasicPropsType['queryFileTypeRecursion']>,
+      default: false,
+    },
+    checkboxConfig: {
+      type: Object as PropType<BasicPropsType['checkboxConfig']>,
+      default: () => ({ enabled: false }),
+    },
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -112,6 +120,7 @@ export default defineComponent({
     const showSelect = ref(props.showSelect)
     const showUploadBtn = ref(props.showUploadBtn)
     const showUploadHyperlinkBtn = ref(props.showUploadHyperlinkBtn)
+    const typeCodeOptions = ref((customOptions.value ?? []) as LabelValueOptions)
 
     const uploadBtnRef = ref()
 
@@ -133,7 +142,8 @@ export default defineComponent({
           v.showTitle === 'unset' && (showTitle.value = true)
           v.showSelect === 'unset' && (showSelect.value = true)
           v.showUploadBtn === 'unset' && (showUploadBtn.value = true)
-          v.showUploadHyperlinkBtn === 'unset' && (showUploadHyperlinkBtn.value = true)
+          v.showUploadHyperlinkBtn === 'unset' &&
+            (showUploadHyperlinkBtn.value = !!handler.apis.uploadHyperlink)
         }
       },
       { deep: true, immediate: true }
@@ -165,6 +175,9 @@ export default defineComponent({
         'onUpdate:selected': (val) => {
           handler.typeCode.value = val
           handler.fillDataSource()
+        },
+        'onUpdate:options': (val) => {
+          typeCodeOptions.value = val
         },
         onSelect: props.onSelect,
         queryFileType: handler.apis.queryFileType,
@@ -285,7 +298,6 @@ export default defineComponent({
         uploadBtnRef,
         parentProps: props,
         handler,
-        typeCodeRecord: handler.typeCodeRecord,
         dataSource: handler.dataSource.value,
         loading: handler.loading.value,
         readonly: props.readonly,
@@ -294,7 +306,7 @@ export default defineComponent({
         onClickName: props.onClickName,
         canResize: props.canResize,
         tableActionPermission: props.tableActionPermission,
-        customOptions: customOptions.value,
+        customOptions: typeCodeOptions.value,
         download: handler.apis.download,
         updateFileNameAndAddress: handler.apis.updateFileNameAndAddress,
         coverColumnTitle: props.coverColumnTitle,
