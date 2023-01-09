@@ -289,7 +289,26 @@ class Handler {
    */
   private getFileActualIds = () => this._uploadResponse.map((el) => el.actualId)
 
+  /**
+   * 返回编辑后的文件列表数据格式
+   * ```js
+   * [
+   *    {
+   *        moduleCode: "...",
+   *        versionList: [
+   *          file1,...
+   *        ]
+   *    }
+   * ]
+   * ```
+   * @returns
+   */
   getResult = () => this._fileFormatter.formatToApi(this._uploadResponse)
+
+  getPropsOrProvide<T extends keyof BasicPropsType>(propName: T): BasicPropsType[T] {
+    // @ts-ignore
+    return this._props[propName] ?? this._provide.value?.[propName]
+  }
 
   /**
    * 将列表数据填到表格上

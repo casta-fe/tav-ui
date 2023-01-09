@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
 // import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
@@ -80,6 +80,13 @@ export const PreviewTable = defineComponent({
 
     const typeCodeOptions = computed(() => props.customOptions)
 
+    let hidePopoverRefs: Ref<{ hidePopover?: () => void }>[] = []
+    watch(
+      () => props.dataSource.length,
+      () => {
+        hidePopoverRefs = []
+      }
+    )
     const getActionColumn = computed<TableProColumn[]>(() => {
       if (
         props.showTableAction.download === false &&
@@ -98,8 +105,6 @@ export const PreviewTable = defineComponent({
       }
       if (props.showTableAction.downloadWatermark !== false) labels.push('水印..')
       if (props.showTableAction.delete !== false) labels.push('删除')
-
-      const hidePopoverRefs: Ref<{ hidePopover?: () => void }>[] = []
 
       // #endregion
       const columns: TableProColumn[] = [
@@ -451,7 +456,14 @@ export const PreviewTable = defineComponent({
         class={{ 'ta-upload-preview-table': true, 'no-margin-top': props.parentProps?.readonly }}
       >
         <TaTablePro
-          maxHeight={props.parentProps?.tableMaxHeight ?? 300}
+          maxHeight={
+            /**
+             * 当不传此 prop 时,表格高度自动继承(给其赋值 `undefined`), 内容超过时滚动
+             *
+             * 当是数字时, `VXETable` 表现为有几行数据, 自动撑起几行的高度, 大于此数字 滚动
+             */
+            props.handler?.getPropsOrProvide('tableMaxHeight')
+          }
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
           editConfig={

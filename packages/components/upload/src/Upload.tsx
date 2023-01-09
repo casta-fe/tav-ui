@@ -103,6 +103,7 @@ export default defineComponent({
     maxCount: Number as PropType<BasicPropsType['maxCount']>,
     immediate: { type: Boolean as PropType<BasicPropsType['immediate']>, default: false },
     emptyState: { type: String as PropType<BasicPropsType['emptyState']>, default: 'normal' },
+    tableMaxHeight: { type: String as PropType<BasicPropsType['tableMaxHeight']> },
     queryFileTypeRecursion: {
       type: Boolean as PropType<BasicPropsType['queryFileTypeRecursion']>,
       default: false,
@@ -189,6 +190,7 @@ export default defineComponent({
         },
         onSelect: props.onSelect,
         queryFileType: handler.apis.queryFileType,
+        queryFileTypeRecursion: props.queryFileTypeRecursion,
       }
 
       const ISelect = (_, { slots }: Recordable) => <TypeSelect {...selectProps} v-slots={slots} />

@@ -327,10 +327,6 @@ type BasicPropsType = {
    */
   emptyState: 'none' | 'header' | 'normal'
   /**
-   * 默认表格 `maxHeight` 属性
-   */
-  tableMaxHeight?: number
-  /**
    * 调用 `queryFileType` 接口时 `recursion` 参数值
    * @default false
    */
@@ -398,6 +394,10 @@ type ProvideDataType = {
         }[]
     >
   >
+  /**
+   * 默认表格 `maxHeight` 属性
+   */
+  tableMaxHeight?: number | 'auto'
 }
 
 type ChangeType = 'init' | 'upload' | 'delete' | 'update'

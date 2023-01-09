@@ -102,7 +102,9 @@ export const useOptions = (
             } else if (localTypeCodeOptions.value.length === 1) {
               emit('update:selected', getDefaultValue())
             }
-          } else if (undefined === defaultValue.value) {
+          }
+
+          if (undefined === props.selected && localTypeCodeOptions.value.length === 1) {
             emit('update:selected', getDefaultValue())
           }
 
