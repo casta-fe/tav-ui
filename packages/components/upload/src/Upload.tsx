@@ -137,20 +137,20 @@ export default defineComponent({
     emit('register', handler)
 
     watch(
-      () => props,
+      () => props.readonly,
       (v, p) => {
-        if (v.readonly === p?.readonly) return
+        if (v === p) return
 
-        if (v.readonly) {
-          v.showTitle === 'unset' && (showTitle.value = false)
-          v.showSelect === 'unset' && (showSelect.value = false)
-          v.showUploadBtn === 'unset' && (showUploadBtn.value = false)
-          v.showUploadHyperlinkBtn === 'unset' && (showUploadHyperlinkBtn.value = false)
+        if (v) {
+          props.showTitle === 'unset' && (showTitle.value = false)
+          props.showSelect === 'unset' && (showSelect.value = false)
+          props.showUploadBtn === 'unset' && (showUploadBtn.value = false)
+          props.showUploadHyperlinkBtn === 'unset' && (showUploadHyperlinkBtn.value = false)
         } else {
-          v.showTitle === 'unset' && (showTitle.value = true)
-          v.showSelect === 'unset' && (showSelect.value = true)
-          v.showUploadBtn === 'unset' && (showUploadBtn.value = true)
-          v.showUploadHyperlinkBtn === 'unset' &&
+          props.showTitle === 'unset' && (showTitle.value = true)
+          props.showSelect === 'unset' && (showSelect.value = true)
+          props.showUploadBtn === 'unset' && (showUploadBtn.value = true)
+          props.showUploadHyperlinkBtn === 'unset' &&
             (showUploadHyperlinkBtn.value = !!handler.apis.uploadHyperlink)
         }
       },

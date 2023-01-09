@@ -455,12 +455,14 @@ export const PreviewTable = defineComponent({
           ref={taTableProInstanceRef}
           // 传此api -> 可编辑
           editConfig={
-            (props.updateFileNameAndAddress || props.handler.apis.updateFileType) && {
-              // trigger: 'manual',
-              trigger: 'click',
-              mode: 'cell',
-              autoClear: true, //'typeName' !== currentEditColumnField.value,
-            }
+            props.readonly
+              ? undefined
+              : (props.updateFileNameAndAddress || props.handler.apis.updateFileType) && {
+                  // trigger: 'manual',
+                  trigger: 'click',
+                  mode: 'cell',
+                  autoClear: true, //'typeName' !== currentEditColumnField.value,
+                }
           }
           pagerConfig={{ enabled: false }}
           showOperations={false}
