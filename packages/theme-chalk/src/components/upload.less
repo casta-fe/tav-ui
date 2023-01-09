@@ -37,6 +37,23 @@
       align-items: center;
     }
 
+    @keyframes iname {
+      0% {
+        border-color: #eaeaea;
+      }
+      50% {
+        border-color: #ed6f6f;
+      }
+      100% {
+        border-color: #eaeaea;
+      }
+    }
+
+    .warn-class {
+      animation: iname 0.8s linear;
+      animation-iteration-count: 3;
+    }
+
     margin-left: 16px;
 
     .file {

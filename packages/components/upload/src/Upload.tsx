@@ -121,11 +121,19 @@ export default defineComponent({
     const showUploadBtn = ref(props.showUploadBtn)
     const showUploadHyperlinkBtn = ref(props.showUploadHyperlinkBtn)
     const typeCodeOptions = ref((customOptions.value ?? []) as LabelValueOptions)
+    const showWarnClass = ref(false)
 
     const uploadBtnRef = ref()
 
+    function triggerWarn() {
+      showWarnClass.value = true
+      setTimeout(() => {
+        showWarnClass.value = false
+      }, 2400)
+    }
+
     const handler = new Handler(props, emit)
-    expose(handler)
+    expose(Object.assign({ triggerWarn }, handler))
     emit('register', handler)
 
     watch(
@@ -216,7 +224,7 @@ export default defineComponent({
           <TaButton
             ref={uploadBtnRef}
             loading={handler.loading.value}
-            class="file"
+            class={{ file: true, 'warn-class': showWarnClass.value }}
             onClick={handler.preOpenChooseFile}
           >
             {/* <i class="ta-upload-btn-icon" /> */}

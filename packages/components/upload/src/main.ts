@@ -41,6 +41,8 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
+
+        if (!this._props.showTable) return
         this.throwResponse(v!, 'init')
       },
       {

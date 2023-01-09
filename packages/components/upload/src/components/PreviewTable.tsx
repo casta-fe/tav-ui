@@ -94,9 +94,9 @@ export const PreviewTable = defineComponent({
       labels.push('查看')
       if (props.showTableAction.download !== false) {
         if (props.showTableAction.downloadWatermark === false) labels.push('下载')
-        else labels.push('下载..')
+        else labels.push('源文..')
       }
-      if (props.showTableAction.downloadWatermark !== false) labels.push('下载..')
+      if (props.showTableAction.downloadWatermark !== false) labels.push('水印..')
       if (props.showTableAction.delete !== false) labels.push('删除')
 
       const hidePopoverRefs: Ref<{ hidePopover?: () => void }>[] = []
@@ -397,7 +397,7 @@ export const PreviewTable = defineComponent({
       ]
       actions.push(
         {
-          label: '下载水印文件',
+          label: '水印文件',
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
@@ -410,7 +410,7 @@ export const PreviewTable = defineComponent({
         },
         {
           // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
-          label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
+          label: props.showTableAction.downloadWatermark === undefined ? '源文件' : '下载',
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
