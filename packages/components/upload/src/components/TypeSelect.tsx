@@ -58,6 +58,11 @@ export const useOptions = (
     return []
   })
 
+  const getDefaultValue = () =>
+    props.selected && localTypeCodeOptions.value.some((el) => props.selected === el.value)
+      ? props.selected
+      : localTypeCodeOptions.value[0]?.value
+
   /**
    * ***仅组件初始化时给予默认值***
    */
@@ -66,9 +71,7 @@ export const useOptions = (
     if (unref(props.noDefaultValue) || !isInit.value) {
       return props.selected || undefined
     } else {
-      return props.selected && localTypeCodeOptions.value.some((el) => props.selected === el.value)
-        ? props.selected
-        : localTypeCodeOptions.value[0]?.value
+      return getDefaultValue()
     }
   })
 
@@ -90,8 +93,17 @@ export const useOptions = (
         .then(({ data }) => {
           isInit.value = true
           fetchedTypeCodeArray.value = data
-          if (!unref(props.noDefaultValue) && defaultValue.value !== props.selected) {
-            emit('update:selected', defaultValue.value)
+          if (defaultValue.value !== props.selected) {
+            /**
+             * 当仅有一个`typeCode`时, 必须选中
+             */
+            if (!unref(props.noDefaultValue)) {
+              emit('update:selected', defaultValue.value)
+            } else if (localTypeCodeOptions.value.length === 1) {
+              emit('update:selected', getDefaultValue())
+            }
+          } else if (undefined === defaultValue.value) {
+            emit('update:selected', getDefaultValue())
           }
 
           emit('update:options', localTypeCodeOptions.value)
