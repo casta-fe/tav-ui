@@ -113,6 +113,7 @@ export default defineComponent({
       (newData) => {
         if (ignoreList.includes(currentFile.value.suffix)) {
           createMessage.warning('暂不支持该文件预览')
+          afterCloseHandle()
           return
         }
         state.showModal = newData
