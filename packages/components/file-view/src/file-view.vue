@@ -111,7 +111,7 @@ export default defineComponent({
     watch(
       () => props.show,
       (newData) => {
-        if (ignoreList.includes(currentFile.value.suffix)) {
+        if (newData && ignoreList.includes(currentFile.value.suffix)) {
           createMessage.warning('暂不支持该文件预览')
           afterCloseHandle()
           return
