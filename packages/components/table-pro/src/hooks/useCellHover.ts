@@ -90,9 +90,9 @@ export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: Ta
     if (!params) return
     showCellTooltip(instances, tablePropsRef, params)
     emit('CellMouseenter', params)
-    setTimeout(() => {
-      deleteTitle(params.cell)
-    }, 150)
+    // setTimeout(() => {
+    //   deleteTitle(params.cell)
+    // }, 150)
   }
 
   const onCellMouseleave = (params?: VxeGridDefines.CellMouseleaveEventParams) => {

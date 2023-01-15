@@ -453,7 +453,11 @@ export const PreviewTable = defineComponent({
     }
     return () => (
       <div
-        class={{ 'ta-upload-preview-table': true, 'no-margin-top': props.parentProps?.readonly }}
+        class={{
+          'ta-upload-preview-table': true,
+          'no-margin-top': props.parentProps?.readonly,
+          'default-height': !props.handler?.getPropsOrProvide('tableMaxHeight'),
+        }}
       >
         <TaTablePro
           maxHeight={
