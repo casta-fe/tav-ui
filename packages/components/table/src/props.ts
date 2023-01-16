@@ -244,6 +244,11 @@ export const tableProps = {
       }
     },
   },
+  // onActivated 时恢复之前滚动位置
+  keepScrollTop: {
+    type: Boolean,
+    default: true,
+  },
 }
 
 export type TableProps = ExtractPropTypes<typeof tableProps>

@@ -453,6 +453,11 @@ export interface BasicTableProps<T = any> {
   onColumnsChange?: (data: ColumnChangeParam[]) => void
   // 权限code
   permission?: Partial<PermissionButton>
+  /**
+   * onActivated 时恢复之前滚动位置
+   * @default true
+   */
+  keepScrollTop?: boolean
 }
 
 export type CellFormat =

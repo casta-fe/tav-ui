@@ -5,6 +5,7 @@ import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import { getViewportOffset } from '@tav-ui/utils/domUtils'
 import { isBoolean } from '@tav-ui/utils/is'
 import { useModalContext } from '@tav-ui/components/modal/src/hooks/useModalContext'
+import { useKeepScroll } from '@tav-ui/hooks/event/useKeepScroll'
 import type { ComputedRef, Ref } from 'vue'
 import type { BasicColumn, BasicTableProps, TableRowSelection } from '../types/table'
 
@@ -84,6 +85,9 @@ export function useTableScroll(
     if (!bodyEl) {
       bodyEl = tableEl.querySelector('.ant-table-body')
       if (!bodyEl) return
+      if (unref(propsRef).keepScrollTop) {
+        useKeepScroll({ scrollEl: bodyEl })
+      }
     }
 
     const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight
