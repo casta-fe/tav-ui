@@ -74,6 +74,7 @@ export default defineComponent({
     const menuContainerRef = ref<HTMLElement>()
 
     const state = reactive({
+      showAllClear: false,
       page: 1,
       value: '',
       isEnter: false,
@@ -115,9 +116,11 @@ export default defineComponent({
     }
 
     const onMouseLeave = () => {
+      state.showAllClear = false
       state.isEnter = false
     }
     const onMouseEnter = () => {
+      state.showAllClear = true
       state.isEnter = true
     }
 
@@ -250,7 +253,7 @@ export default defineComponent({
               })
             }
           }}
-          allowClear
+          allowClear={state.showAllClear}
           value={state.value}
           onUpdate:value={(v) => (state.value = v)}
           // enterButton
