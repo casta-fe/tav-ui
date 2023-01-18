@@ -254,15 +254,14 @@ export default defineComponent({
       }
     }
     // 这块是用户基础数据，更多选项里面也有用
-    const getTrueUserList = (userList = state.userList) => {
-      const list: UserItem[] = []
-      userList.forEach((v) => {
-        const value = v.id
+    const getTrueUserList = (userList = [] as UserItem[]) => {
+      const list: UserItem[] = userList.map((v) => {
         // 非ignoreUser的用户才能选择
-        if (!props.ignoreUser.includes(value)) {
-          v.disabled = props.ignoreFrozenUser ? v.status === 0 : false
-          list.push(v)
+        const obj = { ...v }
+        if (!props.ignoreUser.includes(obj.id)) {
+          obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
         }
+        return v
       })
       return list
     }
