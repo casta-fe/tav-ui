@@ -89,6 +89,7 @@
 <script lang="ts">
 import { computed, defineComponent, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
+import { isEqual } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import BasicModal from '@tav-ui/components/modal'
@@ -114,6 +115,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const userSelectRef = ref<any>(null)
     const state = reactive({
+      count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
       userList: [] as UserItem[],
@@ -163,7 +165,7 @@ export default defineComponent({
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
-        getUserList()
+        getUserList(2)
         if (!props.noOrg) {
           getOrgList()
         }
@@ -182,11 +184,26 @@ export default defineComponent({
     const hideModal = () => {
       closeMemberModal()
     }
-    // 获取用户数据
 
-    const getUserList = () => {
+    // 这块是用户基础数据，更多选项里面也有用
+    const getTrueUserList = (userList = [] as UserItem[]) => {
+      const list: UserItem[] = userList.map((v) => {
+        // 非ignoreUser的用户才能选择
+        const obj = { ...v }
+        if (!props.ignoreUser.includes(obj.id)) {
+          obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
+        }
+        return v
+      })
+      return list
+    }
+    // 获取用户数据
+    const getUserList = (type) => {
+      state.count++
+      console.log(type, state.count)
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
+        // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
       } else {
         userListApi({
@@ -253,18 +270,7 @@ export default defineComponent({
         }
       }
     }
-    // 这块是用户基础数据，更多选项里面也有用
-    const getTrueUserList = (userList = [] as UserItem[]) => {
-      const list: UserItem[] = userList.map((v) => {
-        // 非ignoreUser的用户才能选择
-        const obj = { ...v }
-        if (!props.ignoreUser.includes(obj.id)) {
-          obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
-        }
-        return v
-      })
-      return list
-    }
+
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
       setTimeout(() => {
@@ -295,15 +301,17 @@ export default defineComponent({
     )
     watch(
       () => props.ignoreUser,
-      () => {
-        getUserList()
+      (a, b) => {
+        if (!isEqual(a, b)) {
+          getUserList(4)
+        }
       }
     )
     watch(
       () => props.options,
       (data) => {
         if (data) {
-          getUserList()
+          getUserList(5)
         }
       },
       {
@@ -325,7 +333,7 @@ export default defineComponent({
         if (props.noSelect) {
           return
         }
-        getUserList()
+        getUserList(1)
       } else {
         getOrgList()
       }
