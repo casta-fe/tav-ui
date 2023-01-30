@@ -149,12 +149,24 @@ export function useColumnApi(
       }
     }
 
+    // watch(
+    //   () => getColumns,
+    //   (val) => {
+    //     if (val && val.value.columns && val.value.columns.length > 0) {
+    //       // 在原本column载入后再加载接口中的列配置
+    //       unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
+    //     }
+    //   },
+    //   { deep: true, immediate: true }
+    // )
+    // 修改为监听 getColumns.value.columns，判断columns是否改变，避免离开页面后多次调用接口
     watch(
-      () => getColumns,
-      (val) => {
-        if (val && val.value.columns && val.value.columns.length > 0) {
-          // 在原本column载入后再加载接口中的列配置
-          unref(tablePropsRef).customActionConfig.column && coverCurrentColumns(val.value.columns)
+      () => getColumns.value.columns,
+      (val, oldVal) => {
+        if (val && val.length > 0) {
+          unref(tablePropsRef).customActionConfig.column &&
+            JSON.stringify(val) !== JSON.stringify(oldVal) &&
+            coverCurrentColumns(val)
         }
       },
       { deep: true, immediate: true }
