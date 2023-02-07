@@ -145,6 +145,9 @@ export const memberSelectProps = {
   change: {
     type: Function,
   },
+  modalSubmit: {
+    type: Function,
+  },
 }
 
 export type MemberSelectProps = ExtractPropTypes<typeof memberSelectProps>

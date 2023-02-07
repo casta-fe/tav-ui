@@ -227,10 +227,17 @@ export default defineComponent({
     // 弹窗下面的确定事件
     const modalSubmit = (): void => {
       const data = state.catchData
-      // 多选第一位为数组，单选第一位为字符串
-      state.selectedData[0] = data
-      emitHandle()
-      closeMemberModal()
+      const submit = () => {
+        // 多选第一位为数组，单选第一位为字符串
+        state.selectedData[0] = data
+        emitHandle()
+        closeMemberModal()
+      }
+      if (props.modalSubmit) {
+        props.modalSubmit(data, submit)
+      } else {
+        submit()
+      }
     }
     const emitHandle = (): void => {
       emit('update:value', state.selectedData[0])
