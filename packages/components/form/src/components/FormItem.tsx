@@ -355,6 +355,18 @@ export default defineComponent({
           plain: true,
         })
       }
+
+      if (schema.component === 'Select') {
+        componentProps = Object.assign(
+          {
+            showSearch: true,
+            filterOption: true,
+            optionFilterProp: 'label',
+          },
+          componentProps
+        )
+      }
+
       return componentProps as Recordable
     })
 
