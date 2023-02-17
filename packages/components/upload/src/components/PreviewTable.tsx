@@ -402,7 +402,7 @@ export const PreviewTable = defineComponent({
       ]
       actions.push(
         {
-          label: '水印文件',
+          label: '下载水印文件',
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
@@ -415,7 +415,7 @@ export const PreviewTable = defineComponent({
         },
         {
           // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
-          label: props.showTableAction.downloadWatermark === undefined ? '源文件' : '下载',
+          label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
