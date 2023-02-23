@@ -77,7 +77,10 @@
       :get-container="getPopupContainer"
       @register="registerMemberModal"
     >
-      <MemberModal v-if="modalIsShow" :selected-data="selectedData" @change="modalChange" />
+      <div v-if="modalIsShow" style="min-height: 360px">
+        <MemberModal :selected-data="selectedData" @change="modalChange" />
+      </div>
+
       <template #footer>
         <Button type="primary" @click="modalSubmit">确定</Button>
         <Button @click="hideModal">取消</Button>
