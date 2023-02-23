@@ -77,7 +77,7 @@
       :get-container="getPopupContainer"
       @register="registerMemberModal"
     >
-      <MemberModal :selected-data="selectedData" @change="modalChange" />
+      <MemberModal v-if="modalIsShow" :selected-data="selectedData" @change="modalChange" />
       <template #footer>
         <Button type="primary" @click="modalSubmit">确定</Button>
         <Button @click="hideModal">取消</Button>
@@ -87,15 +87,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, provide, reactive, ref, toRefs, watch } from 'vue'
+import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
 import { isEqual } from 'lodash-es'
 import Button from '@tav-ui/components/button'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
-import { memberSelectProps } from './types'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import MemberModal from './components/member-modal.vue'
+import { memberSelectProps } from './types'
 import type { Ref } from 'vue'
 import type { Options, UserItem } from './types'
 export default defineComponent({
@@ -115,6 +115,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const userSelectRef = ref<any>(null)
     const state = reactive({
+      modalIsShow: false,
       count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
@@ -180,9 +181,13 @@ export default defineComponent({
       setBaseData()
       //  延迟出现，防止互相覆盖
       openMemberModal()
+      state.modalIsShow = true
     }
     const hideModal = () => {
-      closeMemberModal()
+      state.modalIsShow = false
+      nextTick(() => {
+        closeMemberModal()
+      })
     }
 
     // 这块是用户基础数据，更多选项里面也有用
@@ -231,7 +236,7 @@ export default defineComponent({
         // 多选第一位为数组，单选第一位为字符串
         state.selectedData[0] = data
         emitHandle()
-        closeMemberModal()
+        hideModal()
       }
       if (props.modalSubmit) {
         props.modalSubmit(data, submit)
