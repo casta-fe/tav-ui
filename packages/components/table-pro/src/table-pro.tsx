@@ -1,4 +1,5 @@
 import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
+import { isEqual } from 'lodash-es'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -115,11 +116,11 @@ export default defineComponent({
       }
     }
     watch(
-      () => cacheActionWidths,
-      () => {
+      () => [unref(getColumns), cacheActionWidths],
+      ([newCol, preCol]) => {
         const tableData = unref(tableRef)?.getTableData().tableData
         const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-        if (tableData && maxWidth > unref(maxWidthForAction)) {
+        if (!isEqual(newCol, preCol) || (tableData && maxWidth > unref(maxWidthForAction))) {
           const columns = unref(getColumns).columns.map((column) => {
             if (column.field && ACTION_COLUMNS.includes(column.field)) {
               column.width = Math.ceil(maxWidth)
