@@ -72,7 +72,7 @@ import {
   watch,
   watchEffect,
 } from 'vue'
-import { omit } from 'lodash-es'
+import { isEqual, omit } from 'lodash-es'
 import { Table } from 'ant-design-vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { warn } from '@tav-ui/utils/log'
@@ -453,11 +453,11 @@ export default defineComponent({
       }
     }
     watch(
-      () => cacheActionWidths,
-      () => {
+      () => [unref(getViewColumns), cacheActionWidths],
+      ([newCol, preCol]) => {
         const _tableData = unref(tableData)
         const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-        if (_tableData && maxWidth > unref(maxWidthForAction)) {
+        if (!isEqual(newCol, preCol) || (_tableData && maxWidth > unref(maxWidthForAction))) {
           const columns = unref(getViewColumns).map((column) => {
             if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
               column.width = Math.ceil(maxWidth)
