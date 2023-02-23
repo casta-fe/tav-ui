@@ -116,7 +116,7 @@ export default defineComponent({
       }
     }
     watch(
-      () => [unref(getColumns), cacheActionWidths],
+      () => [unref(getColumns).columns, cacheActionWidths],
       ([newCol, preCol]) => {
         const tableData = unref(tableRef)?.getTableData().tableData
         const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
