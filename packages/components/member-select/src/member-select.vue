@@ -77,8 +77,8 @@
       :get-container="getPopupContainer"
       @register="registerMemberModal"
     >
-      <div v-if="modalIsShow" style="min-height: 360px">
-        <MemberModal :selected-data="selectedData" @change="modalChange" />
+      <div style="min-height: 360px">
+        <MemberModal v-if="modalIsShow" :selected-data="selectedData" @change="modalChange" />
       </div>
 
       <template #footer>
