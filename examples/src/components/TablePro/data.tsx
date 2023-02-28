@@ -464,9 +464,20 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
 
   return {
     inputForm: {
-      field: 'customerName',
+      // field: 'customerName',
+      // componentProps: {
+      //   placeholder: '请输入客户名称',
+      // },
+      field: 'time',
+      component: 'DateInterval',
       componentProps: {
-        placeholder: '请输入客户名称',
+        // defaultRange: 'lastYear',
+        onChange: (v: any) => {
+          console.log(v)
+        },
+        onGetCurDate: (data: any) => {
+          console.log(data, '=============')
+        },
       },
     },
     pannelForm: [

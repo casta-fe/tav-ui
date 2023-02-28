@@ -32,6 +32,7 @@ import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
 import TagSelect from './components/TagSelect'
 import YearPicker from './components/YearPicker'
+import DateInterval from './components/DateInterval.vue'
 import type { Component } from 'vue'
 // import { BasicUpload } from "/@/components/Upload";
 import type { ComponentType, EditableComponentType } from './types/index'
@@ -72,6 +73,7 @@ componentMap.set('InputCountDown', CountdownInput)
 // componentMap.set('Upload', BasicUpload);
 componentMap.set('Divider', Divider)
 componentMap.set('FormTitle', FormTitle)
+componentMap.set('DateInterval', DateInterval)
 
 // customadd
 add('MemberSelect', TaMemberSelect)
