@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, unref } from 'vue'
 import moment from 'moment'
+import 'moment/dist/locale/zh-cn'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDateTime } from '@tav-ui/utils/dateUtil'
@@ -120,13 +121,7 @@ export default defineComponent({
         unref(currentDate)?.map((x) => formatToDateTime(x))
       )
     })
-    return {
-      dateRangeList,
-      currentRange,
-      currentDate,
-      handleDateChange,
-      handleRangeChange,
-    }
+    return { dateRangeList, currentRange, currentDate, handleDateChange, handleRangeChange }
   },
 })
 </script>
