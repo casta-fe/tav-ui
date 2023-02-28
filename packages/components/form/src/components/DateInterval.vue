@@ -130,21 +130,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style lang="less" scoped>
-.date-range-wrapper {
-  display: flex;
-  .ant-calendar-picker {
-    :deep(.ant-input) {
-      border-radius: 4px 0px 0px 4px;
-    }
-  }
-  .ant-btn {
-    min-width: auto !important;
-    width: 32px;
-    height: 32px !important;
-    padding: 0 !important;
-    border-radius: 0px 4px 4px 0px;
-  }
-}
-</style>
