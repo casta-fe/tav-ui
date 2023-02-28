@@ -188,6 +188,7 @@ export default defineComponent({
           <ComponentFilterForm
             ref={filterRef}
             config={values.filterFormConfig}
+            filterExclusion={props.filterExclusion}
             tableRef={tableRef}
             tableSlots={slots}
             filterModalClassName={values.filterModalClassName}

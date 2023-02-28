@@ -27,6 +27,10 @@ const props = {
   tableSlots: {
     type: Object as PropType<Slots>,
   },
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
   filterModalClassName: { type: String, default: '' },
 }
 
@@ -115,17 +119,27 @@ export default defineComponent({
     })
 
     // 处理 inputForm
-    function inputFormSubmit(value: string) {
+    async function inputFormSubmit(value: string) {
       if (!value) inputFormResetFields()
       state.inputForm = inputFormGetFieldsValue()
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.inputForm
-      // 置空 pannelform
-      unref(isPannelFormRegister) && pannelFormResetFields()
-      state.visible = false
-      state.choosedNum = 0
-      state.pannelForm = {}
+      // 如果设置参数互斥那么只能用关键字搜索，否则是关键字加表单内容
+      if (props.filterExclusion) {
+        state.currentFilter = {}
+        state.currentFilter = state.inputForm
+        // 置空 pannelform
+        unref(isPannelFormRegister) && pannelFormResetFields()
+        state.visible = false
+        state.choosedNum = 0
+        state.pannelForm = {}
+      } else {
+        if (unref(isPannelFormRegister)) {
+          const _res = await validatePannelForm()
+          const res = JSON.parse(JSON.stringify(_res))
+          state.pannelForm = res
+        }
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },
@@ -225,12 +239,17 @@ export default defineComponent({
         }
         return result
       }, 0)
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.pannelForm
-      // 置空 inputform
-      unref(isInputFormRegister) && inputFormResetFields()
-      state.inputForm = {}
+      if (props.filterExclusion) {
+        state.currentFilter = {}
+        state.currentFilter = state.pannelForm
+        // 置空 inputform
+        unref(isInputFormRegister) && inputFormResetFields()
+        state.inputForm = {}
+      } else {
+        state.inputForm = inputFormGetFieldsValue()
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },
@@ -270,6 +289,7 @@ export default defineComponent({
     return () => {
       return unref(isFilterFormShow) ? (
         <div class={ComponentPrefixCls} data-filter-params={tableFilterParams.value}>
+          {/* <>filterExclusion:{props.filterExclusion ? '互斥' : '不互斥'}</> */}
           {unref(isInputFormShow) ? (
             <BasicForm
               ref={inputFormRef}

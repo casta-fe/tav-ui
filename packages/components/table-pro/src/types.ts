@@ -347,6 +347,13 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.FilterConfig>,
   },
   /**
+   * 筛选是否互斥
+   */
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
+  /**
    * 单选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   radioConfig: {
