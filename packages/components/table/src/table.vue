@@ -459,7 +459,7 @@ export default defineComponent({
     }
     watch(
       () => [unref(getViewColumns), cacheActionWidths],
-      ([newCol, preCol]) => {
+      ([newCol], [preCol]) => {
         const _tableData = unref(tableData)
         const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
         if (!isEqual(newCol, preCol) || (_tableData && maxWidth > unref(maxWidthForAction))) {

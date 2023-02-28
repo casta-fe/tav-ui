@@ -127,7 +127,7 @@ export const FileBranch = defineComponent({
           },
         },
         {
-          label: '水印文件',
+          label: '下载水印文件',
           enabled: !!(record.hyperlink === 1
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),
@@ -137,7 +137,7 @@ export const FileBranch = defineComponent({
         },
         {
           // 有下载水印文件 ? 区分 : 下载源文件显示为(下载)
-          label: props.showTableAction.downloadWatermark === undefined ? '源文件' : '下载',
+          label: props.showTableAction.downloadWatermark === undefined ? '下载源文件' : '下载',
           enabled: !!(record.hyperlink === 1
             ? false
             : (props.showTableAction.download ?? true) && record.sourceFileDownload),
