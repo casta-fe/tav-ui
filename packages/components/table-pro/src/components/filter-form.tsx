@@ -74,6 +74,12 @@ export default defineComponent({
           (props.config?.inputForm as any).component === 'InputSearch'
         ) {
           inputFormSchema = merge(defaultInputFormSchema, unref(props.config?.inputForm))
+        } else if ((props.config?.inputForm as any).component === 'DateInterval') {
+          // 兼容传入的 component 是 DateInterval
+          inputFormSchema = merge(
+            { componentProps: { onSearch: useDebounceFn(inputFormSubmit, 300) } },
+            unref(props.config?.inputForm)
+          )
         } else {
           // 如果开发传入的 component 不是 inputseacrh，那么直接按照传入的schema生成，不merge
           inputFormSchema = unref(props.config?.inputForm)

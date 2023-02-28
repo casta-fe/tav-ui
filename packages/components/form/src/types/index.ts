@@ -118,6 +118,7 @@ export type ComponentType =
   | 'YearPicker'
   | 'InputNumberRange'
   | 'CascadeProSelect'
+  | 'DateInterval'
 
 export type EditableComponentType =
   | 'Input'
@@ -156,3 +157,4 @@ export type EditableComponentType =
   | 'YearPicker'
   | 'InputNumberRange'
   | 'CascadeProSelect'
+  | 'DateInterval'
