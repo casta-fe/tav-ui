@@ -111,6 +111,10 @@ export const tableProps = {
     type: Object as PropType<FilterForms>,
     default: null,
   },
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
   // 新增、删除、导入、导出、刷新按钮配置
   useAdd: {
     type: Object as PropType<useAction>,

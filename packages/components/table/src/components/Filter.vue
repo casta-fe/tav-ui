@@ -1,5 +1,6 @@
 <template>
   <div class="ta-basic-table-filter flex align-center" :data-filter-params="tableFilterParams">
+    是否互斥：{{ filterExclusion }}
     <BasicForm
       v-if="isInputFormShow"
       ref="inputFormRef"
@@ -43,15 +44,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, nextTick, reactive, ref, unref } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import { Badge } from 'ant-design-vue'
 import { merge } from 'lodash-es'
-import { useDebounceFn } from '@vueuse/core'
-import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import Button from '@tav-ui/components/button'
-import BasicModal from '@tav-ui/components/modal'
-import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import BasicForm from '@tav-ui/components/form'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
+import BasicModal from '@tav-ui/components/modal'
+import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
+import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import type { FilterForms, TableActionType } from '../types/table'
 // import { BasicForm, FormSchema, useForm } from "@tav-ui/components/Form";
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
@@ -66,6 +67,10 @@ const props = {
   tableAction: {
     type: Object as PropType<TableActionType>,
     default: () => undefined,
+  },
+  filterExclusion: {
+    type: Boolean,
+    default: true,
   },
 }
 
@@ -139,17 +144,25 @@ export default defineComponent({
     })
 
     // 处理 inputForm
-    function inputFormSubmit(value: string) {
+    async function inputFormSubmit(value: string) {
       if (!value) inputFormResetFields()
       state.inputForm = inputFormGetFieldsValue()
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.inputForm
-      // 置空 pannelform
-      unref(isPannelFormRegister) && pannelFormResetFields()
-      state.visible = false
-      state.choosedNum = 0
-      state.pannelForm = {}
+      if (props.filterExclusion) {
+        // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
+        state.currentFilter = {}
+        state.currentFilter = state.inputForm
+        // 置空 pannelform
+        unref(isPannelFormRegister) && pannelFormResetFields()
+        state.visible = false
+        state.choosedNum = 0
+        state.pannelForm = {}
+      } else {
+        const _res = await validatePannelForm()
+        const res = JSON.parse(JSON.stringify(_res))
+        state.pannelForm = res
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      console.log(state.currentFilter)
       // 发送请求
       props.tableAction?.reload({
         searchInfo: {
@@ -245,12 +258,19 @@ export default defineComponent({
           result++
         return result
       }, 0)
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.pannelForm
-      // 置空 inputform
-      unref(isInputFormRegister) && inputFormResetFields()
-      state.inputForm = {}
+      //filterExclusion为true时候 input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
+
+      if (props.filterExclusion) {
+        state.currentFilter = {}
+        state.currentFilter = state.pannelForm
+        // 置空 inputform
+        unref(isInputFormRegister) && inputFormResetFields()
+        state.inputForm = {}
+      } else {
+        state.inputForm = inputFormGetFieldsValue()
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      console.log({ ...state.currentFilter })
       // 发送请求
       props.tableAction?.reload({
         searchInfo: {

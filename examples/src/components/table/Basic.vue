@@ -10,6 +10,7 @@
         :bordered="border"
         :pagination="pagination"
         :filter="filterForms"
+        :filter-exclusion="true"
         @columns-change="handleColumnChange"
       >
         <!-- <template #toolbar>
@@ -36,6 +37,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, toRefs } from 'vue'
 import { TaTable, TableAction } from '@tav-ui/components/table'
+
 import { getBasicColumns, getBasicData } from './tableData'
 import type { ColumnChangeParam } from '@tav-ui/components/table'
 
@@ -71,8 +73,7 @@ export default defineComponent({
       console.log('ColumnChanged', data)
     }
     const inputForm = {
-      field: 'institutionName',
-      component: 'Input',
+      field: 'keyword',
       componentProps: {
         placeholder: '请输入机构名称',
       },

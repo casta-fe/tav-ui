@@ -21,7 +21,12 @@
       class="ta-basic-table-operations flex flex-wrap align-center justify-between"
     >
       <template v-if="useFilter.isVisible">
-        <Filter ref="filterElRef" :forms="getFilterProps" :table-action="tableAction" />
+        <Filter
+          ref="filterElRef"
+          :forms="getFilterProps"
+          :table-action="tableAction"
+          :filter-exclusion="filterExclusion"
+        />
       </template>
       <template v-else>
         <div class="ta-basic-table-custom-title">
@@ -78,9 +83,9 @@ import { mitt } from '@tav-ui/utils/mitt'
 import { warn } from '@tav-ui/utils/log'
 import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
-import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
