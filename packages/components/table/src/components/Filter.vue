@@ -1,6 +1,5 @@
 <template>
   <div class="ta-basic-table-filter flex align-center" :data-filter-params="tableFilterParams">
-    是否互斥：{{ filterExclusion }}
     <BasicForm
       v-if="isInputFormShow"
       ref="inputFormRef"
