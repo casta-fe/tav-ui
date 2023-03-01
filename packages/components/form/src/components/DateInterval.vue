@@ -1,13 +1,8 @@
 <template>
   <div class="date-range-wrapper">
-    <RangePicker
-      :allow-clear="false"
-      :value="currentDate"
-      value-format="YYYY-MM-DD"
-      @change="handleDateChange"
-    />
+    <RangePicker :allow-clear="false" :value="currentDate" @change="handleDateChange" />
 
-    <!-- <Dropdown trigger="click">
+    <Dropdown trigger="click">
       <TaButton pre-icon="ant-design:calendar-filled" />
       <template #overlay>
         <Menu :selected-keys="[currentRange]" @click="handleRangeChange">
@@ -16,106 +11,95 @@
           </MenuItem>
         </Menu>
       </template>
-    </Dropdown> -->
+    </Dropdown>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, unref } from 'vue'
-// import moment from 'moment'
-// import 'moment/dist/locale/zh-cn'
-import {
-  //  Dropdown, Menu, MenuItem,
-  RangePicker,
-} from 'ant-design-vue'
-// import { TaButton } from '@tav-ui/components/button'
+import moment from 'moment'
+import 'moment/dist/locale/zh-cn'
+import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
+import { TaButton } from '@tav-ui/components/button'
 import { formatToDateTime } from '@tav-ui/utils/dateUtil'
-
+moment.locale('zh-cn')
 const dateRangeList = [
-  // // { label: '今天', key: 'day', dateRange: [moment().startOf('day'), moment().endOf('day')] },
-  // // { label: '本周', key: 'week', dateRange: [moment().startOf('week'), moment().endOf('week')] },
+  // { label: '今天', key: 'day', dateRange: [moment().startOf('day'), moment().endOf('day')] },
+  // { label: '本周', key: 'week', dateRange: [moment().startOf('week'), moment().endOf('week')] },
+  {
+    label: '本月',
+    key: 'month',
+    dateRange: [moment().startOf('month'), moment().endOf('month')],
+  },
   // {
-  //   label: '本月',
-  //   key: 'month',
-  //   dateRange: [moment().startOf('month'), moment().endOf('month')],
+  //   label: '本季度',
+  //   key: 'quarter',
+  //   dateRange: [moment().startOf('quarter'), moment().endOf('quarter')],
   // },
-  // // {
-  // //   label: '本季度',
-  // //   key: 'quarter',
-  // //   dateRange: [moment().startOf('quarter'), moment().endOf('quarter')],
-  // // },
+  {
+    label: '第一季度',
+    key: 'quarter_1',
+    dateRange: [moment().quarter(1).startOf('quarter'), moment().quarter(1).endOf('quarter')],
+  },
+  {
+    label: '第二季度',
+    key: 'quarter_2',
+    dateRange: [moment().quarter(2).startOf('quarter'), moment().quarter(2).endOf('quarter')],
+  },
+  {
+    label: '第三季度',
+    key: 'quarter_3',
+    dateRange: [moment().quarter(3).startOf('quarter'), moment().quarter(3).endOf('quarter')],
+  },
+  {
+    label: '第四季度',
+    key: 'quarter_4',
+    dateRange: [moment().quarter(4).startOf('quarter'), moment().quarter(4).endOf('quarter')],
+  },
+  {
+    label: '本年',
+    key: 'year',
+    dateRange: [moment().startOf('year'), moment().endOf('year')],
+  },
+  {
+    label: '上一年度',
+    key: 'lastYear',
+    dateRange: [
+      moment().subtract(1, 'year').startOf('year'),
+      moment().subtract(1, 'year').endOf('year'),
+    ],
+  },
   // {
-  //   label: '第一季度',
-  //   key: 'quarter_1',
-  //   dateRange: [moment().quarter(1).startOf('quarter'), moment().quarter(1).endOf('quarter')],
+  //   label: '下一年度',
+  //   key: 'nextYear',
+  //   dateRange: [moment().add(1, 'year').startOf('year'), moment().add(1, 'year').endOf('year')],
   // },
-  // {
-  //   label: '第二季度',
-  //   key: 'quarter_2',
-  //   dateRange: [moment().quarter(2).startOf('quarter'), moment().quarter(2).endOf('quarter')],
-  // },
-  // {
-  //   label: '第三季度',
-  //   key: 'quarter_3',
-  //   dateRange: [moment().quarter(3).startOf('quarter'), moment().quarter(3).endOf('quarter')],
-  // },
-  // {
-  //   label: '第四季度',
-  //   key: 'quarter_4',
-  //   dateRange: [moment().quarter(4).startOf('quarter'), moment().quarter(4).endOf('quarter')],
-  // },
-  // {
-  //   label: '本年',
-  //   key: 'year',
-  //   dateRange: [moment().startOf('year'), moment().endOf('year')],
-  // },
-  // {
-  //   label: '上一年度',
-  //   key: 'lastYear',
-  //   dateRange: [
-  //     moment().subtract(1, 'year').startOf('year'),
-  //     moment().subtract(1, 'year').endOf('year'),
-  //   ],
-  // },
-  // // {
-  // //   label: '下一年度',
-  // //   key: 'nextYear',
-  // //   dateRange: [moment().add(1, 'year').startOf('year'), moment().add(1, 'year').endOf('year')],
-  // // },
 ]
 
 export default defineComponent({
   name: 'DateInterval',
-  components: {
-    RangePicker,
-    // , Dropdown, TaButton, MenuItem, Menu
-  },
+  components: { RangePicker, Dropdown, TaButton, MenuItem, Menu },
   props: { defaultRange: { type: String, default: () => 'month' } },
   emits: ['change', 'search', 'getCurDate'],
   setup(props, { emit }) {
     // 当前时间区间
     const currentRange = ref(props.defaultRange)
     // 当前默认时间
-    // const currentDate = ref<any>(
-    //   dateRangeList.find((x) => x.key === unref(currentRange))?.dateRange
-    // )
-
-    const currentDate = ref<any>(['2023-03-15', '2023-03-26'])
+    const currentDate = ref<any>(
+      dateRangeList.find((x) => x.key === unref(currentRange))?.dateRange
+    )
 
     // 选中自定义时间触发
     const handleDateChange = (momentList) => {
-      console.log(momentList)
       currentRange.value = ''
-      currentDate.value = momentList
-      // currentDate.value = [moment(momentList[0]).startOf('day'), moment(momentList[1]).endOf('day')]
+      currentDate.value = [moment(momentList[0]).startOf('day'), moment(momentList[1]).endOf('day')]
       handleEmitEvent()
     }
 
     // 选中时间区间触发
     const handleRangeChange = ({ key }) => {
       currentRange.value = key
-      currentDate.value = ['2023-03-15', '2023-03-26']
-      // currentDate.value = dateRangeList.find((x) => x.key === key)?.dateRange
+      currentDate.value = dateRangeList.find((x) => x.key === key)?.dateRange
       handleEmitEvent()
     }
 
