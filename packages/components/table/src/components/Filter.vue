@@ -156,9 +156,12 @@ export default defineComponent({
         state.choosedNum = 0
         state.pannelForm = {}
       } else {
-        const _res = await validatePannelForm()
-        const res = JSON.parse(JSON.stringify(_res))
-        state.pannelForm = res
+        if (unref(isPannelFormRegister)) {
+          const _res = await validatePannelForm()
+          const res = JSON.parse(JSON.stringify(_res))
+          state.pannelForm = res
+        }
+
         state.currentFilter = { ...state.inputForm, ...state.pannelForm }
       }
       console.log(state.currentFilter)

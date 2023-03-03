@@ -10,7 +10,7 @@
         :bordered="border"
         :pagination="pagination"
         :filter="filterForms"
-        :filter-exclusion="true"
+        :filter-exclusion="false"
         @columns-change="handleColumnChange"
       >
         <!-- <template #toolbar>
