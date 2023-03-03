@@ -86,20 +86,27 @@ export default defineComponent({
     const currentRange = ref(props.defaultRange)
     // 当前默认时间
     const currentDate = ref<any>(
-      dateRangeList.find((x) => x.key === unref(currentRange))?.dateRange
+      dateRangeList
+        .find((x) => x.key === unref(currentRange))
+        ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
     )
 
     // 选中自定义时间触发
     const handleDateChange = (momentList) => {
       currentRange.value = ''
-      currentDate.value = [moment(momentList[0]).startOf('day'), moment(momentList[1]).endOf('day')]
+      currentDate.value = [
+        moment(momentList[0]).startOf('day'),
+        moment(momentList[1]).endOf('day'),
+      ].map((el) => el.format('YYYY-MM-DD'))
       handleEmitEvent()
     }
 
     // 选中时间区间触发
     const handleRangeChange = ({ key }) => {
       currentRange.value = key
-      currentDate.value = dateRangeList.find((x) => x.key === key)?.dateRange
+      currentDate.value = dateRangeList
+        .find((x) => x.key === key)
+        ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
       handleEmitEvent()
     }
 
@@ -121,7 +128,48 @@ export default defineComponent({
         unref(currentDate)?.map((x) => formatToDateTime(x))
       )
     })
-    return { dateRangeList, currentRange, currentDate, handleDateChange, handleRangeChange }
+
+    // const isOpen = ref(false)
+    // let haha = 0
+    // const onPanelChange = (v) => {
+    //   console.error(v.map((el) => el._d.getMonth() + 1))
+
+    //   return
+    //   console.log('onPanelChange', v)
+    //   console.log(haha)
+    //   if (haha == 2) {
+    //     isOpen.value = false
+    //     currentDate.value = v
+    //     haha = 0
+    //   } else {
+    //     haha = haha + 1
+    //   }
+    // }
+    // const onOpenChange = (status) => {
+    //   console.log('onOpenChange', status)
+    //   haha = haha + 1
+    //   isOpen.value = status
+    // }
+
+    // const onCalendarChange = (v) => {
+    //   console.log('onCalendarChange', v)
+    // }
+    // const onOk = (v) => {
+    //   console.log('okokok', v)
+    // }
+
+    return {
+      // isOpen,
+      // onPanelChange,
+      // onOpenChange,
+      // onCalendarChange,
+      // onOk,
+      dateRangeList,
+      currentRange,
+      currentDate,
+      handleDateChange,
+      handleRangeChange,
+    }
   },
 })
 </script>
