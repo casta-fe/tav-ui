@@ -139,7 +139,7 @@ export default defineComponent({
         }
         state.currentFilter = { ...state.inputForm, ...state.pannelForm }
       }
-      console.log(state.currentFilter)
+      // console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },
@@ -249,7 +249,7 @@ export default defineComponent({
         state.inputForm = inputFormGetFieldsValue()
         state.currentFilter = { ...state.inputForm, ...state.pannelForm }
       }
-      console.log(state.currentFilter)
+      // console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },

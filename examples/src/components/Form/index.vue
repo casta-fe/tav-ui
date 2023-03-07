@@ -175,6 +175,18 @@ const schemas: FormSchema[] = [
     },
   },
   {
+    field: 'field21',
+    component: 'InputNumber',
+    label: '字段21',
+    // editable: true,
+    colProps: { span: 8 },
+    componentProps: {
+      noAutoPrecision: true,
+      precision: 0,
+      placeholder: '请输入0-100的整数',
+    },
+  },
+  {
     field: 'field3',
     component: 'DatePicker',
     // editable: true,
@@ -317,8 +329,8 @@ export default defineComponent({
       actionColOptions: {
         span: 24,
       },
-      editable: true,
-      disabled: true,
+      // editable: true,
+      // disabled: true,
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })

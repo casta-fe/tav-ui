@@ -505,6 +505,13 @@ export default defineComponent({
       if (props.schema.componentProps && props.schema.componentProps['noAutoPrecision']) {
         return
       }
+      if (props.schema.componentProps) {
+        const { schema, tableAction, formModel, formActionType } = props
+        let { componentProps = {} } = schema
+        if (isFunction(componentProps))
+          componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {}
+        if (componentProps['noAutoPrecision']) return
+      }
       let precision = 0
       let value = _value
       if (getDomValue && itemRef.value) {
@@ -542,7 +549,7 @@ export default defineComponent({
         field,
         changeEvent = 'change',
         valueField,
-        componentProps,
+        componentProps = {},
       } = props.schema
 
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
@@ -612,7 +619,14 @@ export default defineComponent({
       if (component === 'InputNumber') {
         compAttr.max = (componentProps as any)?.max ?? NUMBER_MAX
         compAttr.min = (componentProps as any)?.min ?? 0
-        compAttr.precision = (componentProps as any)?.precision ?? undefined
+        if (isFunction(componentProps)) {
+          const { schema, tableAction, formModel, formActionType } = props
+          compAttr.precision =
+            componentProps({ schema, tableAction, formModel, formActionType })?.precision ??
+            undefined
+        } else {
+          compAttr.precision = (componentProps as any)?.precision ?? undefined
+        }
       }
 
       if (unref(hasEditable)) {

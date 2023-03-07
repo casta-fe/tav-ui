@@ -472,12 +472,12 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
       component: 'DateInterval',
       componentProps: {
         // defaultRange: 'lastYear',
-        onChange: (v: any) => {
-          console.log(v)
-        },
-        onGetCurDate: (data: any) => {
-          console.log(data, '=============')
-        },
+        // onChange: (v: any) => {
+        //   console.log(v)
+        // },
+        // onGetCurDate: (data: any) => {
+        //   console.log(data, '=============')
+        // },
       },
     },
     pannelForm: [

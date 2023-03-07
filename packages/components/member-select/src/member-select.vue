@@ -20,6 +20,7 @@
           :get-popup-container="getPopupContainer"
           @dropdown-visible-change="userVisibleChange"
           @change="emitHandle"
+          @blur="handleBlur"
         >
           <template #option="item">
             <div class="ta-member-select-option-item">
@@ -208,7 +209,7 @@ export default defineComponent({
     // 获取用户数据
     const getUserList = (type) => {
       state.count++
-      console.log(type, state.count)
+      // console.log(type, state.count)
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));
@@ -251,6 +252,11 @@ export default defineComponent({
       emit('update:value', state.selectedData[0])
       emit('change', state.selectedData[0])
     }
+
+    const handleBlur = () => {
+      emit('blur', state.selectedData)
+    }
+
     // 将传入的value保存为组件使用的数据
     const setBaseData = (): void => {
       if (props.multiple) {
@@ -366,6 +372,7 @@ export default defineComponent({
       modalChange,
       modalSubmit,
       emitHandle,
+      handleBlur,
       registerMemberModal,
     }
   },
