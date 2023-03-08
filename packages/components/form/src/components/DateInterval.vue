@@ -1,7 +1,12 @@
 <template>
   <div class="date-range-wrapper">
-    <!-- <RangePicker :allow-clear="false" :value="currentDate" @change="handleDateChange" /> -->
     <RangePicker
+      :allow-clear="false"
+      format="YYYY-MM"
+      :value="currentDate"
+      @change="handleDateChange"
+    />
+    <!-- <RangePicker
       :allow-clear="false"
       :value="currentDate"
       :open="isOpen"
@@ -15,7 +20,7 @@
         <TaButton type="primary" @click="handleOk">确定</TaButton>
         <TaButton @click="handleCancel">取消</TaButton>
       </template>
-    </RangePicker>
+    </RangePicker> -->
 
     <Dropdown trigger="click">
       <TaButton pre-icon="ant-design:calendar-filled" />
@@ -110,8 +115,8 @@ export default defineComponent({
     const handleDateChange = (momentList) => {
       currentRange.value = ''
       currentDate.value = [
-        moment(momentList[0]).startOf('day'),
-        moment(momentList[1]).endOf('day'),
+        moment(momentList[0]).startOf('month'),
+        moment(momentList[1]).endOf('month'),
       ].map((el) => el.format('YYYY-MM-DD'))
       handleEmitEvent()
     }
@@ -144,36 +149,43 @@ export default defineComponent({
       )
     })
 
-    const isOpen = ref(false)
-    const cacheDate = ref()
-
-    const onPanelChange = (v) => {
-      // console.error(v.map((el) => el._d.getMonth() + 1))
-      cacheDate.value = [moment(v[0]).startOf('month'), moment(v[1]).endOf('month')]
-    }
-    const onOpenChange = (status) => {
-      if (status) {
-        isOpen.value = status
-        currentDate.value = currentDate.value.map((el) => formatToDate(el))
-      }
-    }
-    const handleOk = () => {
-      currentRange.value = ''
-      currentDate.value = cacheDate.value
-      handleEmitEvent()
-      isOpen.value = false
-      // console.log(currentDate.value.map((x) => formatToDate(x)))
-    }
-    const handleCancel = () => {
-      isOpen.value = false
-    }
+    // const isOpen = ref(false)
+    // const cacheDate = ref()
+    // const onPanelChange = (v) => {
+    //   // console.error(v.map((el) => el._d.getMonth() + 1))
+    //   cacheDate.value = [moment(v[0]).startOf('month'), moment(v[1]).endOf('month')]
+    // }
+    // const onOpenChange = async (status) => {
+    //   if (status) {
+    //     isOpen.value = status
+    //     currentDate.value = currentDate.value.map((el) => formatToDate(el))
+    //     await nextTick()
+    //     document
+    //       .querySelector('.ant-calendar-range-right')
+    //       ?.querySelector('.ant-calendar-month-panel-next-year-btn')
+    //       ?.addEventListener('click', () => {
+    //         console.log('!23')
+    //         currentDate.value = [undefined, undefined]
+    //       })
+    //   }
+    // }
+    // const handleOk = () => {
+    //   currentRange.value = ''
+    //   currentDate.value = cacheDate.value
+    //   handleEmitEvent()
+    //   isOpen.value = false
+    //   // console.log(currentDate.value.map((x) => formatToDate(x)))
+    // }
+    // const handleCancel = () => {
+    //   isOpen.value = false
+    // }
 
     return {
-      isOpen,
-      onPanelChange,
-      onOpenChange,
-      handleOk,
-      handleCancel,
+      // isOpen,
+      // onPanelChange,
+      // onOpenChange,
+      // handleOk,
+      // handleCancel,
       dateRangeList,
       currentRange,
       currentDate,

@@ -254,7 +254,7 @@ export default defineComponent({
     }
 
     const handleBlur = () => {
-      emit('blur', state.selectedData)
+      emit('blur', state.selectedData[0])
     }
 
     // 将传入的value保存为组件使用的数据
