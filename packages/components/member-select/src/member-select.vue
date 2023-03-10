@@ -199,7 +199,7 @@ export default defineComponent({
       const list: UserItem[] = userList.map((v) => {
         // 非ignoreUser的用户才能选择
         const obj = { ...v }
-        if (!props.ignoreUser.includes(obj.id)) {
+        if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
           obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
         }
         return obj
