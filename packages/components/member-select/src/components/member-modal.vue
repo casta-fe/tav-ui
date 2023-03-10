@@ -207,7 +207,8 @@ export default defineComponent({
         const chart = pinyin.getCamelChars(v.name)[0]
         const upperChart = chart.toUpperCase()
         // 如果列表中有了就往他的list中插入
-        v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0
+        Reflect.has(v, 'disabled') ||
+          (v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0)
         const item = list.find((v) => v.key === upperChart)
         if (item) {
           item.list.push(v)
