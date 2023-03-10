@@ -202,7 +202,7 @@ export default defineComponent({
         if (!props.ignoreUser.includes(obj.id)) {
           obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
         }
-        return v
+        return obj
       })
       return list
     }
