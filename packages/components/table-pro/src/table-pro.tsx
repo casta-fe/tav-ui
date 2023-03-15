@@ -234,8 +234,8 @@ export default defineComponent({
                 unref(getBindValues).onPageChange?.(...args)
                 instances.clear()
               }}
-              onSortChange={(...args) => {
-                unref(getBindValues).onSortChange?.(...args)
+              onSortChange={() => {
+                // unref(getBindValues).onSortChange?.(...args)
                 instances.clear()
               }}
             >
