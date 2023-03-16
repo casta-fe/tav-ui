@@ -235,21 +235,25 @@ export default defineComponent({
           </TaButton>
         )
 
-      const IUpload = () => (
-        <Upload
-          fileList={[]}
-          multiple={true}
-          accept={props.accept}
-          showUploadList={false}
-          beforeUpload={handler.beforeUpload}
-          customRequest={handler.customRequest}
-        >
-          {IButton()}
-        </Upload>
-      )
+      const IUpload = () =>
+        handler.loading.value ? (
+          IButton()
+        ) : (
+          <Upload
+            fileList={[]}
+            multiple={true}
+            accept={props.accept}
+            showUploadList={false}
+            beforeUpload={handler.beforeUpload}
+            customRequest={handler.customRequest}
+          >
+            {IButton()}
+          </Upload>
+        )
 
       const HyperlinkBtn = () => (
         <TaButton
+          loading={handler.loading.value}
           class="hyperlink"
           onClick={() => {
             handler.currentTypeCodeIsHyperlink.value = !handler.currentTypeCodeIsHyperlink.value
@@ -275,7 +279,9 @@ export default defineComponent({
         )
       }
     }
-
+    setTimeout(() => {
+      handler.loading.value = true
+    }, 3000)
     /**
      * 超链接
      */
