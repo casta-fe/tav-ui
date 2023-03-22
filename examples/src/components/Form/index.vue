@@ -79,7 +79,7 @@
     <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
   <!-- <TaContainerCollapse title="useForm示例"> -->
-  <TaForm @register="register" @submit="handleSubmit" />
+  <TaForm :schemas="schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
@@ -161,7 +161,6 @@ const schemas: FormSchema[] = [
     },
     componentProps: {
       placeholder: '自定义placeholder',
-      options: [],
     },
   },
   {
@@ -178,9 +177,9 @@ const schemas: FormSchema[] = [
     component: 'InputNumber',
     label: '字段21',
     colProps: { span: 8 },
+    defaultValue: 15,
     componentProps: {
       disabled: true,
-      noAutoPrecision: true,
       precision: 0,
       placeholder: '请输入0-100的整数',
     },
@@ -323,7 +322,6 @@ export default defineComponent({
 
     const [register, { setProps, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 120,
-      schemas,
       actionColOptions: {
         span: 24,
       },
@@ -452,7 +450,6 @@ export default defineComponent({
     }
 
     return {
-      register,
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)

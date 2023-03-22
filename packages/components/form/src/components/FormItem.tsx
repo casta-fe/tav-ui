@@ -91,49 +91,51 @@ export default defineComponent({
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
 
-    unref(hasEditable) &&
-      watch(
-        () => props.formModel[props.schema.field],
-        (newVal, oldVal) => {
-          if (isBoolean(newVal)) {
-            // 处理switch、checkbox
-            if (isDef(newVal) && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项有值
-              setEditableFormItemValue(props.schema, newVal)
-            } else {
-              // 初始化数据
-              setEditableFormItemValue(props.schema, editableItemValue)
-            }
+    watch(
+      () => props.formModel[props.schema.field],
+      (newVal, oldVal) => {
+        if (!unref(hasEditable)) {
+          return
+        }
+        if (isBoolean(newVal)) {
+          // 处理switch、checkbox
+          if (isDef(newVal) && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项有值
+            setEditableFormItemValue(props.schema, newVal)
           } else {
-            // 临时解决方案，select值为0时候不渲染正确的label
-            // eslint-disable-next-line eqeqeq
-            if (props.schema.component == 'Select') setEditableFormItemValue(props.schema, newVal)
-
-            if (!isNullOrUnDef(newVal) && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项有值
-              setEditableFormItemValue(props.schema, newVal)
-            } else if (isNullOrUnDef(newVal) && oldVal && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项无值
-              setEditableFormItemValue(props.schema, newVal)
-            } else {
-              // 初始化数据
-              setEditableFormItemValue(props.schema, editableItemValue)
-            }
+            // 初始化数据
+            setEditableFormItemValue(props.schema, editableItemValue)
           }
+        } else {
+          // 临时解决方案，select值为0时候不渲染正确的label
+          // eslint-disable-next-line eqeqeq
+          if (props.schema.component == 'Select') setEditableFormItemValue(props.schema, newVal)
 
-          // if (newVal && newVal !== oldVal) {
-          //   // 表单数据更新处理，当前表单项有值
-          //   setEditableFormItemValue(props.schema, newVal);
-          // } else if (!newVal && oldVal && newVal !== oldVal) {
-          //   // 表单数据更新处理，当前表单项无值
-          //   setEditableFormItemValue(props.schema, newVal);
-          // } else {
-          //   // 初始化数据
-          //   setEditableFormItemValue(props.schema, editableItemValue);
-          // }
-        },
-        { immediate: true }
-      )
+          if (!isNullOrUnDef(newVal) && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项有值
+            setEditableFormItemValue(props.schema, newVal)
+          } else if (isNullOrUnDef(newVal) && oldVal && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项无值
+            setEditableFormItemValue(props.schema, newVal)
+          } else {
+            // 初始化数据
+            setEditableFormItemValue(props.schema, editableItemValue)
+          }
+        }
+
+        // if (newVal && newVal !== oldVal) {
+        //   // 表单数据更新处理，当前表单项有值
+        //   setEditableFormItemValue(props.schema, newVal);
+        // } else if (!newVal && oldVal && newVal !== oldVal) {
+        //   // 表单数据更新处理，当前表单项无值
+        //   setEditableFormItemValue(props.schema, newVal);
+        // } else {
+        //   // 初始化数据
+        //   setEditableFormItemValue(props.schema, editableItemValue);
+        // }
+      },
+      { immediate: true }
+    )
     watch(
       () => props.formModel[props.schema.field],
       (newVal) => {
@@ -142,13 +144,15 @@ export default defineComponent({
       { immediate: true }
     )
     // 修改editable updateschema在 setFieldsValue之前调用，文本更新异常的问题
-    unref(hasEditable) &&
-      watch(
-        () => (props.schema.componentProps as any)?.options,
-        () => {
-          setEditableFormItemValue(props.schema, itemValue.value)
+    watch(
+      () => (props.schema.componentProps as any)?.options,
+      () => {
+        if (!unref(hasEditable)) {
+          return
         }
-      )
+        setEditableFormItemValue(props.schema, itemValue.value)
+      }
+    )
     function setEditableFormItemValue(schema, _value) {
       const value = unref(_value)
       if (isString(value)) {
@@ -749,23 +753,17 @@ export default defineComponent({
             return <div>{editableItemValue.value}</div>
           }
         }
-
+        const getEditableFormItemClass = () => {
+          let className = unref(getDisable) ? 'ta-form-item__cell disabled' : 'ta-form-item__cell'
+          if (props.schema.component === 'InputNumber') {
+            className += ' number-cell'
+          }
+          return className
+        }
         const createEditableFormItem = () => {
           return !unref(isEditableItemClicked) ? (
             <div
-              class={
-                props.schema.component === 'InputNumber'
-                  ? 'ta-form-item__cell number-cell'
-                  : 'ta-form-item__cell'
-              }
-              style={
-                unref(getDisable)
-                  ? {
-                      cursor: 'not-allowed',
-                      color: 'rgba(0, 0, 0, 0.25)',
-                    }
-                  : {}
-              }
+              class={getEditableFormItemClass()}
               title={editableItemValue.value}
               onClick={() => {
                 if (!unref(getDisable)) {

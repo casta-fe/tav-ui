@@ -45,7 +45,11 @@ export default defineComponent({
 
     // Get the basic configuration of the form
     const getProps = computed((): FormProps => {
-      return { ...props, ...unref(propsRef) } as FormProps
+      // 这两行为了老项目做兼容，最早editable都在shcmeas上配置着，后面放到form上，为了改动小，这样兼容下
+      const mergeData = { ...props, ...unref(propsRef) } as FormProps
+      mergeData.editable =
+        mergeData.editable || mergeData.schemas?.some((v) => v.editable !== undefined)
+      return mergeData
     })
 
     const getFormClass = computed(() => {
@@ -85,6 +89,7 @@ export default defineComponent({
     const getSchema = computed((): FormSchema[] => {
       const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any)
       const isEditable = unref(getProps).editable
+      console.log(isEditable)
       for (const schema of schemas) {
         const { defaultValue, component } = schema
 
