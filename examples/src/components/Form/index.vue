@@ -159,7 +159,6 @@ const schemas: FormSchema[] = [
     colProps: {
       span: 8,
     },
-    // editable: true,
     componentProps: {
       placeholder: '自定义placeholder',
       options: [],
@@ -169,7 +168,7 @@ const schemas: FormSchema[] = [
     field: 'field2',
     component: 'InputNumberRange',
     label: '字段2',
-    // editable: true,
+    editable: true,
     colProps: {
       span: 8,
     },
@@ -178,9 +177,9 @@ const schemas: FormSchema[] = [
     field: 'field21',
     component: 'InputNumber',
     label: '字段21',
-    // editable: true,
     colProps: { span: 8 },
     componentProps: {
+      disabled: true,
       noAutoPrecision: true,
       precision: 0,
       placeholder: '请输入0-100的整数',
@@ -189,7 +188,6 @@ const schemas: FormSchema[] = [
   {
     field: 'field3',
     component: 'DatePicker',
-    // editable: true,
     label: '字段3',
     colProps: {
       span: 8,
@@ -199,7 +197,6 @@ const schemas: FormSchema[] = [
     field: 'fieldTime',
     component: 'RangePicker',
     label: '时间字段',
-    // editable: true,
     colProps: {
       span: 8,
     },
@@ -211,8 +208,9 @@ const schemas: FormSchema[] = [
     colProps: {
       span: 8,
     },
-    editable: true,
+    defaultValue: '1',
     componentProps: {
+      disabled: true,
       onEditableFormItemVisible(v) {
         console.log(v)
       },
@@ -329,7 +327,7 @@ export default defineComponent({
       actionColOptions: {
         span: 24,
       },
-      // editable: true,
+      editable: true,
       // disabled: true,
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],

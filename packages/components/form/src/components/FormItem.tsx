@@ -87,8 +87,7 @@ export default defineComponent({
       () => props.formModel[props.schema.field] || props.schema.defaultValue
     )
     const editableItemValue = ref<any>(itemValue.value) // 默认值
-    const hasEditable = computed(() => Reflect.has(props.schema, 'editable'))
-    const isEditable = computed(() => !!props.schema.editable)
+    const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
 
@@ -767,7 +766,7 @@ export default defineComponent({
               }
               title={editableItemValue.value}
               onClick={() => {
-                if (!unref(getDisable) && unref(isEditable)) {
+                if (!unref(getDisable)) {
                   isEditableItemClicked.value = true
                   unref(getComponentsProps).onEditableFormItemVisible &&
                     unref(getComponentsProps).onEditableFormItemVisible(
@@ -778,7 +777,7 @@ export default defineComponent({
             >
               {getEditableFormContent()}
 
-              {unref(isEditable) ? (
+              {!unref(getDisable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />
               ) : (
                 <LockOutlined class="ta-form-item--editable-icon" />
@@ -810,7 +809,7 @@ export default defineComponent({
             class={{
               'suffix-item': showSuffix,
               'ta-form-item': true,
-              [`ta-form-item--${unref(isEditable) ? 'editable' : 'diseditable'}`]:
+              [`ta-form-item--${!unref(getDisable) ? 'editable' : 'diseditable'}`]:
                 unref(hasEditable),
             }}
             {...(itemProps as Recordable)}

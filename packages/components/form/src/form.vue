@@ -101,7 +101,7 @@ export default defineComponent({
           }
         }
 
-        if (isEditable) schema.editable = true
+        // if (isEditable) schema.editable = true
       }
       if (unref(getProps).showAdvancedButton)
         return schemas.filter((schema) => schema.component !== 'Divider') as FormSchema[]
