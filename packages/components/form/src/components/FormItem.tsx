@@ -373,7 +373,9 @@ export default defineComponent({
       const { disabled: globDisabled } = props.formProps
       const { dynamicDisabled } = props.schema
       const { disabled: itemDisabled = false } = unref(getComponentsProps)
-      let disabled = !!globDisabled || itemDisabled
+      // 兼容老程序里面的代码
+      const { editable: itemEditable = true } = props.schema
+      let disabled = !!globDisabled || itemDisabled || !itemEditable
       if (isBoolean(dynamicDisabled)) {
         disabled = dynamicDisabled
       }

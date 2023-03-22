@@ -168,7 +168,7 @@ const schemas: FormSchema[] = [
     field: 'field2',
     component: 'InputNumberRange',
     label: '字段2',
-    editable: true,
+    editable: false,
     colProps: {
       span: 8,
     },
