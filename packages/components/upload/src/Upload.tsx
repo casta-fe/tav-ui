@@ -279,9 +279,7 @@ export default defineComponent({
         )
       }
     }
-    setTimeout(() => {
-      handler.loading.value = true
-    }, 3000)
+
     /**
      * 超链接
      */
