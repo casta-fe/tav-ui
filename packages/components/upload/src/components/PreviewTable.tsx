@@ -318,6 +318,7 @@ export const PreviewTable = defineComponent({
                       props.handler.getFileFormatter.getNewestFileByActualId(row.actualId) ??
                       props.handler.getFileFormatter.getBasicFileByActualId(row.actualId)!
                     }
+                    parentProps={props.parentProps}
                   />
                 ) : (
                   ''
