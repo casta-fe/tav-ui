@@ -88,8 +88,6 @@ export default defineComponent({
 
     const getSchema = computed((): FormSchema[] => {
       const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any)
-      const isEditable = unref(getProps).editable
-      console.log(isEditable)
       for (const schema of schemas) {
         const { defaultValue, component } = schema
 

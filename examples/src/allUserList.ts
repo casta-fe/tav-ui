@@ -7,7 +7,7 @@ export default {
       name: '王路州test',
       sex: 1,
       phone: '18888888888',
-      status: 1,
+      status: 0,
       supLeader: null,
       supLeaderName: null,
       updateTime: '2022-06-30 10:49:47',

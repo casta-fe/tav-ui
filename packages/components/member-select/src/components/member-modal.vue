@@ -117,7 +117,7 @@
       <div class="select-bd">
         <span v-for="item in tagList" :key="item.id" class="tag">
           {{ item.name }}
-          <CloseCircleOutlined @click="removeTag" />
+          <CloseCircleOutlined @click="removeTag(item.id)" />
         </span>
       </div>
     </div>

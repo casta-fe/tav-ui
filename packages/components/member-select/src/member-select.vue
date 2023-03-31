@@ -196,18 +196,22 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
-      const list: UserItem[] = userList.map((v) => {
-        // 非ignoreUser的用户才能选择
-        const obj = { ...v }
-        if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
-          obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
-        }
-        return obj
-      })
+      const list: UserItem[] = userList
+        .map((v) => {
+          // 非ignoreUser的用户才能选择
+          const obj = { ...v }
+          if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
+            obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
+          }
+          return obj
+        })
+        .sort((a) => {
+          return a.disabled ? 1 : -1
+        })
       return list
     }
     // 获取用户数据
-    const getUserList = (type) => {
+    const getUserList = () => {
       state.count++
       // console.log(type, state.count)
       if (Array.isArray(props.options)) {
