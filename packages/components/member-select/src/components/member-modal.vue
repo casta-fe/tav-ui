@@ -313,7 +313,7 @@ export default defineComponent({
     }
     watch(
       () => orgList.value,
-      (a, b) => {
+      (a) => {
         if (a.length > 0) {
           openFirstOrg()
         }
