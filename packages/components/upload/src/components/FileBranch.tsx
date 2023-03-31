@@ -37,6 +37,7 @@ export const FileBranch = defineComponent({
     onShowPopover: Function,
     width: { type: String, default: '840px' },
     getAppendNewestFile: Function as PropType<() => Recordable>,
+    permissionControl: [Boolean, Number],
   },
   setup(props, { expose }) {
     // const { createMessage } = useMessage()
@@ -174,7 +175,10 @@ export const FileBranch = defineComponent({
         return
       }
 
-      queryFileHistory({ fileActualIds: [props.file.actualId] }, props.parentProps?.AppId)
+      queryFileHistory(
+        { fileActualIds: [props.file.actualId], permissionControl: props.permissionControl },
+        props.parentProps?.AppId
+      )
         .then((res) => {
           let newestFile: undefined | Recordable = undefined
 
