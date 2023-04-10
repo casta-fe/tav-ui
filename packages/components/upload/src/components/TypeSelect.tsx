@@ -53,9 +53,8 @@ export const useOptions = (
           })
         }
       }
-      return options
     }
-    return []
+    return options
   })
 
   const getDefaultValue = () =>

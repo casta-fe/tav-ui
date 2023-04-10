@@ -35,22 +35,26 @@ const uploadArr: any[] = [
 export const taUploadProvideData: Partial<
   ProvideDataType & { queryFileHistory: any; removeFileById: any }
 > = {
-  // typeCodeRecord: {
-  //   tg_invest: [
-  //     {
-  //       label: '文件类型1',
-  //       value: 'FILE_TYPE_1',
-  //     },
-  //     {
-  //       label: '文件类型2',
-  //       value: 'FILE_TYPE_2',
-  //     },
-  //     {
-  //       label: '基金管理人其他资料',
-  //       value: 'FUND_GLR_QTZL',
-  //     },
-  //   ],
-  // },
+  typeCodeRecord: {
+    tg_invest: [
+      {
+        label: '企业库其他文件',
+        value: 'COMPANY_OTHER',
+      },
+      {
+        label: '文件类型1',
+        value: 'FILE_TYPE_1',
+      },
+      {
+        label: '文件类型2',
+        value: 'FILE_TYPE_2',
+      },
+      {
+        label: '基金管理人其他资料',
+        value: 'FUND_GLR_QTZL',
+      },
+    ],
+  },
   queryFileType: async (moduleCodes: string[]) => {
     await promiseTimeout(1000)
 
