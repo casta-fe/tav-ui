@@ -212,7 +212,7 @@ export default defineComponent({
     }
     // 获取用户数据
     const getUserList = (type) => {
-      console.log(type)
+      // console.log(type)
       state.count++
       // console.log(type, state.count)
       if (Array.isArray(props.options)) {

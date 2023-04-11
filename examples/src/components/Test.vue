@@ -1,46 +1,53 @@
 <template>
   <div class="wrapper">
-    <TaUpload
-      v-bind="{ ...state.upload, params: state.upload.params }"
-      v-model:fileActualIds="state.upload.fileActualIds"
-    />
-    <TaButton :loading="true" @click="handleExport">button</TaButton>
+    <TaForm :schemas="state.schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { TaButton, TaUpload } from '@tav-ui/components'
+import { TaForm } from '@tav-ui/components'
 
 export default defineComponent({
   name: 'Test',
-  components: { TaUpload, TaButton },
+  components: { TaForm },
   setup() {
     const state = reactive<Record<string, any>>({
-      upload: {
-        fileActualIds: [],
-        customOptions: [
-          {
-            label: 'QR',
-            value: 'POE_TH_PITCH_QR',
+      schemas: [
+        {
+          field: 'contractType',
+          component: 'Select',
+          label: '合同类型',
+          required: true,
+          defaultValue: [1], // 默认为合同
+          componentProps: ({ formActionType, formModel }) => {
+            return {
+              options: [
+                { label: '合同', value: 1 },
+                { label: '补充协议', value: 2 },
+              ],
+              placeholder: '请选择文件类型',
+              mode: 'multiple',
+              onChange: async (val: any) => {
+                // if (formModel.contractDeptRangeList?.length !== 0) {
+                //   formActionType?.validate(['contractDeptRangeList'])
+                // }
+                if (val !== 1) {
+                  await formActionType?.setFieldsValue({ projectRelIdList: undefined }, false)
+                } else if (val !== 2) {
+                  await formActionType?.setFieldsValue({ contractRelId: undefined }, false)
+                }
+              },
+            }
           },
-          {
-            label: 'Pitchbook',
-            value: 'POE_TH_PITCH_BOOK',
-          },
-        ],
-        params: {
-          moduleCode: 'kf_org_file',
-          businessKey: `_CUSTOMER_ORG_FILE`,
         },
-        showTableAction: { preview: false, downloadWatermark: false },
-      },
+      ],
     })
 
-    const handleExport = () => {
+    const handleSubmit = () => {
       console.log(1)
     }
-    return { state, handleExport }
+    return { state, handleSubmit }
   },
 })
 </script>
