@@ -42,10 +42,14 @@ app.use(TaVXETable)
 // app.use(TaFileView)
 // app.use(TaForm)
 // app.use(TaContainerCollapse)
-if ('3000' === location.port) {
+if ('3002' === location.port) {
   app.mount('#app')
 } else {
-  toLogin().finally(() => {
-    app.mount('#app')
-  })
+  Promise.race([toLogin(), new Promise((_, r) => setTimeout(r.bind(null, 'timeout'), 3000))])
+    .catch((e) => {
+      console.error(e)
+    })
+    .finally(() => {
+      app.mount('#app')
+    })
 }

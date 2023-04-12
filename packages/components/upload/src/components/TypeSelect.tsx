@@ -53,9 +53,8 @@ export const useOptions = (
           })
         }
       }
-      return options
     }
-    return []
+    return options
   })
 
   const getDefaultValue = () =>
@@ -80,6 +79,7 @@ export const useOptions = (
     (moduleCode) => {
       if (!(moduleCode && props.queryFileType)) {
         emit('update:selected', defaultValue.value)
+        emit('update:options', localTypeCodeOptions.value)
         isInit.value = false
 
         return

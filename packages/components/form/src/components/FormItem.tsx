@@ -155,16 +155,24 @@ export default defineComponent({
     )
     function setEditableFormItemValue(schema, _value) {
       const value = unref(_value)
+      let { componentProps = {} } = schema
+
+      if (isFunction(componentProps)) {
+        const { schema: propsSchema, tableAction, formModel, formActionType } = props
+        componentProps =
+          componentProps({ schema: propsSchema, tableAction, formModel, formActionType }) ?? {}
+      }
+
       if (isString(value)) {
         // select 要回显 label
         if (editableComponentSelectTypeMap.has(schema.component)) {
-          const target = schema.componentProps?.options?.find(
+          const target = componentProps?.options?.find(
             (option) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
         } else if (editableComponentTimeTypeMap.has(schema.component)) {
           // 修复日期不能正常格式化的问题
-          const valueFormat = schema.componentProps.valueFormat
+          const valueFormat = componentProps.valueFormat
           if (value && value != '-') {
             editableItemValue.value = formatToDate(value, valueFormat)
           } else {
@@ -185,16 +193,16 @@ export default defineComponent({
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
-            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+            schemaOptions = [...(componentProps?.options || []), ...allUserList]
           } else {
-            schemaOptions = schema.componentProps?.options
+            schemaOptions = componentProps?.options
           }
           const target = schemaOptions.find(
             (option) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
         } else {
-          const inputFormatter = schema.componentProps?.formatter
+          const inputFormatter = componentProps?.formatter
           if (inputFormatter) {
             // 处理 inputNumber formatter
             editableItemValue.value = inputFormatter(value)
@@ -215,9 +223,9 @@ export default defineComponent({
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
-            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+            schemaOptions = [...(componentProps?.options || []), ...allUserList]
           } else {
-            schemaOptions = schema.componentProps?.options
+            schemaOptions = componentProps?.options
           }
           const target = schemaOptions
             ?.reduce((result, option) => {
@@ -230,7 +238,7 @@ export default defineComponent({
           editableItemValue.value = target && target.length > 0 ? target.join(',') : '-'
         } else {
           // date 回显 string
-          const valueFormat = schema.componentProps?.valueFormat
+          const valueFormat = componentProps?.valueFormat
           const [startTime, endTime] = value
           if (isNullOrUnDef(startTime) || isNullOrUnDef(endTime)) {
             editableItemValue.value = '-'
