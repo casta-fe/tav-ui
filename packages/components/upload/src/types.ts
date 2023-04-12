@@ -212,6 +212,7 @@ type BasicPropsType = {
     update?: boolean
     delete?: boolean
   }
+  beforeUpload?: Fn<any, boolean>
   /**
    * ".doc,.docx,.xlsx..."
    */

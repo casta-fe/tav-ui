@@ -8,6 +8,9 @@ export const UpdateFile = defineComponent({
   props: {
     parentProps: {
       type: Object as PropType<BasicPropsType>,
+      default: () => {
+        return {}
+      },
     },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
@@ -32,6 +35,12 @@ export const UpdateFile = defineComponent({
 
     const fileChange = (event) => {
       const files = event.target.files
+      const { beforeUpload } = props.parentProps
+      if (beforeUpload && !beforeUpload(files)) {
+        uploadRef.value.value = ''
+        return
+      }
+
       const formData = new FormData()
       let updateFlag = true
 

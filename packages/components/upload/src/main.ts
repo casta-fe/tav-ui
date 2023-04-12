@@ -426,7 +426,7 @@ class Handler {
    * 多个文件依次push到文件列表(变量)
    * @param file 一个文件
    */
-  beforeUpload = (file: File) => {
+  antBeforeUpload = (file: File) => {
     this._refFileList.push(file)
   }
 
@@ -470,6 +470,12 @@ class Handler {
     // 非更新时候 typecode必传
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
+      this.resetFileList()
+      return
+    }
+    const { beforeUpload } = this._props
+    if (beforeUpload && !beforeUpload(this._refFileList)) {
+      console.log('拦截')
       this.resetFileList()
       return
     }

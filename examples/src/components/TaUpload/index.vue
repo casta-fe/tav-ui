@@ -16,6 +16,7 @@
           column: { field: 'ghi', title: '文件类型前的新增列' },
         },
       ]"
+      :before-upload="beforeUpload"
       :cover-column-title="{ fullName: '全称' }"
       :hide-column-fields="['createTime']"
       :file-branch-is-show-delete-action="fileBranchIsShowDeleteAction"
@@ -66,11 +67,20 @@ export default defineComponent({
     function getRes() {
       console.error('uploadRef.value?.getResult', uploadRef.value?.getResult())
     }
-
+    const beforeUpload = (files) => {
+      console.log(files)
+      if (files.length > 2) {
+        console.log('文件太多了')
+        return false
+      } else {
+        return true
+      }
+    }
     // setTimeout(switchModule, 2000)
 
     return {
       uploadRef,
+      beforeUpload,
       params,
       getRes,
       onSelect: console.log,

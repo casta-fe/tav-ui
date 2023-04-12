@@ -37,6 +37,9 @@ export default defineComponent({
       type: Object as PropType<BasicPropsType['showTableAction']>,
       default: () => ({}),
     },
+    beforeUpload: {
+      type: Function as PropType<() => boolean>,
+    },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
       default:
@@ -244,7 +247,7 @@ export default defineComponent({
             multiple={true}
             accept={props.accept}
             showUploadList={false}
-            beforeUpload={handler.beforeUpload}
+            beforeUpload={handler.antBeforeUpload}
             customRequest={handler.customRequest}
           >
             {IButton()}
