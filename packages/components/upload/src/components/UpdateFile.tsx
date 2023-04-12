@@ -33,10 +33,11 @@ export const UpdateFile = defineComponent({
     let fileActualIds = ''
     let rawFile: Recordable = {}
 
-    const fileChange = (event) => {
+    const fileChange = async (event) => {
       const files = event.target.files
       const { beforeUpload } = props.parentProps
-      if (beforeUpload && !beforeUpload(files)) {
+
+      if (beforeUpload && !(await beforeUpload(files))) {
         uploadRef.value.value = ''
         return
       }

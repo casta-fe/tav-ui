@@ -67,14 +67,23 @@ export default defineComponent({
     function getRes() {
       console.error('uploadRef.value?.getResult', uploadRef.value?.getResult())
     }
-    const beforeUpload = (files) => {
+    const test = () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true)
+        }, 500)
+      })
+    }
+    const beforeUpload = async (files) => {
       console.log(files)
-      if (files.length > 2) {
-        console.log('文件太多了')
-        return false
-      } else {
-        return true
-      }
+      const res = await test()
+      return res
+      // if (files.length > 1) {
+      //   console.log('文件太多了')
+      //   return false
+      // } else {
+      //   return true
+      // }
     }
     // setTimeout(switchModule, 2000)
 

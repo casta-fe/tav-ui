@@ -466,7 +466,7 @@ class Handler {
   /**
    * 真正的上传请求
    */
-  private realUpload = () => {
+  private realUpload = async () => {
     // 非更新时候 typecode必传
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
@@ -474,8 +474,7 @@ class Handler {
       return
     }
     const { beforeUpload } = this._props
-    if (beforeUpload && !beforeUpload(this._refFileList)) {
-      console.log('拦截')
+    if (beforeUpload && !(await beforeUpload(this._refFileList))) {
       this.resetFileList()
       return
     }
