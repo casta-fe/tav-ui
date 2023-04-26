@@ -336,6 +336,7 @@ type BasicPropsType = {
    * 默认文件列表的选择列配置
    */
   checkboxConfig: VxeTablePropTypes.CheckboxConfig & { enabled: boolean }
+  permissionControl?: number
 } & ProvideDataType
 
 /**

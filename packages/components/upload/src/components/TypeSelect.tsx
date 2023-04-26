@@ -2,7 +2,13 @@ import { type Ref, computed, defineComponent, ref, unref, watch } from 'vue'
 import { Select as TaSelect } from 'ant-design-vue'
 import { useFileTypeCode } from '../hooks'
 import type { PropType } from 'vue'
-import type { LabelValueOptions, PromiseFn, Recordable, TypeSelectPropType } from '../types'
+import type {
+  BasicPropsType,
+  LabelValueOptions,
+  PromiseFn,
+  Recordable,
+  TypeSelectPropType,
+} from '../types'
 
 type FetchedTypeCodeType = Recordable & { code: string; name: string }
 
@@ -16,6 +22,7 @@ export const useOptions = (
     noDefaultValue?: boolean | Ref<boolean>
     selected?: any
     queryFileTypeRecursion?: boolean
+    permissionControl?: BasicPropsType['permissionControl']
   },
   emit: (event: 'update:selected' | 'update:options', ...args: any[]) => void
 ) => {
@@ -89,6 +96,7 @@ export const useOptions = (
         .queryFileType({
           recursion: !!props.queryFileTypeRecursion,
           moduleCode: [moduleCode],
+          permissionControl: props.permissionControl,
         })
         .then(({ data }) => {
           isInit.value = true
@@ -135,6 +143,7 @@ export const TypeSelect = defineComponent({
     queryFileType: Function as PropType<TypeSelectPropType['queryFileType']>,
     onSelect: Function as PropType<TypeSelectPropType['onSelect']>,
     queryFileTypeRecursion: Boolean as PropType<TypeSelectPropType['queryFileTypeRecursion']>,
+    permissionControl: Number,
   },
   emits: ['update:selected', 'update:options'],
   setup(props, { emit, slots }) {

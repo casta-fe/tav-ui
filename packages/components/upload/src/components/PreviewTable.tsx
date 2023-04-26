@@ -319,6 +319,7 @@ export const PreviewTable = defineComponent({
                       props.handler.getFileFormatter.getBasicFileByActualId(row.actualId)!
                     }
                     parentProps={props.parentProps}
+                    permissionControl={props.parentProps?.permissionControl}
                   />
                 ) : (
                   ''

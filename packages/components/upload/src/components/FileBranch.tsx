@@ -37,7 +37,7 @@ export const FileBranch = defineComponent({
     onShowPopover: Function,
     width: { type: String, default: '840px' },
     getAppendNewestFile: Function as PropType<() => Recordable>,
-    permissionControl: [Boolean, Number],
+    permissionControl: Number,
   },
   setup(props, { expose }) {
     // const { createMessage } = useMessage()

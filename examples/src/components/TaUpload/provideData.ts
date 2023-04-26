@@ -55,10 +55,10 @@ export const taUploadProvideData: Partial<
       },
     ],
   },
-  queryFileType: async (moduleCodes: string[]) => {
+  queryFileType: async (params: any) => {
     await promiseTimeout(1000)
 
-    // console.log('moduleCodes', moduleCodes)
+    console.log('params', params)
 
     return Promise.resolve({
       data: {
@@ -78,12 +78,12 @@ export const taUploadProvideData: Partial<
             code: 'otherType',
           },
         ],
-      }[moduleCodes[0]]!,
+      }['tg_invest']!,
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   queryFile: (params: any): Promise<any> => {
-    console.log(params, 'queryFile')
+    // console.log(params, 'queryFile')
 
     fetch('/queryFile', {
       method: 'POST',
@@ -101,15 +101,19 @@ export const taUploadProvideData: Partial<
       )
     )
   },
-  queryFileHistory: (): Promise<any> =>
-    new Promise((r) =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  queryFileHistory: (args: any): Promise<any> => {
+    // console.error('args', args)
+
+    return new Promise((r) =>
       setTimeout(
         r.bind(null, {
           data: Math.random() > 0.5 ? uploadArr.slice(0, 2) : uploadArr,
         }),
         900
       )
-    ),
+    )
+  },
   uploadFile: (payload: FormData): Promise<any> => {
     console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
 

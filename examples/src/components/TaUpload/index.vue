@@ -20,6 +20,7 @@
       :cover-column-title="{ fullName: '全称' }"
       :hide-column-fields="['createTime']"
       :file-branch-is-show-delete-action="fileBranchIsShowDeleteAction"
+      :permission-control="0"
       @select="onSelect"
     >
       <template #beforeButton="{ loading }">

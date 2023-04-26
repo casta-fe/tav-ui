@@ -115,6 +115,7 @@ export default defineComponent({
       type: Object as PropType<BasicPropsType['checkboxConfig']>,
       default: () => ({ enabled: false }),
     },
+    permissionControl: Number,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -194,6 +195,7 @@ export default defineComponent({
         onSelect: props.onSelect,
         queryFileType: handler.apis.queryFileType,
         queryFileTypeRecursion: props.queryFileTypeRecursion,
+        permissionControl: props.permissionControl,
       }
 
       const ISelect = (_, { slots }: Recordable) => <TypeSelect {...selectProps} v-slots={slots} />
