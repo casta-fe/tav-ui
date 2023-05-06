@@ -83,18 +83,16 @@
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
-import { defineComponent, h } from 'vue'
+import { type Ref, computed, defineComponent, h, ref } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { API__CENTER_INDUSTRY_TAG } from '@tav-ui/components/table-pro/src/data'
 import tag from '@tav-ui/components/time-line/src/components/tag'
+import { useGlobalConfig } from '@tav-ui/hooks'
 import type { FormSchema } from '@tav-ui/components/form'
-// const aaaaa = [
-//   { label: '用户1', value: 99 },
-//   { label: '用户2', value: 100 },
-//   { label: '用户3', value: 3 },
-// ]
-const schemas: FormSchema[] = [
+const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+const allUserList = computed(() => globalConfig.value?.TaMemberSelect?.allUserList || [])
+const schemas: FormSchema[] = ref([
   // {
   //   field: 'field00',
   //   component: 'CascadeProSelect',
@@ -160,6 +158,11 @@ const schemas: FormSchema[] = [
       span: 8,
     },
     componentProps: {
+      multiple: true,
+      onChange(ids, list) {
+        console.log(ids, list)
+      },
+      options: allUserList,
       placeholder: '自定义placeholder',
     },
   },
@@ -313,8 +316,7 @@ const schemas: FormSchema[] = [
   //     },
   //   },
   // },
-]
-
+])
 export default defineComponent({
   components: { TaButton, TaForm },
   setup() {

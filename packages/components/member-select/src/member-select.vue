@@ -254,8 +254,15 @@ export default defineComponent({
       }
     }
     const emitHandle = (): void => {
+      const userMap = allUserList.filter((v) => {
+        if (props.multiple) {
+          return state.selectedData[0].includes(v.id)
+        } else {
+          return state.selectedData[0] == v.id
+        }
+      })
       emit('update:value', state.selectedData[0])
-      emit('change', state.selectedData[0])
+      emit('change', state.selectedData[0], userMap)
     }
 
     const handleBlur = () => {
