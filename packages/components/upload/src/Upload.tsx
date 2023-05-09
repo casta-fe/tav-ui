@@ -187,7 +187,7 @@ export default defineComponent({
         typeCodeRecord: handler.typeCodeRecord,
         'onUpdate:selected': (val) => {
           handler.typeCode.value = val
-          handler.fillDataSource()
+          // handler.fillDataSource()
         },
         'onUpdate:options': (val) => {
           typeCodeOptions.value = val
