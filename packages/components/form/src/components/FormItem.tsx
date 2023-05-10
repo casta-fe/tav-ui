@@ -90,6 +90,23 @@ export default defineComponent({
     const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
+    /** 函数处理 */
+    const componentProps = computed(() => {
+      let componentProps = props.schema.componentProps
+      if (isFunction(props.schema.componentProps)) {
+        const { schema, tableAction, formModel, formActionType } = props
+        componentProps =
+          props.schema.componentProps!({
+            schema,
+            // @ts-ignore
+            tableAction,
+            formModel,
+            // @ts-ignore
+            formActionType,
+          }) ?? {}
+      }
+      return componentProps ?? {}
+    })
 
     watch(
       () => props.formModel[props.schema.field],
@@ -145,7 +162,7 @@ export default defineComponent({
     )
     // 修改editable updateschema在 setFieldsValue之前调用，文本更新异常的问题
     watch(
-      () => (props.schema.componentProps as any)?.options,
+      () => (unref(componentProps) as any)?.options,
       () => {
         if (!unref(hasEditable)) {
           return
@@ -224,6 +241,12 @@ export default defineComponent({
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
             schemaOptions = [...(componentProps?.options || []), ...allUserList]
+          } else if (schema.component == 'SearchableApiSelect') {
+            const item = value?.[1]
+            if (!item) return
+            const keyword = item.label ?? item[componentProps?.labelField || 'name']
+            keyword && (editableItemValue.value = keyword)
+            return
           } else {
             schemaOptions = componentProps?.options
           }
@@ -263,21 +286,21 @@ export default defineComponent({
       if (unref(hasEditable) && props.schema.component) {
         const isMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          props.schema.componentProps &&
-          ((props.schema.componentProps as any).mode === 'multiple' ||
-            (props.schema.componentProps as any).mode === 'tags')
+          unref(componentProps) &&
+          ((unref(componentProps) as any).mode === 'multiple' ||
+            (unref(componentProps) as any).mode === 'tags')
         const isCheckTypeGroup =
           editableComponentChecksTypeMap.has(props.schema.component) &&
           props.schema.component.includes('Group')
         const isTimePicker = props.schema.component === 'TimePicker'
         const isRangePickerHasTimePicker =
           props.schema.component === 'RangePicker' &&
-          props.schema.componentProps &&
-          (props.schema.componentProps as any).showTime
+          unref(componentProps) &&
+          (unref(componentProps) as any).showTime
         const isOpenMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          props.schema.componentProps &&
-          (props.schema.componentProps as any).multiple === true
+          unref(componentProps) &&
+          (unref(componentProps) as any).multiple === true
 
         // 给 rangepicker右下角的确定按钮开启后门
         if (go) {
@@ -515,10 +538,10 @@ export default defineComponent({
         return
       }
       // console.log(props.schema.componentProps);
-      if (props.schema.componentProps && props.schema.componentProps['noAutoPrecision']) {
+      if (unref(componentProps) && unref(componentProps)['noAutoPrecision']) {
         return
       }
-      if (props.schema.componentProps) {
+      if (unref(componentProps)) {
         const { schema, tableAction, formModel, formActionType } = props
         let { componentProps = {} } = schema
         if (isFunction(componentProps))
@@ -749,8 +772,8 @@ export default defineComponent({
             props.schema.component === 'InputNumber' &&
             typeof editableItemValue.value == 'number'
           ) {
-            if (props.schema.componentProps) {
-              const precision = props.schema.componentProps['precision']
+            if (unref(componentProps)) {
+              const precision = unref(componentProps)['precision']
               return precision
                 ? editableItemValue.value.toFixed(precision)
                 : editableItemValue.value

@@ -1,7 +1,7 @@
 <template>
   <div class="searchableapiselect">
     <TaModal v-model:visible="visibleRef" width="860px" title="天眼查组件">
-      <TaForm @register="formRegister" />
+      <TaForm editable @register="formRegister" />
     </TaModal>
     <TaButton @click="() => (visibleRef = true)"> 打开天眼查组件 </TaButton>
   </div>
@@ -28,6 +28,9 @@ export default defineComponent({
           field: 'companyName',
           component: 'SearchableApiSelect',
           label: '企业名称',
+          editable: true,
+          // eslint-disable-next-line no-sparse-arrays
+          defaultValue: [, { label: '天塔集团有限公司' }],
           componentProps: {
             getPopupContainer: () => document.body,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars

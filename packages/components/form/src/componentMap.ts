@@ -106,6 +106,8 @@ const editableComponentSelectTypeMap = new Map<EditableComponentType, Component>
 // onchange/clickoutside 隐藏表单项
 editableComponentSelectTypeMap.set('Select', Select)
 editableComponentSelectTypeMap.set('MemberSelect', TaMemberSelect)
+editableComponentSelectTypeMap.set('SearchableApiSelect', SearchableApiSelect)
+
 const editableComponentCheckTypeMap = new Map<EditableComponentType, Component>()
 // onchange/clickoutside 隐藏表单项
 editableComponentCheckTypeMap.set('Switch', Switch)
