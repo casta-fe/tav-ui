@@ -770,15 +770,17 @@ export default defineComponent({
         const getEditableFormContent = () => {
           // return <div>{editableItemValue.value}</div>;
           // 暂时不强制格式化到6位
-          console.log(editableItemValue.value)
+          if (editSlot) {
+            return getSlot(slots, editSlot, unref(getValues))
+          }
           let realContent = editableItemValue.value
+
           if (
             props.schema.component === 'InputNumber' &&
             typeof editableItemValue.value == 'number'
           ) {
             if (unref(componentProps)) {
               const precision = unref(componentProps)['precision']
-              console.log(precision)
               const value = isNullOrUnDef(precision)
                 ? editableItemValue.value
                 : editableItemValue.value.toFixed(precision)

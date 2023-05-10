@@ -79,7 +79,9 @@
     <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
   <!-- <TaContainerCollapse title="useForm示例"> -->
-  <TaForm :schemas="schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
+  <TaForm ref="testForm" :schemas="schemas" :label-width="140" editable @submit="handleSubmit">
+    <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
+  </TaForm>
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
@@ -92,7 +94,7 @@ import { useGlobalConfig } from '@tav-ui/hooks'
 import type { FormSchema } from '@tav-ui/components/form'
 const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
 const allUserList = computed(() => globalConfig.value?.TaMemberSelect?.allUserList || [])
-const schemas: FormSchema[] = ref([
+const schemas = ref([
   // {
   //   field: 'field00',
   //   component: 'CascadeProSelect',
@@ -150,86 +152,97 @@ const schemas: FormSchema[] = ref([
   //     // }
   //   },
   // },
+  // {
+  //   field: 'field0',
+  //   component: 'MemberSelect',
+  //   label: '字段1',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     multiple: true,
+  //     onChange(ids, list) {
+  //       console.log(ids, list)
+  //     },
+  //     options: allUserList,
+  //     placeholder: '自定义placeholder',
+  //   },
+  // },
   {
     field: 'field1',
-    component: 'MemberSelect',
-    label: '字段1',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      multiple: true,
-      onChange(ids, list) {
-        console.log(ids, list)
-      },
-      options: allUserList,
-      placeholder: '自定义placeholder',
-    },
+    component: 'InputNumber',
+    label: '普通InputNumber',
+    colProps: { span: 8 },
+    editSlot: 'testSlot',
+    componentProps: {},
   },
   {
     field: 'field2',
-    component: 'InputNumberRange',
-    label: '字段2',
-    editable: false,
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'field21',
     component: 'InputNumber',
-    label: '字段21',
+    label: 'formatter',
     colProps: { span: 8 },
-    defaultValue: 15,
     componentProps: {
-      disabled: true,
-      precision: 0,
-      placeholder: '请输入0-100的整数',
+      precision: 8,
+      formatter: (value) => `${value}%`,
     },
   },
-  {
-    field: 'field3',
-    component: 'DatePicker',
-    label: '字段3',
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'fieldTime',
-    component: 'RangePicker',
-    label: '时间字段',
-    colProps: {
-      span: 8,
-    },
-  },
-  {
-    field: 'field4',
-    component: 'Select',
-    label: '字段4',
-    colProps: {
-      span: 8,
-    },
-    defaultValue: '1',
-    componentProps: {
-      disabled: true,
-      onEditableFormItemVisible(v) {
-        console.log(v)
-      },
-      options: [
-        {
-          label: '选项1',
-          value: '1',
-          key: '1',
-        },
-        {
-          label: '选项2',
-          value: '2',
-          key: '2',
-        },
-      ],
-    },
-  },
+  // {
+  //   field: 'field22',
+  //   component: 'InputNumber',
+  //   label: '字段slot1',
+  //   colProps: { span: 8 },
+  //   defaultValue: 15,
+  //   editslot: 'testSlot',
+  //   componentProps: {
+  //     precision: 4,
+  //     placeholder: '请输入0-100的整数',
+  //   },
+  // },
+  // {
+  //   field: 'field3',
+  //   component: 'Input',
+  //   label: '字段3',
+
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
+  // {
+  //   field: 'fieldTime',
+  //   component: 'RangePicker',
+  //   label: '时间字段',
+
+  //   colProps: {
+  //     span: 8,
+  //   },
+  // },
+  // {
+  //   field: 'field4',
+  //   component: 'Select',
+  //   label: '字段4',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   defaultValue: '1',
+  //   componentProps: {
+  //     disabled: true,
+  //     onEditableFormItemVisible(v) {
+  //       console.log(v)
+  //     },
+  //     options: [
+  //       {
+  //         label: '选项1',
+  //         value: '1',
+  //         key: '1',
+  //       },
+  //       {
+  //         label: '选项2',
+  //         value: '2',
+  //         key: '2',
+  //       },
+  //     ],
+  //   },
+  // },
   // {
   //   field: 'field5',
   //   component: 'CheckboxGroup',
@@ -327,7 +340,6 @@ export default defineComponent({
       actionColOptions: {
         span: 24,
       },
-      editable: true,
       // disabled: true,
       showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
@@ -380,49 +392,6 @@ export default defineComponent({
       }
     })
 
-    setTimeout(() => {
-      setFieldsValue({
-        field1: 99,
-        // field0: [
-        //   {
-        //     city: '130100',
-        //     cityName: '石家庄市',
-        //     district: '130104',
-        //     districtName: '桥西区',
-        //     province: '130000',
-        //     provinceName: '河北省',
-        //   },
-        // ],
-        field0: [
-          {
-            city: null,
-            cityName: null,
-            district: null,
-            districtName: null,
-            province: 110000,
-            provinceName: '北京',
-          },
-          {
-            city: null,
-            cityName: null,
-            district: null,
-            districtName: null,
-            province: 500000,
-            provinceName: '重庆',
-          },
-        ],
-        field00: [
-          {
-            tag: '484d222e04a711ec8b830242ac110002',
-            tagName: '光子',
-            subTag: 'f62db7c1bbe14b928e2430830f74581a',
-            subTagName: '光子陀螺',
-            type: 2,
-          },
-        ],
-      })
-    }, 500)
-
     async function handleLoad() {
       const promiseFn = function () {
         return new Promise((resolve) => {
@@ -450,12 +419,33 @@ export default defineComponent({
         field9,
       })
     }
-
+    const testForm = ref()
+    setTimeout(() => {
+      schemas.value = [
+        ...schemas.value,
+        {
+          field: 'field3',
+          component: 'Input',
+          label: '新增的',
+          colProps: {
+            span: 8,
+          },
+        },
+      ]
+      setTimeout(() => {
+        // testForm.value.setFieldsValue({
+        //   field1: 99,
+        //   field2: 66.1256,
+        //   field3: 99,
+        // })
+      }, 500)
+    }, 2000)
     return {
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
+      testForm,
       setProps,
       handleLoad,
     }
