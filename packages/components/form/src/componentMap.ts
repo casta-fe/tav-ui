@@ -131,6 +131,7 @@ editableComponentTimeTypeMap.set('TimePicker', TimePicker)
 const editableComponentOtherTypeMap = new Map<EditableComponentType, Component>()
 editableComponentOtherTypeMap.set('InputNumberRange', TaInputNumberRange)
 editableComponentOtherTypeMap.set('CascadeProSelect', TaCascadeProSelect)
+editableComponentOtherTypeMap.set('SearchableApiSelect', SearchableApiSelect)
 
 /* EditableTableForm 支持组件列表 ----------  end  ---------- */
 
