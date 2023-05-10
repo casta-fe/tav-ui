@@ -219,14 +219,16 @@ export default defineComponent({
           )
           editableItemValue.value = target ? target.label : '-'
         } else {
-          const inputFormatter = componentProps?.formatter
-          if (inputFormatter) {
-            // 处理 inputNumber formatter
-            editableItemValue.value = inputFormatter(value)
-          } else {
-            // input 回显值
-            editableItemValue.value = value
-          }
+          editableItemValue.value = value
+          // 暂时注释掉，否则editable格式化精度出问题
+          // const inputFormatter = componentProps?.formatter
+          // if (inputFormatter) {
+          //   // 处理 inputNumber formatter
+          //   editableItemValue.value = inputFormatter(value)
+          // } else {
+          //   // input 回显值
+          //   editableItemValue.value = value
+          // }
         }
       } else if (isArray(value)) {
         // select || checkGroup 多选要回显label 用 ，分隔
@@ -553,7 +555,7 @@ export default defineComponent({
       if (getDomValue && itemRef.value) {
         const inputEle = itemRef.value.querySelector('input')
         if (inputEle) {
-          value = inputEle.value
+          value = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
         }
         // inputEle
       }
@@ -725,7 +727,7 @@ export default defineComponent({
     }
 
     function renderItem() {
-      const { itemProps, slot, render, field, suffix, component } = props.schema
+      const { itemProps, slot, render, field, suffix, editSlot, component } = props.schema
       const { labelCol, wrapperCol } = unref(itemLabelWidthProp)
 
       if (component === 'Divider') {
@@ -768,21 +770,27 @@ export default defineComponent({
         const getEditableFormContent = () => {
           // return <div>{editableItemValue.value}</div>;
           // 暂时不强制格式化到6位
+          console.log(editableItemValue.value)
+          let realContent = editableItemValue.value
           if (
             props.schema.component === 'InputNumber' &&
             typeof editableItemValue.value == 'number'
           ) {
             if (unref(componentProps)) {
               const precision = unref(componentProps)['precision']
-              return precision
-                ? editableItemValue.value.toFixed(precision)
-                : editableItemValue.value
-            } else {
-              return editableItemValue.value
+              console.log(precision)
+              const value = isNullOrUnDef(precision)
+                ? editableItemValue.value
+                : editableItemValue.value.toFixed(precision)
+              realContent = value
             }
-          } else {
-            return <div>{editableItemValue.value}</div>
           }
+          const inputFormatter = unref(componentProps)['formatter']
+          if (inputFormatter && realContent !== '-') {
+            // 处理 inputNumber formatter
+            realContent = inputFormatter(realContent)
+          }
+          return <>{realContent}</>
         }
         const getEditableFormItemClass = () => {
           let className = unref(getDisable) ? 'ta-form-item__cell disabled' : 'ta-form-item__cell'
