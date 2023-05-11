@@ -202,6 +202,7 @@ export interface FormSchema {
 
   // Custom slot, in from-item
   slot?: string
+  editSlot?: string
 
   // Custom slot, similar to renderColContent
   colSlot?: string
