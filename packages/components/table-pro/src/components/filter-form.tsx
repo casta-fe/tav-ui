@@ -27,6 +27,11 @@ const props = {
   tableSlots: {
     type: Object as PropType<Slots>,
   },
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
+  filterModalClassName: { type: String, default: '' },
 }
 
 export default defineComponent({
@@ -73,6 +78,12 @@ export default defineComponent({
           (props.config?.inputForm as any).component === 'InputSearch'
         ) {
           inputFormSchema = merge(defaultInputFormSchema, unref(props.config?.inputForm))
+        } else if ((props.config?.inputForm as any).component === 'DateInterval') {
+          // 兼容传入的 component 是 DateInterval
+          inputFormSchema = merge(
+            { componentProps: { onSearch: useDebounceFn(inputFormSubmit, 300) } },
+            unref(props.config?.inputForm)
+          )
         } else {
           // 如果开发传入的 component 不是 inputseacrh，那么直接按照传入的schema生成，不merge
           inputFormSchema = unref(props.config?.inputForm)
@@ -108,17 +119,27 @@ export default defineComponent({
     })
 
     // 处理 inputForm
-    function inputFormSubmit(value: string) {
+    async function inputFormSubmit(value: string) {
       if (!value) inputFormResetFields()
       state.inputForm = inputFormGetFieldsValue()
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.inputForm
-      // 置空 pannelform
-      unref(isPannelFormRegister) && pannelFormResetFields()
-      state.visible = false
-      state.choosedNum = 0
-      state.pannelForm = {}
+      // 如果设置参数互斥那么只能用关键字搜索，否则是关键字加表单内容
+      if (props.filterExclusion) {
+        state.currentFilter = {}
+        state.currentFilter = state.inputForm
+        // 置空 pannelform
+        unref(isPannelFormRegister) && pannelFormResetFields()
+        state.visible = false
+        state.choosedNum = 0
+        state.pannelForm = {}
+      } else {
+        if (unref(isPannelFormRegister)) {
+          const _res = await validatePannelForm()
+          const res = JSON.parse(JSON.stringify(_res))
+          state.pannelForm = res
+        }
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      // console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },
@@ -152,9 +173,11 @@ export default defineComponent({
 
     const fixPannelFormModalPos = () => {
       const dom: HTMLDivElement | null = pannelContainerRef.value
-      if (dom) {
+      const actionDom: HTMLDivElement | null = customerActionRef.value
+      if (dom && actionDom) {
+        const { bottom = 0 } = actionDom.getBoundingClientRect()
         const { top = 0, width = 0, left = 0 } = dom.getBoundingClientRect()
-        state.dialogStyle.top = `${top}px`
+        state.dialogStyle.top = `${bottom + 16}px`
         state.dialogStyle.left = `${left}px`
         state.dialogStyle.width = `${width}px`
         state.dialogStyle.margin = `${0}px`
@@ -166,8 +189,10 @@ export default defineComponent({
     useWindowSizeFn(debounceFixPannelFormModalPos)
 
     const pannelContainerRef = ref<any>(null)
-    tableEmitter.on('table-pro:dom-ready', async ({ table }) => {
+    const customerActionRef = ref<any>(null)
+    tableEmitter.on('table-pro:dom-ready', async ({ table, action }) => {
       pannelContainerRef.value = table
+      customerActionRef.value = action
     })
 
     const [
@@ -203,19 +228,28 @@ export default defineComponent({
           res[cur] !== undefined &&
           res[cur] !== null &&
           JSON.stringify(res[cur]) !== '[]' &&
+          JSON.stringify(res[cur]) !== '["",""]' &&
+          JSON.stringify(res[cur]) !== '[null,""]' &&
+          JSON.stringify(res[cur]) !== '["",null]' &&
           JSON.stringify(res[cur]) !== '{}' &&
           res[cur] &&
           JSON.stringify(res[cur])
-        )
+        ) {
           result++
+        }
         return result
       }, 0)
-      // input查询与更多筛选不能同时存在, 所以先置空接口参数对象，再置空表单
-      state.currentFilter = {}
-      state.currentFilter = state.pannelForm
-      // 置空 inputform
-      unref(isInputFormRegister) && inputFormResetFields()
-      state.inputForm = {}
+      if (props.filterExclusion) {
+        state.currentFilter = {}
+        state.currentFilter = state.pannelForm
+        // 置空 inputform
+        unref(isInputFormRegister) && inputFormResetFields()
+        state.inputForm = {}
+      } else {
+        state.inputForm = inputFormGetFieldsValue()
+        state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      }
+      // console.log(state.currentFilter)
       // 发送请求
       unref(props.tableRef)?.commitProxy('query', {
         filter: { ...state.currentFilter },
@@ -242,20 +276,20 @@ export default defineComponent({
     watch(
       () => props.config,
       (config, prevConfig) => {
-        // if (config && JSON.stringify(config) !== JSON.stringify(prevConfig))
-        // 这样子只能判断异步schema同步不能进行了
-        if (config) {
+        if (config && JSON.stringify(config) !== JSON.stringify(prevConfig)) {
           // input/pannel 都有可能是异步赋值所以这里需要判断rendered
           nextTick(() => {
             tableEmitter.emit('table-pro:filter-form-rendered')
           })
         }
-      }
+      },
+      { immediate: true }
     )
 
     return () => {
       return unref(isFilterFormShow) ? (
         <div class={ComponentPrefixCls} data-filter-params={tableFilterParams.value}>
+          {/* <>filterExclusion:{props.filterExclusion ? '互斥' : '不互斥'}</> */}
           {unref(isInputFormShow) ? (
             <BasicForm
               ref={inputFormRef}
@@ -283,6 +317,7 @@ export default defineComponent({
               </Button>
               <BasicModal
                 title={'更多筛选'}
+                wrapClassName={props.filterModalClassName}
                 style={state.dialogStyle}
                 width={state.dialogStyle.width}
                 maskStyle={{ background: 'rgba(0,0,0,0)' }}

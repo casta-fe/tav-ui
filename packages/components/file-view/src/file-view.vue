@@ -75,8 +75,7 @@ export default defineComponent({
 
       state.filePath = ''
       state.pageLoading = true
-
-      globalConfig.value.TaFileView.previewFile(id)
+      globalConfig.value.TaFileView.previewFile(id, props.AppId)
         .then((res) => {
           state.pageLoading = false
           state.filePath = res.data
@@ -112,8 +111,9 @@ export default defineComponent({
     watch(
       () => props.show,
       (newData) => {
-        if (ignoreList.includes(currentFile.value.suffix)) {
+        if (newData && ignoreList.includes(currentFile.value.suffix)) {
           createMessage.warning('暂不支持该文件预览')
+          afterCloseHandle()
           return
         }
         state.showModal = newData
@@ -163,7 +163,7 @@ export default defineComponent({
         <Button type="text" @click="downloadFile">下载</Button>
       </div>
       <span class="file-view-num">{{ index + 1 }}/{{ list.length }}</span> -->
-      <span class="file-view-title">{{ currentFile.name + '.' + currentFile.suffix }} </span>
+      <span class="file-view-title">{{ currentFile.name + '.' + currentFile.suffix }}</span>
     </template>
     <template v-if="list.length > 1">
       <div class="file-view-modal-prev" @click="goPrev">
@@ -187,7 +187,9 @@ export default defineComponent({
         <template v-if="fileType === 'mpeg'">
           <iframe id="fileIframe" :src="filePath" frameborder="0" />
         </template>
-        <template v-if="fileType === 'pic'"> <img :src="filePath" alt="" /> </template>
+        <template v-if="fileType === 'pic'">
+          <img :src="filePath" alt="" />
+        </template>
         <template v-if="fileType === 'text'">
           <div class="text-page">
             <iframe id="fileIframe" :src="filePath" frameborder="0" />

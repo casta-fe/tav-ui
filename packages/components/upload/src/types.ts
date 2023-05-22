@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { VxeTablePropTypes } from 'vxe-table'
 import type { TableProColumn } from '../../table-pro'
 import type { Handler } from './main'
 
@@ -133,7 +134,8 @@ type QueryFileParamsType = {
  * @updateDate 2022/01/24
  */
 type PreviewTablePropType = {
-  dataSource: Recordable[]
+  parentProps: BasicPropsType
+  dataSource: FileItemType[]
   showTableAction: BasicPropsType['showTableAction']
   tableActionPermission: BasicPropsType['tableActionPermission']
   loading?: boolean
@@ -142,26 +144,18 @@ type PreviewTablePropType = {
   customOptions: BasicPropsType['customOptions']
 }
 
-type NeedHideElType = {
-  hideSelect: boolean
-  hideTable: boolean
-}
-
 type TypeSelectPropType = {
   moduleCode: string
   selected?: string
   typeCodeArray?: string[]
   noDefaultValue: boolean | Ref<boolean>
   customOptions?: BasicPropsType['customOptions']
-}
-
-interface IHandle {
-  backfill(): Promise<void>
-  realUpload(): void
-  beforeUpload(file: File): void
-  throwResponse(newRecord: Recordable[]): void
-  customRequest(): void
-  appendResultToTable(): void
+  typeCodeRecord?: BasicPropsType['typeCodeRecord']
+  queryFileType?: ProvideDataType['queryFileType']
+  onSelect?: Fn
+  queryFileTypeRecursion?: BasicPropsType['queryFileTypeRecursion']
+  'onUpdate:options': Fn
+  'onUpdate:selected': Fn
 }
 
 /**
@@ -180,7 +174,7 @@ type DefaultColumnFields =
  * @author mxs
  * @name TaUploadBasciProps
  * @createDate 2022/01/12
- * @updateDate 2022/06/28
+ * @updateDate 2022/12/11
  */
 type BasicPropsType = {
   /**
@@ -197,27 +191,28 @@ type BasicPropsType = {
    */
   params: RequestFilterType
   /**
+   * 默认的Title
+   */
+  showTitle: boolean | 'unset'
+  /**
    * 默认的select选择框
    */
-  showSelect: boolean
-  /**
-   * 上传同时添加businessId
-   */
-  relationBusinessId: boolean
+  showSelect: boolean | 'unset'
   /**
    * 默认的文件列表
+   * @default true
    */
   showTable: boolean
   /**
    * 默认的文件列表的action列
    */
   showTableAction: {
-    preview?: boolean
     download?: boolean
     downloadWatermark?: boolean
     update?: boolean
     delete?: boolean
   }
+  beforeUpload?: Fn<any, boolean>
   /**
    * ".doc,.docx,.xlsx..."
    */
@@ -256,14 +251,6 @@ type BasicPropsType = {
    */
   'onUpdate:fileActualIds'?: Fn<string[], void>
   /**
-   * 假删除
-   * change会调用 文件真实id也会变
-   * 如果不点提交,数据就不变
-   * 编辑点了提交,文件真实id列表变了=>后台会执行真删除
-   * @default true
-   */
-  useFakeDelete: boolean
-  /**
    * 回填传入列表数据就不再发起请求
    */
   uploadResponse?: FileItemType[]
@@ -271,7 +258,12 @@ type BasicPropsType = {
    * 显示上传按钮(用于仅显示列表不上传的地方)
    * @default true
    */
-  showUploadBtn: boolean
+  showUploadBtn: boolean | 'unset'
+  /**
+   * 显示超链接上传按钮
+   * @default true
+   */
+  showUploadHyperlinkBtn: boolean | 'unset'
   /**
    * 点击文件名跳转...
    * @default undefined
@@ -306,7 +298,7 @@ type BasicPropsType = {
    * 文件类型 选择框 onSelect
    */
   onSelect?: Fn
-  coverColumnTitle?: Record<DefaultColumnFields, string>
+  coverColumnTitle?: Partial<Record<DefaultColumnFields, string>>
   hideColumnFields?: DefaultColumnFields[]
   nameColumnWidth?: number | string
   insertColumns?: {
@@ -320,6 +312,31 @@ type BasicPropsType = {
     beforeOrAfter?: 'before' | 'after'
     column: TableProColumn
   }[]
+  AppId?: string | number
+  fileBranchIsShowDeleteAction?: Fn<Recordable, boolean>
+  /**
+   * [最多上传多少个文件](./types.ts "组件被销毁前一直记录")
+   */
+  maxCount?: number
+  /**
+   * 操作直接调接口生效
+   * @default true
+   */
+  immediate: boolean
+  /**
+   * 表格数据为空时展示方式
+   */
+  emptyState: 'none' | 'header' | 'normal'
+  /**
+   * 调用 `queryFileType` 接口时 `recursion` 参数值
+   * @default false
+   */
+  queryFileTypeRecursion: boolean
+  /**
+   * 默认文件列表的选择列配置
+   */
+  checkboxConfig: VxeTablePropTypes.CheckboxConfig & { enabled: boolean }
+  permissionControl?: number
 } & ProvideDataType
 
 /**
@@ -356,53 +373,48 @@ type ProvideDataType = {
     file: Pick<FileItemType, 'id' | 'name' | 'address'>,
     ...args: any[]
   ) => Promise<void>
+  /**
+   * 更新文件类型(可编辑单元格中的选择框)
+   */
+  updateFileType?: (id: string | number, typeCode: string) => Promise<void>
   typeCodeRecord?: Recordable<LabelValueOptions>
+  queryFileType?: PromiseFn<
+    string[],
+    Result<
+      Recordable &
+        {
+          name: string
+          code: string
+
+          // appId?: number
+          // id?: number
+          // moduleId?: number
+          // parentId?: number
+          // remark?: string
+          // seq?: number
+          // sid?: string
+        }[]
+    >
+  >
+  /**
+   * 默认表格 `maxHeight` 属性
+   */
+  tableMaxHeight?: number | 'auto'
 }
 
-/**
- * 有默认值的props
- * @author mxs
- * @createDate  2022/01/22
- * @updateDate  2022/03/09
- */
-type HasDefaultPropType =
-  | 'accept'
-  // | "maxSize"
-  | 'readonly'
-  | 'readonly'
-  | 'canResize'
-  | 'showTable'
-  | 'showSelect'
-  | 'showUploadBtn'
-  | 'useFakeDelete'
-  | 'controlInOuter'
-  | 'noDefaultValue'
-  | 'showTableAction'
-  | 'relationBusinessId'
-  | 'tableActionPermission'
-
-/**
- * 外部非必传的props
- * @author mxs
- * @createDate 2022/...
- * @updateDate 2022/01/22
- */
-type OmitHasDefaultPropType<T = HasDefaultPropType> = Partial<BasicPropsType> &
-  Omit<BasicPropsType, T extends string | number | symbol ? T : ''>
+type ChangeType = 'init' | 'upload' | 'delete' | 'update'
 
 export type {
   Fn,
   Result,
-  IHandle,
   PromiseFn,
+  ChangeType,
   Recordable,
   FileItemType,
   BasicPropsType,
-  NeedHideElType,
   ProvideDataType,
   LabelValueOption,
   LabelValueOptions,
   TypeSelectPropType,
   PreviewTablePropType,
-  OmitHasDefaultPropType,
 }

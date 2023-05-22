@@ -45,15 +45,24 @@ export default defineComponent({
 
     // Get the basic configuration of the form
     const getProps = computed((): FormProps => {
-      return { ...props, ...unref(propsRef) } as FormProps
+      // 这两行为了老项目做兼容，最早editable都在shcmeas上配置着，后面放到form上，为了改动小，这样兼容下
+      const mergeData = { ...props, ...unref(propsRef) } as FormProps
+      mergeData.editable =
+        mergeData.editable || mergeData.schemas?.some((v) => v.editable !== undefined)
+      return mergeData
     })
 
     const getFormClass = computed(() => {
       // ::==================== i7eo：更新 ///// start ///// ====================:: //
       const schemas: FormSchema[] = unref(schemaRef) || (unref(getProps).schemas as any)
+      const isEditable = unref(getProps).editable
       let hasEditableFormItemNums = 0
-      for (const schema of schemas) {
-        if (Reflect.has(schema, 'editable')) hasEditableFormItemNums++
+      if (isEditable) {
+        hasEditableFormItemNums++
+      } else {
+        for (const schema of schemas) {
+          if (Reflect.has(schema, 'editable')) hasEditableFormItemNums++
+        }
       }
 
       return [
@@ -94,6 +103,8 @@ export default defineComponent({
             schema.defaultValue = def
           }
         }
+
+        // if (isEditable) schema.editable = true
       }
       if (unref(getProps).showAdvancedButton)
         return schemas.filter((schema) => schema.component !== 'Divider') as FormSchema[]

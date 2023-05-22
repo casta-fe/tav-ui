@@ -1,6 +1,7 @@
 import { computed } from 'vue'
+// import { clone } from 'xe-utils'
 import type { Handler } from './main'
-import type { LabelValueOptions, Recordable } from './types'
+import type { FileItemType, LabelValueOptions, Recordable } from './types'
 
 /**
  * ***begin***
@@ -128,7 +129,7 @@ export const useFileTypeCode = (fileTypeCode: Recordable<LabelValueOptions<strin
 export function getActionColumnMaxWidth(
   arr: string[],
   {
-    margin = 44,
+    margin = 17,
     fontSize = 12,
     appendWidth = 10,
   }: {
@@ -138,12 +139,147 @@ export function getActionColumnMaxWidth(
   } = {}
 ) {
   // TableAction 组件最多展示3个按钮, 间距为 20+20
-  let l = margin
+  let l = 0
   arr.sort((x, y) => y.length - x.length)
-  for (const str of arr) {
-    l += str.length * fontSize
+  const _arr = arr.splice(0, 3)
+  for (const str of _arr) {
+    const [text, dots] = str.split('..')
+    l += text.length * fontSize
+    if (dots) {
+      l += 2 * 4
+    }
+    l += margin
   }
-  // 表格td 自带 padding(左[10]+右[10])
-  l += 20
-  return l + appendWidth
+  l += appendWidth * 2
+  return l
+}
+
+export type UseFileFormatterParamsType = {
+  /**
+   * 更新时保存多少文件历史版本
+   *
+   * `"newest"` 仅保留最后一次更新
+   *
+   * `"all"` 保留当前版本往后所有更新
+   * @default "newest"
+   */
+  fileVersionCount?: 'newest' | 'all'
+}
+
+export function useFileFormatter({ fileVersionCount = 'newest' }: UseFileFormatterParamsType = {}) {
+  const versionRecord: Partial<Recordable<FileItemType[]>> = {}
+
+  function upadteVersion(file: FileItemType) {
+    const existFile = versionRecord[file.actualId!]?.find((el) => el.id === file.id)
+
+    if (existFile) {
+      /**
+       * 文件名更新 || 超链接更新
+       */
+      if (existFile.name !== file.name || existFile.address !== file.address) {
+        /**
+         * ```ts
+         * [v1File, v2File] as const
+         * ```
+         */
+        const fileArr = versionRecord[existFile.actualId!]
+
+        if (fileArr) {
+          const lastIndex = fileArr.length - 1
+
+          fileArr[lastIndex] = file
+        }
+      }
+      return
+    }
+
+    if (fileVersionCount === 'newest') {
+      if (versionRecord[file.actualId!]) {
+        if (
+          file.version === 0 &&
+          getBasicFileByActualId(file.actualId!)!.version === 1 &&
+          !(
+            getBasicFileByActualId(file.actualId!)!.businessId ||
+            getBasicFileByActualId(file.actualId!)!.businessKey
+          )
+        ) {
+          file.version = 1
+        } else {
+          file.version = versionRecord[file.actualId!]![0].version + 1
+        }
+        versionRecord[file.actualId!]![1] = file
+      } else {
+        versionRecord[file.actualId!] = [file]
+      }
+
+      return
+    }
+
+    if (versionRecord[file.actualId!]) {
+      // 维护文件唯一性
+      if (versionRecord[file.actualId!]?.some((el) => file.id === el.id)) return
+
+      versionRecord[file.actualId!]!.push(file)
+    } else {
+      versionRecord[file.actualId!] = [file]
+    }
+  }
+
+  function formatToApi(files: FileItemType[]) {
+    const currentFileActualIdsSet = new Set<string>()
+
+    for (const file of files) {
+      upadteVersion(file)
+
+      currentFileActualIdsSet.add(file.actualId!)
+    }
+
+    for (const actualId in versionRecord) {
+      // 有删除操作时
+      currentFileActualIdsSet.has(actualId) || Reflect.deleteProperty(versionRecord, actualId)
+    }
+
+    // const cloneVersionRecord = clone(versionRecord, true)
+    // versionRecord = {}
+
+    return Object.keys(versionRecord).map((k) => ({
+      actualId: k,
+      moduleCode: versionRecord[k]![0].moduleCode,
+      versionList: [versionRecord[k]![1] || versionRecord[k]![0]],
+    }))
+  }
+
+  /**
+   * @param actualId
+   * @returns
+   */
+  function getFilesByActualId(actualId: string) {
+    return versionRecord[actualId]
+  }
+
+  /**
+   * 初始化时的文件
+   * @param actualId
+   * @returns
+   */
+  function getBasicFileByActualId(actualId: string) {
+    return getFilesByActualId(actualId)?.[0]
+  }
+
+  /**
+   * 最后一次点击更新后的文件
+   * @param actualId
+   * @returns
+   */
+  function getNewestFileByActualId(actualId: string) {
+    return getFilesByActualId(actualId)?.[1]
+  }
+
+  return {
+    formatToApi,
+    upadteVersion,
+    getFilesByActualId,
+    getBasicFileByActualId,
+    getNewestFileByActualId,
+  }
 }

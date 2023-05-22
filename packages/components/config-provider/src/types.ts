@@ -1,10 +1,14 @@
 import type { ExtractPropTypes, PropType } from 'vue'
 
 export const configProviderProps = {
-  // namespace: {
-  //   type: String,
-  //   default: 'ta',
-  // },
+  appId: {
+    type: String,
+    required: true,
+  },
+  userInfo: {
+    type: Object as PropType<Record<string, any>>,
+    required: true,
+  },
   permissions: {
     type: Object as PropType<Record<string, any>>,
     default: () => ({}),

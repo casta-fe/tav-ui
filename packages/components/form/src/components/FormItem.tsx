@@ -42,6 +42,9 @@ type Nullable<T> = T | null
 const NUMBER_MAX = 9999999999
 export default defineComponent({
   name: 'BasicFormItem',
+  directives: {
+    clickOutside,
+  },
   inheritAttrs: false,
   props: {
     schema: {
@@ -71,9 +74,6 @@ export default defineComponent({
       type: Object as PropType<FormActionType>,
     },
   },
-  directives: {
-    clickOutside,
-  },
   setup(props, { slots }) {
     // 测试 memberselect
     // 弹窗的位置，样式修改
@@ -87,54 +87,72 @@ export default defineComponent({
       () => props.formModel[props.schema.field] || props.schema.defaultValue
     )
     const editableItemValue = ref<any>(itemValue.value) // 默认值
-    const hasEditable = computed(() => Reflect.has(props.schema, 'editable'))
-    const isEditable = computed(() => !!props.schema.editable)
+    const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
+    /** 函数处理 */
+    const componentProps = computed(() => {
+      let componentProps = props.schema.componentProps
+      if (isFunction(props.schema.componentProps)) {
+        const { schema, tableAction, formModel, formActionType } = props
+        componentProps =
+          props.schema.componentProps!({
+            schema,
+            // @ts-ignore
+            tableAction,
+            formModel,
+            // @ts-ignore
+            formActionType,
+          }) ?? {}
+      }
+      return componentProps ?? {}
+    })
 
-    unref(hasEditable) &&
-      watch(
-        () => props.formModel[props.schema.field],
-        (newVal, oldVal) => {
-          if (isBoolean(newVal)) {
-            // 处理switch、checkbox
-            if (isDef(newVal) && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项有值
-              setEditableFormItemValue(props.schema, newVal)
-            } else {
-              // 初始化数据
-              setEditableFormItemValue(props.schema, editableItemValue)
-            }
+    watch(
+      () => props.formModel[props.schema.field],
+      (newVal, oldVal) => {
+        if (!unref(hasEditable)) {
+          return
+        }
+        if (isBoolean(newVal)) {
+          // 处理switch、checkbox
+          if (isDef(newVal) && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项有值
+            setEditableFormItemValue(props.schema, newVal)
           } else {
-            // 临时解决方案，select值为0时候不渲染正确的label
-            // eslint-disable-next-line eqeqeq
-            if (props.schema.component == 'Select') setEditableFormItemValue(props.schema, newVal)
-
-            if (!isNullOrUnDef(newVal) && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项有值
-              setEditableFormItemValue(props.schema, newVal)
-            } else if (isNullOrUnDef(newVal) && oldVal && newVal !== oldVal) {
-              // 表单数据更新处理，当前表单项无值
-              setEditableFormItemValue(props.schema, newVal)
-            } else {
-              // 初始化数据
-              setEditableFormItemValue(props.schema, editableItemValue)
-            }
+            // 初始化数据
+            setEditableFormItemValue(props.schema, editableItemValue)
           }
+        } else {
+          // 临时解决方案，select值为0时候不渲染正确的label
+          // eslint-disable-next-line eqeqeq
+          if (props.schema.component == 'Select') setEditableFormItemValue(props.schema, newVal)
 
-          // if (newVal && newVal !== oldVal) {
-          //   // 表单数据更新处理，当前表单项有值
-          //   setEditableFormItemValue(props.schema, newVal);
-          // } else if (!newVal && oldVal && newVal !== oldVal) {
-          //   // 表单数据更新处理，当前表单项无值
-          //   setEditableFormItemValue(props.schema, newVal);
-          // } else {
-          //   // 初始化数据
-          //   setEditableFormItemValue(props.schema, editableItemValue);
-          // }
-        },
-        { immediate: true }
-      )
+          if (!isNullOrUnDef(newVal) && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项有值
+            setEditableFormItemValue(props.schema, newVal)
+          } else if (isNullOrUnDef(newVal) && oldVal && newVal !== oldVal) {
+            // 表单数据更新处理，当前表单项无值
+            setEditableFormItemValue(props.schema, newVal)
+          } else {
+            // 初始化数据
+            setEditableFormItemValue(props.schema, editableItemValue)
+          }
+        }
+
+        // if (newVal && newVal !== oldVal) {
+        //   // 表单数据更新处理，当前表单项有值
+        //   setEditableFormItemValue(props.schema, newVal);
+        // } else if (!newVal && oldVal && newVal !== oldVal) {
+        //   // 表单数据更新处理，当前表单项无值
+        //   setEditableFormItemValue(props.schema, newVal);
+        // } else {
+        //   // 初始化数据
+        //   setEditableFormItemValue(props.schema, editableItemValue);
+        // }
+      },
+      { immediate: true }
+    )
     watch(
       () => props.formModel[props.schema.field],
       (newVal) => {
@@ -143,25 +161,35 @@ export default defineComponent({
       { immediate: true }
     )
     // 修改editable updateschema在 setFieldsValue之前调用，文本更新异常的问题
-    unref(hasEditable) &&
-      watch(
-        () => (props.schema.componentProps as any)?.options,
-        () => {
-          setEditableFormItemValue(props.schema, itemValue.value)
+    watch(
+      () => (unref(componentProps) as any)?.options,
+      () => {
+        if (!unref(hasEditable)) {
+          return
         }
-      )
+        setEditableFormItemValue(props.schema, itemValue.value)
+      }
+    )
     function setEditableFormItemValue(schema, _value) {
       const value = unref(_value)
+      let { componentProps = {} } = schema
+
+      if (isFunction(componentProps)) {
+        const { schema: propsSchema, tableAction, formModel, formActionType } = props
+        componentProps =
+          componentProps({ schema: propsSchema, tableAction, formModel, formActionType }) ?? {}
+      }
+
       if (isString(value)) {
         // select 要回显 label
         if (editableComponentSelectTypeMap.has(schema.component)) {
-          const target = schema.componentProps?.options?.find(
+          const target = componentProps?.options?.find(
             (option) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
         } else if (editableComponentTimeTypeMap.has(schema.component)) {
           // 修复日期不能正常格式化的问题
-          const valueFormat = schema.componentProps.valueFormat
+          const valueFormat = componentProps.valueFormat
           if (value && value != '-') {
             editableItemValue.value = formatToDate(value, valueFormat)
           } else {
@@ -182,23 +210,25 @@ export default defineComponent({
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
-            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+            schemaOptions = [...(componentProps?.options || []), ...allUserList]
           } else {
-            schemaOptions = schema.componentProps?.options
+            schemaOptions = componentProps?.options
           }
           const target = schemaOptions.find(
             (option) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
         } else {
-          const inputFormatter = schema.componentProps?.formatter
-          if (inputFormatter) {
-            // 处理 inputNumber formatter
-            editableItemValue.value = inputFormatter(value)
-          } else {
-            // input 回显值
-            editableItemValue.value = value
-          }
+          editableItemValue.value = value
+          // 暂时注释掉，否则editable格式化精度出问题
+          // const inputFormatter = componentProps?.formatter
+          // if (inputFormatter) {
+          //   // 处理 inputNumber formatter
+          //   editableItemValue.value = inputFormatter(value)
+          // } else {
+          //   // input 回显值
+          //   editableItemValue.value = value
+          // }
         }
       } else if (isArray(value)) {
         // select || checkGroup 多选要回显label 用 ，分隔
@@ -212,9 +242,15 @@ export default defineComponent({
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
-            schemaOptions = [...(schema.componentProps?.options || []), ...allUserList]
+            schemaOptions = [...(componentProps?.options || []), ...allUserList]
+          } else if (schema.component == 'SearchableApiSelect') {
+            const item = value?.[1]
+            if (!item) return
+            const keyword = item.label ?? item[componentProps?.labelField || 'name']
+            keyword && (editableItemValue.value = keyword)
+            return
           } else {
-            schemaOptions = schema.componentProps?.options
+            schemaOptions = componentProps?.options
           }
           const target = schemaOptions
             ?.reduce((result, option) => {
@@ -227,7 +263,7 @@ export default defineComponent({
           editableItemValue.value = target && target.length > 0 ? target.join(',') : '-'
         } else {
           // date 回显 string
-          const valueFormat = schema.componentProps?.valueFormat
+          const valueFormat = componentProps?.valueFormat
           const [startTime, endTime] = value
           if (isNullOrUnDef(startTime) || isNullOrUnDef(endTime)) {
             editableItemValue.value = '-'
@@ -252,21 +288,21 @@ export default defineComponent({
       if (unref(hasEditable) && props.schema.component) {
         const isMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          props.schema.componentProps &&
-          ((props.schema.componentProps as any).mode === 'multiple' ||
-            (props.schema.componentProps as any).mode === 'tags')
+          unref(componentProps) &&
+          ((unref(componentProps) as any).mode === 'multiple' ||
+            (unref(componentProps) as any).mode === 'tags')
         const isCheckTypeGroup =
           editableComponentChecksTypeMap.has(props.schema.component) &&
           props.schema.component.includes('Group')
         const isTimePicker = props.schema.component === 'TimePicker'
         const isRangePickerHasTimePicker =
           props.schema.component === 'RangePicker' &&
-          props.schema.componentProps &&
-          (props.schema.componentProps as any).showTime
+          unref(componentProps) &&
+          (unref(componentProps) as any).showTime
         const isOpenMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          props.schema.componentProps &&
-          (props.schema.componentProps as any).multiple === true
+          unref(componentProps) &&
+          (unref(componentProps) as any).multiple === true
 
         // 给 rangepicker右下角的确定按钮开启后门
         if (go) {
@@ -292,7 +328,11 @@ export default defineComponent({
 
     function showEditableDom(componentMap, schema) {
       const hide = () => {
-        if (componentMap.has(schema.component)) isEditableItemClicked.value = false
+        if (componentMap.has(schema.component) && unref(isEditableItemClicked)) {
+          isEditableItemClicked.value = false
+          unref(getComponentsProps).onEditableFormItemVisible &&
+            unref(getComponentsProps).onEditableFormItemVisible(unref(isEditableItemClicked))
+        }
       }
       if (schema.required) {
         // if (props.schema.field === "purposeInvestScale") {
@@ -351,6 +391,18 @@ export default defineComponent({
           plain: true,
         })
       }
+
+      if (schema.component === 'Select') {
+        componentProps = Object.assign(
+          {
+            showSearch: true,
+            filterOption: true,
+            optionFilterProp: 'label',
+          },
+          componentProps
+        )
+      }
+
       return componentProps as Recordable
     })
 
@@ -358,7 +410,9 @@ export default defineComponent({
       const { disabled: globDisabled } = props.formProps
       const { dynamicDisabled } = props.schema
       const { disabled: itemDisabled = false } = unref(getComponentsProps)
-      let disabled = !!globDisabled || itemDisabled
+      // 兼容老程序里面的代码
+      const { editable: itemEditable = true } = props.schema
+      let disabled = !!globDisabled || itemDisabled || !itemEditable
       if (isBoolean(dynamicDisabled)) {
         disabled = dynamicDisabled
       }
@@ -486,15 +540,22 @@ export default defineComponent({
         return
       }
       // console.log(props.schema.componentProps);
-      if (props.schema.componentProps && props.schema.componentProps['noAutoPrecision']) {
+      if (unref(componentProps) && unref(componentProps)['noAutoPrecision']) {
         return
+      }
+      if (unref(componentProps)) {
+        const { schema, tableAction, formModel, formActionType } = props
+        let { componentProps = {} } = schema
+        if (isFunction(componentProps))
+          componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {}
+        if (componentProps['noAutoPrecision']) return
       }
       let precision = 0
       let value = _value
       if (getDomValue && itemRef.value) {
         const inputEle = itemRef.value.querySelector('input')
         if (inputEle) {
-          value = inputEle.value
+          value = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
         }
         // inputEle
       }
@@ -526,7 +587,7 @@ export default defineComponent({
         field,
         changeEvent = 'change',
         valueField,
-        componentProps,
+        componentProps = {},
       } = props.schema
 
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
@@ -596,7 +657,14 @@ export default defineComponent({
       if (component === 'InputNumber') {
         compAttr.max = (componentProps as any)?.max ?? NUMBER_MAX
         compAttr.min = (componentProps as any)?.min ?? 0
-        compAttr.precision = (componentProps as any)?.precision ?? undefined
+        if (isFunction(componentProps)) {
+          const { schema, tableAction, formModel, formActionType } = props
+          compAttr.precision =
+            componentProps({ schema, tableAction, formModel, formActionType })?.precision ??
+            undefined
+        } else {
+          compAttr.precision = (componentProps as any)?.precision ?? undefined
+        }
       }
 
       if (unref(hasEditable)) {
@@ -659,7 +727,7 @@ export default defineComponent({
     }
 
     function renderItem() {
-      const { itemProps, slot, render, field, suffix, component } = props.schema
+      const { itemProps, slot, render, field, suffix, editSlot, component } = props.schema
       const { labelCol, wrapperCol } = unref(itemLabelWidthProp)
 
       if (component === 'Divider') {
@@ -702,39 +770,55 @@ export default defineComponent({
         const getEditableFormContent = () => {
           // return <div>{editableItemValue.value}</div>;
           // 暂时不强制格式化到6位
+          if (editSlot) {
+            return getSlot(slots, editSlot, unref(getValues))
+          }
+          let realContent = editableItemValue.value
+
           if (
             props.schema.component === 'InputNumber' &&
             typeof editableItemValue.value == 'number'
           ) {
-            if (props.schema.componentProps) {
-              const precision = props.schema.componentProps['precision']
-              return precision
-                ? editableItemValue.value.toFixed(precision)
-                : editableItemValue.value
-            } else {
-              return editableItemValue.value
+            if (unref(componentProps)) {
+              const precision = unref(componentProps)['precision']
+              const value = isNullOrUnDef(precision)
+                ? editableItemValue.value
+                : editableItemValue.value.toFixed(precision)
+              realContent = value
             }
-          } else {
-            return <div>{editableItemValue.value}</div>
           }
+          const inputFormatter = unref(componentProps)['formatter']
+          if (inputFormatter && realContent !== '-') {
+            // 处理 inputNumber formatter
+            realContent = inputFormatter(realContent)
+          }
+          return <>{realContent}</>
         }
-
+        const getEditableFormItemClass = () => {
+          let className = unref(getDisable) ? 'ta-form-item__cell disabled' : 'ta-form-item__cell'
+          if (props.schema.component === 'InputNumber') {
+            className += ' number-cell'
+          }
+          return className
+        }
         const createEditableFormItem = () => {
           return !unref(isEditableItemClicked) ? (
             <div
-              class={
-                props.schema.component === 'InputNumber'
-                  ? 'ta-form-item__cell number-cell'
-                  : 'ta-form-item__cell'
-              }
+              class={getEditableFormItemClass()}
               title={editableItemValue.value}
               onClick={() => {
-                if (unref(isEditable)) isEditableItemClicked.value = true
+                if (!unref(getDisable)) {
+                  isEditableItemClicked.value = true
+                  unref(getComponentsProps).onEditableFormItemVisible &&
+                    unref(getComponentsProps).onEditableFormItemVisible(
+                      unref(isEditableItemClicked)
+                    )
+                }
               }}
             >
               {getEditableFormContent()}
 
-              {unref(isEditable) ? (
+              {!unref(getDisable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />
               ) : (
                 <LockOutlined class="ta-form-item--editable-icon" />
@@ -766,7 +850,7 @@ export default defineComponent({
             class={{
               'suffix-item': showSuffix,
               'ta-form-item': true,
-              [`ta-form-item--${unref(isEditable) ? 'editable' : 'diseditable'}`]:
+              [`ta-form-item--${!unref(getDisable) ? 'editable' : 'diseditable'}`]:
                 unref(hasEditable),
             }}
             {...(itemProps as Recordable)}

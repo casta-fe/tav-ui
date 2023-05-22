@@ -1,0 +1,230 @@
+@import '../var/index.less';
+@prefix-cls-cascade-pro: ~'ta-cascade-pro';
+
+@gap16: 16px;
+@gap24: 24px;
+
+.@{prefix-cls-cascade-pro} {
+  &,
+  .ant-select-item {
+    font-size: 12px;
+  }
+
+  &-modal {
+    .ant-modal-body {
+      min-height: 380px; // 只有pannel和 result
+      max-height: 560px; // header/pannel/result（4行）
+      overflow: hidden;
+    }
+
+    .scrollbar__wrap {
+      overflow: hidden;
+    }
+
+    .scrollbar__bar.is-vertical {
+      opacity: 0 !important;
+    }
+  }
+
+  &-select {
+    width: 100%;
+    display: inline-flex;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    // cursor: pointer;
+
+    .ant-tag {
+      font-size: 14px;
+    }
+
+    .ant-select-item-option-close-icon {
+      color: rgba(0, 0, 0, 0.45);
+      align-items: center;
+
+      &:hover {
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+  }
+
+  &-search {
+    &-option {
+      .ant-select-item-option-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      &-name,
+      &-name-path {
+        width: 40%;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      &-name {
+        width: 50%;
+      }
+      &-name-path {
+        text-align: right;
+      }
+    }
+  }
+
+  &-hot {
+    margin-left: @gap24;
+    text-align: right;
+  }
+
+  &-first-letter {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 10px @gap16;
+
+    span {
+      margin-right: @gap16;
+
+      &:first-child {
+        margin-right: calc(@gap16 / 2);
+      }
+    }
+  }
+
+  &-pannel {
+    &-field {
+      flex: 1;
+      flex: 0 1 0%;
+      min-width: 160px;
+
+      &:last-child {
+        flex: 1 1 0%;
+
+        // .scrollbar__view {
+        //   display: flex;
+        //   flex-wrap: wrap;
+        //   align-content: flex-start;
+        // }
+      }
+    }
+  }
+
+  &-search-result {
+    &-title {
+      display: flex;
+      align-items: center;
+
+      button {
+        min-width: auto;
+        font-size: 12px;
+        height: auto !important;
+        line-height: inherit !important;
+      }
+    }
+
+    &-tip {
+      font-weight: 500;
+      color: #000;
+    }
+
+    &-list {
+      position: relative;
+      margin-top: calc(@gap16 / 4);
+      min-height: 0;
+      max-height: 100px;
+      overflow-y: auto;
+
+      .ant-tag {
+        margin-right: 12px;
+        margin-bottom: 6px;
+        background-color: #f5f5f5;
+        border: none;
+
+        .ant-tag-close-icon {
+          margin-left: 6px;
+          vertical-align: inherit !important;
+        }
+      }
+    }
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+
+    .@{prefix-cls-cascade-pro} {
+      &-search {
+        width: 50%;
+        min-width: 200px;
+      }
+
+      &-hot {
+        flex: 1;
+      }
+    }
+  }
+
+  &-content {
+    margin-top: @gap16;
+    border-radius: @primary-border-radius;
+    border: 1px solid @border-color-base;
+
+    .@{prefix-cls-cascade-pro} {
+      &-first-letter {
+        .ant-tag-checkable {
+          background-color: #fff;
+
+          &-checked {
+            background-color: #276dff;
+          }
+        }
+        background-color: #f5f5f5;
+        border-top-left-radius: @primary-border-radius;
+        border-top-right-radius: @primary-border-radius;
+      }
+
+      &-pannel {
+        &-field {
+          position: relative;
+          height: 300px;
+          overflow-y: scroll;
+          padding: calc(@gap16 / 4) 0;
+
+          .ant-select-item-option {
+            &-content {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+
+              .first-letter-group {
+                width: 18px;
+                font-size: 14px;
+                font-weight: 500;
+              }
+            }
+
+            &:hover {
+              background-color: #f5f5f5;
+            }
+
+            &[data-is-selected='true'] {
+              &:hover {
+                background-color: #f0f7ff;
+              }
+            }
+          }
+        }
+
+        &--success {
+          display: flex;
+        }
+      }
+    }
+  }
+
+  &-footer {
+    margin-top: calc(@gap16 / 2);
+  }
+}

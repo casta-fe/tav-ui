@@ -1,12 +1,21 @@
-import { computed, defineComponent, ref, toRefs, unref } from 'vue'
-import { onMountedOrOnDeactivated } from '@tav-ui/hooks/core/onMountedOrOnDeactivated'
-import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
+import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+// import TaCollapseTransition from '@tav-ui/components/transition'
+import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
-import { CamelCaseToCls, ComponentName, ComponentOperationsName } from './const'
+import {
+  ACTION_COLUMNS,
+  CamelCaseToCls,
+  ComponentName,
+  ComponentOperationsName,
+  buildTableId,
+} from './const'
 import { useCellHover } from './hooks/useCellHover'
+import { useColumnApi } from './hooks/useColumnApi'
 import { useColumns } from './hooks/useColums'
 import { useDataSource } from './hooks/useDataSource'
 import { useExtendInstance } from './hooks/useExtendInstance'
@@ -18,9 +27,9 @@ import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
-import type { TableProEvent, TableProInstance, TableProProps } from './types'
 import type { ComputedRef } from 'vue'
-// import { isBoolean } from '@tav-ui/utils/is'
+import type { TableProColumn, TableProEvent, TableProInstance, TableProProps } from './types'
+import type { CustomActionRef } from './typings'
 
 const _VXETable = setupVxeTable()
 const { Grid } = _VXETable
@@ -36,13 +45,17 @@ export default defineComponent({
     // 获取实例
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
+    const customActionRef = ref<CustomActionRef | null>(null)
+    const cacheActionWidths = ref<Record<string, any>>({})
+    const columnsForAction = ref<TableProColumn[]>([])
+    const maxWidthForAction = ref<number>(0)
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
 
     // 表格 props
     const _getProps = computed(() => {
-      return { ...props } as TableProProps
+      return { ...props, id: props.id ?? buildTableId() } as TableProProps
     })
 
     // 根据 default 生成默认属性并与传入的 props 合并
@@ -50,8 +63,16 @@ export default defineComponent({
 
     // 扩展 columns
     const getColumns = computed(() => {
-      return { columns: useColumns(getProps, tableRef, emit) }
+      let columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
+      if (unref(columnsForAction) && unref(columnsForAction).length > 0) {
+        columns = unref(columnsForAction)
+      }
+      return { columns }
     })
+
+    // 列持久化处理
+    const columnApiOptions = useColumnApi(getProps, useGlobalConfig())
+    columnApiOptions?.useCachedColumnCoverCurrentColumns(getColumns, customActionRef as any)
 
     // 透传 attr
     const getAttrs = computed(() => {
@@ -85,10 +106,45 @@ export default defineComponent({
     useDataSource(getProps, tableRef)
 
     // 执行dom监听的处理
-    useWatchDom(getProps, tableRef, tableEmitter)
+    useWatchDom(getProps, tableRef, customActionRef, tableEmitter)
+
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
+    }
+    watch(
+      () => cacheActionWidths,
+      () => {
+        const tableData = unref(tableRef)?.getTableData().tableData
+        const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        if (tableData && maxWidth > unref(maxWidthForAction)) {
+          const columns = unref(getColumns).columns.map((column) => {
+            if (column.field && ACTION_COLUMNS.includes(column.field)) {
+              column.width = Math.ceil(maxWidth)
+              column.minWidth = Math.ceil(maxWidth)
+              return column
+            }
+            return column
+          })
+          columnsForAction.value = columns
+          maxWidthForAction.value = maxWidth
+        }
+      },
+      {
+        deep: true,
+      }
+    )
 
     // 注入数据
-    createTableContext({ tableRef, tableEmitter, tablePropsRef: getProps })
+    createTableContext({
+      tableRef,
+      tableEmitter,
+      tablePropsRef: getBindValues,
+      columnApiOptions,
+      setCacheActionWidths,
+    })
 
     // 抛出实例
     expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
@@ -102,10 +158,18 @@ export default defineComponent({
         `${ComponentPrefixCls}-wrapper`,
         {
           [`${ComponentPrefixCls}--fill-inner`]: values.fillInner,
-          // [`${ComponentPrefixCls}--pagination-disabled`]: !values.pagination,
         },
       ]
     })
+
+    // 统计面板
+    const statisticalShow = ref(false)
+    const triggerStatistical = () => {
+      statisticalShow.value = !statisticalShow.value
+      setTimeout(() => {
+        setHeight()
+      }, 0)
+    }
 
     // components
     function createOperation() {
@@ -124,14 +188,23 @@ export default defineComponent({
           <ComponentFilterForm
             ref={filterRef}
             config={values.filterFormConfig}
+            filterExclusion={props.filterExclusion}
             tableRef={tableRef}
             tableSlots={slots}
+            filterModalClassName={values.filterModalClassName}
           />
           <ComponentCustomAction
+            ref={customActionRef}
             config={values.customActionConfig}
             tableRef={tableRef}
             tableSlots={slots}
+            onTriggerStatistical={triggerStatistical}
           />
+          {/* <TaCollapseTransition> */}
+          <div v-show={statisticalShow.value} class={`${ComponentOperationsPrefixCls}-statistical`}>
+            {slots?.statisticalList?.()}
+          </div>
+          {/* </TaCollapseTransition> */}
         </div>
       ) : null
     }
@@ -140,17 +213,32 @@ export default defineComponent({
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
-    onMountedOrOnDeactivated(() => {
+    onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
+
+      cacheActionWidths.value = {}
+      columnsForAction.value = []
+      maxWidthForAction.value = 0
     })
 
     return () => {
       return (
-        <div class={unref(getWrapperClass)} ref={wrapperRef}>
+        <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
           {createOperation()}
           <div class={ComponentPrefixCls} style={{ height: unref(getHeight) }}>
-            <Grid ref={tableRef} {...unref(getBindValues)}>
+            <Grid
+              ref={tableRef}
+              {...unref(getBindValues)}
+              onPageChange={(...args) => {
+                unref(getBindValues).onPageChange?.(...args)
+                instances.clear()
+              }}
+              onSortChange={() => {
+                // unref(getBindValues).onSortChange?.(...args)
+                instances.clear()
+              }}
+            >
               {{
                 empty: () => <ComponentEmpty />,
                 ...slots,

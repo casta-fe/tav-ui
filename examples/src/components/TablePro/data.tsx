@@ -235,7 +235,7 @@ export const filterForm1 = (): TableProFilterForm => ({
   ] as FormSchema[],
 })
 
-export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> => {
+export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TableProColumn[]> => {
   await API__POE_CUSTOM_ALL({
     filter: { tab: 0 },
     model: { page: 1, limit: 50 },
@@ -376,6 +376,34 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
     //   field: 'valuation',
     //   title: '最新估值（万元）',
     // },
+    // { field: 'customerCode', title: '客户编号', fixed: 'left' },
+    {
+      title: '集合',
+      field: 'collect1',
+      // fixed: 'left',
+      width: 200,
+      children: [
+        {
+          field: 'customerName',
+          title: '客户名称',
+          width: 100,
+          customRender: ({ row: { customerName } }) => (
+            <a
+              href="javascript:;"
+              style="color: #3a67fc"
+              onClick={(e) => {
+                handleRoutePush(e, {
+                  name: 'Test',
+                })
+              }}
+            >
+              {customerName}
+            </a>
+          ),
+        },
+        { field: 'customerCode', title: '客户编号', width: 100 },
+      ],
+    },
     {
       title: '集合2',
       children: [
@@ -452,13 +480,16 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
             {
               label: '编辑',
               onClick: () => {
-                console.log('edit')
+                OpenModal()
               },
             },
             {
-              label: '测试1',
-              onClick: () => {
-                console.log('test 1')
+              label: '测试112321321321321',
+              popConfirm: {
+                title: '删除后将无法恢复，确定删除吗？',
+                confirm: () => {
+                  console.log('del')
+                },
               },
             },
             {
@@ -484,16 +515,27 @@ export const columns2 = async ({ handleRoutePush }): Promise<TableProColumn[]> =
 }
 
 export const filterForm2 = async (): Promise<TableProFilterForm> => {
-  await API__POE_CUSTOM_ALL({
-    filter: { tab: 0 },
-    model: { page: 1, limit: 2 },
-  })
+  // await API__POE_CUSTOM_ALL({
+  //   filter: { tab: 0 },
+  //   model: { page: 1, limit: 2 },
+  // })
 
   return {
     inputForm: {
-      field: 'customerName',
+      // field: 'customerName',
+      // componentProps: {
+      //   placeholder: '请输入客户名称',
+      // },
+      field: 'time',
+      component: 'DateInterval',
       componentProps: {
-        placeholder: '请输入客户名称',
+        // defaultRange: 'lastYear',
+        // onChange: (v: any) => {
+        //   console.log(v)
+        // },
+        // onGetCurDate: (data: any) => {
+        //   console.log(data, '=============')
+        // },
       },
     },
     pannelForm: [

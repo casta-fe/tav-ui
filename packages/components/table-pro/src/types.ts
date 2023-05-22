@@ -6,7 +6,7 @@ import {
   PAGE_SIZE,
   PAGE_SIZE_OPTIONS,
   ROW_KEY,
-  buildTableId,
+  // buildTableId,
 } from './const'
 import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
@@ -27,16 +27,14 @@ import type {
   TableProFilterFormConfig,
 } from './typings'
 
-type _TableProColumn = VxeTableDefines.ColumnOptions & {
+export type TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
-}
-/** column 类型 */
-export type TableProColumn = _TableProColumn & {
-  children?: _TableProColumn[]
+  children?: TableProColumn[]
 }
 export type TableProColumnInfo = VxeTableDefines.ColumnInfo
+
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
 /** 扩展后的 table 实例 */
@@ -66,7 +64,7 @@ export const tableProProps = {
   /** 唯一标识（被某些特定的功能所依赖） */
   id: {
     type: String as PropType<VxeTablePropTypes.ID>,
-    default: buildTableId(),
+    // default: buildTableId(),
   },
   /**
    * 表格高度（默认为铺满网页）https://vxetable.cn/#/table/base/autoHeight
@@ -348,6 +346,13 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.FilterConfig>,
   },
   /**
+   * 筛选是否互斥
+   */
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
+  /**
    * 单选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   radioConfig: {
@@ -430,6 +435,10 @@ export const tableProProps = {
    */
   clipConfig: {
     type: Object as PropType<VxeTablePropTypes.ClipConfig>,
+  },
+  /**  表格筛选组件modal类名  */
+  filterModalClassName: {
+    type: String,
   },
   //:==================================================: 需付费，使用时请查看文档 :==================================================://
   /**

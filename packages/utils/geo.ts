@@ -1,10 +1,12 @@
-interface CascaderOption {
-  value: string
+export interface AddressOption {
   label: string
-  children?: CascaderOption[]
+  /** 唯一标识 */
+  value: string | number
+  [key: string]: any
+  children?: AddressOption[]
 }
 // 省/市
-export const ProvinceCityOptions: CascaderOption[] = [
+export const ProvinceCityOptions: AddressOption[] = [
   {
     value: '110000',
     label: '北京',
@@ -15239,7 +15241,7 @@ export const ProvinceCityOptions: CascaderOption[] = [
   },
 ]
 // 国家/省/市
-export const CountryProvinceCityOptions: CascaderOption[] = [
+export const CountryProvinceCityOptions: AddressOption[] = [
   {
     label: '中国',
     value: '10009',
@@ -15254,7 +15256,6 @@ export function getAddressByCodeList(_data) {
   _data.forEach((item, index) => {
     const sameOption = optionsList.filter((aitem) => aitem.value == item)[0]
     if (!sameOption) {
-      // console.log("异常");
       return
     }
     const children = sameOption && sameOption.children

@@ -4,6 +4,7 @@ import { CamelCaseToCls, ComponentActionName } from '../const'
 import type { Emitter } from '@tav-ui/utils/mitt'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProInstance, TableProProps } from '../types'
+import type { CustomActionRef } from '../typings'
 
 const ComponentActionPrefixCls = CamelCaseToCls(ComponentActionName)
 const ACTION_COLUMNS = ['actions', 'action']
@@ -119,6 +120,7 @@ function useDataTableProObserver(
 export function useWatchDom(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
+  customActionRef: Ref<any | null>,
   tableEmitter: Emitter
 ) {
   watchEffect(() => {
@@ -126,6 +128,7 @@ export function useWatchDom(
       // vxeGrid dom挂载完毕事件
       tableEmitter.emit('table-pro:dom-ready', {
         table: unref(tableRef.value)?.$el,
+        action: unref(customActionRef.value)?.actionRef,
       })
 
       // if (unref(tablePropsRef).api) {

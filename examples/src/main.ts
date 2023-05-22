@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { toLogin } from '@tav-ui/components/table-pro/src/data'
 import { router } from './router'
 // import {
 //   TaBasicArrow,
@@ -41,4 +42,14 @@ app.use(TaVXETable)
 // app.use(TaFileView)
 // app.use(TaForm)
 // app.use(TaContainerCollapse)
-app.mount('#app')
+if ('3002' === location.port) {
+  app.mount('#app')
+} else {
+  Promise.race([toLogin(), new Promise((_, r) => setTimeout(r.bind(null, 'timeout'), 3000))])
+    .catch((e) => {
+      console.error(e)
+    })
+    .finally(() => {
+      app.mount('#app')
+    })
+}

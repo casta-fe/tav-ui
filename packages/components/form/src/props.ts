@@ -43,6 +43,7 @@ export const formProps = {
   autoSubmitOnEnter: propTypes.bool.def(false),
   submitOnReset: propTypes.bool,
   size: propTypes.oneOf(['default', 'small', 'large']).def('default'),
+  editable: propTypes.bool.def(false),
   // 禁用表单
   disabled: propTypes.bool,
   emptySpan: {

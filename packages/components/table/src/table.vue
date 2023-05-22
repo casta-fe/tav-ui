@@ -21,7 +21,12 @@
       class="ta-basic-table-operations flex flex-wrap align-center justify-between"
     >
       <template v-if="useFilter.isVisible">
-        <Filter ref="filterElRef" :forms="getFilterProps" :table-action="tableAction" />
+        <Filter
+          ref="filterElRef"
+          :forms="getFilterProps"
+          :table-action="tableAction"
+          :filter-exclusion="filterExclusion"
+        />
       </template>
       <template v-else>
         <div class="ta-basic-table-custom-title">
@@ -61,13 +66,24 @@
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { computed, defineComponent, inject, provide, ref, toRaw, unref, watchEffect } from 'vue'
-import { omit } from 'lodash-es'
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  ref,
+  toRaw,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue'
+import { isEqual, omit } from 'lodash-es'
 import { Table } from 'ant-design-vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { warn } from '@tav-ui/utils/log'
 import { isFunction, isNullOrUnDef } from '@tav-ui/utils/is'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
 import CustomAction from './components/CustomAction.vue'
@@ -140,6 +156,9 @@ export default defineComponent({
     const formRef = ref(null)
     const actionRef = ref(null)
     const innerPropsRef = ref<Partial<BasicTableProps>>()
+    const cacheActionWidths = ref<Record<string, any>>({})
+    const columnsForAction = ref<any[]>([])
+    const maxWidthForAction = ref<number>(0)
 
     const prefixCls = 'ta-basic-table'
     const [registerForm, formActions] = useForm()
@@ -366,6 +385,14 @@ export default defineComponent({
     const { getFormProps, replaceFormSlotKey, getFormSlotKeys, handleSearchInfoChange } =
       useTableForm(getProps, slots, fetch, getLoading)
 
+    const _getColumns = computed(() => {
+      let columns = unref(getViewColumns)
+      if (unref(columnsForAction) && unref(columnsForAction).length > 0) {
+        columns = unref(columnsForAction)
+      }
+      return columns
+    })
+
     const getBindValues = computed(() => {
       const dataSource = unref(getDataSourceRef)
       let propsData: Recordable = {
@@ -381,7 +408,8 @@ export default defineComponent({
         tableLayout: 'fixed',
         rowSelection: unref(getRowSelectionRef),
         rowKey: unref(getRowKey),
-        columns: toRaw(unref(getViewColumns)),
+        // columns: toRaw(unref(getViewColumns)),
+        columns: unref(_getColumns),
         pagination: toRaw(unref(getPaginationInfo)),
         dataSource,
         footer: unref(getFooterProps),
@@ -423,6 +451,40 @@ export default defineComponent({
       //@ts-ignore
       return filterElRef.value.pannelFormRef
     }
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
+    }
+    watch(
+      () => [unref(getViewColumns), cacheActionWidths],
+      ([newCol], [preCol]) => {
+        const _tableData = unref(tableData)
+        const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+        if (!isEqual(newCol, preCol) || (_tableData && maxWidth > unref(maxWidthForAction))) {
+          const columns = unref(getViewColumns).map((column) => {
+            if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
+              column.width = Math.ceil(maxWidth)
+              column.minWidth = Math.ceil(maxWidth)
+              return column
+            }
+            return column
+          })
+          columnsForAction.value = columns
+          maxWidthForAction.value = maxWidth
+        }
+      },
+      {
+        deep: true,
+      }
+    )
+
+    onUnmountedOrOnDeactivated(() => {
+      cacheActionWidths.value = {}
+      columnsForAction.value = []
+      maxWidthForAction.value = 0
+    })
     const tableAction: TableActionType = {
       reload,
       getSelectRows,
@@ -461,7 +523,7 @@ export default defineComponent({
         return unref(getBindValues).size as SizeType
       },
     }
-    createTableContext({ ...tableAction, wrapRef, getBindValues })
+    createTableContext({ ...tableAction, wrapRef, getBindValues, setCacheActionWidths })
 
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
     watchEffect(() => {

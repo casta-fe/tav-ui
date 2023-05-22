@@ -31,6 +31,7 @@ function autoAddChoosenElement(
 
   if (!isColumnsHasCheckbox && checkboxConfig.enabled) {
     columns.unshift({
+      field: 'checkboxField',
       type: 'checkbox',
       fixed: 'left',
       slots: {
@@ -66,6 +67,7 @@ function autoAddChoosenElement(
 
   if (!isColumnsHasRadio && radioConfig.enabled) {
     columns.unshift({
+      field: 'radioField',
       type: 'radio',
       fixed: 'left',
     })
@@ -101,14 +103,23 @@ function setColumnMinWidth(columns: TableProColumn[]) {
  * @returns
  */
 function wrapperColumnSlot(columns: TableProColumn[]) {
+  const handleWrapper = (column: TableProColumn) => {
+    const { customRender } = column
+    column['cellRender'] = {
+      name: ComponentCellName,
+      options: [{ customRender }],
+    }
+    return column
+  }
   return columns.length
     ? columns.map((column: TableProColumn) => {
-        const { customRender } = column
-        column['cellRender'] = {
-          name: ComponentCellName,
-          options: [{ customRender }],
+        const { children } = column
+        if (children && children.length) {
+          column.children = children.map((_column: TableProColumn) => handleWrapper(_column))
+          return column
+        } else {
+          return handleWrapper(column)
         }
-        return column
       })
     : columns
 }

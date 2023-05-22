@@ -23,6 +23,8 @@ import { TaMemberSelect } from '@tav-ui/components/member-select'
 import { TaStrengthMeter as StrengthMeter } from '@tav-ui/components/strength-meter'
 import IconPicker from '@tav-ui/components/icon-picker'
 import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
+import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
+import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
 import ApiSelect from './components/ApiSelect.vue'
 import FormTitle from './components/FormTitle.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
@@ -30,10 +32,10 @@ import RadioButtonGroup from './components/RadioButtonGroup.vue'
 import SearchableApiSelect from './components/SearchableApiSelect'
 import TagSelect from './components/TagSelect'
 import YearPicker from './components/YearPicker'
+import DateInterval from './components/DateInterval.vue'
 import type { Component } from 'vue'
 // import { BasicUpload } from "/@/components/Upload";
 import type { ComponentType, EditableComponentType } from './types/index'
-
 const componentMap = new Map<ComponentType, Component>()
 
 componentMap.set('Input', Input)
@@ -71,12 +73,15 @@ componentMap.set('InputCountDown', CountdownInput)
 // componentMap.set('Upload', BasicUpload);
 componentMap.set('Divider', Divider)
 componentMap.set('FormTitle', FormTitle)
+componentMap.set('DateInterval', DateInterval)
 
 // customadd
 add('MemberSelect', TaMemberSelect)
 add('SearchableApiSelect', SearchableApiSelect)
 add('TagSelect', TagSelect)
 add('YearPicker', YearPicker)
+add('InputNumberRange', TaInputNumberRange)
+add('CascadeProSelect', TaCascadeProSelect)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)
@@ -101,6 +106,8 @@ const editableComponentSelectTypeMap = new Map<EditableComponentType, Component>
 // onchange/clickoutside 隐藏表单项
 editableComponentSelectTypeMap.set('Select', Select)
 editableComponentSelectTypeMap.set('MemberSelect', TaMemberSelect)
+editableComponentSelectTypeMap.set('SearchableApiSelect', SearchableApiSelect)
+
 const editableComponentCheckTypeMap = new Map<EditableComponentType, Component>()
 // onchange/clickoutside 隐藏表单项
 editableComponentCheckTypeMap.set('Switch', Switch)
@@ -122,7 +129,11 @@ editableComponentTimeTypeMap.set('MonthPicker', DatePicker.MonthPicker)
 editableComponentTimeTypeMap.set('RangePicker', DatePicker.RangePicker)
 editableComponentTimeTypeMap.set('WeekPicker', DatePicker.WeekPicker)
 editableComponentTimeTypeMap.set('TimePicker', TimePicker)
+
 const editableComponentOtherTypeMap = new Map<EditableComponentType, Component>()
+editableComponentOtherTypeMap.set('InputNumberRange', TaInputNumberRange)
+editableComponentOtherTypeMap.set('CascadeProSelect', TaCascadeProSelect)
+editableComponentOtherTypeMap.set('SearchableApiSelect', SearchableApiSelect)
 
 /* EditableTableForm 支持组件列表 ----------  end  ---------- */
 

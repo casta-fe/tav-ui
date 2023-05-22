@@ -116,6 +116,9 @@ export type ComponentType =
   | 'SearchableApiSelect'
   | 'TagSelect'
   | 'YearPicker'
+  | 'InputNumberRange'
+  | 'CascadeProSelect'
+  | 'DateInterval'
 
 export type EditableComponentType =
   | 'Input'
@@ -152,3 +155,6 @@ export type EditableComponentType =
   | 'SearchableApiSelect'
   | 'TagSelect'
   | 'YearPicker'
+  | 'InputNumberRange'
+  | 'CascadeProSelect'
+  | 'DateInterval'

@@ -83,6 +83,7 @@
                         <firstLetter :value="v" />{{ v.name }}
                         <template v-if="v.status === 0"> (已冻结) </template>
                       </Checkbox>
+                      <p class="org-name">{{ v.organizationName }}</p>
                     </li>
                   </ul>
                 </CheckboxGroup>
@@ -98,6 +99,7 @@
                         <firstLetter :value="v" />{{ v.name }}
                         <template v-if="v.status === 0"> (已冻结) </template>
                       </Radio>
+                      <p class="org-name">{{ v.organizationName }}</p>
                     </li>
                   </ul>
                 </RadioGroup>
@@ -115,7 +117,7 @@
       <div class="select-bd">
         <span v-for="item in tagList" :key="item.id" class="tag">
           {{ item.name }}
-          <CloseCircleOutlined @click="removeTag" />
+          <CloseCircleOutlined @click="removeTag(item.id)" />
         </span>
       </div>
     </div>
@@ -127,10 +129,11 @@ import { computed, defineComponent, inject, onMounted, reactive, toRefs, watch }
 import { Checkbox, CheckboxGroup, Radio, RadioGroup, TabPane, Tabs, Tree } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
 import { CloseCircleOutlined } from '@ant-design/icons-vue'
+import { isEqual, sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import FirstLetter from './first-letter.vue'
-import type { LetterItemList, letterItem } from '../types'
+import type { letterItem } from '../types'
 
 const { createConfirm } = useMessage()
 export default defineComponent({
@@ -198,24 +201,25 @@ export default defineComponent({
     }
     // 获取全部用户首字母，并将其分类
     const userDataRest = () => {
-      const letterObj = {}
+      const list: letterItem[] = []
+
       userList.value.forEach((v: any) => {
         const chart = pinyin.getCamelChars(v.name)[0]
         const upperChart = chart.toUpperCase()
-        if (!letterObj[upperChart]) {
-          letterObj[upperChart] = [v]
+        // 如果列表中有了就往他的list中插入
+        Reflect.has(v, 'disabled') ||
+          (v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0)
+        const item = list.find((v) => v.key === upperChart)
+        if (item) {
+          item.list.push(v)
         } else {
-          letterObj[upperChart].push(v)
+          list.push({
+            key: upperChart,
+            list: [v],
+          })
         }
       })
-      state.letterList = Object.keys(letterObj)
-        .sort()
-        .map((v) => {
-          return {
-            key: v,
-            list: letterObj[v] as LetterItemList[],
-          }
-        })
+      state.letterList = sortBy(list, 'key')
       if (state.letterList.length > 0) {
         state.activeLetter = state.letterList[0].key
       }
@@ -232,13 +236,6 @@ export default defineComponent({
         setTimeout(() => {
           state.listenScroll = true
         }, 500)
-        // let { start } = useScrollTo({
-        //   el: userListRef,
-        //   to: dom?.offsetTop - 60 || 0,
-        //   duration: 50,
-        //   direction: "scrollTop"
-        // });
-        // start();
       }
     }
 
@@ -254,7 +251,7 @@ export default defineComponent({
           .map((v: any) => {
             v.isLeaf = true
             // 忽略列表中的用户需要禁止选中
-            // v.disabled = propsData.value.ignoreUser.includes(v.id);
+            v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0
             return v
           })
         treeNode.dataRef.children = deWeightThree([...oldData, ...children])
@@ -274,7 +271,8 @@ export default defineComponent({
     const openFirstOrg = () => {
       // 默认打开第一个节点，并获取他下面的用户
       const firstOrg = orgList.value[0]
-      if (firstOrg) {
+      // 如果当前打开的就是第一个就不执行后面的
+      if (firstOrg && !isEqual(state.orgExpandedKeys, [firstOrg.id])) {
         state.orgExpandedKeys = [firstOrg.id]
         const children = userList.value
           .filter((v: any) => v.organizationId == firstOrg.id)
@@ -315,8 +313,8 @@ export default defineComponent({
     }
     watch(
       () => orgList.value,
-      (newData) => {
-        if (newData.length > 0) {
+      (a) => {
+        if (a.length > 0) {
           openFirstOrg()
         }
       }
@@ -334,7 +332,7 @@ export default defineComponent({
       }
     )
     watch(
-      () => userList.value,
+      () => userList.value.length,
       () => {
         pageInit()
       }

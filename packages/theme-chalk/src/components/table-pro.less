@@ -369,22 +369,117 @@
   }
   // custom action
   &-custom-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: @gap16;
 
     .ta-basic-button {
       height: 32px !important;
       line-height: 32px !important;
-      margin-left: @gap16;
+      margin-left: @gap12;
       & + & {
-        margin-right: @gap16;
+        margin-right: @gap12;
       }
     }
 
-    &-btn.refresh {
-      min-width: auto;
-      color: @primary-color;
-      border-color: @primary-color;
+    &-settings {
+      position: relative;
+      margin-left: @gap12;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 1px;
+        height: 50%;
+        transform: translateY(-50%);
+        background-color: #e8eaec;
+      }
+
+      .refresh,
+      .column {
+        min-width: auto !important;
+        padding: 0 !important;
+        margin: 0 0 0 @gap12 !important;
+        color: @primary-color !important;
+        // border-color: @primary-color;
+        &:hover,
+        &:active,
+        &:focus {
+          background: transparent;
+        }
+      }
+
+      .column-popver {
+        min-width: 300px;
+
+        &-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          &-btns {
+            .ant-btn {
+              min-width: auto !important;
+            }
+          }
+        }
+
+        .ant-popover-inner-content {
+          padding-left: 0;
+          padding-right: 0;
+          height: 300px;
+
+          .scroll-back-top {
+            position: fixed;
+            bottom: 40px;
+            right: 15px;
+            padding: 6px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            pointer-events: all;
+            border-radius: 50%;
+            z-index: 2;
+            background-color: #ccc;
+            user-select: none;
+          }
+        }
+
+        .ant-checkbox-group {
+          width: 100%;
+        }
+
+        .ant-tree > li {
+          padding-right: 60px;
+
+          &:first-child {
+            padding-top: 0;
+          }
+        }
+
+        &-tree-option {
+          // position: relative;
+
+          .ant-tree-title {
+            position: relative;
+
+            & > span.anticon {
+              position: absolute;
+              top: 50%;
+              right: -70%;
+              transform: translateY(-50%);
+            }
+          }
+        }
+      }
     }
+  }
+
+  &-operations-statistical{
+    width: 100%;
   }
 
   // operations
@@ -457,7 +552,7 @@
       padding-left: 0 !important;
       padding-right: 0 !important;
       font-size: 12px;
-
+      border: none;
       min-width: auto;
 
       span {
@@ -473,7 +568,7 @@
 
     .ant-divider,
     .ant-divider-vertical {
-      margin: 0 10px;
+      margin: 0 8px;
     }
 
     .icon-more {

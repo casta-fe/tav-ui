@@ -2,9 +2,17 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { isFunction } from '@tav-ui/utils'
+import { useFileFormatter } from './hooks'
 import type { Ref } from 'vue'
 import type { FormActionType } from '../../form'
-import type { BasicPropsType, FileItemType, Fn, ProvideDataType, Recordable } from './types'
+import type {
+  BasicPropsType,
+  ChangeType,
+  FileItemType,
+  Fn,
+  ProvideDataType,
+  Recordable,
+} from './types'
 
 // global variable beginRegion
 const { createMessage } = useMessage()
@@ -33,6 +41,9 @@ class Handler {
       () => this._props.uploadResponse,
       (v) => {
         this.uploadResponse = v
+
+        if (!this._props.showTable) return
+        this.throwResponse(v!, 'init')
       },
       {
         immediate: true,
@@ -51,9 +62,9 @@ class Handler {
   private _refFileList: File[] = []
   private _uploadResponse: FileItemType[] = []
   private _refFileListPushEnd = false
-  private _relationBusinessId = false
-  private _useFakeDelete = false
+  private _immediate = false
   private _controlInOuter = false
+  private _fileFormatter = useFileFormatter()
 
   /**
    * newest typeCode
@@ -64,6 +75,8 @@ class Handler {
   public currentTypeCodeIsHyperlink = ref(false)
   private _paramsName: string | undefined
   private _paramsAddress: string | undefined
+  private _apis: ProvideDataType = {}
+  public currentUpload = null as null | Promise<any> | FileItemType[]
 
   //// getter begin
   get dataSource() {
@@ -81,38 +94,54 @@ class Handler {
   }
 
   get apis() {
-    const apis = {
-      queryFile: (this._provide.value?.queryFile ??
-        this._props.queryFile) as ProvideDataType['queryFile'],
-      removeFile: (this._provide.value?.removeFile ??
-        this._props.removeFile) as ProvideDataType['removeFile'],
-      uploadFile: (this._provide.value?.uploadFile ??
-        this._props.uploadFile) as ProvideDataType['uploadFile'],
-      updateFile: (this._provide.value?.updateFile ??
-        this._props.updateFile) as ProvideDataType['updateFile'],
-      uploadHyperlink: (this._provide.value?.uploadHyperlink ??
-        this._props.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
-      download: (this._provide.value?.download ??
-        this._props.download) as ProvideDataType['download'],
-      updateFileNameAndAddress: (this._provide.value?.updateFileNameAndAddress ??
-        this._props.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
-    }
-
-    if (
-      !(
-        isFunction(apis.queryFile) &&
-        // 当使用 useFakeDelete 时不需要传removeFile
-        (this._useFakeDelete ? true : isFunction(apis.removeFile)) &&
+    if (!this._apis.queryFile) {
+      const apis: Partial<ProvideDataType> = {
+        queryFile: (this._props.queryFile ??
+          this._provide.value?.queryFile) as ProvideDataType['queryFile'],
+        removeFile: (this._props.removeFile ??
+          this._provide.value?.removeFile) as ProvideDataType['removeFile'],
+        uploadFile: (this._props.uploadFile ??
+          this._provide.value?.uploadFile) as ProvideDataType['uploadFile'],
+        updateFile: (this._props.updateFile ??
+          this._provide.value?.updateFile) as ProvideDataType['updateFile'],
+        uploadHyperlink: (this._props.uploadHyperlink ??
+          this._provide.value?.uploadHyperlink) as ProvideDataType['uploadHyperlink'],
+        download: (this._props.download ??
+          this._provide.value?.download) as ProvideDataType['download'],
+        updateFileNameAndAddress: (this._props.updateFileNameAndAddress ??
+          this._provide.value
+            ?.updateFileNameAndAddress) as ProvideDataType['updateFileNameAndAddress'],
+        updateFileType: (this._props.updateFileType ??
+          this._provide.value?.updateFileType) as ProvideDataType['updateFileType'],
+        queryFileType: (this._props.queryFileType ??
+          this._provide.value?.queryFileType) as ProvideDataType['queryFileType'],
+      }
+      for (const key in apis) {
+        this._apis[key] =
+          apis[key] && isFunction(apis[key])
+            ? (...args: any[]) => apis[key](...args, this._props.AppId)
+            : undefined
+      }
+      if (
+        !(isFunction(apis.queryFile) &&
+        // 当使用 false === immediate 时不需要传removeFile
+        (this._immediate ? isFunction(apis.removeFile) : true) &&
         isFunction(apis.uploadFile) &&
-        isFunction(apis.uploadHyperlink)
-      )
-    ) {
-      throw new Error(
-        '<queryFile, uploadFile, uploadHyperlink,typeCodeRecord, [removeFile]> 必须在TaUpload挂载前从app.vue注入, 或者传入同名props'
-      )
+        (this._props.showUploadHyperlinkBtn === 'unset' ||
+          false === this._props.showUploadHyperlinkBtn)
+          ? true
+          : isFunction(apis.uploadHyperlink))
+      ) {
+        throw new Error(
+          '<queryFile, uploadFile, uploadHyperlink,typeCodeRecord, [removeFile]> 必须在TaUpload挂载前从app.vue注入, 或者传入同名props'
+        )
+      }
     }
+    return this._apis
+  }
 
-    return apis
+  get getFileFormatter() {
+    return this._fileFormatter
   }
 
   //// getter end
@@ -153,20 +182,9 @@ class Handler {
 
     // 动态控制上传同时携带businessId
     watch(
-      () => this._props.relationBusinessId,
+      () => this._props.immediate,
       (val) => {
-        this._relationBusinessId = val
-      },
-      {
-        immediate: true,
-      }
-    )
-
-    // 掉接口删除?
-    watch(
-      () => this._props.useFakeDelete,
-      (val) => {
-        this._useFakeDelete = val
+        this._immediate = val
       },
       {
         immediate: true,
@@ -193,34 +211,71 @@ class Handler {
       }
     )
 
+    // 用 businessKey 控制回填与清空
+    watch(
+      () => this._props.params.businessKey,
+      (val) => {
+        this._params.businessKey = val
+        // 外部控制 -> 不请求,不自动清除
+        if (this._controlInOuter) return
+        if (undefined === val) {
+          this.clearResponse()
+          return
+        }
+        // 传入文件列表 -> 不请求
+        if (this._props.uploadResponse) return
+        this.backfill()
+      },
+      {
+        immediate: true,
+      }
+    )
+
     // 一些请求的参数
     watch(
-      () => [
-        this._props.params.id,
-        this._props.params.endTime,
-        this._props.params.typeCode,
-        this._props.params.startTime,
-        this._props.params.businessKey,
-        this._props.params.searchValue,
-      ],
+      () =>
+        [
+          this._props.params.id,
+          this._props.params.endTime,
+          this._props.params.typeCode,
+          this._props.params.startTime,
+          this._props.params.moduleCode,
+          this._props.params.businessKey,
+          this._props.params.searchValue,
+        ] as const,
       (
-        [idVal, endTimeVal, typeCodeVal, startTimeVal, businessKeyVal, searchValueVal],
-        [idPrev, endTimePrev, typeCodePrev, startTimePrev, businessKeyPrev, searchValuePrev]
+        [
+          idVal,
+          endTimeVal,
+          typeCodeVal,
+          startTimeVal,
+          moduleCodeVal,
+          businessKeyVal,
+          searchValueVal,
+        ],
+        [
+          idPrev,
+          endTimePrev,
+          typeCodePrev,
+          startTimePrev,
+          moduleCodePrev,
+          businessKeyPrev,
+          searchValuePrev,
+        ]
       ) => {
-        idVal !== idPrev && (this._params.id = idVal as number | undefined)
+        idVal !== idPrev && (this._params.id = idVal)
 
-        endTimeVal !== endTimePrev && (this._params.endTime = endTimeVal as string | undefined)
+        endTimeVal !== endTimePrev && (this._params.endTime = endTimeVal)
 
-        typeCodeVal !== typeCodePrev && (this._typeCode.value = typeCodeVal as string | undefined)
+        typeCodeVal !== typeCodePrev && (this._typeCode.value = typeCodeVal)
 
-        startTimeVal !== startTimePrev &&
-          (this._params.startTime = startTimeVal as string | undefined)
+        startTimeVal !== startTimePrev && (this._params.startTime = startTimeVal)
 
-        businessKeyVal !== businessKeyPrev &&
-          (this._params.businessKey = businessKeyVal as string | undefined)
+        businessKeyVal !== businessKeyPrev && (this._params.businessKey = businessKeyVal)
 
-        searchValueVal !== searchValuePrev &&
-          (this._params.searchValue = searchValueVal as string | undefined)
+        moduleCodeVal !== moduleCodePrev && (this._params.moduleCode = moduleCodeVal)
+
+        searchValueVal !== searchValuePrev && (this._params.searchValue = searchValueVal)
       }
     )
   }
@@ -233,6 +288,27 @@ class Handler {
    * 提取文件真实id
    */
   private getFileActualIds = () => this._uploadResponse.map((el) => el.actualId)
+
+  /**
+   * 返回编辑后的文件列表数据格式
+   * ```js
+   * [
+   *    {
+   *        moduleCode: "...",
+   *        versionList: [
+   *          file1,...
+   *        ]
+   *    }
+   * ]
+   * ```
+   * @returns
+   */
+  getResult = () => this._fileFormatter.formatToApi(this._uploadResponse)
+
+  getPropsOrProvide<T extends keyof BasicPropsType>(propName: T): BasicPropsType[T] {
+    // @ts-ignore
+    return this._props[propName] ?? this._provide.value?.[propName]
+  }
 
   /**
    * 将列表数据填到表格上
@@ -252,30 +328,33 @@ class Handler {
    * 请求文件列表成功和上传成功时触发
    * @param newRecord 新上传成功的文件
    */
-  private throwResponse(newRecord: Recordable[]): void {
-    this.emit('update:fileActualIds', this.getFileActualIds())
-    this.emit('change', newRecord, this._uploadResponse)
+  private throwResponse(newRecord: Recordable[], type: ChangeType): void {
+    this.emit(
+      'update:fileActualIds',
+      !this._props.immediate && (this._params.businessId || this._params.businessKey)
+        ? this.getResult()
+        : this.getFileActualIds()
+    )
+    this.emit('change', newRecord, this._uploadResponse, type)
   }
   /**
    * 更新一条数据
    * @param {Recordable} record
    * @memberof Handler
    **/
-  updateItem = (record: FileItemType) => {
-    const { actualId } = record
-    // this._uploadResponse.length = 0
-    const index = this._uploadResponse.findIndex((el) => el.actualId === actualId)
-    this._uploadResponse.splice(index, 1, record)
+  updateItem = (record: FileItemType, oldFileActualIds: string) => {
+    // const { actualId } = record
+    const index = this._uploadResponse.findIndex((el) => el.actualId === oldFileActualIds)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const oldRecord = this._uploadResponse.splice(index, 1, record)[0]
+    // this._fileFormatter.upadteVersion(oldRecord)
+    this._fileFormatter.upadteVersion(record)
     this.fillDataSource()
-    console.log(this._uploadResponse)
+    this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
   }
   /**
    * 删除一条数据
-   * @param record 需要删除的文件信息
-  /**
-   *
-   *
-   * @param {Recordable} record
+   * @param {Recordable} record 需要删除的文件信息
    * @memberof Handler
    */
   deleteItem = (record: Recordable) => {
@@ -286,13 +365,12 @@ class Handler {
     const spliceData = () => {
       this._uploadResponse.splice(index, 1)
       this.fillDataSource()
-      this.throwResponse([newRecord])
+      this.throwResponse([newRecord], 'delete')
     }
 
     this._isLoading.value = true
-    if (this._useFakeDelete) {
+    if (!this._immediate) {
       spliceData()
-      // 用户体验拉满😏
       setTimeout(() => {
         this._isLoading.value = false
       }, 300)
@@ -328,8 +406,9 @@ class Handler {
         },
       }).finally(() => (this._isLoading.value = false))
       this._uploadResponse.push(...response.data.result)
+      this._fileFormatter.formatToApi(this._uploadResponse)
 
-      this.throwResponse(response.data.result)
+      this.throwResponse(response.data.result, 'init')
     }
     this.fillDataSource()
   }
@@ -338,16 +417,16 @@ class Handler {
    * 在弹窗关闭时调用
    */
   clearResponse(): void {
-    this._uploadResponse = []
-    this.fillDataSource()
-    this._typeCode.value = this._props.params.typeCode
+    this.uploadResponse = []
+    this._props.params.typeCode && (this._typeCode.value = this._props.params.typeCode)
+    this.throwResponse([], 'delete')
   }
 
   /**
    * 多个文件依次push到文件列表(变量)
    * @param file 一个文件
    */
-  beforeUpload = (file: File) => {
+  antBeforeUpload = (file: File) => {
     this._refFileList.push(file)
   }
 
@@ -366,6 +445,14 @@ class Handler {
       this.resetFileList()
       return
     }
+    if (
+      this._props.maxCount &&
+      this._uploadResponse.length + this._refFileList.length > this._props.maxCount
+    ) {
+      createMessage.warn(`文件最多上传 ${this._props.maxCount}个`)
+      this.resetFileList()
+      return
+    }
     this._refFileListPushEnd = true
     this.realUpload()
   }
@@ -379,10 +466,15 @@ class Handler {
   /**
    * 真正的上传请求
    */
-  private realUpload = () => {
+  private realUpload = async () => {
     // 非更新时候 typecode必传
     if (!this._typeCode.value) {
       createMessage.warn('请选择文件类型')
+      this.resetFileList()
+      return
+    }
+    const { beforeUpload } = this._props
+    if (beforeUpload && !(await beforeUpload(this._refFileList))) {
       this.resetFileList()
       return
     }
@@ -395,18 +487,22 @@ class Handler {
     this._params.typeCode = this._typeCode.value
     // 将参数塞到formData里面去
     for (const k in this._params) {
-      if (!this._relationBusinessId && ['businessId', 'businessKey'].includes(k)) continue
+      if (!this._immediate && ['businessId', 'businessKey'].includes(k)) continue
       if (!this._params[k]) continue
       this._params[k] != undefined && formData.append(k, this._params[k])
     }
     // fillFormData end
 
     this._isLoading.value = true
-    this.apis.uploadFile!(formData)
+    this.currentUpload = this.apis.uploadFile!(formData)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(...r)
-        this.throwResponse(r)
+        this.throwResponse(r, 'upload')
         nextTick(() => this.fillDataSource())
+        r.forEach((el) => {
+          this._fileFormatter.upadteVersion(el)
+        })
+
         createMessage.success('上传成功')
       })
       .catch(() => {
@@ -436,7 +532,7 @@ class Handler {
       name: this._paramsName,
       address: this._paramsAddress,
     }
-    if (!this._relationBusinessId) {
+    if (!this._immediate) {
       Reflect.deleteProperty(payload, 'businessId')
       Reflect.deleteProperty(payload, 'businessKey')
     }
@@ -444,7 +540,8 @@ class Handler {
     this.apis.uploadHyperlink!(payload)
       .then(({ data: r }) => {
         this._uploadResponse.unshift(r)
-        this.throwResponse([r])
+        this._fileFormatter.upadteVersion(r)
+        this.throwResponse([r], 'upload')
         nextTick(() => this.fillDataSource())
         createMessage.success('上传成功')
       })

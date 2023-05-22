@@ -17,6 +17,10 @@ export const fileViewProps = {
     type: Function,
     default: null,
   },
+  AppId: {
+    type: [String, Number],
+    default: '',
+  },
 }
 
 export type FileViewProps = ExtractPropTypes<typeof fileViewProps>

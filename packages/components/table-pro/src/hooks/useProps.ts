@@ -136,7 +136,7 @@ function handleExtenApi(
 
       try {
         if (beforeApi && isFunction(beforeApi)) {
-          params = (await beforeApi(option)) || option
+          params = (await beforeApi(params)) || params
         }
 
         if (api && isFunction(api)) {
@@ -202,9 +202,9 @@ function handleRowLineHeight(tablePropsRef: ComputedRef<TableProProps>) {
   // 因为 vxetable 虚拟滚动的要求是关闭动态行高（即行高度不允许被内容撑开）
   if (fixedLineHeight) {
     // 所以当 showTooltip 为 true 时，要设置固定行高度（即设置 showOverflow）
-    unref(tablePropsRef).showOverflow = 'title'
-    unref(tablePropsRef).showHeaderOverflow = 'title'
-    unref(tablePropsRef).showFooterOverflow = 'title'
+    unref(tablePropsRef).showOverflow = 'ellipsis'
+    unref(tablePropsRef).showHeaderOverflow = 'ellipsis'
+    unref(tablePropsRef).showFooterOverflow = 'ellipsis'
     unref(tablePropsRef).scrollX.enabled = true
     unref(tablePropsRef).scrollY.enabled = true
   } else {

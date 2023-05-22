@@ -1,115 +1,62 @@
 <template>
-  <div class="table_wrapper">
-    <TaTablePro
-      ref="tableRef"
-      :columns="state.columns"
-      :api="handleApi"
-      :filter-form-config="state.filterFormConfig"
-      :custom-action-config="{
-        export: {
-          handleAction: handleExport,
-        },
-      }"
-    />
+  <div class="wrapper">
+    <TaForm :schemas="state.schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
   </div>
 </template>
 
 <script lang="ts">
-import { TaTablePro } from '@tav-ui/components/table-pro'
-// eslint-disable-next-line import/order
-import { defineComponent, reactive, ref, unref } from 'vue'
-// eslint-disable-next-line import/order
-import type { ITableProInstance, TableProApi } from '@tav-ui/components/table-pro'
+import { defineComponent, reactive } from 'vue'
+import { TaForm } from '@tav-ui/components'
 
 export default defineComponent({
   name: 'Test',
-  components: { TaTablePro },
+  components: { TaForm },
   setup() {
     const state = reactive<Record<string, any>>({
-      filterFormConfig: {
-        inputForm: {
-          field: 'projectName',
-          componentProps: {
-            placeholder: '请输入项目名称',
-          },
-        },
-        pannelForm: [
-          {
-            field: 'customerName',
-            component: 'Input',
-            label: '客户名称',
-            colProps: {
-              span: 12,
-              offset: 12,
-              pull: 12,
-            },
-            componentProps: {
-              placeholder: '请输入客户名称',
-              allowClear: true,
-            },
-          },
-          {
-            field: 'priorityList',
-            component: 'CheckboxGroup',
-            label: '项目优先级',
-            colProps: {
-              span: 24,
-            },
-            componentProps: {
-              placeholder: '请选择项目优先级',
-              options: [{ label: 'P1', value: 1 }],
-            },
-          },
-        ],
-      },
-      columns: [
+      schemas: [
         {
-          field: 'customerName',
-          title: '客户名称',
-          // width: 200,
-        },
-      ],
-      dataList: [
-        {
-          customerName: 'hahahahaha',
+          field: 'contractType',
+          component: 'Select',
+          label: '合同类型',
+          required: true,
+          defaultValue: [1], // 默认为合同
+          componentProps: ({ formActionType, formModel }) => {
+            return {
+              options: [
+                { label: '合同', value: 1 },
+                { label: '补充协议', value: 2 },
+              ],
+              placeholder: '请选择文件类型',
+              mode: 'multiple',
+              onChange: async (val: any) => {
+                // if (formModel.contractDeptRangeList?.length !== 0) {
+                //   formActionType?.validate(['contractDeptRangeList'])
+                // }
+                if (val !== 1) {
+                  await formActionType?.setFieldsValue({ projectRelIdList: undefined }, false)
+                } else if (val !== 2) {
+                  await formActionType?.setFieldsValue({ contractRelId: undefined }, false)
+                }
+              },
+            }
+          },
         },
       ],
     })
 
-    const tableRef = ref<ITableProInstance | null>(null)
-
-    const handleApi: TableProApi<Promise<any>> = async ({ filter, model }) => {
-      console.log(filter)
-      const API = async () => {
-        return {
-          code: '0000',
-          msg: null,
-          success: true,
-          data: {
-            result: [
-              {
-                customerName: 'hahahahaha',
-              },
-            ],
-          },
-        }
-      }
-      const data = await API()
-      return data
+    const handleSubmit = () => {
+      console.log(1)
     }
-
-    const handleExport = () => {
-      unref(tableRef)?.instance?.reload({})
-    }
-    return { state, tableRef, handleApi, handleExport }
+    return { state, handleSubmit }
   },
 })
 </script>
 
 <style lang="less" scoprd>
-.table_wrapper {
+.wrapper {
   width: 100%;
   height: 800px;
   padding: 16px;
+  background-color: #ccc;
 }
 </style>

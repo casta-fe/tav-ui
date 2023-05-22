@@ -18,6 +18,19 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    // Listening on all local IPs
+    host: true,
+    port: 3002,
+    // Load proxy configuration from .env
+    proxy: {
+      '/api': {
+        target: 'http://192.168.10.29:8080/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   optimizeDeps: {
     include: ['vue', '@vue/shared'],
   },

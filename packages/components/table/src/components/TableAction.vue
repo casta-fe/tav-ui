@@ -1,21 +1,7 @@
 <template>
-  <div :class="[prefixCls, getAlign]" @click="onCellClick">
+  <div :id="id" :class="[prefixCls, getAlign]" @click="onCellClick">
     <template v-for="(action, index) in getActions" :key="`${index}-${action.label}`">
-      <Tooltip v-if="action.tooltip" v-bind="getTooltip(action.tooltip)">
-        <ModalButton v-bind="action">
-          <Icon v-if="action.icon" :icon="action.icon" :class="{ 'mr-1': !!action.label }" />
-          <template v-if="action.label">{{ action.label }}</template>
-        </ModalButton>
-        <!-- <PopConfirmButton v-bind="action">
-          <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
-          <template v-if="action.label">{{ action.label }}</template>
-        </PopConfirmButton> -->
-      </Tooltip>
-      <!-- <PopConfirmButton v-else v-bind="action">
-        <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
-        <template v-if="action.label">{{ action.label }}</template>
-      </PopConfirmButton> -->
-      <ModalButton v-else v-bind="action">
+      <ModalButton v-bind="action">
         <Icon v-if="action.icon" :icon="action.icon" :class="{ 'mr-1': !!action.label }" />
         <template v-if="action.label">{{ action.label }}</template>
       </ModalButton>
@@ -42,7 +28,7 @@
 <script lang="ts">
 import { computed, defineComponent, toRaw, unref } from 'vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
-import { Button, Divider, Tooltip } from 'ant-design-vue'
+import { Button, Divider } from 'ant-design-vue'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
@@ -50,8 +36,13 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { usePermission } from "@tav-ui/hooks/web/usePermission";
 import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
-import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER } from '../const'
+import { ACTION_COLUMN_FLAG, MAX_ACTION_NUMBER, buildTableActionId } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
+import {
+  isOverMaxWidth,
+  limitActionLabel,
+  useColumnActionAutoWidth,
+} from '../hooks/useColumnAutoWidth'
 import type { TooltipProps } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
 import type { TableActionType } from '../types/table'
@@ -64,7 +55,6 @@ export default defineComponent({
     Divider,
     Dropdown,
     MoreOutlined,
-    Tooltip,
     ModalButton,
     AButton: Button,
   },
@@ -83,10 +73,11 @@ export default defineComponent({
   },
   setup(props) {
     const prefixCls = 'ta-basic-table-action'
-    let table: Partial<TableActionType> = {}
+    let table: any = {}
     if (!props.outside) {
       table = useTableContext()
     }
+    const id = buildTableActionId()
 
     function isIfShow(action: ActionItem): boolean {
       const ifShow = action.ifShow
@@ -119,11 +110,32 @@ export default defineComponent({
       // actions = actions.filter((action) => isIfShow(action))
       const actions = getPermissonFilterActions.value
       if (actions.length <= MAX_ACTION_NUMBER) {
-        return actions
+        restActions = []
+        const isOverMax = isOverMaxWidth(actions)
+        if (isOverMax) {
+          const handleActions = limitActionLabel(actions)
+          const total = useColumnActionAutoWidth(unref(getPermissonFilterActions))
+          table.setCacheActionWidths!({ key: id, value: total })
+          return handleActions
+        } else {
+          const total = useColumnActionAutoWidth(unref(getPermissonFilterActions), false)
+          table.setCacheActionWidths!({ key: id, value: total })
+          return actions
+        }
       } else {
         const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
         restActions = actions.slice(MAX_ACTION_NUMBER - 1)
-        return _actions
+        const isOverMax = isOverMaxWidth(actions)
+        if (isOverMax) {
+          const handleActions = limitActionLabel(_actions)
+          const total = useColumnActionAutoWidth(unref(getPermissonFilterActions))
+          table.setCacheActionWidths!({ key: id, value: total })
+          return handleActions
+        } else {
+          const total = useColumnActionAutoWidth(unref(getPermissonFilterActions), false)
+          table.setCacheActionWidths!({ key: id, value: total })
+          return _actions
+        }
       }
     })
     const DropdownActions = computed(() => {
@@ -205,6 +217,7 @@ export default defineComponent({
     }
 
     return {
+      id,
       prefixCls,
       getActions,
       getDropdownList,

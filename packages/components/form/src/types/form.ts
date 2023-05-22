@@ -124,6 +124,7 @@ export interface FormProps {
   submitFunc?: () => Promise<void>
   transformDateFunc?: (date: any) => string
   colon?: boolean
+  editable?: boolean
 }
 export interface FormSchema {
   // Field name
@@ -201,6 +202,7 @@ export interface FormSchema {
 
   // Custom slot, in from-item
   slot?: string
+  editSlot?: string
 
   // Custom slot, similar to renderColContent
   colSlot?: string

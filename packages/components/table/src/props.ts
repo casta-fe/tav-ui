@@ -111,6 +111,10 @@ export const tableProps = {
     type: Object as PropType<FilterForms>,
     default: null,
   },
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
   // 新增、删除、导入、导出、刷新按钮配置
   useAdd: {
     type: Object as PropType<useAction>,
@@ -243,6 +247,11 @@ export const tableProps = {
         refresh: undefined,
       }
     },
+  },
+  // onActivated 时恢复之前滚动位置
+  keepScrollTop: {
+    type: Boolean,
+    default: true,
   },
 }
 

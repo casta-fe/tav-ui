@@ -1,4 +1,4 @@
-import { defineComponent, nextTick, reactive, unref } from 'vue'
+import { defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
@@ -8,12 +8,13 @@ import {
   CamelCaseToCls,
   ComponentCustomActionName,
   SELECT_COMPONENTS,
-} from '../const'
-import { useTableContext } from '../hooks/useTableContext'
-import type { PropType, Ref, Slots } from 'vue'
+} from '../../const'
+import { useTableContext } from '../../hooks/useTableContext'
+import Settings from './settings'
 import type { FormSchema } from '@tav-ui/components/form'
-import type { TableProColumnInfo, TableProInstance } from '../types'
-import type { TableProCustomActionConfig, TreeDataItem } from '../typings'
+import type { ComputedRef, PropType, Ref, Slots } from 'vue'
+import type { TableProColumnInfo, TableProInstance } from '../../types'
+import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 const ExportModalFormSchemas: FormSchema[] = [
@@ -113,7 +114,10 @@ const props = {
 export default defineComponent({
   name: ComponentCustomActionName,
   props,
-  setup(props) {
+  emits: ['triggerStatistical'],
+  setup(props, { emit, expose }) {
+    const settingsRef = ref<CustomActionSetting | null>(null)
+    const actionRef = ref<ComputedRef | null>(null)
     const { tableEmitter } = useTableContext()
 
     const state = reactive({
@@ -124,12 +128,32 @@ export default defineComponent({
       state.filter = filter
     })
 
+    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
+
+    // 统计按钮配置
+    const handleStatistical = (e: Event) => {
+      emit('triggerStatistical')
+      if (isObject(props.config?.statistical) && props.config?.statistical.handleAction)
+        props.config?.statistical.handleAction(e)
+    }
+    const statisticalButton = () =>
+      props.config?.statistical ? (
+        <Button
+          class={`${ComponentPrefixCls}-btn statistical`}
+          type="primary"
+          preIcon={'ant-design:calculator-outlined'}
+          onClick={handleStatistical}
+          permission={getPermission(props.config?.statistical)}
+        >
+          统计
+        </Button>
+      ) : null
+
+    // 新增按钮配置
     const handleAdd = (e: Event) => {
       if (isObject(props.config?.add) && props.config?.add.handleAction)
         props.config?.add.handleAction(e)
     }
-
-    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
     const addButton = () =>
       props.config?.add ? (
@@ -144,6 +168,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 删除按钮配置
     const handleDelete = (e: Event) => {
       if (isObject(props.config?.delete) && props.config?.delete.handleAction)
         props.config?.delete.handleAction(e)
@@ -162,6 +187,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 导入按钮配置
     const handleImport = (e: Event) => {
       if (isObject(props.config?.import) && props.config?.import.handleAction)
         props.config?.import.handleAction(e)
@@ -380,6 +406,7 @@ export default defineComponent({
         </Button>
       ) : null
 
+    // 刷新按钮配置
     const handleRefresh = (e: Event) => {
       if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
         props.config?.refresh.handleAction(e)
@@ -388,33 +415,32 @@ export default defineComponent({
       unref(props.tableRef)?.commitProxy('query')
     }
 
-    const refreshButton = () =>
-      props.config?.refresh ? (
-        <Button
-          class={`${ComponentPrefixCls}-btn refresh`}
-          type="default"
-          preIcon={'ant-design:redo-outlined'}
-          onClick={handleRefresh}
-          permission={getPermission(props.config?.refresh)}
-        />
-      ) : null
+    expose({
+      addRef: null,
+      deleteRef: null,
+      importRef: null,
+      exportRef: null,
+      settingsRef,
+      actionRef,
+    })
 
     return () => {
-      return (
-        <>
-          {props.config?.enabled ? (
-            <div class={ComponentPrefixCls}>
-              {addButton()}
-              {deleteButton()}
-              {props.tableSlots?.customAction?.()}
-              {importButton()}
-              {exportButton()}
-              {refreshButton()}
-            </div>
-          ) : null}
-          {exportModal()}
-        </>
-      )
+      return props.config?.enabled ? (
+        <div class={ComponentPrefixCls} ref={actionRef}>
+          {statisticalButton()}
+          {addButton()}
+          {deleteButton()}
+          {props.tableSlots?.customAction?.()}
+          {importButton()}
+          {exportButton()}
+          <Settings
+            ref={settingsRef}
+            config={props.config}
+            tableRef={props.tableRef}
+            tableSlots={props.tableSlots}
+          />
+        </div>
+      ) : null
     }
   },
 })

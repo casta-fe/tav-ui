@@ -37,6 +37,23 @@
       align-items: center;
     }
 
+    @keyframes iname {
+      0% {
+        border-color: #eaeaea;
+      }
+      50% {
+        border-color: #ed6f6f;
+      }
+      100% {
+        border-color: #eaeaea;
+      }
+    }
+
+    .warn-class {
+      animation: iname 0.8s linear;
+      animation-iteration-count: 3;
+    }
+
     margin-left: 16px;
 
     .file {
@@ -54,9 +71,16 @@
   }
 
   &-preview-table {
-    height: 300px;
     // border: 1px solid red;
     margin-top: 16px;
+
+    &.default-height {
+      height: 300px;
+    }
+
+    &.no-margin-top {
+      margin-top: 0;
+    }
 
     .ant-table-wrapper {
       padding: 0 !important;

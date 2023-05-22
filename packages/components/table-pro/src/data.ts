@@ -1,3 +1,5 @@
+import { JSEncrypt } from 'jsencrypt'
+
 // data: [
 //   {
 //     id: 10001,
@@ -72,6 +74,51 @@
 //     address: 'ShenzhenShenzhenShenzhenShenzhen',
 //   },
 // ]
+const ai = '10002'
+let at = ''
+let rd = ''
+const Encryptor = new JSEncrypt()
+
+export async function toLogin() {
+  const phone = '13999999999'
+  // const phone = '13629273499'
+  const password = '123456'
+
+  await fetch('/api/TIANTA-SYSTEM/test.html', {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-store',
+    credentials: 'include',
+  })
+
+  const {
+    data: { keyId, publicKey },
+  } = await fetch('/api/TIANTA-SYSTEM/login/getKey', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ai,
+    },
+  }).then((r) => r.json())
+
+  Encryptor.setPublicKey(publicKey)
+
+  await fetch('/api/TIANTA-SYSTEM/login/enter', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ai,
+    },
+    body: JSON.stringify({
+      keyId,
+      phone,
+      password: Encryptor.encrypt(password) as string,
+    }),
+  }).then((r) => {
+    at = r.headers.get('at')!
+    rd = r.headers.get('rd')!
+  })
+}
 
 const address = [
   'Shenzhen',
@@ -131,9 +178,9 @@ export async function __post(url = '', data = {}) {
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
-      ai: '10002',
-      at: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNjYzODE1NTAyLCJpYXQiOjE2NjEyMjM1MDJ9.yB3CK9pRhSn3h6VKjBETyN68IhZMftsSQ_IVbLe335U',
-      rd: '19662441760fd1f827c2b4c5fbb4de407ed5c88b5',
+      ai,
+      at,
+      rd,
     },
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -157,14 +204,44 @@ export async function API__POE_INVEST_ALL(
   url = '/api/STARLIGHT-POE-WEB/invesinstitution/listPager'
 ) {
   // 复制 ai at rd cookie：guid
-  await __get('/api/TIANTA-SYSTEM/test.html')
+  // await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }
 
 export async function API__POE_CUSTOM_ALL(data, url = '/api/STARLIGHT-POE-WEB/customer/listPager') {
   // 复制 ai at rd cookie：guid
-  await __get('/api/TIANTA-SYSTEM/test.html')
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+export async function API__SYSTEM_USER_TABLE_INFO_GET(
+  data,
+  url = '/api/TIANTA-SYSTEM/sys/customTableFiled/load'
+) {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+export async function API__SYSTEM_USER_TABLE_INFO_SET(
+  data,
+  url = '/api/TIANTA-SYSTEM/sys/customTableFiled/save'
+) {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+export async function API__CENTER_INDUSTRY_TAG(
+  data,
+  url = '/api/STARLIGHT-CENTRE-WEB/baseinfo/industry/list/incl_tags'
+) {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }

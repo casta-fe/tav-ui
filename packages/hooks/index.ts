@@ -2,7 +2,7 @@ export * from './component/useFormItem'
 export * from './component/usePageContext'
 
 export * from './core/onMountedOrActivated'
-export * from './core/onMountedOrOnDeactivated'
+export * from './core/onUnmountedOrOnDeactivated'
 export * from './core/useAttrs'
 export * from './core/useContext'
 export * from './core/useLockFn'

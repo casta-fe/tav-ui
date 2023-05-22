@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   nextTick,
   onBeforeUnmount,
@@ -72,8 +73,17 @@ export default defineComponent({
   setup(props, { emit, attrs }) {
     const selfRef = ref<{ $el: HTMLElement }>()
     const menuContainerRef = ref<HTMLElement>()
+    /**
+     * 此处使用, useForm 传入的 `editable` 读取不到,
+     *
+     * 只能再 `schema` 中传入 `editable`
+     **/
+    const computedEditable = computed(
+      () => (attrs as any).formValues.schema?.editable ?? attrs.editable
+    )
 
     const state = reactive({
+      showAllClear: false,
       page: 1,
       value: '',
       isEnter: false,
@@ -85,6 +95,13 @@ export default defineComponent({
     })
 
     const emitValue = (empty = false) => {
+      if (unref(computedEditable)) {
+        if (empty) return
+        // eslint-disable-next-line no-sparse-arrays
+        emit('change', [, { label: state.value }])
+        return
+      }
+
       if (empty) {
         emit('change', undefined)
         return
@@ -108,10 +125,18 @@ export default defineComponent({
       }
     }
 
+    function clickOther() {
+      if (state.isEnter) return
+
+      state.visible = false
+    }
+
     const onMouseLeave = () => {
+      state.showAllClear = false
       state.isEnter = false
     }
     const onMouseEnter = () => {
+      state.showAllClear = true
       state.isEnter = true
     }
 
@@ -147,10 +172,13 @@ export default defineComponent({
           state.options = []
         })
         .finally(() => (state.loading = false))
+      if (unref(computedEditable)) {
+        state.visible = true
+      }
     }
 
     const throttleFetchCurrentKeyword = useThrottleFn(() => {
-      state.value.length >= 2 &&
+      state.value?.length >= 2 &&
         fetchCurrentKeyword().then(() => {
           if (!state.visible) {
             state.visible = true
@@ -163,6 +191,8 @@ export default defineComponent({
       selfRef.value!.$el.addEventListener('mouseleave', onMouseLeave)
       // 移除鼠标又移入后, 取消关闭
       selfRef.value!.$el.addEventListener('mouseenter', onMouseEnter)
+      // 点击非此组件其他位置, 关闭弹窗
+      window.addEventListener('click', clickOther)
 
       watch(
         () => props.value,
@@ -177,7 +207,7 @@ export default defineComponent({
           // 下面为天眼查
           state.value = v[1].label
           if (!unref(props.canInputRef)) {
-            if (!attrs.disabled && !state.options.length && state.value.length >= 2)
+            if (!attrs.disabled && !state.options.length && state.value?.length >= 2)
               fetchCurrentKeyword()
           }
         },
@@ -192,7 +222,7 @@ export default defineComponent({
           // 必须走天眼查 -> 可自定义输入
           if (v) {
             emitValue()
-            if (state.value.length < 2) {
+            if (state.value?.length < 2) {
               return
             }
           } else {
@@ -212,6 +242,8 @@ export default defineComponent({
     onBeforeUnmount(() => {
       selfRef.value!.$el.removeEventListener('mouseleave', onMouseLeave)
       selfRef.value!.$el.removeEventListener('mouseenter', onMouseEnter)
+
+      window.removeEventListener('click', clickOther)
     })
 
     return () => (
@@ -232,7 +264,7 @@ export default defineComponent({
               emitValue()
               return
             }
-            if (state.options.length === 0 && state.value.length >= 2) {
+            if (state.options.length === 0 && state.value?.length >= 2) {
               fetchCurrentKeyword().then(() => {
                 if (!state.visible) {
                   state.visible = true
@@ -240,7 +272,7 @@ export default defineComponent({
               })
             }
           }}
-          allowClear
+          allowClear={state.showAllClear}
           value={state.value}
           onUpdate:value={(v) => (state.value = v)}
           // enterButton

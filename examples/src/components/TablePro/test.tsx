@@ -1,8 +1,9 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import { TaTablePro } from '@tav-ui/components/table-pro'
+import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
 import Button from '@tav-ui/components/button'
+import { TaModal, useModal } from '@tav-ui/components/modal'
 import { columns2, filterForm2 } from './data'
 import type {
   ITableProInstance,
@@ -15,6 +16,8 @@ import type {
 export default defineComponent({
   setup() {
     const router = useRouter()
+    const id = ref<string>('')
+    id.value = getTableProId(router, 'play')!
     const state = reactive({
       filterFormConfig: {},
       columns: [] as any[],
@@ -41,9 +44,11 @@ export default defineComponent({
     //   ...filterForm2(),
     // })
 
+    const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
+
     onMounted(async () => {
       state.filterFormConfig = await filterForm2()
-      state.columns = await columns2({ handleRoutePush })
+      state.columns = await columns2({ handleRoutePush, OpenModal })
     })
 
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({
@@ -59,6 +64,12 @@ export default defineComponent({
         },
       },
       refresh: true,
+      statistical: {
+        handleAction: (params) => {
+          console.log(params)
+        },
+      },
+      column: true,
     })
 
     // const handleProxyConfig = (): TableProProxyConfig => ({
@@ -171,7 +182,7 @@ export default defineComponent({
         <div
           style={{
             width: '80%',
-            height: '968px',
+            height: '100%',
             backgroundColor: '#f6f8ff',
             margin: '0 auto',
             overflow: 'auto',
@@ -180,6 +191,7 @@ export default defineComponent({
           <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
             {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
             <TaTablePro
+              id={unref(id)}
               ref={tableRef}
               // pagerConfig={{ enabled: false }}
               rowConfig={{ keyField: 'id' }}
@@ -189,6 +201,7 @@ export default defineComponent({
               loading={loading.value}
               // filterFormConfig={handleFilterFormConfig()}
               filterFormConfig={state.filterFormConfig}
+              // filterFormConfig={{ enabled: false }}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
               api={handleApi}
@@ -209,7 +222,7 @@ export default defineComponent({
               // pagerConfig={{ enabled: false }}
             >
               {{
-                // filterForm: () => (<div>123</div>),
+                // filterForm: () => <div>123</div>,
                 customAction: () => (
                   <>
                     <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
@@ -225,10 +238,22 @@ export default defineComponent({
                 //   {customerType}
                 //   </>
                 // )
+                statisticalList: () => (
+                  <div style={{ height: '200px', backgroundColor: '#ccc' }}>12</div>
+                ),
               }}
             </TaTablePro>
           </div>
           {/* </div> */}
+          <TaModal
+            height={500}
+            title="新增"
+            width={864}
+            destroy-on-close={true}
+            onRegister={ModalRegister}
+          >
+            123
+          </TaModal>
         </div>
       )
     }

@@ -1,7 +1,7 @@
 import { createVNode } from 'vue'
-import { TaTableTags } from '../../../../dist/tav-ui/es/index.mjs'
-import type { FormProps, FormSchema } from '../../../../dist/types/components/src/table'
-import type { BasicColumn } from '../../../../dist/types/components/src/table/types/table'
+import { TaTableTags } from '@tav-ui/components/table-tags'
+import type { FormProps, FormSchema } from '@tav-ui/components/form'
+import type { BasicColumn } from '@tav-ui/components/table'
 export function getBasicColumns(): BasicColumn[] {
   return [
     {
@@ -43,6 +43,13 @@ export function getBasicColumns(): BasicColumn[] {
       width: 150,
       sorter: true,
       dataIndex: 'endTime',
+      format: 'date|YYYY-MM-DD',
+    },
+    {
+      width: 150,
+      title: '操作',
+      dataIndex: 'action',
+      slots: { customRender: 'action' },
     },
   ]
 }

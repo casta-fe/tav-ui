@@ -12,13 +12,13 @@ function showCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { cell, column, _rowIndex, _columnIndex } = params
+  const { cell, column, _rowIndex, _columnIndex, rowid } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}`
+    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}-${rowid}`
     const el = (cell as HTMLElement).querySelector(`.${ContentPrefixCls}`) as HTMLElement
     let title = ''
     let isCellOverflow = false
@@ -38,7 +38,7 @@ function showCellTooltip(
     } else {
       instance = instances.get(id)
     }
-    isCellOverflow && instance?.showTooltip()
+    isCellOverflow && instance?.showTooltip(el)
   }
 }
 
@@ -47,13 +47,13 @@ function hideCellTooltip(
   tablePropsRef: ComputedRef<TableProProps>,
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
-  const { column, _rowIndex, _columnIndex } = params
+  const { column, _rowIndex, _columnIndex, rowid } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
   const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
-    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}`
+    const id = `${tableId}:row_${_rowIndex}-${_columnIndex}-${rowid}`
     const instance = instances.get(id)
     instance?.hideTooltip()
   }
@@ -90,9 +90,9 @@ export function useCellHover(tablePropsRef: ComputedRef<TableProProps>, emit: Ta
     if (!params) return
     showCellTooltip(instances, tablePropsRef, params)
     emit('CellMouseenter', params)
-    setTimeout(() => {
-      deleteTitle(params.cell)
-    }, 150)
+    // setTimeout(() => {
+    //   deleteTitle(params.cell)
+    // }, 150)
   }
 
   const onCellMouseleave = (params?: VxeGridDefines.CellMouseleaveEventParams) => {

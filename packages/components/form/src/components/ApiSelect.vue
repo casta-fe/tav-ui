@@ -117,7 +117,6 @@ export default defineComponent({
     // 发请求
     async function fetch() {
       const api = props.api
-      console.log(2333)
       if (!api || !isFunction(api)) return
       selectState.list.length = 0
       try {

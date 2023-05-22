@@ -78,46 +78,131 @@
     </TaButton>
     <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
-  <TaContainerCollapse title="useForm示例">
-    <TaForm @register="register" @submit="handleSubmit" />
-  </TaContainerCollapse>
+  <!-- <TaContainerCollapse title="useForm示例"> -->
+  <TaForm ref="testForm" :schemas="schemas" :label-width="140" editable @submit="handleSubmit">
+    <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
+  </TaForm>
+  <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { type Ref, computed, defineComponent, h, ref } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { API__CENTER_INDUSTRY_TAG } from '@tav-ui/components/table-pro/src/data'
+import tag from '@tav-ui/components/time-line/src/components/tag'
+import { useGlobalConfig } from '@tav-ui/hooks'
 import type { FormSchema } from '@tav-ui/components/form'
-const aaaaa = [
-  { label: '用户1', value: 99 },
-  { label: '用户2', value: 100 },
-  { label: '用户3', value: 3 },
-]
-const schemas: FormSchema[] = [
+const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+const allUserList = computed(() => globalConfig.value?.TaMemberSelect?.allUserList || [])
+const schemas = ref([
+  // {
+  //   field: 'field00',
+  //   component: 'CascadeProSelect',
+  //   label: '字段00',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     title: '标签选择',
+  //     // placeholder: '请选择标签',
+  //     searchPlaceholder: '请输入标签名称',
+  //     fields: ['tag', 'subTag'],
+  //     optionsKeyConfig: {
+  //       name: 'name',
+  //       id: 'id',
+  //       children: 'children',
+  //       pid: 'pid',
+  //     },
+  //     // hotKeyWords: ['光子', '半导体', '人工智能', '先进制造', '军工'],
+  //     hotKeyWords: [
+  //       '484d222e04a711ec8b830242ac110002',
+  //       '484e1d9a04a711ec8b830242ac110002',
+  //       '4853fcb504a711ec8b830242ac110002',
+  //       '4852cb2b04a711ec8b830242ac110002',
+  //       '48562dce04a711ec8b830242ac110002',
+  //     ],
+  //     generatePannelItem(option, level) {
+  //       if (level === 0) {
+  //         return h('div', null, option.name)
+  //       } else {
+  //         return h('div', null, [
+  //           h('span', null, option.name),
+  //           h('span', null, option.type === 1 ? '技术' : '应用'),
+  //         ])
+  //       }
+  //     },
+  //     maxTagCount: 999,
+  //     // generateSearchItem(option) {
+  //     //   return h('div', null, option.namePath)
+  //     // },
+  //   },
+  // },
+  // {
+  //   field: 'field0',
+  //   component: 'CascadeProSelect',
+  //   label: '字段0',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     // placeholder: '自定义placeholder',
+  //     // firstLetterTitle: 'aaa',
+  //     // generateHotList: (options) => {
+  //     //   return options
+  //     // }
+  //   },
+  // },
+  // {
+  //   field: 'field0',
+  //   component: 'MemberSelect',
+  //   label: '字段1',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     multiple: true,
+  //     onChange(ids, list) {
+  //       console.log(ids, list)
+  //     },
+  //     options: allUserList,
+  //     placeholder: '自定义placeholder',
+  //   },
+  // },
   {
     field: 'field1',
-    component: 'MemberSelect',
-    label: '字段1',
-    colProps: {
-      span: 8,
-    },
-    editable: true,
+    component: 'InputNumber',
+    label: '普通InputNumber',
+    colProps: { span: 8 },
+    editSlot: 'testSlot',
+    componentProps: {},
+  },
+  {
+    field: 'field2',
+    component: 'InputNumber',
+    label: 'formatter',
+    colProps: { span: 8 },
     componentProps: {
-      placeholder: '自定义placeholder',
-      options: [],
+      precision: 8,
+      formatter: (value) => `${value}%`,
     },
   },
   // {
-  //   field: 'field2',
-  //   component: 'Input',
-  //   label: '字段2',
-  //   colProps: {
-  //     span: 8,
+  //   field: 'field22',
+  //   component: 'InputNumber',
+  //   label: '字段slot1',
+  //   colProps: { span: 8 },
+  //   defaultValue: 15,
+  //   editslot: 'testSlot',
+  //   componentProps: {
+  //     precision: 4,
+  //     placeholder: '请输入0-100的整数',
   //   },
   // },
   // {
   //   field: 'field3',
-  //   component: 'DatePicker',
+  //   component: 'Input',
   //   label: '字段3',
+
   //   colProps: {
   //     span: 8,
   //   },
@@ -126,6 +211,7 @@ const schemas: FormSchema[] = [
   //   field: 'fieldTime',
   //   component: 'RangePicker',
   //   label: '时间字段',
+
   //   colProps: {
   //     span: 8,
   //   },
@@ -137,7 +223,12 @@ const schemas: FormSchema[] = [
   //   colProps: {
   //     span: 8,
   //   },
+  //   defaultValue: '1',
   //   componentProps: {
+  //     disabled: true,
+  //     onEditableFormItemVisible(v) {
+  //       console.log(v)
+  //     },
   //     options: [
   //       {
   //         label: '选项1',
@@ -238,8 +329,7 @@ const schemas: FormSchema[] = [
   //     },
   //   },
   // },
-]
-
+])
 export default defineComponent({
   components: { TaButton, TaForm },
   setup() {
@@ -247,15 +337,61 @@ export default defineComponent({
 
     const [register, { setProps, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 120,
-      schemas,
       actionColOptions: {
         span: 24,
       },
+      // disabled: true,
+      showActionButtonGroup: true,
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
-    setTimeout(() => {
-      setFieldsValue({ field1: 99 })
-    }, 500)
+
+    API__CENTER_INDUSTRY_TAG({}).then((res) => {
+      const { success, data } = res
+      if (success && data) {
+        const result = data.map((option) => {
+          const { applicationTags, technicalTags } = option
+          const atags = applicationTags.map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            pid: tag.industryId,
+            type: tag.type,
+          }))
+          const ttags = technicalTags.map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            pid: tag.industryId,
+            type: tag.type,
+          }))
+
+          return {
+            id: option.id,
+            name: option.name,
+            children: [...atags, ...ttags],
+          }
+        })
+
+        // updateSchema({
+        //   field: 'field00',
+        //   componentProps: {
+        //     options: result,
+        //   },
+        // })
+
+        // setFieldsValue({
+        //   field00: [
+        //     {
+        //       city: '130100',
+        //       cityName: '石家庄市',
+        //       district: '130104',
+        //       districtName: '桥西区',
+        //       province: '130000',
+        //       provinceName: '河北省',
+        //     },
+        //   ],
+        // })
+      }
+    })
+
     async function handleLoad() {
       const promiseFn = function () {
         return new Promise((resolve) => {
@@ -283,13 +419,33 @@ export default defineComponent({
         field9,
       })
     }
-
+    const testForm = ref()
+    setTimeout(() => {
+      schemas.value = [
+        ...schemas.value,
+        {
+          field: 'field3',
+          component: 'Input',
+          label: '新增的',
+          colProps: {
+            span: 8,
+          },
+        },
+      ]
+      setTimeout(() => {
+        // testForm.value.setFieldsValue({
+        //   field1: 99,
+        //   field2: 66.1256,
+        //   field3: 99,
+        // })
+      }, 500)
+    }, 2000)
     return {
-      register,
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
+      testForm,
       setProps,
       handleLoad,
     }

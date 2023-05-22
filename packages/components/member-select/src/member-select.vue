@@ -20,6 +20,7 @@
           :get-popup-container="getPopupContainer"
           @dropdown-visible-change="userVisibleChange"
           @change="emitHandle"
+          @blur="handleBlur"
         >
           <template #option="item">
             <div class="ta-member-select-option-item">
@@ -77,7 +78,10 @@
       :get-container="getPopupContainer"
       @register="registerMemberModal"
     >
-      <MemberModal :selected-data="selectedData" @change="modalChange" />
+      <div style="min-height: 360px">
+        <MemberModal v-if="modalIsShow" :selected-data="selectedData" @change="modalChange" />
+      </div>
+
       <template #footer>
         <Button type="primary" @click="modalSubmit">确定</Button>
         <Button @click="hideModal">取消</Button>
@@ -87,14 +91,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, provide, reactive, ref, toRefs, watch } from 'vue'
+import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
+import { isEqual } from 'lodash-es'
 import Button from '@tav-ui/components/button'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
-import { memberSelectProps } from './types'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import MemberModal from './components/member-modal.vue'
+import { memberSelectProps } from './types'
 import type { Ref } from 'vue'
 import type { Options, UserItem } from './types'
 export default defineComponent({
@@ -114,6 +119,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const userSelectRef = ref<any>(null)
     const state = reactive({
+      modalIsShow: false,
+      count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
       userList: [] as UserItem[],
@@ -163,7 +170,7 @@ export default defineComponent({
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
-        getUserList()
+        getUserList(2)
         if (!props.noOrg) {
           getOrgList()
         }
@@ -178,15 +185,39 @@ export default defineComponent({
       setBaseData()
       //  延迟出现，防止互相覆盖
       openMemberModal()
+      state.modalIsShow = true
     }
     const hideModal = () => {
-      closeMemberModal()
+      state.modalIsShow = false
+      nextTick(() => {
+        closeMemberModal()
+      })
+    }
+
+    // 这块是用户基础数据，更多选项里面也有用
+    const getTrueUserList = (userList = [] as UserItem[]) => {
+      const list: UserItem[] = userList
+        .map((v) => {
+          // 非ignoreUser的用户才能选择
+          const obj = { ...v }
+          if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
+            obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
+          }
+          return obj
+        })
+        .sort((a) => {
+          return a.disabled ? 1 : -1
+        })
+      return list
     }
     // 获取用户数据
-
-    const getUserList = () => {
+    const getUserList = (type) => {
+      // console.log(type)
+      state.count++
+      // console.log(type, state.count)
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
+        // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
       } else {
         userListApi({
@@ -210,15 +241,34 @@ export default defineComponent({
     // 弹窗下面的确定事件
     const modalSubmit = (): void => {
       const data = state.catchData
-      // 多选第一位为数组，单选第一位为字符串
-      state.selectedData[0] = data
-      emitHandle()
-      closeMemberModal()
+      const submit = () => {
+        // 多选第一位为数组，单选第一位为字符串
+        state.selectedData[0] = data
+        emitHandle()
+        hideModal()
+      }
+      if (props.modalSubmit) {
+        props.modalSubmit(data, submit)
+      } else {
+        submit()
+      }
     }
     const emitHandle = (): void => {
+      const userMap = allUserList.filter((v) => {
+        if (props.multiple) {
+          return state.selectedData[0].includes(v.id)
+        } else {
+          return state.selectedData[0] == v.id
+        }
+      })
       emit('update:value', state.selectedData[0])
-      emit('change', state.selectedData[0])
+      emit('change', state.selectedData[0], userMap)
     }
+
+    const handleBlur = () => {
+      emit('blur', state.selectedData[0])
+    }
+
     // 将传入的value保存为组件使用的数据
     const setBaseData = (): void => {
       if (props.multiple) {
@@ -253,19 +303,7 @@ export default defineComponent({
         }
       }
     }
-    // 这块是用户基础数据，更多选项里面也有用
-    const getTrueUserList = (userList = state.userList) => {
-      const list: UserItem[] = []
-      userList.forEach((v) => {
-        const value = v.id
-        // 非ignoreUser的用户才能选择
-        if (!props.ignoreUser.includes(value)) {
-          v.disabled = props.ignoreFrozenUser ? v.status === 0 : false
-          list.push(v)
-        }
-      })
-      return list
-    }
+
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
       setTimeout(() => {
@@ -296,15 +334,17 @@ export default defineComponent({
     )
     watch(
       () => props.ignoreUser,
-      () => {
-        getUserList()
+      (a, b) => {
+        if (!isEqual(a, b)) {
+          getUserList(4)
+        }
       }
     )
     watch(
       () => props.options,
       (data) => {
         if (data) {
-          getUserList()
+          getUserList(5)
         }
       },
       {
@@ -326,7 +366,7 @@ export default defineComponent({
         if (props.noSelect) {
           return
         }
-        getUserList()
+        getUserList(1)
       } else {
         getOrgList()
       }
@@ -344,6 +384,7 @@ export default defineComponent({
       modalChange,
       modalSubmit,
       emitHandle,
+      handleBlur,
       registerMemberModal,
     }
   },
