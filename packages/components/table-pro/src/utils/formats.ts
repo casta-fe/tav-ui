@@ -8,7 +8,7 @@ import {
 } from '@tav-ui/utils'
 import type { VxeGlobalRendererHandles } from 'vxe-table'
 
-function number({ cellValue }, format = 2) {
+function number({ cellValue }, format = 'auto') {
   return formatNumber(cellValue, format)
 }
 function date({ cellValue }, format = 'YYYY-MM-DD') {
