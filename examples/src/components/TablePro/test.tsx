@@ -62,6 +62,8 @@ export default defineComponent({
       statistical: {
         handleAction: (params) => {
           console.log(params)
+          console.log(unref(tableRef)?.instance.resetFilterInput)
+          unref(tableRef)?.instance?.resetFilterInput()
         },
       },
       column: true,

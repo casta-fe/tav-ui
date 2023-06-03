@@ -147,7 +147,16 @@ export default defineComponent({
     })
 
     // 抛出实例
-    expose({ ...toRefs(useExtendInstance(tableRef, getProps, { setLoading }, filterRef)) })
+    expose({
+      ...toRefs(
+        useExtendInstance(
+          tableRef,
+          getProps,
+          { setLoading, resetFilterInput: () => filterRef.value.resetFilterInput() },
+          filterRef
+        )
+      ),
+    })
 
     // 类名处理
     const getWrapperClass = computed(() => {
