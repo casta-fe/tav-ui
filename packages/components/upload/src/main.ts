@@ -474,7 +474,7 @@ class Handler {
       return
     }
     const { beforeUpload } = this._props
-    if (beforeUpload && !(await beforeUpload(this._refFileList))) {
+    if (beforeUpload && !(await beforeUpload(this._refFileList, this._typeCode.value))) {
       this.resetFileList()
       return
     }

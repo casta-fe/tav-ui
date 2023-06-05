@@ -146,7 +146,6 @@ export function useExtendInstance(
   }>({
     instance: null,
   })
-  console.log(filterRef)
 
   watch(
     () => tableRef.value,
