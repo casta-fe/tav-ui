@@ -25,6 +25,10 @@ export default defineComponent({
       type: [Boolean, String] as PropType<BasicPropsType['showSelect']>,
       default: 'unset',
     },
+    disabledSelect: {
+      type: [Boolean, String] as PropType<BasicPropsType['disabledSelect']>,
+      default: false,
+    },
     showTable: {
       type: Boolean as PropType<BasicPropsType['showTable']>,
       default: true,
@@ -183,6 +187,7 @@ export default defineComponent({
         moduleCode: params.value.moduleCode,
         typeCodeArray: typeCodeArray.value,
         noDefaultValue: props.noDefaultValue,
+        disabledSelect: props.disabledSelect,
         selected: handler.typeCode.value,
         typeCodeRecord: handler.typeCodeRecord,
         'onUpdate:selected': (val) => {

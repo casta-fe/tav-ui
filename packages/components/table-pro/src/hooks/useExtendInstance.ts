@@ -124,6 +124,7 @@ function createExendApis(
 /** 扩展实例 */
 type OuterExtendApis = {
   setLoading: (loading: boolean) => void
+  resetFilterInput: () => void
 }
 export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 

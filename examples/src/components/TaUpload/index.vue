@@ -16,6 +16,7 @@
           column: { field: 'ghi', title: '文件类型前的新增列' },
         },
       ]"
+      :disabled-select="true"
       :before-upload="beforeUpload"
       :cover-column-title="{ fullName: '全称' }"
       :hide-column-fields="['createTime']"
@@ -54,6 +55,7 @@ export default defineComponent({
 
     const params = reactive({
       moduleCode: 'tg_invest',
+      typeCode: 'FUND_GLR_QTZL',
       // businessId: 'id0',
     })
 

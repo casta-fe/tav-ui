@@ -37,7 +37,7 @@ const props = {
 export default defineComponent({
   name: ComponentFilterFormName,
   props,
-  setup(props) {
+  setup(props, { expose }) {
     const { tableEmitter } = useTableContext()
 
     const state = reactive({
@@ -285,6 +285,8 @@ export default defineComponent({
       },
       { immediate: true }
     )
+
+    expose({ resetFilterInput: inputFormResetFields })
 
     return () => {
       return unref(isFilterFormShow) ? (

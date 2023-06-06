@@ -149,6 +149,7 @@ type TypeSelectPropType = {
   selected?: string
   typeCodeArray?: string[]
   noDefaultValue: boolean | Ref<boolean>
+  disabledSelect?: BasicPropsType['disabledSelect']
   customOptions?: BasicPropsType['customOptions']
   typeCodeRecord?: BasicPropsType['typeCodeRecord']
   queryFileType?: ProvideDataType['queryFileType']
@@ -198,6 +199,10 @@ type BasicPropsType = {
    * 默认的select选择框
    */
   showSelect: boolean | 'unset'
+  /**
+   * 文件类型是否禁止选择
+   */
+  disabledSelect: boolean
   /**
    * 默认的文件列表
    * @default true

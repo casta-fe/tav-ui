@@ -317,7 +317,7 @@ export function formatCell(text: string, format: CellFormat, record: Recordable,
          * 数值格式化方法的格式 取默认值
          */
         if (PREFIX === 'number|' && dateFormat === '') {
-          dateFormat = undefined
+          dateFormat = 'auto'
         }
 
         if ((PREFIX !== 'number|' && !dateFormat) || text == null) {

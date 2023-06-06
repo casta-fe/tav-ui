@@ -135,6 +135,10 @@ export const TypeSelect = defineComponent({
     typeCodeArray: Array as PropType<TypeSelectPropType['typeCodeArray']>,
     selected: String as PropType<TypeSelectPropType['selected']>,
     noDefaultValue: [Boolean, Object] as PropType<TypeSelectPropType['noDefaultValue']>,
+    disabledSelect: {
+      type: Boolean as PropType<TypeSelectPropType['disabledSelect']>,
+      default: () => false,
+    },
     customOptions: Array as PropType<TypeSelectPropType['customOptions']>,
     typeCodeRecord: {
       type: Object as PropType<TypeSelectPropType['typeCodeRecord']>,
@@ -164,7 +168,7 @@ export const TypeSelect = defineComponent({
             emit('update:selected', value, option)
           }}
           placeholder="请选择文件类型"
-          disabled={localTypeCodeOptions.value.length === 1}
+          disabled={localTypeCodeOptions.value.length === 1 || props.disabledSelect}
           allowClear={localTypeCodeOptions.value.length !== 1}
           onClear={() => {
             emit('update:selected', undefined)
