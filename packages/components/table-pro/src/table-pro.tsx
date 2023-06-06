@@ -111,16 +111,16 @@ export default defineComponent({
     const getListeners = useListeners(emit)
 
     // extend props&apis
-    // const { loading, setLoading } = useLoading(getProps)
-    const { loading, setLoading } = useLoading(unref(getProps).loading)
+    const { loading, setLoading } = useLoading(getProps)
+    // const { loading, setLoading } = useLoading(unref(getProps).loading)
 
     // 手动处理单元格 tooltip
-    // const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
-    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(
-      unref(getProps).id,
-      unref(getProps).showTooltip,
-      emit
-    )
+    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
+    // const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(
+    //   unref(getProps).id,
+    //   unref(getProps).showTooltip,
+    //   emit
+    // )
 
     // 监听全局鼠标滚动取消cell tooltip
     useHideTooltips(instances)
@@ -137,13 +137,13 @@ export default defineComponent({
     }))
 
     // 数据处理
-    // useDataSource(getProps, tableRef)
-    useDataSource(
-      unref(getProps).api,
-      unref(getProps).immediate,
-      unref(getProps).pagerConfig,
-      tableRef
-    )
+    useDataSource(getProps, tableRef)
+    // useDataSource(
+    //   unref(getProps).api,
+    //   unref(getProps).immediate,
+    //   unref(getProps).pagerConfig,
+    //   tableRef
+    // )
 
     // 执行dom监听的处理
     useWatchDom(tableRef, customActionRef, tableEmitter)

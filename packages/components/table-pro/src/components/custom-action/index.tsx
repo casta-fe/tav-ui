@@ -338,6 +338,11 @@ export default defineComponent({
             fileDescription = await props.config?.export.handleDescription()
           }
 
+          let fileStyles = {}
+          if (isObject(props.config?.export) && props.config?.export.styles) {
+            fileStyles = props.config?.export.styles
+          }
+
           // console.log(data, _columns, columns)
           props.tableRef?.value?.exportData({
             filename: data.fileName,
@@ -356,6 +361,7 @@ export default defineComponent({
             exportModalClose,
             useStyle: true,
             fileDescription,
+            fileStyles,
             fileSeq: !!data.fileSeq,
           } as any)
 

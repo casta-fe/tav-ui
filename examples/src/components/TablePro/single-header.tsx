@@ -63,9 +63,9 @@ export default defineComponent({
           {
             field: 'customerName',
             title: '客户名称',
-            // cellContent: ({ row: { customerName } }) => {
-            //   return `${customerName}123`
-            // },
+            cellContent: ({ row: { customerName } }) => {
+              return `${customerName}123`
+            },
           },
           {
             field: 'customerCode',
@@ -236,11 +236,14 @@ export default defineComponent({
             title: '删除状态',
           },
         ],
+        styles: {
+          descriptionBackgroundColor: '276dff',
+        },
         handleAction: (params) => {
           console.log(params)
         },
         handleDescription: () => 'dsahdjkashjkda',
-        // handleAllApi: () => API__POE_CUSTOM_ALL_LIST({}),
+        handleAllApi: () => API__POE_CUSTOM_ALL_LIST({}),
         // handleBackendApi: async ({ filter, model }) => {
         //   console.log(filter, model)
         // },

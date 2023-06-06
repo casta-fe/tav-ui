@@ -9,15 +9,15 @@ import type { TableProGridEmit, TableProProps } from '../types'
 
 function showCellTooltip(
   instances: Map<any, any>,
-  // tablePropsRef: ComputedRef<TableProProps>,
-  tableId: TableProProps['id'],
-  showTooltip: TableProProps['showTooltip'],
+  tablePropsRef: ComputedRef<TableProProps>,
+  // tableId: TableProProps['id'],
+  // showTooltip: TableProProps['showTooltip'],
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
   const { cell, column, _rowIndex, _columnIndex, rowid } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
-  // const { showTooltip, id: tableId } = unref(tablePropsRef)
+  const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
     const id = `${tableId}:row_${_rowIndex}-${_columnIndex}-${rowid}`
@@ -46,15 +46,15 @@ function showCellTooltip(
 
 function hideCellTooltip(
   instances: Map<any, any>,
-  // tablePropsRef: ComputedRef<TableProProps>,
-  tableId: TableProProps['id'],
-  showTooltip: TableProProps['showTooltip'],
+  tablePropsRef: ComputedRef<TableProProps>,
+  // tableId: TableProProps['id'],
+  // showTooltip: TableProProps['showTooltip'],
   params: VxeGridDefines.CellMouseenterEventParams
 ) {
   const { column, _rowIndex, _columnIndex, rowid } = params
   const { params: columnParams = {} } = column
   const { showTooltip: columnShowTooltip } = columnParams
-  // const { showTooltip, id: tableId } = unref(tablePropsRef)
+  const { showTooltip, id: tableId } = unref(tablePropsRef)
   const isColumnShowTooltip = isBoolean(columnShowTooltip) ? columnShowTooltip : showTooltip
   if (isColumnShowTooltip) {
     const id = `${tableId}:row_${_rowIndex}-${_columnIndex}-${rowid}`
@@ -87,9 +87,9 @@ function deleteTitle(cellEl: HTMLElement) {
 }
 
 export function useCellHover(
-  // tablePropsRef: ComputedRef<TableProProps>,
-  id: TableProProps['id'],
-  showTooltip: TableProProps['showTooltip'],
+  tablePropsRef: ComputedRef<TableProProps>,
+  // id: TableProProps['id'],
+  // showTooltip: TableProProps['showTooltip'],
   emit: TableProGridEmit
 ) {
   const instances = new Map<string, any>()
@@ -97,8 +97,8 @@ export function useCellHover(
   const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams) => {
     // 详情可参考 vxetable body.ts triggerHeaderTooltipEvent/triggerBodyTooltipEvent/triggerFooterTooltipEvent
     if (!params) return
-    // showCellTooltip(instances, tablePropsRef, params)
-    showCellTooltip(instances, id, showTooltip, params)
+    showCellTooltip(instances, tablePropsRef, params)
+    // showCellTooltip(instances, id, showTooltip, params)
     emit('CellMouseenter', params)
     // setTimeout(() => {
     //   deleteTitle(params.cell)
@@ -109,8 +109,8 @@ export function useCellHover(
     if (!params) {
       hideCellAllTooltip(instances)
     } else {
-      // hideCellTooltip(instances, tablePropsRef, params)
-      hideCellTooltip(instances, id, showTooltip, params)
+      hideCellTooltip(instances, tablePropsRef, params)
+      // hideCellTooltip(instances, id, showTooltip, params)
       emit('CellMouseleave', params)
     }
   }

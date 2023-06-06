@@ -6,13 +6,13 @@ import type { ComputedRef, Ref } from 'vue'
 import type { TableProInstance, TableProProps } from '../types'
 
 export function useDataSource(
-  // tablePropsRef: ComputedRef<TableProProps>,
-  api: TableProProps['api'],
-  immediate: TableProProps['immediate'],
-  pagerConfig: TableProProps['pagerConfig'],
+  tablePropsRef: ComputedRef<TableProProps>,
+  // api: TableProProps['api'],
+  // immediate: TableProProps['immediate'],
+  // pagerConfig: TableProProps['pagerConfig'],
   tableRef: Ref<TableProInstance | null>
 ) {
-  // const { api, immediate, pagerConfig } = unref(tablePropsRef)
+  const { api, immediate, pagerConfig } = unref(tablePropsRef)
   const hasApi = api && isFunction(api)
   if (!hasApi) return
 

@@ -39,24 +39,24 @@ let vxetable: VXETableCore
 // }
 
 // 遵循飞书文档样式
-const defaultHeaderHeight = 26
-const defaultHeaderBackgroundColor = 'f5f6f7'
-const defaultHeaderFontSize = 11
+let defaultHeaderHeight = 26
+let defaultHeaderBackgroundColor = 'f5f6f7'
+let defaultHeaderFontSize = 11
 
-const defaultCellHeight = 24
-const defaultCellFontColor = '1f2329'
-const defaultCellFontSize = 10
-const defaultCellBorderStyle = 'thin'
-const defaultCellBorderColor = 'dee0e3'
+let defaultCellHeight = 24
+let defaultCellFontColor = '1f2329'
+let defaultCellFontSize = 10
+let defaultCellBorderStyle = 'thin'
+let defaultCellBorderColor = 'dee0e3'
 
-const defaultFooterHeight = defaultHeaderHeight
-const defaultFooterBackgroundColor = defaultHeaderBackgroundColor
-const defaultFooterFontSize = defaultHeaderFontSize
+let defaultFooterHeight = defaultHeaderHeight
+let defaultFooterBackgroundColor = defaultHeaderBackgroundColor
+let defaultFooterFontSize = defaultHeaderFontSize
 
-const defaultDescriptionHeight = 40
-const defaultDescriptionBackgroundColor = 'fff258'
-const defaultDescriptionFontSize = 14
-const defaultDescriptionAlign = 'left'
+let defaultDescriptionHeight = 40
+let defaultDescriptionBackgroundColor = 'fff258'
+let defaultDescriptionFontSize = 14
+let defaultDescriptionAlign = 'left'
 
 const { createMessage } = useMessage()
 
@@ -423,7 +423,29 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     fileSeq,
     backupColumns,
     exportModalClose,
+    fileStyles,
   } = options
+
+  defaultHeaderHeight = fileStyles.headerHeight ?? defaultHeaderHeight
+  defaultHeaderBackgroundColor = fileStyles.headerBackgroundColor ?? defaultHeaderBackgroundColor
+  defaultHeaderFontSize = fileStyles.headerFontSize ?? defaultHeaderFontSize
+
+  defaultCellHeight = fileStyles.cellHeight ?? defaultCellHeight
+  defaultCellFontColor = fileStyles.cellFontColor ?? defaultCellFontColor
+  defaultCellFontSize = fileStyles.cellFontSize ?? defaultCellFontSize
+  defaultCellBorderStyle = fileStyles.cellBorderStyle ?? defaultCellBorderStyle
+  defaultCellBorderColor = fileStyles.cellBorderColor ?? defaultCellBorderColor
+
+  defaultFooterHeight = fileStyles.footerHeight ?? defaultHeaderHeight
+  defaultFooterBackgroundColor = fileStyles.footerBackgroundColor ?? defaultHeaderBackgroundColor
+  defaultFooterFontSize = fileStyles.footerFontSize ?? defaultHeaderFontSize
+
+  defaultDescriptionHeight = fileStyles.descriptionHeight ?? defaultDescriptionHeight
+  defaultDescriptionBackgroundColor =
+    fileStyles.descriptionBackgroundColor ?? defaultDescriptionBackgroundColor
+  defaultDescriptionFontSize = fileStyles.descriptionFontSize ?? defaultDescriptionFontSize
+  defaultDescriptionAlign = fileStyles.descriptionAlign ?? defaultDescriptionAlign
+
   const showMsg = message !== false
   const mergeCells = $table.getMergeCells()
   const colList: any[] = []

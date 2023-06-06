@@ -3,15 +3,15 @@ import type { ComputedRef } from 'vue'
 import type { TableProProps } from '../types'
 
 export function useLoading(
-  // tablePropsRef: ComputedRef<TableProProps>
-  loading: TableProProps['loading']
+  tablePropsRef: ComputedRef<TableProProps>
+  // loading: ComputedRef<TableProProps['loading']>
 ) {
-  // const loadingRef = ref(unref(tablePropsRef).loading)
-  const loadingRef = ref(loading)
+  const loadingRef = ref(unref(tablePropsRef).loading)
+  // const loadingRef = ref(loading)
 
   watch(
-    // () => unref(tablePropsRef).loading,
-    () => loading,
+    () => unref(tablePropsRef).loading,
+    // () => loading,
     (_loading) => {
       loadingRef.value = _loading
     }

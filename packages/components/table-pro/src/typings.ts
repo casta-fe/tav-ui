@@ -42,6 +42,24 @@ export interface TableProCustomActionConfig {
           // columnFormat?: (...args: any[]) => any
           cellFormat?: (...args: any[]) => any
         }[]
+        /** color 相关的格式必须为 argb，即 #212121 => 212121 */
+        styles?: {
+          headerHeight?: number
+          headerBackgroundColor?: string
+          headerFontSize?: number
+          cellHeight?: number
+          cellFontColor?: string
+          cellFontSize?: number
+          cellBorderStyle?: string
+          cellBorderColor?: string
+          footerHeight?: number
+          footerBackgroundColor?: string
+          footerFontSize?: number
+          descriptionHeight?: number
+          descriptionBackgroundColor?: string
+          descriptionFontSize?: number
+          descriptionAlign?: string
+        }
         handleDescription?: (...args: any[]) => any
         /** 导出全部异步数据接口 */
         handleAllApi?: TableProApi<Promise<any>>
