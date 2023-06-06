@@ -144,6 +144,7 @@ importers:
   examples:
     specifiers:
       '@vitejs/plugin-vue': ^2.3.0
+      jsencrypt: ^3.2.1
       typescript: ^4.5.4
       vite: 2.8.3
       vite-plugin-windicss: ^1.8.4
@@ -151,6 +152,8 @@ importers:
       vue-router: ^4.0.13
       vue-tsc: 0.29.3
       windicss: ^3.5.2
+    dependencies:
+      jsencrypt: 3.3.2
     devDependencies:
       '@vitejs/plugin-vue': 2.3.3_vite@2.8.3+vue@3.2.21
       typescript: 4.7.4
@@ -1339,6 +1342,7 @@ packages:
       read-yaml-file: 2.1.0
     transitivePeerDependencies:
       - '@pnpm/logger'
+    dev: false
 
   /@pnpm/find-workspace-packages/4.0.22_@pnpm+logger@4.0.0:
     resolution: {integrity: sha512-pgEa+wMVBZvHOjq/6DC5zf/ITdmWzYwfHCl89rhHjSAE8cGxVdbTGMaUBET5TggnQ/GUi8kcK3Z5TKHrl4w1Xg==}
@@ -3592,8 +3596,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -5029,7 +5033,7 @@ packages:
     resolution: {integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw==}
     engines: {node: '>= 4.0'}
     os: [darwin]
-    deprecated: fsevents 1 will break on node v14+ and could be using insecure binaries. Upgrade to fsevents 2.
+    deprecated: The v1 package contains DANGEROUS / INSECURE binaries. Upgrade to safe fsevents v2
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -6053,6 +6057,10 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
+
+  /jsencrypt/3.3.2:
+    resolution: {integrity: sha512-arQR1R1ESGdAxY7ZheWr12wCaF2yF47v5qpB76TtV64H1pyGudk9Hvw8Y9tb/FiTIaaTRUyaSnm5T/Y53Ghm/A==}
+    dev: false
 
   /jsesc/2.5.2:
     resolution: {integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==}
@@ -8862,6 +8870,7 @@ packages:
       - rollup
       - vite
       - webpack
+    dev: false
 
   /unplugin-vue-define-options/0.6.2_vue@3.2.21:
     resolution: {integrity: sha512-0YAbugPnN57ZkUM0fygfp43Vm321vOUYy2s81O09SfCM08mSul4vMxOZxLj9VSa3NVPF/IN0FmGyTMB5exOdyQ==}
