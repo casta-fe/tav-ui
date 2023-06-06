@@ -85,9 +85,14 @@ function handleExtenApi(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  const { api, beforeApi, afterApi, exportAllApi } = unref(tablePropsRef)
+  const { api, beforeApi, afterApi, customActionConfig, apiSetting } = unref(tablePropsRef)
   const hasApi = api && isFunction(api)
-  const hasExportAllApi = exportAllApi && isFunction(exportAllApi)
+  const hasExportAllApi =
+    customActionConfig &&
+    customActionConfig.export &&
+    isObject(customActionConfig.export) &&
+    isFunction(customActionConfig.export.handleAllApi)
+  const hasApiSetting = Object.keys(apiSetting).length > 0
 
   /**  处理 vxetable proxy */
   if (hasApi) {
@@ -105,9 +110,31 @@ function handleExtenApi(
 
     // 挂载vxetable 导出全部接口
     if (hasExportAllApi) {
-      unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = () => {
+      unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = async () => {
+        let listField: string | undefined = undefined
+        if (hasApiSetting) {
+          listField = apiSetting.listField
+        }
         params.model!['viewAll'] = true
-        return Promise.resolve(exportAllApi(params))
+        // 郭明说不分页接口返回的就是data数组这里自动包装
+        const allApiResult = await (customActionConfig.export as any).handleAllApi(params)
+        let data: any[] = []
+        if (allApiResult.success) {
+          data = allApiResult.data
+        }
+        let result = {}
+        if (listField) {
+          result = {
+            data: {
+              [listField]: data,
+            },
+          }
+        } else {
+          result = {
+            data,
+          }
+        }
+        return result
       }
     }
 
@@ -188,9 +215,9 @@ function handleExtendProps(
   emit: TableProGridEmit
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
-  const handleExtenAfterApiResult = handleExtenAfterApi(handleExtendProxyConfigResult, tableRef)
-  const handleExtenApiResult = handleExtenApi(handleExtenAfterApiResult, tableRef, emit)
-  return handleExtenApiResult
+  const handleExtendAfterApiResult = handleExtenAfterApi(handleExtendProxyConfigResult, tableRef)
+  const handleExtendApiResult = handleExtenApi(handleExtendAfterApiResult, tableRef, emit)
+  return handleExtendApiResult
 }
 
 /**

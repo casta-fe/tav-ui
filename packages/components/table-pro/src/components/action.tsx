@@ -65,7 +65,7 @@ export default defineComponent({
   name: ComponentActionName,
   props,
   setup(props, { slots }) {
-    let { tableRef, setCacheActionWidths } = useTableContext()
+    let { tableRef, setCacheActionWidths /*, tableEmitter*/ } = useTableContext()
     if (!props.outside) tableRef = ref(null)
     const actionEl = ref(null)
     const id = buildTableActionId()
@@ -112,11 +112,11 @@ export default defineComponent({
           if (isOverMax) {
             const handleActions = limitActionLabel(actions)
             const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths!({ key: id, value: total })
+            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
             return handleActions
           } else {
             const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths!({ key: id, value: total })
+            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
             return actions
           }
         } else {
@@ -126,11 +126,11 @@ export default defineComponent({
           if (isOverMax) {
             const handleActions = limitActionLabel(_actions)
             const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths!({ key: id, value: total })
+            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
             return handleActions
           } else {
             const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths!({ key: id, value: total })
+            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
             return _actions
           }
         }

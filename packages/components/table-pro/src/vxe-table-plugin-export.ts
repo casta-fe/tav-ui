@@ -18,6 +18,7 @@ interface ColumnInfo {
   _colSpan: number
   _rowSpan: number
   childNodes: ColumnInfo[]
+  [key: string]: any
 }
 
 let vxetable: VXETableCore
@@ -37,10 +38,25 @@ let vxetable: VXETableCore
 //   }
 // }
 
-const defaultHeaderBackgroundColor = 'f8f8f9'
-const defaultCellFontColor = '606266'
+// 遵循飞书文档样式
+const defaultHeaderHeight = 26
+const defaultHeaderBackgroundColor = 'f5f6f7'
+const defaultHeaderFontSize = 11
+
+const defaultCellHeight = 24
+const defaultCellFontColor = '1f2329'
+const defaultCellFontSize = 10
 const defaultCellBorderStyle = 'thin'
-const defaultCellBorderColor = 'e8eaec'
+const defaultCellBorderColor = 'dee0e3'
+
+const defaultFooterHeight = defaultHeaderHeight
+const defaultFooterBackgroundColor = defaultHeaderBackgroundColor
+const defaultFooterFontSize = defaultHeaderFontSize
+
+const defaultDescriptionHeight = 40
+const defaultDescriptionBackgroundColor = 'fff258'
+const defaultDescriptionFontSize = 14
+const defaultDescriptionAlign = 'left'
 
 const { createMessage } = useMessage()
 
@@ -94,9 +110,15 @@ function getValidColumn(column: ColumnInfo): ColumnInfo {
   return column
 }
 
-function setExcelRowHeight(excelRow: ExcelJS.Row, height: number) {
+function setExcelRowHeight(excelRow: ExcelJS.Row, height: number, type?: string) {
   if (height) {
-    excelRow.height = XEUtils.floor(height * 0.75, 12)
+    if (type === 'header') {
+      excelRow.height = Math.min(XEUtils.floor(height * 0.75, 12), defaultHeaderHeight)
+    } else if (type === 'footer') {
+      excelRow.height = Math.min(XEUtils.floor(height * 0.75, 12), defaultFooterHeight)
+    } else {
+      excelRow.height = Math.min(XEUtils.floor(height * 0.75, 12), defaultCellHeight)
+    }
   }
 }
 
@@ -152,7 +174,234 @@ function deleteNotRequiredColumns(columns: any[]) {
   return handler(columns)
 }
 
-function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
+/**
+ * @description 设置表格描述
+ * @param sheet
+ * @param useStyle
+ * @param fileDescription
+ */
+function setDescription(sheet, useStyle, fileDescription) {
+  // see https://github.com/exceljs/exceljs/issues/433
+  sheet.spliceRows(1, 0, [])
+  // sheet.insertRow(1, [])
+  sheet._rows[0].height = defaultDescriptionHeight
+
+  const mergeColRange: string[] = []
+  sheet.columns.forEach((column) => {
+    mergeColRange.push(column.letter)
+  })
+  sheet.mergeCells(`${mergeColRange[0]}1`, `${mergeColRange[mergeColRange.length - 1]}1`)
+  const cell = sheet.getCell(`${mergeColRange[0]}1`)
+  cell.value = fileDescription
+
+  setExcelCellStyle(cell, defaultDescriptionAlign || allAlign)
+
+  if (useStyle) {
+    Object.assign(cell, {
+      font: {
+        size: defaultDescriptionFontSize,
+        color: {
+          argb: defaultCellFontColor,
+        },
+        bold: true,
+      },
+      fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {
+          argb: defaultDescriptionBackgroundColor,
+        },
+      },
+      border: getDefaultBorderStyle(),
+    })
+  }
+}
+
+/**
+ * @description 设置表格序号列
+ * @param sheet
+ * @param useStyle
+ */
+function setSeq(sheet, useStyle, fileDescription, headerList, contentList, footerList) {
+  const headerDeep = headerList.length
+  const seqValues: any[] = []
+  // const { footerData } = $table.getTableData()
+  // const footers = getFooterData(options, footerData)
+
+  // 填充列内容
+  for (let i = 0; i < sheet._rows.length; i++) {
+    if (i < (fileDescription ? headerDeep + 1 : headerDeep)) {
+      // 把表头的位置空出来占位
+      seqValues.push('')
+    } else if (
+      footerList.length > 0 &&
+      i > (fileDescription ? headerDeep + 1 : headerDeep) + contentList.length - 1
+    ) {
+      // 把表尾的位置空出来占位
+      seqValues.push('')
+    } else {
+      seqValues.push(fileDescription ? i - headerDeep : i - headerDeep + 1)
+    }
+  }
+
+  sheet.spliceColumns(1, 0, seqValues)
+  // sheet.insertColumn(1, seqValues)
+  sheet._columns[0].eachCell((cell) => {
+    if (useStyle) {
+      setExcelCellStyle(cell, defaultDescriptionAlign || allAlign)
+      Object.assign(cell, {
+        font: {
+          size: defaultCellFontSize,
+          color: {
+            argb: defaultCellFontColor,
+          },
+        },
+        border: getDefaultBorderStyle(),
+      })
+    }
+  })
+
+  // 合并占位符与'序号'
+  const mergeColRange: string[] = []
+  sheet.columns.forEach((column) => {
+    mergeColRange.push(column.letter)
+  })
+  // fileDescription 如果有值，r、c 各加一让出第一行位置
+  sheet.mergeCells(
+    `${mergeColRange[0]}${fileDescription ? 1 + 1 : 1}`,
+    `${mergeColRange[0]}${fileDescription ? headerDeep + 1 : headerDeep}`
+  )
+  const firstCell = sheet.getCell(`${mergeColRange[0]}${fileDescription ? 1 + 1 : 1}`)
+  firstCell.value = '序号'
+
+  setExcelCellStyle(firstCell, defaultDescriptionAlign || allAlign)
+  if (useStyle) {
+    Object.assign(firstCell, {
+      font: {
+        size: defaultHeaderFontSize,
+        color: {
+          argb: defaultCellFontColor,
+        },
+        bold: true,
+      },
+      fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {
+          argb: defaultHeaderBackgroundColor,
+        },
+      },
+      border: getDefaultBorderStyle(),
+    })
+  }
+
+  if (fileDescription) {
+    // excel bug, manual hack. 新增描述后调用spliceColumns新增一列后之前描述逻辑中合并失效这里需要先删除后覆盖
+    Reflect.deleteProperty(sheet._merges, `${mergeColRange[0]}1`)
+    sheet.mergeCells(`${mergeColRange[0]}1`, `${mergeColRange[mergeColRange.length - 1 - 1]}1`) // 调用spliceColumns新增一列后 excel 自动在尾部追加一列所以这里要减掉
+    const cell = sheet.getCell(`${mergeColRange[0]}1`)
+    cell.value = fileDescription
+
+    setExcelCellStyle(cell, defaultDescriptionAlign || allAlign)
+
+    if (useStyle) {
+      Object.assign(cell, {
+        font: {
+          size: defaultDescriptionFontSize,
+          color: {
+            argb: defaultCellFontColor,
+          },
+          bold: true,
+        },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: {
+            argb: defaultDescriptionBackgroundColor,
+          },
+        },
+        border: getDefaultBorderStyle(),
+      })
+    }
+  }
+}
+
+function setFooter(
+  sheet,
+  useStyle,
+  fileSeq,
+  $table,
+  options,
+  fileDescription,
+  headerList,
+  contentList,
+  _footerData
+) {
+  const headerDeep = headerList.length
+  const totalRowCount = sheet._rows.length
+  const { footerData } = $table.getTableData()
+  const footers = getFooterData(options, _footerData || footerData)
+
+  // 序号列最后一位填充表尾信息
+  const fillFooterTitle = (row, value) => {
+    if (fileSeq) {
+      row.getCell(1).value = value
+    }
+  }
+
+  for (let i = totalRowCount - footers.length; i < totalRowCount; i++) {
+    const idx = (fileDescription ? headerDeep + 1 : headerDeep) + contentList.length
+    const row = sheet.getRow(i + 1)
+    fillFooterTitle(row, footers[i - idx][0])
+
+    row.eachCell((excelCell) => {
+      setExcelCellStyle(excelCell, defaultDescriptionAlign || allAlign)
+      if (useStyle) {
+        Object.assign(excelCell, {
+          font: {
+            size: defaultFooterFontSize,
+            color: {
+              argb: defaultCellFontColor,
+            },
+            bold: true,
+          },
+          fill: {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: {
+              argb: defaultFooterBackgroundColor,
+            },
+          },
+          border: getDefaultBorderStyle(),
+        })
+      }
+      // const excelCol = sheet.getColumn(excelCell.col)
+      // const column: any = $table.getColumnById(excelCol.key as string)
+      // const { footerAlign, align } = column
+      // setExcelCellStyle(excelCell, footerAlign || align || allFooterAlign || allAlign)
+      // if (useStyle) {
+      //   Object.assign(excelCell, {
+      //     font: {
+      //       size: defaultFooterFontSize,
+      //       color: {
+      //         argb: defaultCellFontColor,
+      //       },
+      //     },
+      //     fill: {
+      //       type: 'pattern',
+      //       pattern: 'solid',
+      //       fgColor: {
+      //         argb: defaultFooterBackgroundColor,
+      //       },
+      //     },
+      //     border: getDefaultBorderStyle(),
+      //   })
+      // }
+    })
+  }
+}
+
+async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
   const msgKey = 'xlsx'
   const { modal, t } = vxetable
   const { $table, options, columns: _columns, colgroups, datas } = params
@@ -170,6 +419,10 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
     original,
     useStyle,
     sheetMethod,
+    fileDescription,
+    fileSeq,
+    backupColumns,
+    exportModalClose,
   } = options
   const showMsg = message !== false
   const mergeCells = $table.getMergeCells()
@@ -179,12 +432,16 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const sheetMerges: { s: { r: number; c: number }; e: { r: number; c: number } }[] = []
   let beforeRowCount = 0
   const colHead: any = {}
+  // await $table.updateFooter()
+  const _footerData = $table.props.footerMethod
+    ? $table.props.footerMethod({ columns, data: datas.map((d) => d._row) })
+    : null
   columns.forEach((column) => {
-    const { id, property, renderWidth } = column
+    const { id, property, renderWidth, width, minWidth } = column
     colHead[id] = original ? property : column.getTitle()
     sheetCols.push({
       key: id,
-      width: XEUtils.ceil(renderWidth / 8, 1),
+      width: XEUtils.ceil((renderWidth || width || minWidth) / 8, 1),
     })
   })
   // 处理表头
@@ -202,9 +459,13 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
           const columnIndex = columns.indexOf(validColumn)
           groupHead[validColumn.id] = original ? validColumn.property : column.getTitle()
           if (_colSpan > 1 || _rowSpan > 1) {
+            // sheetMerges.push({
+            //   s: { r: rIndex, c: columnIndex },
+            //   e: { r: rIndex + _rowSpan - 1, c: columnIndex + _colSpan - 1 },
+            // })
             sheetMerges.push({
-              s: { r: rIndex, c: columnIndex },
-              e: { r: rIndex + _rowSpan - 1, c: columnIndex + _colSpan - 1 },
+              s: { r: rIndex + 1, c: columnIndex + 1 },
+              e: { r: rIndex + _rowSpan - 1 + 1, c: columnIndex + _colSpan - 1 + 1 },
             })
           }
         })
@@ -224,11 +485,18 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
         col: mergeColIndex,
         colspan: mergeColspan,
       } = mergeItem
+      // sheetMerges.push({
+      //   s: { r: mergeRowIndex + beforeRowCount, c: mergeColIndex },
+      //   e: {
+      //     r: mergeRowIndex + beforeRowCount + mergeRowspan - 1,
+      //     c: mergeColIndex + mergeColspan - 1,
+      //   },
+      // })
       sheetMerges.push({
-        s: { r: mergeRowIndex + beforeRowCount, c: mergeColIndex },
+        s: { r: mergeRowIndex + beforeRowCount + 1, c: mergeColIndex + 1 },
         e: {
-          r: mergeRowIndex + beforeRowCount + mergeRowspan - 1,
-          c: mergeColIndex + mergeColspan - 1,
+          r: mergeRowIndex + beforeRowCount + mergeRowspan - 1 + 1,
+          c: mergeColIndex + mergeColspan - 1 + 1,
         },
       })
     })
@@ -239,8 +507,8 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       // rest[column.id] = getCellLabel(column, item[column.id])
       let cellValue = item[column.id]
       // 使用自定义的导出逻辑，针对于单元格是复杂组件的情况（图片、tags等）
-      if (column.params && column.params.exportContent) {
-        cellValue = column.params.exportContent({ row: item._row || {} }) || ''
+      if (column.params && column.params.cellContent) {
+        cellValue = column.params.cellContent({ row: item._row || {} }) || ''
       }
       rest[column.id] = getCellLabel(column, cellValue)
     })
@@ -250,7 +518,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   // 处理表尾
   if (isFooter) {
     const { footerData } = $table.getTableData()
-    const footers = getFooterData(options, footerData)
+    const footers = getFooterData(options, _footerData || footerData)
     const mergeFooterItems = $table.getMergeFooterItems()
     // 处理合并
     if (isMerge && !original) {
@@ -261,11 +529,18 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
           col: mergeColIndex,
           colspan: mergeColspan,
         } = mergeItem
+        // sheetMerges.push({
+        //   s: { r: mergeRowIndex + beforeRowCount, c: mergeColIndex },
+        //   e: {
+        //     r: mergeRowIndex + beforeRowCount + mergeRowspan - 1,
+        //     c: mergeColIndex + mergeColspan - 1,
+        //   },
+        // })
         sheetMerges.push({
-          s: { r: mergeRowIndex + beforeRowCount, c: mergeColIndex },
+          s: { r: mergeRowIndex + beforeRowCount + 1, c: mergeColIndex + 1 },
           e: {
-            r: mergeRowIndex + beforeRowCount + mergeRowspan - 1,
-            c: mergeColIndex + mergeColspan - 1,
+            r: mergeRowIndex + beforeRowCount + mergeRowspan - 1 + 1,
+            c: mergeColIndex + mergeColspan - 1 + 1,
           },
         })
       })
@@ -273,7 +548,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
     footers.forEach((rows) => {
       const item: any = {}
       columns.forEach((column) => {
-        item[column.id] = getFooterCellValue($table, options, rows, column)
+        item[column.id] = getFooterCellValue($table, options, rows, column) || ''
       })
       footList.push(item)
     })
@@ -281,12 +556,13 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const exportMethod = () => {
     const workbook = new ExcelJS.Workbook()
     const sheet = workbook.addWorksheet(sheetName)
-    workbook.creator = 'vxe-table'
+    workbook.creator = 'i7eo'
+    sheet.views = [{}] // 为了设置固定的行高必须设置该值，see：https://github.com/exceljs/exceljs/issues/422
     sheet.columns = sheetCols
     if (isHeader) {
       sheet.addRows(colList).forEach((excelRow) => {
         if (useStyle) {
-          setExcelRowHeight(excelRow, rowHeight)
+          setExcelRowHeight(excelRow, rowHeight, 'header')
         }
         excelRow.eachCell((excelCell) => {
           const excelCol = sheet.getColumn(excelCell.col)
@@ -296,10 +572,11 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
-                bold: true,
+                size: defaultHeaderFontSize,
                 color: {
                   argb: defaultCellFontColor,
                 },
+                bold: true,
               },
               fill: {
                 type: 'pattern',
@@ -326,6 +603,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
         if (useStyle) {
           Object.assign(excelCell, {
             font: {
+              size: defaultCellFontSize,
               color: {
                 argb: defaultCellFontColor,
               },
@@ -333,12 +611,27 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
             border: getDefaultBorderStyle(),
           })
         }
+
+        // 如果不格式化时间或者时间字段返回时间戳能直接供excel使用则可以开启，当前时间字段返回格式化好的时间所以要格式化的话得把每条数据转为时间戳才能让excel的格式化生效
+        // if(!excelCol.numFmt) {
+        //   if (column.params && column.params.columnFormat) {
+        //     excelCol.numFmt = column.params.columnFormat(column, excelCell)
+        //   } else {
+        //     excelCol.numFmt = '@'
+        //   }
+        // }
+
+        if (column.params && column.params.cellFormat) {
+          excelCell.numFmt = column.params.cellFormat(excelCell)
+        } else {
+          excelCell.numFmt = '@'
+        }
       })
     })
     if (isFooter) {
       sheet.addRows(footList).forEach((excelRow) => {
         if (useStyle) {
-          setExcelRowHeight(excelRow, rowHeight)
+          setExcelRowHeight(excelRow, rowHeight, 'footer')
         }
         excelRow.eachCell((excelCell) => {
           const excelCol = sheet.getColumn(excelCell.col)
@@ -348,16 +641,31 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
+                size: defaultFooterFontSize,
                 color: {
                   argb: defaultCellFontColor,
+                },
+              },
+              fill: {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: {
+                  argb: defaultFooterBackgroundColor,
                 },
               },
               border: getDefaultBorderStyle(),
             })
           }
+
+          if (column.params && column.params.cellFormat) {
+            excelCell.numFmt = column.params.cellFormat(excelCell)
+          } else {
+            excelCell.numFmt = '@'
+          }
         })
       })
     }
+
     if (useStyle && sheetMethod) {
       sheetMethod({
         options,
@@ -369,18 +677,71 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
         $table,
       })
     }
+
+    fileDescription && setDescription(sheet, useStyle, fileDescription)
+    fileSeq && setSeq(sheet, useStyle, fileDescription, colList, rowList, footList)
+    footList.length > 0 &&
+      setFooter(
+        sheet,
+        useStyle,
+        fileSeq,
+        $table,
+        options,
+        fileDescription,
+        colList,
+        rowList,
+        _footerData
+      )
+
+    // sheetMerges.forEach(({ s, e }) => {
+    //   // 按开始行，开始列，结束行，结束列合并, see https://github.com/exceljs/exceljs/blob/master/README_zh.md#合并单元格
+    //   sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
+    // })
+
+    // sheetMerges.forEach(({ s, e }) => {
+    //   sheet.mergeCells(s.r, s.c, e.r, e.c)
+    // })
+
     sheetMerges.forEach(({ s, e }) => {
-      sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
+      if (fileDescription) {
+        if (fileSeq) {
+          sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
+        } else {
+          sheet.mergeCells(s.r + 1, s.c, e.r + 1, e.c)
+        }
+      } else {
+        if (fileSeq) {
+          sheet.mergeCells(s.r, s.c + 1, e.r, e.c + 1)
+        } else {
+          sheet.mergeCells(s.r, s.c, e.r, e.c)
+        }
+      }
     })
+
+    // sheetMerges.forEach(({ s, e }) => {
+    //   // 按开始行，开始列，结束行，结束列合并, see https://github.com/exceljs/exceljs/blob/master/README_zh.md#合并单元格
+    //   if (fileDescription) {
+    //     // 如果有描述先往顶部插入一行合并完成后再调用原本的合并，此时因为顶部插入了一行所以在合并时行计算应该下移一位
+    //     // sheet.mergeCells(s.r + 1 + 1, s.c + 1, e.r + 1 + 1, e.c + 1)
+    //     // 手动添加序号列后行右移
+    //     sheet.mergeCells(s.r + 1 + 1, s.c + 1 + 1, e.r + 1 + 1, e.c + 1 + 1)
+    //   } else {
+    //     // sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
+    //     // 手动添加序号列后行右移
+    //     sheet.mergeCells(s.r + 1, s.c + 1 + 1, e.r + 1, e.c + 1 + 1)
+    //   }
+    // })
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/octet-stream' })
       // 导出 xlsx
-      downloadFile(params, blob, options)
+      downloadFile(blob, options, $table)
       if (showMsg && modal) {
         modal.close(msgKey)
         // modal.message({ content: t('vxe.table.expSuccess'), status: 'success' })
         createMessage.success(t('vxe.table.expSuccess'))
       }
+      $table.loadColumn(backupColumns.value)
+      exportModalClose()
     })
   }
   if (showMsg && modal) {
@@ -401,11 +762,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   }
 }
 
-function downloadFile(
-  params: VxeGlobalInterceptorHandles.InterceptorExportParams,
-  blob: Blob,
-  options: VxeTablePropTypes.ExportConfig
-) {
+function downloadFile(blob: Blob, options: VxeTablePropTypes.ExportConfig) {
   const { modal, t } = vxetable
   const { message, filename, type } = options
   const showMsg = message !== false

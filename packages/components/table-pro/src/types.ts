@@ -32,8 +32,14 @@ export type TableProColumn = VxeTableDefines.ColumnOptions & {
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
   customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
   children?: TableProColumn[]
+  /** vxetable内部会对column上的属性按照内部定义筛选 */
+  params?: VxeColumnPropTypes.Params
 }
-export type TableProColumnInfo = VxeTableDefines.ColumnInfo
+export type TableProColumnInfo = VxeTableDefines.ColumnInfo & {
+  params?: VxeColumnPropTypes.Params
+}
+
+export type TableProFooter = VxeTablePropTypes.FooterMethod
 
 /** table 实例 */
 export type TableProInstance = VxeGridInstance
@@ -556,10 +562,6 @@ export const tableProProps = {
   /** 异步数据接口请求后函数 */
   afterApi: {
     type: Function as PropType<(...arg: any[]) => any>,
-  },
-  /** 导出全部异步数据接口 */
-  exportAllApi: {
-    type: Function as PropType<TableProApi<Promise<any>>>,
   },
   /** 异步数据接口配置 */
   apiSetting: {

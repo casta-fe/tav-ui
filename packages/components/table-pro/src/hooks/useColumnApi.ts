@@ -5,10 +5,14 @@ import type { ConfigProviderContext } from '@tav-ui/hooks/global/useGlobalProvid
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProColumn, TableProProps } from '../types'
 import type { CustomActionRef } from '../typings'
+import type { Emitter } from '@tav-ui/utils/mitt'
 
 export function useColumnApi(
-  tablePropsRef: ComputedRef<TableProProps>,
-  globalContext: Ref<Partial<ConfigProviderContext>>
+  // tablePropsRef: ComputedRef<TableProProps>,
+  id: TableProProps['id'],
+  customActionConfigColumn: TableProProps['customActionConfig']['column'],
+  globalContext: Ref<Partial<ConfigProviderContext>>,
+  tableEmitter: Emitter
 ) {
   const globalConfig = unref(globalContext)
   if (!globalConfig) return null
@@ -24,7 +28,8 @@ export function useColumnApi(
 
   /** 获取当前table id */
   function getTableId() {
-    return unref(tablePropsRef).id!
+    // return unref(tablePropsRef).id!
+    return id
   }
 
   /** 获取表格列数据参数 module */
@@ -108,6 +113,7 @@ export function useColumnApi(
             title: cachedColumn.title,
             key: cachedColumn.key,
             disabled: cachedColumn.disabled,
+            visible: cachedColumn.visible,
           }
         } else {
           return null
@@ -146,6 +152,8 @@ export function useColumnApi(
         const coverColumnsSetting = (customActionRef.value?.settingsRef as any).columnRef
           .coverColumnsSetting
         if (coverColumnsSetting) coverColumnsSetting(options, checkedList, halfCheckedList)
+      } else {
+        tableEmitter.emit('table-pro:column-covered-no-data')
       }
     }
 
@@ -164,7 +172,8 @@ export function useColumnApi(
       () => getColumns.value.columns,
       (val, oldVal) => {
         if (val && val.length > 0) {
-          unref(tablePropsRef).customActionConfig.column &&
+          // unref(tablePropsRef).customActionConfig.column &&
+          customActionConfigColumn &&
             JSON.stringify(val) !== JSON.stringify(oldVal) &&
             coverCurrentColumns(val)
         }

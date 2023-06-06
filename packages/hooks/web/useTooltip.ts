@@ -38,7 +38,7 @@ export const $Tooltip = (el: HTMLElement, props: any) => {
 
   function update() {
     computePosition(el, tooltipEl, {
-      placement: 'top-start',
+      placement: 'top',
       middleware: [hide(), offset(6), flip(), shift({ padding: 6 }), arrow({ element: arrowEl })],
     }).then(({ x, y, placement, middlewareData }) => {
       Object.assign(tooltipEl.style, {
@@ -54,8 +54,8 @@ export const $Tooltip = (el: HTMLElement, props: any) => {
       }[placement.split('-')[0]]
 
       Object.assign(arrowEl.style, {
-        // left: middlewareData.arrow?.x != null ? `${middlewareData.arrow?.x}px` : '',
-        left: '10px',
+        left: middlewareData.arrow?.x != null ? `${middlewareData.arrow?.x}px` : '',
+        // left: '10px',
         top: middlewareData.arrow?.y != null ? `${middlewareData.arrow?.y}px` : '',
         right: '',
         bottom: '',

@@ -1,10 +1,13 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
-import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import { TaTablePro, XLSXFormats, getTableProId } from '@tav-ui/components/table-pro'
+import { formatToExcelTime } from '@tav-ui/utils'
+import {
+  API__POE_CUSTOM_ALL,
+  API__POE_CUSTOM_ALL_LIST,
+} from '@tav-ui/components/table-pro/src/data'
 import Button from '@tav-ui/components/button'
-import { TaModal, useModal } from '@tav-ui/components/modal'
-import { columns2, filterForm2, footerMethod2 } from './data'
+import { columns1, filterForm2, footerMethod1 } from './data'
 import type {
   ITableProInstance,
   TableProApi,
@@ -22,33 +25,23 @@ export default defineComponent({
       filterFormConfig: {},
       columns: [] as any[],
     })
-    const handleRoutePush = (e: Event, opts: any) => {
-      e.stopPropagation()
-      router.push({
-        ...opts,
-      })
-    }
+
     const loading = ref<boolean>(false)
 
-    // const columns = columns2
+    // const columns = columns1
 
     const tableRef = ref<ITableProInstance | null>(null)
 
-    // loading.value = true
-    // setTimeout(() => {
-    //   loading.value = false
-    // }, 300)
-
-    // const handleFilterFormConfig = (): TableProFilterFormConfig => ({
-    //   // enabled: false,
-    //   ...filterForm2(),
-    // })
-
-    const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
-
     onMounted(async () => {
       state.filterFormConfig = await filterForm2()
-      state.columns = await columns2({ handleRoutePush, OpenModal })
+      state.columns = await columns1()
+
+      // setTimeout(() => {
+      //   console.log(123)
+      //   var _columns = [...state.columns]
+      //   _columns[_columns.length - 1].visible = false
+      //   state.columns = [..._columns]
+      // }, 1500)
     })
 
     const handleCustomActionConfig = (): TableProCustomActionConfig => ({
@@ -59,19 +52,195 @@ export default defineComponent({
         },
       },
       export: {
+        columns: [
+          // {
+          //   field: 'round',
+          // },
+          {
+            field: 'id',
+            title: 'ID',
+          },
+          {
+            field: 'customerName',
+            title: '客户名称',
+            // cellContent: ({ row: { customerName } }) => {
+            //   return `${customerName}123`
+            // },
+          },
+          {
+            field: 'customerCode',
+            title: '客户编号',
+          },
+          {
+            field: 'latestFinancingAmount',
+            title: '最新融资金额（万元）',
+          },
+          {
+            field: 'customerType',
+            title: '客户类型',
+          },
+          // 与下面重复了，保留一个即可
+          // {
+          //   field: 'classification',
+          //   title: '分类'
+          // },
+          {
+            field: 'classificationValue',
+            title: '客户分类',
+          },
+          {
+            field: 'valuation',
+            title: '最新估值（万元）',
+          },
+          {
+            field: 'annualRevenue',
+            title: '年度营收（万元）',
+            cellFormat: () => XLSXFormats['number|0.000000'],
+          },
+          {
+            field: 'financing',
+            title: '融资情况（万元）',
+          },
+          // 与下面重复了，保留一个即可
+          // {
+          //   field: 'shareholderList',
+          //   title: '主要股东列表'
+          // },
+          {
+            field: 'shareholder',
+            title: '主要股东',
+          },
+          {
+            field: 'sourceType',
+            title: '客户来源',
+          },
+          {
+            field: 'sourceOther',
+            title: '客户来源——其他',
+          },
+          // 与下面重复了，保留一个即可
+          // {
+          //   field: 'owner',
+          //   title: '客户负责ID'
+          // },
+          // {
+          //   field: 'ownerName',
+          //   title: '客户负责人',
+          // },
+          {
+            field: 'country',
+            title: '国家',
+          },
+          {
+            field: 'province',
+            title: '省份',
+          },
+          {
+            field: 'city',
+            title: '城市',
+          },
+          {
+            field: 'districts',
+            title: '区/县',
+          },
+          {
+            field: 'address',
+            title: '注册地',
+          },
+          {
+            field: 'compnayProfile',
+            title: '企业简介',
+          },
+          {
+            field: 'teamProfile',
+            title: '团队概况',
+          },
+          {
+            field: 'incomeProfile',
+            title: '收入概况',
+          },
+          {
+            field: 'businessProfile',
+            title: '业务概况',
+          },
+          {
+            field: 'industrialChain',
+            title: '产业链',
+          },
+          {
+            field: 'visitCount',
+            title: '拜访记录条数',
+          },
+          {
+            field: 'industryList',
+            title: '行业列表',
+          },
+          {
+            field: 'applicationList',
+            title: '应用领域列表',
+          },
+          {
+            field: 'creditCode',
+            title: '统一社会信用代码',
+          },
+          {
+            field: 'technologyList',
+            title: '技术标签列表',
+          },
+          {
+            field: 'technology',
+            title: '技术标签',
+          },
+          {
+            field: 'establishResult',
+            title: '立项结果',
+          },
+          {
+            field: 'pay',
+            title: '是否付费',
+          },
+          {
+            field: 'createBy',
+            title: '创建人',
+          },
+          {
+            field: 'createByName',
+            title: '创建人名称',
+          },
+          {
+            field: 'createDate',
+            title: '创建日期',
+            // cellFormat: (cell) => {
+            //   cell.value = formatToExcelTime(cell.value)
+            //   return XLSXFormats.date
+            // },
+          },
+          {
+            field: 'updateBy',
+            title: '变更人',
+          },
+          {
+            field: 'updateDate',
+            title: '变更日期',
+          },
+          {
+            field: 'serviceNum',
+            title: '服务项目数量',
+          },
+          {
+            field: 'serviceDetail',
+            title: '服务项目详情',
+          },
+          {
+            field: 'deleted',
+            title: '删除状态',
+          },
+        ],
         handleAction: (params) => {
           console.log(params)
         },
         handleDescription: () => 'dsahdjkashjkda',
-        handleAllApi: ({ filter, model }) =>
-          API__POE_CUSTOM_ALL({
-            filter,
-            model: {
-              // ...model,
-              // page: 7,
-              viewAll: true,
-            },
-          }),
+        // handleAllApi: () => API__POE_CUSTOM_ALL_LIST({}),
         // handleBackendApi: async ({ filter, model }) => {
         //   console.log(filter, model)
         // },
@@ -84,29 +253,6 @@ export default defineComponent({
       },
       column: true,
     })
-
-    // const handleProxyConfig = (): TableProProxyConfig => ({
-    //   // autoLoad: false,
-    //   props: {
-    //     result: 'data.result',
-    //     total: 'data.total',
-    //   },
-    //   ajax: {
-    //     query: (info) => {
-    //       console.log(info)
-    //       // API__POE_INVEST_ALL({
-    //       //   filter: {},
-    //       //   model: { page: 1, limit: 50 },
-    //       // }),
-    //       const result = API__POE_CUSTOM_ALL({
-    //         filter: { tab: 0 },
-    //         model: { page: 1, limit: 300 },
-    //       })
-
-    //       return Promise.resolve(result)
-    //     },
-    //   },
-    // })
 
     const handleApi: TableProApi<Promise<any>> = ({ filter, model }) =>
       API__POE_CUSTOM_ALL({
@@ -223,7 +369,7 @@ export default defineComponent({
               onPageChange={handlePageChange}
               fillInner={false}
               showFooter={true}
-              footerMethod={footerMethod2}
+              footerMethod={footerMethod1}
               // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
               // fixedLineHeight={false}
               // pagerConfig={{ enabled: false }}
@@ -252,15 +398,6 @@ export default defineComponent({
             </TaTablePro>
           </div>
           {/* </div> */}
-          <TaModal
-            height={500}
-            title="新增"
-            width={864}
-            destroy-on-close={true}
-            onRegister={ModalRegister}
-          >
-            123
-          </TaModal>
         </div>
       )
     }

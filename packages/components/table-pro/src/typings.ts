@@ -3,7 +3,7 @@ import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties, ComputedRef, Ref } from 'vue'
 import type { VxeGridPropTypes } from 'vxe-table'
-import type { TableProColumn } from './types'
+import type { TableProColumn, TableProColumnInfo } from './types'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -30,7 +30,24 @@ export interface TableProCustomActionConfig {
   add?: CustomAction | boolean
   delete?: CustomAction | boolean
   import?: CustomAction | boolean
-  export?: CustomAction | boolean
+  export?:
+    | (CustomAction & {
+        /** 这里是对数据中全量字段进行配置，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
+        columns: {
+          field: string
+          title?: string
+          minWidth?: number
+          visible?: boolean
+          cellContent?: (...args: any[]) => any
+          // columnFormat?: (...args: any[]) => any
+          cellFormat?: (...args: any[]) => any
+        }[]
+        handleDescription?: (...args: any[]) => any
+        /** 导出全部异步数据接口 */
+        handleAllApi?: TableProApi<Promise<any>>
+        handleBackendApi?: TableProApi<Promise<any>>
+      })
+    | boolean
   refresh?: CustomAction | boolean
   column?: CustomAction | boolean
   statistical?: CustomAction | boolean

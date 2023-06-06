@@ -1,4 +1,4 @@
-import { defineComponent, nextTick, reactive, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
@@ -17,6 +17,21 @@ import type { TableProColumnInfo, TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
+
+const FileDataTypeOptions = [
+  {
+    label: '当前页的选中数据',
+    value: 'selected',
+  },
+  {
+    label: '当前页的全部数据',
+    value: 'current',
+  },
+  {
+    label: '全量数据',
+    value: 'all',
+  },
+]
 const ExportModalFormSchemas: FormSchema[] = [
   {
     field: 'fileName',
@@ -25,6 +40,35 @@ const ExportModalFormSchemas: FormSchema[] = [
     required: true,
     componentProps: {
       placeholder: '请输入文件名',
+    },
+  },
+  // {
+  //   field: 'fileDescription',
+  //   component: 'Input',
+  //   label: '描述',
+  //   required: false,
+  //   componentProps: {
+  //     placeholder: '请输入表格描述',
+  //   },
+  // },
+  {
+    field: 'fileSeq',
+    component: 'Select',
+    label: '序号列',
+    required: false,
+    defaultValue: 1,
+    componentProps: {
+      placeholder: '请选择是否生成表格序号列',
+      options: [
+        {
+          label: '自动生成',
+          value: 1,
+        },
+        {
+          label: '不生成',
+          value: 0,
+        },
+      ],
     },
   },
   {
@@ -64,23 +108,10 @@ const ExportModalFormSchemas: FormSchema[] = [
     component: 'Select',
     label: '文件数据',
     required: true,
-    defaultValue: 'current',
+    defaultValue: '',
     componentProps: {
       placeholder: '请选择文件数据',
-      options: [
-        {
-          label: '选中数据（当前页选中的数据）',
-          value: 'selected',
-        },
-        {
-          label: '当前数据（当前页的数据）',
-          value: 'current',
-        },
-        {
-          label: '全量数据（包括所有分页的数据）',
-          value: 'all',
-        },
-      ],
+      options: [],
     },
   },
   {
@@ -118,7 +149,19 @@ export default defineComponent({
   setup(props, { emit, expose }) {
     const settingsRef = ref<CustomActionSetting | null>(null)
     const actionRef = ref<ComputedRef | null>(null)
-    const { tableEmitter } = useTableContext()
+    const { tableEmitter, tablePropsRef } = useTableContext()
+    const backupColumns = ref<any[]>([])
+    const prepareExport = ref<boolean>(false)
+
+    const hasTreeConfig = computed(() => {
+      const treeConfig = unref(tablePropsRef).treeConfig
+
+      if (!JSON.stringify(treeConfig)) {
+        return false
+      } else {
+        return true
+      }
+    })
 
     const state = reactive({
       filter: {},
@@ -244,7 +287,6 @@ export default defineComponent({
       const handleExport = async () => {
         const { data, errors } = await handleSubmit()
         if (errors.length === 0) {
-          exportModalClose()
           const _columns = props.tableRef?.value?.getTableColumn().collectColumn ?? []
           /** 扁平化树结构选中的 column id*/
           const getContainColumnIds = (fieldValue: string[]) => {
@@ -290,7 +332,13 @@ export default defineComponent({
             return result
           }
           const columns = traverse(_columns, [])
-          console.log(data, _columns, columns)
+          // const fileDescription = data.fileDescription
+          let fileDescription = ''
+          if (isObject(props.config?.export) && props.config?.export.handleDescription) {
+            fileDescription = await props.config?.export.handleDescription()
+          }
+
+          // console.log(data, _columns, columns)
           props.tableRef?.value?.exportData({
             filename: data.fileName,
             sheetName: data.fileName,
@@ -301,8 +349,18 @@ export default defineComponent({
             isMerge: true,
             isColgroup: true,
             // message: true,
+            // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
+            // original: true,
             columns,
-          })
+            backupColumns,
+            exportModalClose,
+            useStyle: true,
+            fileDescription,
+            fileSeq: !!data.fileSeq,
+          } as any)
+
+          // props.tableRef?.value?.loadColumn(backupColumns.value)
+          // exportModalClose()
         }
       }
 
@@ -314,6 +372,11 @@ export default defineComponent({
           wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
           destroyOnClose={true}
           maskClosable={false}
+          onVisible-change={(isOpen) => {
+            if (!isOpen) {
+              props.tableRef?.value?.loadColumn(backupColumns.value)
+            }
+          }}
         >
           {{
             default: () => exportModalForm(),
@@ -331,66 +394,229 @@ export default defineComponent({
     }
 
     const handleExportClick = async (e: Event) => {
+      prepareExport.value = true
       if (isObject(props.config?.export) && props.config?.export.handleAction) {
         props.config?.export.handleAction(e)
       }
-      exportModalOpen()
-      const columns = props.tableRef?.value?.getTableColumn().collectColumn!
-      let selectedKeys: string[] = []
-      const handleTreeDataItem = (column: TableProColumnInfo, pid: string) => {
-        const { id, type, field, title, visible, disabled } = column
-        const currentId = pid ? `${pid}-${id}` : id
-        const item: TreeDataItem = {
-          title,
-          key: currentId,
-          value: currentId,
-          disabled: false,
-        }
-        selectedKeys.push(currentId)
-        if (visible && !disabled && SELECT_COMPONENTS.includes(type!)) {
-          item.title = '选中状态'
-        }
-        // 把选中、操作列设置为不可选择项
-        if (
-          visible &&
-          !disabled &&
-          ((type && SELECT_COMPONENTS.includes(type!)) ||
-            (field && ACTION_COLUMNS.includes(field!)))
-        ) {
-          item.disabled = true
-        }
-        // 把选中、操作列设置为不可选择项，默认不导出
-        if (
-          (type && SELECT_COMPONENTS.includes(type!)) ||
-          (field && ACTION_COLUMNS.includes(field!))
-        ) {
-          selectedKeys = selectedKeys.filter((key) => key !== currentId)
-        }
-        return item
-      }
-      const traverse = (columns: TableProColumnInfo[], pid = '') => {
-        return columns.map((column) => {
-          if (column.children && column.children.length) {
-            const current = handleTreeDataItem(column, pid)
-            const children = traverse(column.children, column.id)
-            return { ...current, children }
-          } else {
-            return handleTreeDataItem(column, pid)
+
+      if (isObject(props.config?.export) && props.config?.export.handleBackendApi) {
+        await props.config?.export.handleBackendApi(state.filter)
+        prepareExport.value = false
+      } else {
+        const _columns = props.tableRef?.value?.getTableColumn().collectColumn!
+        backupColumns.value = _columns
+        const mergeColumns = (columns, exportColumns) => {
+          if (!(exportColumns && exportColumns.length)) return columns
+          const createTarget = (target, other?: TableProColumnInfo) => {
+            const params = {} // 必须放在 params 中否则 vxe 内部会把参数过滤掉
+            if (target.cellContent) {
+              params['cellContent'] = target.cellContent
+            }
+            if (target.columnFormat) {
+              params['columnFormat'] = target.columnFormat
+            }
+            if (target.cellFormat) {
+              params['cellFormat'] = target.cellFormat
+            }
+
+            let title = ''
+            if (other) {
+              title = target.title || other.title || target.field
+            } else {
+              title = target.title ?? target.field
+            }
+
+            if (!other) {
+              params['isAppendColumn'] = true
+            }
+            return {
+              ...target,
+              title,
+              params,
+            }
           }
+          const handledFields: string[] = []
+
+          const traverse = (columns: TableProColumnInfo[], handledFields: string[]) => {
+            return columns.map((column) => {
+              if (column.children && column.children.length) {
+                return { ...column, children: traverse(column.children, handledFields) }
+              } else {
+                const target = exportColumns.find(
+                  (exportColumn) => exportColumn.field === column.field
+                )
+                if (target) {
+                  handledFields.push(target.field)
+                  const targetProps = createTarget(target, column)
+                  for (const [k, v] of Object.entries(targetProps)) {
+                    column[k] = v
+                  }
+                  return column
+                } else {
+                  return column
+                }
+              }
+            })
+          }
+
+          const mergedColumns = traverse(columns, handledFields)
+          return [
+            ...mergedColumns,
+            ...exportColumns
+              .filter((exportColumn) => !handledFields.includes(exportColumn.field))
+              .map((exportColumn) => {
+                return {
+                  visible: true,
+                  minWidth: 100,
+                  ...exportColumn,
+                  ...createTarget(exportColumn),
+                }
+              }),
+          ]
+        }
+        const mergedColumns = mergeColumns(
+          _columns,
+          isObject(props.config?.export) ? props.config?.export.columns : []
+        )
+        prepareExport.value = false
+        exportModalOpen()
+
+        await props.tableRef?.value?.loadColumn(mergedColumns)
+        await props.tableRef?.value?.refreshScroll()
+        await props.tableRef?.value?.recalculate()
+        const columns = props.tableRef?.value?.getTableColumn().collectColumn!
+
+        let selectedKeys: string[] = []
+        const unvisibleFields: Record<string, any>[] = []
+        const uninitFields: Record<string, any>[] = []
+        const handleTreeDataItem = (column: TableProColumnInfo, pid: string) => {
+          const { id, type, field, title, visible, disabled, params } = column
+          const currentId = pid ? `${pid}-${id}` : id
+          const item: TreeDataItem = {
+            title,
+            key: currentId,
+            value: currentId,
+            disabled: false,
+          }
+          selectedKeys.push(currentId)
+          if (visible && !disabled && SELECT_COMPONENTS.includes(type!)) {
+            item.title = '选中状态'
+          }
+          // 把选中、操作列设置为不可选择项
+          if (
+            visible &&
+            !disabled &&
+            ((type && SELECT_COMPONENTS.includes(type!)) ||
+              (field && ACTION_COLUMNS.includes(field!)))
+          ) {
+            item.disabled = true
+          }
+          // 把选中、操作列设置为不可选择项，默认不导出
+          if (
+            (type && SELECT_COMPONENTS.includes(type!)) ||
+            (field && ACTION_COLUMNS.includes(field!))
+          ) {
+            selectedKeys = selectedKeys.filter((key) => key !== currentId)
+          }
+          // 把配置visible的列筛选出来添加样式
+          !visible &&
+            unvisibleFields.push({
+              value: currentId,
+              label: title,
+            })
+
+          // 把通过追加的列筛选出来添加样式
+          params &&
+            params.isAppendColumn &&
+            uninitFields.push({
+              value: currentId,
+              label: title,
+            })
+
+          return item
+        }
+        const traverse = (columns: TableProColumnInfo[], pid = '') => {
+          return columns
+            .map((column) => {
+              if (column.children && column.children.length) {
+                const current = handleTreeDataItem(column, pid)
+                // 因为export配置在分组表头的父表头中配置是没有意义的只有在最底部表头上才有效所以这里只对子表头做判断
+                const children = traverse(column.children, column.id).filter(Boolean)
+                return { ...current, children }
+              } else {
+                return handleTreeDataItem(column, pid)
+              }
+            })
+            .filter(Boolean)
+        }
+        const treeData: TreeDataItem[] = traverse(columns)
+        const handleUnvisibleField = async (value) => {
+          const target = unvisibleFields.find((field) => field.value === value)
+          if (target) {
+            await nextTick()
+            const el: HTMLElement | null = document.querySelector(
+              `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
+            )
+            if (el) {
+              el.style.backgroundColor = '#cccccc80'
+            }
+          }
+        }
+        const handleUninitField = async (value) => {
+          const target = uninitFields.find((field) => field.value === value)
+          if (target) {
+            await nextTick()
+            const el: HTMLElement | null = document.querySelector(
+              `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
+            )
+            if (el) {
+              el.style.backgroundColor = '#409eff80'
+            }
+          }
+        }
+        const handleFieldSelect = (value) => {
+          handleUnvisibleField(value)
+          handleUninitField(value)
+        }
+        await nextTick()
+        const {
+          pager: { pageSize, total },
+        } = props.tableRef?.value?.getProxyInfo() ?? {}
+        let _fileDataTypeDefaultValue = 'current'
+        let fileDataTypeOptions = FileDataTypeOptions
+        // 没配置 handleAllApi，就不显示 all
+        if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
+          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value !== 'all')
+        }
+        if (total / pageSize <= 1) {
+          _fileDataTypeDefaultValue = 'all'
+          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value === 'all')
+        }
+        await exportModalFormUpdateSchema([
+          {
+            field: 'fileDataType',
+            componentProps: {
+              options: fileDataTypeOptions,
+            },
+          },
+          {
+            field: 'fileContainFields',
+            componentProps: {
+              treeData,
+              onSelect: handleFieldSelect,
+            },
+          },
+        ])
+        await nextTick()
+        await exportModalFormSetFieldsValue({
+          fileContainFields: selectedKeys,
+          fileDataType: _fileDataTypeDefaultValue,
+        })
+        selectedKeys.forEach((key) => {
+          handleUnvisibleField(key)
+          handleUninitField(key)
         })
       }
-      const treeData: TreeDataItem[] = traverse(columns)
-      await nextTick()
-      await exportModalFormUpdateSchema({
-        field: 'fileContainFields',
-        componentProps: {
-          treeData,
-        },
-      })
-      await nextTick()
-      await exportModalFormSetFieldsValue({
-        fileContainFields: selectedKeys,
-      })
     }
 
     const exportButton = () =>
@@ -399,21 +625,13 @@ export default defineComponent({
           class={`${ComponentPrefixCls}-btn export`}
           type="primary"
           preIcon={'ant-design:export-outlined'}
+          loading={unref(prepareExport)}
           onClick={handleExportClick}
           permission={getPermission(props.config?.export)}
         >
           导出
         </Button>
       ) : null
-
-    // 刷新按钮配置
-    const handleRefresh = (e: Event) => {
-      if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
-        props.config?.refresh.handleAction(e)
-      // query 保留query状态刷新数据
-      // reload 清空状态回到第一页
-      unref(props.tableRef)?.commitProxy('query')
-    }
 
     expose({
       addRef: null,
@@ -425,22 +643,31 @@ export default defineComponent({
     })
 
     return () => {
-      return props.config?.enabled ? (
-        <div class={ComponentPrefixCls} ref={actionRef}>
-          {statisticalButton()}
-          {addButton()}
-          {deleteButton()}
-          {props.tableSlots?.customAction?.()}
-          {importButton()}
-          {exportButton()}
-          <Settings
-            ref={settingsRef}
-            config={props.config}
-            tableRef={props.tableRef}
-            tableSlots={props.tableSlots}
-          />
-        </div>
-      ) : null
+      return (
+        <>
+          {props.config?.enabled ? (
+            <div class={ComponentPrefixCls} ref={actionRef}>
+              {statisticalButton()}
+              {addButton()}
+              {deleteButton()}
+              {props.tableSlots?.customAction?.()}
+              {!unref(hasTreeConfig) ? (
+                <>
+                  {importButton()}
+                  {exportButton()}
+                </>
+              ) : null}
+              <Settings
+                ref={settingsRef}
+                config={props.config}
+                tableRef={props.tableRef}
+                tableSlots={props.tableSlots}
+              />
+            </div>
+          ) : null}
+          {exportModal()}
+        </>
+      )
     }
   },
 })

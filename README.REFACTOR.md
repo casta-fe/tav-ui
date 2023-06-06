@@ -13,3 +13,5 @@
 6. 删除form、table组件 use ？
 
 7. 动态表单封装占位
+
+8. tablepro column、api、columnapi 都涉及异步，需要统一的状态管理先处理api，随后column，最后columnapi

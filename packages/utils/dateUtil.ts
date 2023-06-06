@@ -17,6 +17,15 @@ export function formatToDate(date: moment.MomentInput = undefined, format = DATE
   return date ? moment(date).format(format) : ''
 }
 
+export function formatToTimestamp(date: string, format = DATE_TIME_FORMAT): number {
+  return moment(date, format).valueOf()
+}
+
+export function formatToExcelTime(date: string): number {
+  const timeStamp = formatToTimestamp(date)
+  return (timeStamp / 1000 + 8 * 3600) / 86400 + 70 * 365 + 19
+}
+
 export const dateUtil = moment
 
 export function getMomentFormatString(date, valueFormat = DATE_TIME_FORMAT) {

@@ -453,23 +453,28 @@
         }
 
         .ant-tree > li {
-          padding-right: 60px;
-
           &:first-child {
             padding-top: 0;
           }
         }
 
         &-tree-option {
-          // position: relative;
+          position: relative;
+
+          .ant-tree-node-content-wrapper {
+            width: calc(100% - 24px - 22px - 20px);
+          }
+
+          .ant-tree-node-content-wrapper-open {
+            position: relative;
+            width: calc(100% - 24px - 22px);
+          }
 
           .ant-tree-title {
-            position: relative;
-
             & > span.anticon {
               position: absolute;
               top: 50%;
-              right: -70%;
+              right: 20px;
               transform: translateY(-50%);
             }
           }

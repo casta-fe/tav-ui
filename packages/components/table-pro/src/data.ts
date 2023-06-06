@@ -216,6 +216,16 @@ export async function API__POE_CUSTOM_ALL(data, url = '/api/STARLIGHT-POE-WEB/cu
   return await __post(url, data)
 }
 
+export async function API__POE_CUSTOM_ALL_LIST(
+  data,
+  url = '/api/STARLIGHT-POE-WEB/project/data/list'
+) {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
 export async function API__SYSTEM_USER_TABLE_INFO_GET(
   data,
   url = '/api/TIANTA-SYSTEM/sys/customTableFiled/load'

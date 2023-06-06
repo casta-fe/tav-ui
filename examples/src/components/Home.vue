@@ -109,6 +109,7 @@ export default defineComponent({
     </template>
   </TaModal>
   <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
+  <TablePro />
 
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa

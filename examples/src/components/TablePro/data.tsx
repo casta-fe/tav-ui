@@ -1,15 +1,49 @@
 import { Tag } from 'ant-design-vue'
 import { TableAction } from '@tav-ui/components/table'
-import { TaTableProAction, TaTableProTags, getTagsContent } from '@tav-ui/components/table-pro'
-import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import {
+  TaTableProAction,
+  TaTableProTags,
+  XLSXFormats,
+  getTagsContent,
+} from '@tav-ui/components/table-pro'
+import {
+  API__POE_CUSTOM_ALL,
+  API__POE_CUSTOM_ALL_LIST,
+} from '@tav-ui/components/table-pro/src/data'
+import { formatToExcelTime } from '@tav-ui/utils'
 import type { FormSchema } from '@tav-ui/components/form'
-import type { TableProColumn, TableProFilterForm } from '@tav-ui/components/table-pro'
+import type {
+  TableProColumn,
+  TableProFilterForm,
+  TableProFooter,
+} from '@tav-ui/components/table-pro'
+
+/** 如果js计算不准请使用 mathjs 代替 */
+const sumNum = (list: any[], field: string) => {
+  let count = 0
+  list.forEach((item) => {
+    count += Number(item[field])
+  })
+  return count
+}
 
 export const columns1 = (): TableProColumn[] => {
   return [
     { field: 'projectName', title: '投行部项目名称', fixed: 'left', minWidth: 100 },
     { field: 'projectCode', title: '投行部项目编码', width: 200 },
-    { field: 'customerName', title: '客户名称', width: 1000 },
+    // { field: 'id', title: 'ID', width: 10, visible: false },
+    {
+      field: 'customerName',
+      title: '客户名称',
+      width: 300,
+      // fixed: 'left',
+      visible: false,
+    },
+    {
+      field: 'round',
+      title: 'round',
+      width: 100,
+    },
     {
       field: 'classificationValue',
       title: '客户分类',
@@ -52,6 +86,10 @@ export const columns1 = (): TableProColumn[] => {
       },
     },
     {
+      field: 'annualRevenue',
+      title: '年度营收（万元）',
+    },
+    {
       field: 'projectStatus',
       title: '项目状态',
     },
@@ -91,40 +129,43 @@ export const columns1 = (): TableProColumn[] => {
       field: 'actions',
       title: '操作',
       fixed: 'right',
+      // visible: false,
       slots: {
-        default: () => [
-          <TableAction
-            actions={[
-              {
-                label: '编辑',
-                onClick: () => {
-                  console.log('edit')
-                },
-              },
-              {
-                label: '测试1',
-                onClick: () => {
-                  console.log('test 1')
-                },
-              },
-              {
-                label: '测试2',
-                onClick: () => {
-                  console.log('test 2')
-                },
-              },
-              {
-                label: '删除',
-                popConfirm: {
-                  title: '删除后将无法恢复，确定删除吗？',
-                  confirm: () => {
-                    console.log('del')
+        default: () => {
+          return [
+            <TaTableProAction
+              actions={[
+                {
+                  label: '编辑',
+                  onClick: () => {
+                    console.log('edit')
                   },
                 },
-              },
-            ]}
-          />,
-        ],
+                {
+                  label: '测试1',
+                  onClick: () => {
+                    console.log('test 1')
+                  },
+                },
+                {
+                  label: '测试2',
+                  onClick: () => {
+                    console.log('test 2')
+                  },
+                },
+                {
+                  label: '删除',
+                  popConfirm: {
+                    title: '删除后将无法恢复，确定删除吗？',
+                    confirm: () => {
+                      console.log('del')
+                    },
+                  },
+                },
+              ]}
+            />,
+          ]
+        },
       },
     },
   ]
@@ -235,6 +276,20 @@ export const filterForm1 = (): TableProFilterForm => ({
   ] as FormSchema[],
 })
 
+export const footerMethod1: TableProFooter = ({ columns, data }) => {
+  return [
+    columns.map((column, columnIndex) => {
+      if (columnIndex === 0) {
+        return '合值'
+      }
+      if (['round'].includes(column.field)) {
+        return sumNum(data, column.field)
+      }
+      return null
+    }),
+  ]
+}
+
 export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TableProColumn[]> => {
   await API__POE_CUSTOM_ALL({
     filter: { tab: 0 },
@@ -261,14 +316,24 @@ export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TablePro
     //   ),
     // },
     // { field: 'customerCode', title: '客户编号', fixed: 'left' },
+    // {
+    //   type: 'seq',
+    //   field: 'seq',
+    //   title: '序号',
+    //   width: 60,
+    // },
     {
-      title: '集合1',
-      // fixed: 'left',
+      title: '集合0',
+      field: 'collect0',
+      fixed: undefined,
+      // visible: false,
       children: [
         {
-          field: 'customerName',
-          title: '客户名称',
+          field: 'customerName0',
+          title: '客户名称0',
           width: 100,
+          // visible: false,
+          fixed: 'left',
           customRender: ({ row: { customerName } }) => (
             <a
               href="javascript:;"
@@ -283,63 +348,83 @@ export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TablePro
             </a>
           ),
         },
-        { field: 'customerCode', title: '客户编号', width: 100 },
+        {
+          field: 'customerCode0',
+          title: '客户编号0',
+          width: 100,
+          // visible: false,
+        },
       ],
     },
-    // {
-    //   field: 'classificationValue',
-    //   title: '客户分类',
-    //   width: 1000,
-    //   // showTooltip: true,
-    //   // visible: false,
-    //   // slots: {
-    //   //   default: ({ row: { classificationValue } }) => {
-    //   //     return [
-    //   //       <TaTableProTags
-    //   //         data={classificationValue}
-    //   //         tagConfig={{ color: 'blue', round: '50px' }}
-    //   //       />,
-    //   //     ]
-    //   //   },
-    //   // },
-    //   customRender: ({ row: { classificationValue } }) => (
-    //     <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
-    //   ),
-    //   params: {
-    //     exportContent: ({ row: { classificationValue } }) =>
-    //       getTagsContent(classificationValue, { color: 'blue' }),
-    //   },
-    // },
-    // {
-    //   field: 'customerType',
-    //   title: '客户类型',
-    //   // slots: {
-    //   //   default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
-    //   // },
-    //   customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
-    //   // slots: {
-    //   //   default: 'customerType'
-    //   // }
-    //   params: {
-    //     exportContent: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
-    //   },
-    // },
-    // {
-    //   field: 'industryList',
-    //   title: '行业',
-    //   // slots: {
-    //   //   default: ({ row: { industryList } }) => {
-    //   //     return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
-    //   //   },
-    //   // },
-    //   customRender: ({ row: { industryList } }) => (
-    //     <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
-    //   ),
-    //   params: {
-    //     exportContent: ({ row: { industryList } }) =>
-    //       getTagsContent(industryList, { color: 'green' }),
-    //   },
-    // },
+    {
+      field: 'classificationValue',
+      title: '客户分类',
+      width: 200,
+      // showTooltip: true,
+      visible: false,
+      // slots: {
+      //   default: ({ row: { classificationValue } }) => {
+      //     return [
+      //       <TaTableProTags
+      //         data={classificationValue}
+      //         tagConfig={{ color: 'blue', round: '50px' }}
+      //       />,
+      //     ]
+      //   },
+      // },
+      customRender: ({ row: { classificationValue } }) => (
+        <TaTableProTags data={classificationValue} tagConfig={{ color: 'blue' }} />
+      ),
+    },
+    {
+      field: 'address',
+      title: '注册地',
+      visible: false,
+    },
+    {
+      field: 'ownerName',
+      title: '客户负责人',
+      visible: false,
+    },
+    {
+      field: 'sourceType',
+      title: '客户来源',
+      customRender: ({ row: { address, ownerName, sourceType } }) => (
+        <>{`${address}::${ownerName}::${sourceType}`}</>
+      ),
+    },
+    {
+      title: '集合1',
+      field: 'collect1',
+      // fixed: 'left',
+      children: [
+        {
+          field: 'customerType',
+          title: '客户类型',
+          width: 200,
+          // slots: {
+          //   default: ({ row: { customerType } }) => [customerType == 1 ? '机构' : '企业'],
+          // },
+          customRender: ({ row: { customerType } }) => (customerType == 1 ? '机构' : '企业'),
+          // slots: {
+          //   default: 'customerType'
+          // }
+        },
+        {
+          field: 'industryList',
+          title: '行业',
+          width: 200,
+          // slots: {
+          //   default: ({ row: { industryList } }) => {
+          //     return [<TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />]
+          //   },
+          // },
+          customRender: ({ row: { industryList } }) => (
+            <TaTableProTags data={industryList} tagConfig={{ color: 'green' }} />
+          ),
+        },
+      ],
+    },
     // {
     //   field: 'applicationList',
     //   title: '应用领域',
@@ -351,22 +436,6 @@ export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TablePro
     //   customRender: ({ row: { applicationList } }) => (
     //     <TaTableProTags data={applicationList} tagConfig={{ color: 'purple' }} />
     //   ),
-    //   params: {
-    //     exportContent: ({ row: { applicationList } }) =>
-    //       getTagsContent(applicationList, { color: 'purple' }),
-    //   },
-    // },
-    // {
-    //   field: 'address',
-    //   title: '注册地',
-    // },
-    // {
-    //   field: 'ownerName',
-    //   title: '客户负责人',
-    // },
-    // {
-    //   field: 'sourceType',
-    //   title: '客户来源',
     // },
     // {
     //   field: 'shareholder',
@@ -378,46 +447,23 @@ export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TablePro
     // },
     // { field: 'customerCode', title: '客户编号', fixed: 'left' },
     {
-      title: '集合',
-      field: 'collect1',
-      // fixed: 'left',
-      width: 200,
-      children: [
-        {
-          field: 'customerName',
-          title: '客户名称',
-          width: 100,
-          customRender: ({ row: { customerName } }) => (
-            <a
-              href="javascript:;"
-              style="color: #3a67fc"
-              onClick={(e) => {
-                handleRoutePush(e, {
-                  name: 'Test',
-                })
-              }}
-            >
-              {customerName}
-            </a>
-          ),
-        },
-        { field: 'customerCode', title: '客户编号', width: 100 },
-      ],
-    },
-    {
       title: '集合2',
+      field: 'collect2',
       children: [
         {
           field: 'annualRevenue',
           title: '年度营收（万元）',
+          width: 200,
         },
         {
           field: 'latestFinancingAmount',
           title: '最新融资金额（万元）',
+          width: 200,
         },
         {
           field: 'createDate',
           title: '创建时间',
+          width: 200,
         },
       ],
     },
@@ -662,6 +708,23 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
       // },
     ],
   }
+}
+
+export const footerMethod2: TableProFooter = ({ columns, data }) => {
+  return [
+    columns.map((column, columnIndex) => {
+      if (columnIndex === 0) {
+        return '合值'
+      }
+      if (['annualRevenue'].includes(column.field)) {
+        return sumNum(data, column.field)
+      }
+      if (['latestFinancingAmount'].includes(column.field)) {
+        return sumNum(data, column.field)
+      }
+      return null
+    }),
+  ]
 }
 
 export const columns3 = async ({ handleRoutePush }): Promise<TableProColumn[]> => {

@@ -1,5 +1,5 @@
 import { defineComponent, reactive, unref, watchEffect } from 'vue'
-import { PushpinFilled } from '@ant-design/icons-vue'
+import { OrderedListOutlined, PushpinFilled } from '@ant-design/icons-vue'
 import { Checkbox, Popover, Tooltip, Tree, TreeNode } from 'ant-design-vue'
 import { cloneDeep, flatten } from 'lodash-es'
 import TaButton from '@tav-ui/components/button'
@@ -70,7 +70,7 @@ export default defineComponent({
       /** popver 显示或隐藏 */
       visible: false,
       /** 全选控制 */
-      checkAll: true,
+      checkAll: false,
       /** 全选样式控制 */
       indeterminate: false,
       /** 包含树节点数据结构的列数据 */
@@ -91,7 +91,7 @@ export default defineComponent({
 
     const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
 
-    const { columnApiOptions, tablePropsRef } = useTableContext()
+    const { columnApiOptions, tablePropsRef, tableEmitter } = useTableContext()
     if (!columnApiOptions)
       warn(
         '请在业务中的 TaConfigProvider 组件，其属性 components 中配置 TaTablePro 所需数据。开启 column 后所需数据为 userInfo, columnsGetApi, columnsSetApi'
@@ -112,13 +112,22 @@ export default defineComponent({
       const traverse = (columns: TableProColumn[]) => {
         return columns.map((column: TableProColumn) => {
           if (column.children && column.children.length) {
+            let visible = column.visible
+            if (column.visible === undefined) {
+              visible = COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT.visible
+            }
             return {
               ...COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT,
               ...column,
+              visible,
               children: traverse(column.children),
             }
           } else {
-            return { ...COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT, ...column }
+            let visible = column.visible
+            if (column.visible === undefined) {
+              visible = COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT.visible
+            }
+            return { ...COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT, ...column, visible }
           }
         })
       }
@@ -132,9 +141,9 @@ export default defineComponent({
       return `${tableIdUUID}_${column.field || column.type}`
     }
 
-    /** 将默认不显示的列过滤 */
+    /** 将默认disabled的列过滤 */
     function filterDefaultInvisibleColumn(columns: ColumnOption[]) {
-      return columns.filter((column) => column.visible && !column.disabled)
+      return columns.filter((column) => !column.disabled)
     }
 
     /** 获取默认选中列 */
@@ -143,7 +152,7 @@ export default defineComponent({
         options.map((option) => {
           if (option.children && option.children.length) {
             if (option.disabled || option.fixed) {
-              return [option.key, ...getCheckedList(option.children)]
+              return [option.key, ...getDefaultCheckedList(option.children)]
             } else {
               return null
             }
@@ -159,12 +168,38 @@ export default defineComponent({
     }
 
     /** 获取选中列 */
-    // function getCheckedList(options: TreeDataItem[]) {
     function getCheckedList(options: ColumnOption[]) {
+      return flatten(
+        options
+          .map((option) => {
+            if (option.children && option.children.length) {
+              if (option.visible) {
+                return [option.key, ...getCheckedList(option.children)]
+              } else {
+                return [...getCheckedList(option.children)]
+              }
+            } else {
+              if (option.visible) {
+                return option.key
+              } else {
+                return null
+              }
+            }
+          })
+          .filter(Boolean)
+      )
+    }
+
+    /**
+     * 获取扁平化的 option 用来判断全选与半选
+     * @param options
+     * @returns
+     */
+    function getFlattenOptions(options: ColumnOption[]) {
       return flatten(
         options.map((option) => {
           if (option.children && option.children.length) {
-            return [option.key, ...getCheckedList(option.children)]
+            return [option.key, ...getFlattenOptions(option.children)]
           } else {
             return option.key
           }
@@ -176,7 +211,8 @@ export default defineComponent({
     function handleColumnGetOption(column: ColumnOption, pid: string, parentColumn?: ColumnOption) {
       const { type, field, fixed, disabled: _disabled, visible } = column
       const id = getColumnId(column)
-      const currentId = pid ? `${pid}-${id}` : id
+      // const currentId = pid ? `${pid}-${id}` : id
+      const currentId = id
       const currentFixed = parentColumn ? parentColumn.fixed : fixed
       // 修改select的title
       if (visible && !_disabled && SELECT_COMPONENTS.includes(type!)) {
@@ -185,7 +221,7 @@ export default defineComponent({
       // 将选中、操作列、传入的固定列设置为disable
       let disabled = false
       if (
-        visible &&
+        // visible &&
         !disabled &&
         ((type && SELECT_COMPONENTS.includes(type!)) ||
           (field && ACTION_COLUMNS.includes(field!)) ||
@@ -268,6 +304,7 @@ export default defineComponent({
       await props.tableRef?.value?.loadColumn(filteredColumns)
       await props.tableRef?.value?.refreshScroll()
       await props.tableRef?.value?.recalculate()
+      tableEmitter.emit('table-pro:column-covered')
 
       return filteredColumns
     }
@@ -279,13 +316,21 @@ export default defineComponent({
       const checkedList = getCheckedList(options)
 
       if (!state.columnOptions.length) {
-        state.columnOptions = options
-        state.cacheColumnOptions = options
+        state.columnOptions = [...options]
+        state.cacheColumnOptions = [...options]
         state.cacheColumnOptionsCheckedList = checkedList
       }
 
       state.columnOptionsCheckedList = checkedList
       state.isInit = true
+
+      if (checkedList.length === getFlattenOptions(options).length) {
+        state.checkAll = true
+        state.indeterminate = false
+      } else {
+        state.checkAll = false
+        state.indeterminate = true
+      }
     }
 
     /** popver 弹出处理 */
@@ -295,33 +340,74 @@ export default defineComponent({
     }
 
     /** 全选处理 */
-    function handleColumnCheckAllChange(e) {
-      const checkList = getCheckedList(state.cacheColumnOptions)
-      state.indeterminate = false
+    async function handleColumnCheckAllChange(e) {
+      const checkList = getFlattenOptions(state.columnOptions)
       if (e.target.checked) {
         state.columnOptionsCheckedList = checkList
         state.checkAll = true
+        state.indeterminate = false
       } else {
-        state.columnOptionsCheckedList = getDefaultCheckedList(state.cacheColumnOptions)
-        state.indeterminate = true
+        state.columnOptionsCheckedList = getDefaultCheckedList(state.columnOptions)
         state.checkAll = false
+        state.indeterminate = true
       }
+
+      const columnOptions = state.columnOptions.map((column) => {
+        const handle = (_column) => {
+          let visible = true
+          if (_column.key && state.columnOptionsCheckedList.includes(_column.key)) {
+            visible = true
+          } else {
+            visible = false
+          }
+          return {
+            ..._column,
+            visible,
+          }
+        }
+
+        if (column.children && column.children.length) {
+          const current = handle(column)
+          const children = column.children.map((childColumn) => handle(childColumn))
+          return {
+            ...current,
+            children,
+          }
+        } else {
+          return handle(column)
+        }
+      })
+      state.columnOptions = [...columnOptions]
+      // await useColumSetOptions(
+      //   state.columnOptions as any,
+      //   state.columnOptionsCheckedList,
+      //   state.columnOptionsHalfCheckedList
+      // )
     }
 
     /** 重置处理 */
-    function handleColumnReset() {
+    async function handleColumnReset() {
       state.columnOptionsCheckedList = [...state.cacheColumnOptionsCheckedList]
       state.columnOptionsHalfCheckedList = []
-
-      state.checkAll = true
-      state.indeterminate = false
       state.columnOptions = [...state.cacheColumnOptions]
-      // await useColumSetOptions(state.columnOptions as any, state.columnOptionsCheckedList)
+      if (state.columnOptionsCheckedList.length === getFlattenOptions(state.columnOptions).length) {
+        state.checkAll = true
+        state.indeterminate = false
+      } else {
+        state.checkAll = false
+        state.indeterminate = true
+      }
+
+      // await useColumSetOptions(
+      //   state.columnOptions as any,
+      //   state.columnOptionsCheckedList,
+      //   state.columnOptionsHalfCheckedList
+      // )
     }
 
     /** 确定处理 */
     async function handleColumnSubmit() {
-      const filteredColumnOptions = await useColumSetOptions(
+      await useColumSetOptions(
         state.columnOptions as any,
         state.columnOptionsCheckedList,
         state.columnOptionsHalfCheckedList
@@ -336,8 +422,13 @@ export default defineComponent({
         'set'
       )
       if (api) {
-        await api(params)
-        state.visible = false
+        const { success } = await api(params)
+        // state.visible = false
+        if (success) {
+          createMessage.success('表格列保存成功！点击弹窗外区域失焦后自动消失')
+        } else {
+          createMessage.warning('表格列保存失败，请刷新重试！')
+        }
       }
     }
 
@@ -347,7 +438,7 @@ export default defineComponent({
      * @param info
      * @returns
      */
-    function handleColumnOptionsSort(info: DropEvent) {
+    async function handleColumnOptionsSort(info: DropEvent) {
       const dropKey = info.node.eventKey
       const dragKey = info.dragNode.eventKey
       const dropPos = info.node.pos.split('-')
@@ -440,28 +531,66 @@ export default defineComponent({
           ar = arr
           i = index
         })
+
         if (dropPosition === -1) {
           ar.splice(i, 0, dragObj)
         } else {
           ar.splice(i + 1, 0, dragObj)
         }
       }
-      state.columnOptions = data
+      state.columnOptions = [...data]
+
+      // await useColumSetOptions(
+      //   state.columnOptions as any,
+      //   state.columnOptionsCheckedList,
+      //   state.columnOptionsHalfCheckedList
+      // )
     }
 
     /** 列选择处理 */
-    function handleColumnOptionsChange(changedCheckedList: string[], e) {
+    async function handleColumnOptionsChange(changedCheckedList: string[], e) {
       state.columnOptionsCheckedList = [...changedCheckedList]
       const halfList = e.halfCheckedKeys
       state.columnOptionsHalfCheckedList = [...halfList]
-      const checkedList = getCheckedList(state.cacheColumnOptions)
-      if (changedCheckedList.length === checkedList.length) {
-        state.indeterminate = false
+      if (changedCheckedList.length === getFlattenOptions(state.columnOptions).length) {
         state.checkAll = true
+        state.indeterminate = false
       } else {
-        state.indeterminate = true
         state.checkAll = false
+        state.indeterminate = true
       }
+
+      const columnOptions = state.columnOptions.map((column) => {
+        const handle = (_column) => {
+          let visible = true
+          if (_column.key && changedCheckedList.includes(_column.key)) {
+            visible = true
+          } else {
+            visible = false
+          }
+          return {
+            ..._column,
+            visible,
+          }
+        }
+
+        if (column.children && column.children.length) {
+          const current = handle(column)
+          const children = column.children.map((childColumn) => handle(childColumn))
+          return {
+            ...current,
+            children,
+          }
+        } else {
+          return handle(column)
+        }
+      })
+      state.columnOptions = [...columnOptions]
+      // await useColumSetOptions(
+      //   state.columnOptions as any,
+      //   state.columnOptionsCheckedList,
+      //   state.columnOptionsHalfCheckedList
+      // )
     }
 
     /** 应用从接口获得的持久化数据 */
@@ -470,27 +599,28 @@ export default defineComponent({
       checkedList: string[],
       halfCheckedList: string[]
     ) {
-      if (!columns.length) {
-        state.checkAll = false
-        state.indeterminate = false
-      } else {
-        const cacheCheckedList = getCheckedList(state.cacheColumnOptions)
-        if (checkedList.length === cacheCheckedList.length) {
-          state.checkAll = true
-          state.indeterminate = false
-        } else {
-          state.checkAll = false
-          state.indeterminate = true
-        }
+      if (columns.length) {
+        state.columnOptions = [...columns]
+        state.cacheColumnOptions = [...columns]
       }
 
-      state.columnOptions = [...columns]
-      // state.cacheColumnOptions = [...columns]
-      state.columnOptionsCheckedList = [...checkedList]
-      // state.cacheColumnOptionsCheckedList = [...checkedList]
-      //新增半节点存储
-      state.columnOptionsHalfCheckedList = [...halfCheckedList]
-      // state.cacheColumnOptionsHalfCheckedList = [...halfCheckedList]
+      if (checkedList.length) {
+        state.columnOptionsCheckedList = [...checkedList]
+        state.cacheColumnOptionsCheckedList = [...checkedList]
+      }
+
+      if (halfCheckedList.length) {
+        state.columnOptionsHalfCheckedList = [...halfCheckedList]
+        // state.cacheColumnOptionsHalfCheckedList = [...halfCheckedList]
+      }
+
+      if (state.columnOptionsCheckedList.length === getFlattenOptions(state.columnOptions).length) {
+        state.checkAll = true
+        state.indeterminate = false
+      } else {
+        state.checkAll = false
+        state.indeterminate = true
+      }
 
       useColumSetOptions(
         state.columnOptions as any,
@@ -500,7 +630,7 @@ export default defineComponent({
     }
 
     function handleColumnClick(e: Event) {
-      state.visible = true
+      // state.visible = true
       handleColumnVisibleChange()
       if (isObject(props.config?.column) && props.config?.column.handleAction)
         props.config?.column.handleAction(e)
@@ -521,7 +651,11 @@ export default defineComponent({
                   <Tooltip placement="top" title="固定列">
                     <PushpinFilled />
                   </Tooltip>
-                ) : null}
+                ) : (
+                  <Tooltip placement="top" title="拖动列">
+                    <OrderedListOutlined />
+                  </Tooltip>
+                )}
               </>
             ),
             default: () => (isFunction(defaultSolt) ? defaultSolt(option.children) : defaultSolt),
@@ -541,13 +675,12 @@ export default defineComponent({
     }
 
     return () => {
-      // console.log(state.columnOptions)
       return props.config?.column && unref(columnApiOptions) ? (
         <Tooltip placement="bottomLeft" title="列设置">
           <Popover
             placement="bottomLeft"
             trigger="click"
-            visible={state.visible}
+            // visible={state.visible}
             overlayClassName={`column-popver`}
             getPopupContainer={getPopupContainer}
           >

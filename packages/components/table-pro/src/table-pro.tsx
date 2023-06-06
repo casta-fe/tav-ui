@@ -4,6 +4,7 @@ import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import TaCollapseTransition from '@tav-ui/components/transition'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
+// import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
@@ -53,6 +54,14 @@ export default defineComponent({
     // 注册 tablepro emitter
     const tableEmitter = mitt()
 
+    // 数据返回的时机当作表格内部渲染完毕的时机
+    const isTableProRendered = computed(() => {
+      return (
+        JSON.stringify(unref(tableRef)?.getTableData().visibleData) &&
+        JSON.stringify(unref(tableRef)?.getTableData().visibleData) !== '[]'
+      )
+    })
+
     // 表格 props
     const _getProps = computed(() => {
       return { ...props, id: props.id ?? buildTableId() } as TableProProps
@@ -63,16 +72,35 @@ export default defineComponent({
 
     // 扩展 columns
     const getColumns = computed(() => {
-      let columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
-      if (unref(columnsForAction) && unref(columnsForAction).length > 0) {
-        columns = unref(columnsForAction)
-      }
+      // const columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
+      const columns: TableProColumn[] = useColumns(
+        unref(getProps).columns,
+        unref(getProps).checkboxConfig,
+        unref(getProps).radioConfig,
+        tableRef,
+        emit
+      )
       return { columns }
     })
 
     // 列持久化处理
-    const columnApiOptions = useColumnApi(getProps, useGlobalConfig())
-    columnApiOptions?.useCachedColumnCoverCurrentColumns(getColumns, customActionRef as any)
+    // const columnApiOptions = useColumnApi(getProps, useGlobalConfig(), tableEmitter)
+    const columnApiOptions = useColumnApi(
+      unref(getProps).id,
+      unref(getProps).customActionConfig.column,
+      useGlobalConfig(),
+      tableEmitter
+    )
+
+    // columnApiOptions?.useCachedColumnCoverCurrentColumns(getColumns, customActionRef as any)
+    watch(
+      () => unref(isTableProRendered),
+      (isRendered) => {
+        if (isRendered) {
+          columnApiOptions?.useCachedColumnCoverCurrentColumns(getColumns, customActionRef as any)
+        }
+      }
+    )
 
     // 透传 attr
     const getAttrs = computed(() => {
@@ -83,10 +111,16 @@ export default defineComponent({
     const getListeners = useListeners(emit)
 
     // extend props&apis
-    const { loading, setLoading } = useLoading(getProps)
+    // const { loading, setLoading } = useLoading(getProps)
+    const { loading, setLoading } = useLoading(unref(getProps).loading)
 
     // 手动处理单元格 tooltip
-    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
+    // const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
+    const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(
+      unref(getProps).id,
+      unref(getProps).showTooltip,
+      emit
+    )
 
     // 监听全局鼠标滚动取消cell tooltip
     useHideTooltips(instances)
@@ -103,10 +137,16 @@ export default defineComponent({
     }))
 
     // 数据处理
-    useDataSource(getProps, tableRef)
+    // useDataSource(getProps, tableRef)
+    useDataSource(
+      unref(getProps).api,
+      unref(getProps).immediate,
+      unref(getProps).pagerConfig,
+      tableRef
+    )
 
     // 执行dom监听的处理
-    useWatchDom(getProps, tableRef, customActionRef, tableEmitter)
+    useWatchDom(tableRef, customActionRef, tableEmitter)
 
     // 统计 action 渲染数据，动态设置宽度
     const setCacheActionWidths = ({ key = '', value = 0 }) => {
@@ -114,28 +154,61 @@ export default defineComponent({
         cacheActionWidths.value[key] = value
       }
     }
-    watch(
-      () => cacheActionWidths,
-      () => {
-        const tableData = unref(tableRef)?.getTableData().tableData
-        const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-        if (tableData && maxWidth > unref(maxWidthForAction)) {
-          const columns = unref(getColumns).columns.map((column) => {
-            if (column.field && ACTION_COLUMNS.includes(column.field)) {
-              column.width = Math.ceil(maxWidth)
-              column.minWidth = Math.ceil(maxWidth)
-              return column
-            }
+    function handleNotPersistentColumnActionWidth() {
+      const tableData = unref(tableRef)?.getTableData().tableData
+      const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+      if (tableData && maxWidth >= unref(maxWidthForAction)) {
+        const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
+        const columns = currentColumns!.map((column) => {
+          if (column.field && ACTION_COLUMNS.includes(column.field)) {
+            column.width = Math.ceil(maxWidth)
+            column.minWidth = Math.ceil(maxWidth)
             return column
-          })
-          columnsForAction.value = columns
-          maxWidthForAction.value = maxWidth
-        }
-      },
-      {
-        deep: true,
+          }
+          return column
+        })
+        unref(tableRef)?.loadColumn(columns)
+        maxWidthForAction.value = maxWidth
       }
-    )
+    }
+    if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
+      // 开启了列持久化
+      tableEmitter.on('table-pro:column-covered', () => {
+        handleNotPersistentColumnActionWidth()
+      })
+
+      // 开启了列持久化但是无持久化数据
+      tableEmitter.on('table-pro:column-covered-no-data', () => {
+        handleNotPersistentColumnActionWidth()
+      })
+    } else {
+      // 未开启列持久化
+      watch(
+        () => cacheActionWidths,
+        () => {
+          const tableData = unref(tableRef)?.getTableData().tableData
+          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+          if (tableData && maxWidth > unref(maxWidthForAction)) {
+            // const currentColumns = unref(getColumns).columns
+            const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
+            const columns = currentColumns!.map((column) => {
+              if (column.field && ACTION_COLUMNS.includes(column.field)) {
+                column.width = Math.ceil(maxWidth)
+                column.minWidth = Math.ceil(maxWidth)
+                return column
+              }
+              return column
+            })
+            // columnsForAction.value = columns
+            unref(tableRef)?.loadColumn(columns)
+            maxWidthForAction.value = maxWidth
+          }
+        },
+        {
+          deep: true,
+        }
+      )
+    }
 
     // 注入数据
     createTableContext({
