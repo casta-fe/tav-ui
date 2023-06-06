@@ -2,6 +2,8 @@
 
 `tav-ui` 是基于 Vue 3 + Typescript + Vite 技术开发的前端 Vue 组件库。该项目采用`pnpm+monorepo`进行包管理,使用`gulp`控制打包流程,`rollup`进行打包。
 
+> 环境依赖 node16 pnpm7
+
 # tips
 
 - 文件中用到的自定义类型必须手动复制粘贴过去
