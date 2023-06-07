@@ -1,4 +1,4 @@
-@import "../var/index.less";
+@import '../var/index.less';
 .ta-button-group {
   margin-bottom: @gap16;
   position: relative;
@@ -16,6 +16,24 @@
 
   .ant-btn {
     border-radius: 32px !important;
+  }
+
+  .badge-count {
+    z-index: 1;
+    min-width: 20px;
+    position: absolute;
+    height: 20px;
+    padding: 0 6px;
+    color: #fff;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    white-space: nowrap;
+    text-align: center;
+    background: #ff4d4f;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px #fff;
+    top: 0;
   }
 
   .ant-btn + .ant-btn {

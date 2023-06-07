@@ -75,6 +75,14 @@ export default defineComponent({
       >
         {{ item.label }}
         <span v-if="item.number != null">（{{ item.number }}）</span>
+        <sup v-if="item.badge != null" class="badge-count">
+          <template v-if="item.badge !== true">
+            {{ item.badge }}
+          </template>
+          <template v-else-if="item.number != null">
+            {{ item.number }}
+          </template>
+        </sup>
       </Button>
     </div>
     <slot />

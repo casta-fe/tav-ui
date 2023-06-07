@@ -5,6 +5,7 @@ export interface ButtonGroupItem {
   label: string
   url?: string
   number?: number | null | undefined
+  badge?: true | number | null | undefined
   disabled?: boolean
   permission?: string
   loading?: boolean
