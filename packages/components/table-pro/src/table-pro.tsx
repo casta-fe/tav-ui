@@ -210,6 +210,10 @@ export default defineComponent({
       )
     }
 
+    // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
+    const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
+    useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
+
     // 注入数据
     createTableContext({
       tableRef,
@@ -225,7 +229,11 @@ export default defineComponent({
         useExtendInstance(
           tableRef,
           getProps,
-          { setLoading, resetFilterInput: () => filterRef.value.resetFilterInput() },
+          {
+            setLoading,
+            resetFilterInput: () => filterRef.value.resetFilterInput(),
+            resizeTableHeight: setHeight,
+          },
           filterRef
         )
       ),
@@ -290,10 +298,6 @@ export default defineComponent({
         </div>
       ) : null
     }
-
-    // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
-    const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
-    useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
 
     onUnmountedOrOnDeactivated(() => {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
