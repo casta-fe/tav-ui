@@ -228,6 +228,7 @@ class Handler {
       },
       {
         immediate: true,
+        flush: 'pre',
       }
     )
 
@@ -276,6 +277,9 @@ class Handler {
         moduleCodeVal !== moduleCodePrev && (this._params.moduleCode = moduleCodeVal)
 
         searchValueVal !== searchValuePrev && (this._params.searchValue = searchValueVal)
+      },
+      {
+        flush: 'pre',
       }
     )
   }
