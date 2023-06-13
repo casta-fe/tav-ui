@@ -344,7 +344,7 @@ export default defineComponent({
         if (schema.component == 'InputNumber') {
           if (schemaValue !== undefined && !isNull(schemaValue)) hide()
         } else {
-          if (schemaValue) {
+          if (!isNullOrUnDef(schemaValue)) {
             hide()
           } else {
             // 必填项此时无值不能隐藏表单项
