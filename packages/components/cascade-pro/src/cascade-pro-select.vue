@@ -29,6 +29,7 @@
           v-if="!getBindValue.showPlaceholder"
           pre-icon="ant-design:plus-outlined"
           style="min-width: 80px"
+          :disabled="($attrs.disabled as any)"
         />
         <span v-else class="ant-select-selection-placeholder">
           {{ getBindValue.placeholder }}
@@ -198,6 +199,8 @@ export default defineComponent({
     }
 
     const handleClick = () => {
+      if (attrs.disabled) return
+
       visible.value = true
     }
 

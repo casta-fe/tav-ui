@@ -259,6 +259,18 @@ export default defineComponent({
       closePannelFormModal()
     }
 
+    async function handleInputFormResetFields() {
+      await inputFormResetFields()
+      await nextTick()
+      state.inputForm = inputFormGetFieldsValue()
+      state.currentFilter = { ...state.inputForm, ...state.pannelForm }
+      unref(props.tableRef)?.commitProxy('query', {
+        filter: { ...state.currentFilter },
+        model: { page: 1 },
+      })
+      tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
+    }
+
     function handlePannelFormResetFields() {
       pannelFormResetFields()
       state.visible = false
@@ -286,7 +298,7 @@ export default defineComponent({
       { immediate: true }
     )
 
-    expose({ resetFilterInput: inputFormResetFields })
+    expose({ resetFilterInput: handleInputFormResetFields })
 
     return () => {
       return unref(isFilterFormShow) ? (
