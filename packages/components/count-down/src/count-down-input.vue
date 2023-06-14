@@ -1,22 +1,23 @@
 <template>
-  <a-input v-bind="$attrs" :class="prefixCls" :size="size" :value="state">
+  <Input v-bind="$attrs" :class="prefixCls" :size="size" :value="state">
     <template #addonAfter>
       <TaCountButton :size="size" :count="count" :value="state" :before-start-func="sendCodeApi" />
     </template>
     <template v-for="item in Object.keys($slots).filter((k) => k !== 'addonAfter')" #[item]="data">
       <slot :name="item" v-bind="data || {}" />
     </template>
-  </a-input>
+  </Input>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { Input } from 'ant-design-vue'
 import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import TaCountButton from '@tav-ui/components/count-button/src/count-button.vue'
 import { countDownInputProps } from './types'
 
 export default defineComponent({
   name: 'TaCountDownInput',
-  components: { TaCountButton },
+  components: { TaCountButton, Input },
   inheritAttrs: false,
   props: countDownInputProps,
   setup(props) {

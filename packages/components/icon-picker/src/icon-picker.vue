@@ -103,7 +103,7 @@ export default defineComponent({
 })
 </script>
 <template>
-  <a-input
+  <AInput
     v-model:value="currentSelect"
     disabled
     :style="{ width }"
@@ -119,7 +119,7 @@ export default defineComponent({
       >
         <template #title>
           <div class="flex justify-between">
-            <a-input placeholder="搜索图标" allow-clear @change="debounceHandleSearchChange" />
+            <AInput placeholder="搜索图标" allow-clear @change="debounceHandleSearchChange" />
           </div>
         </template>
 
@@ -164,5 +164,5 @@ export default defineComponent({
         <Icon v-else :icon="currentSelect || 'ion:apps-outline'" class="cursor-pointer px-2 py-1" />
       </a-popover>
     </template>
-  </a-input>
+  </AInput>
 </template>
