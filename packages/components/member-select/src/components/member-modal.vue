@@ -272,7 +272,7 @@ export default defineComponent({
       // 默认打开第一个节点，并获取他下面的用户
       const firstOrg = orgList.value[0]
       // 如果当前打开的就是第一个就不执行后面的
-      if (firstOrg && !isEqual(state.orgExpandedKeys, [firstOrg.id])) {
+      if (firstOrg && state.orgExpandedKeys.length == 0) {
         state.orgExpandedKeys = [firstOrg.id]
         const children = userList.value
           .filter((v: any) => v.organizationId == firstOrg.id)
@@ -312,14 +312,6 @@ export default defineComponent({
       state.autoExpandParent = false
     }
     watch(
-      () => orgList.value,
-      (a) => {
-        if (a.length > 0) {
-          openFirstOrg()
-        }
-      }
-    )
-    watch(
       () => state.checkboxData,
       (val) => {
         emit('change', val)
@@ -329,6 +321,14 @@ export default defineComponent({
       () => state.radioData,
       (val) => {
         emit('change', val)
+      }
+    )
+    watch(
+      () => state.tabActive,
+      (a) => {
+        if (a == '0') {
+          openFirstOrg()
+        }
       }
     )
     watch(
@@ -342,7 +342,6 @@ export default defineComponent({
     })
     const pageInit = (): void => {
       const data: any[] = props.selectedData
-      openFirstOrg()
       if (propsData.value.multiple) {
         state.checkboxData = [...data[0]]
       } else {
