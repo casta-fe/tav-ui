@@ -361,7 +361,9 @@ export default defineComponent({
           ) : null}
         </div>
       ) : (
-        props.tableSlots?.filterForm?.()
+        <div class={ComponentPrefixCls} data-filter-params={tableFilterParams.value}>
+          {props.tableSlots?.filterForm?.()}
+        </div>
       )
     }
   },
