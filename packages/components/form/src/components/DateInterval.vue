@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { type PropType, computed, defineComponent, onMounted, ref, unref } from 'vue'
-import moment from 'moment'
+import moment, { type unitOfTime } from 'moment'
 import 'moment/dist/locale/zh-cn'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
@@ -66,6 +66,7 @@ export default defineComponent({
       type: Array as PropType<DateRangeKeyType[]>,
       default: () => defaultDateRangeKeyList,
     },
+    autoChoose: { type: String as PropType<unitOfTime.StartOf | 'none'>, default: 'month' },
   },
   emits: ['change', 'search', 'getCurDate'],
   setup(props, { emit }) {
@@ -94,10 +95,12 @@ export default defineComponent({
 
       if (props.allowClear && momentList.length === 0) {
         currentDate.value = []
+      } else if (props.autoChoose === 'none') {
+        currentDate.value = momentList
       } else {
         currentDate.value = [
-          moment(momentList[0]).startOf('month'),
-          moment(momentList[1]).endOf('month'),
+          moment(momentList[0]).startOf(props.autoChoose),
+          moment(momentList[1]).endOf(props.autoChoose),
         ].map((el) => el.format('YYYY-MM-DD'))
       }
       handleEmitEvent()
