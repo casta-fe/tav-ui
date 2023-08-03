@@ -20,6 +20,7 @@ import {
 } from '@tav-ui/utils/is'
 import { error } from '@tav-ui/utils/log'
 import BasicHelp from '@tav-ui/components/basic-help'
+import { numberToChinese } from '@tav-ui/utils'
 import {
   componentMap,
   editableComponentChecksTypeMap,
@@ -578,7 +579,12 @@ export default defineComponent({
         props.schema.componentProps['precision'] = precision
       }
     }
-
+    const showNumberToChinese = () => {
+      const { component, componentProps = {} as any } = props.schema
+      return (
+        component === 'InputNumber' && componentProps.useChinese && !isNullOrUnDef(unref(itemValue))
+      )
+    }
     function renderComponent() {
       const {
         renderComponentContent,
@@ -684,9 +690,14 @@ export default defineComponent({
       // if (!renderComponentContent) return <Comp {...compAttr} />;
       if (!renderComponentContent) {
         return unref(hasEditable) ? (
-          withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])
+          <>{withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])} 222</>
         ) : (
-          <Comp {...compAttr} />
+          <>
+            <Comp {...compAttr}></Comp>
+            {showNumberToChinese() && (
+              <div class="number-to-chinese">{numberToChinese(itemValue.value)}</div>
+            )}
+          </>
         )
       }
 
