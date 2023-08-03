@@ -82,15 +82,16 @@ export default defineComponent({
       schema: Ref<FormSchema>
       formProps: Ref<FormProps>
     }
-
     // ::==================== i7eo：添加 ///// start ///// ====================:: //
     const itemValue = computed(
       () => props.formModel[props.schema.field] || props.schema.defaultValue
     )
+
     const editableItemValue = ref<any>(itemValue.value) // 默认值
     const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
+    const AntItemRef = ref<FormProps | null>(null)
     /** 函数处理 */
     const componentProps = computed(() => {
       let componentProps = props.schema.componentProps
@@ -156,8 +157,10 @@ export default defineComponent({
     )
     watch(
       () => props.formModel[props.schema.field],
-      (newVal) => {
-        getFormItemPrecision(newVal, false)
+      (newVal, oldValue) => {
+        if (newVal !== oldValue) {
+          getFormItemPrecision(newVal, false)
+        }
       },
       { immediate: true }
     )
@@ -534,22 +537,17 @@ export default defineComponent({
     }
     // 获取数字类型数据精度 最小为2最大为6
     function getFormItemPrecision(_value, getDomValue) {
-      if (props.schema.component !== 'InputNumber') {
+      const { schema, tableAction, formModel, formActionType } = props
+      const { componentProps = {} } = schema
+      const realcomponentProps = isFunction(componentProps)
+        ? componentProps({ schema, tableAction, formModel, formActionType })
+        : componentProps
+      if (
+        props.schema.component !== 'InputNumber' ||
+        _value === undefined ||
+        realcomponentProps['noAutoPrecision']
+      ) {
         return
-      }
-      if (_value === undefined) {
-        return
-      }
-      // console.log(props.schema.componentProps);
-      if (unref(componentProps) && unref(componentProps)['noAutoPrecision']) {
-        return
-      }
-      if (unref(componentProps)) {
-        const { schema, tableAction, formModel, formActionType } = props
-        let { componentProps = {} } = schema
-        if (isFunction(componentProps))
-          componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {}
-        if (componentProps['noAutoPrecision']) return
       }
       let precision = 0
       let value = _value
@@ -564,8 +562,8 @@ export default defineComponent({
         const newValDecimal = String(value).split('.')[1]
         if (!newValDecimal || newValDecimal.length <= 2) {
           precision = 2
-        } else if (newValDecimal.length >= 6) {
-          precision = 6
+        } else if (newValDecimal.length > 5) {
+          precision = 5
         } else {
           precision = newValDecimal.length
         }
@@ -575,17 +573,27 @@ export default defineComponent({
         // eslint-disable-next-line vue/no-mutating-props
         props.schema.componentProps = { precision }
       } else {
+        console.log(getDomValue)
         // eslint-disable-next-line vue/no-mutating-props
         props.schema.componentProps['precision'] = precision
       }
     }
     const showNumberToChinese = () => {
+      const { tableAction, formModel, formActionType } = props
       const { component, componentProps = {} as any } = props.schema
+      const realComponetProps = isFunction(componentProps)
+        ? componentProps({ schema, tableAction, formModel, formActionType })
+        : componentProps
+      const regRes = AntItemRef.value
+      console.log(regRes)
       return (
-        component === 'InputNumber' && componentProps.useChinese && !isNullOrUnDef(unref(itemValue))
+        component === 'InputNumber' &&
+        realComponetProps.useChinese &&
+        !isNullOrUnDef(unref(itemValue))
       )
     }
     function renderComponent() {
+      const { tableAction, formModel, formActionType } = props
       const {
         renderComponentContent,
         component,
@@ -595,7 +603,6 @@ export default defineComponent({
         valueField,
         componentProps = {},
       } = props.schema
-
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
       const eventKey = `on${upperFirst(changeEvent)}`
@@ -618,7 +625,9 @@ export default defineComponent({
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
         },
       }
-
+      const realComponetProps = isFunction(componentProps)
+        ? componentProps({ schema, tableAction, formModel, formActionType })
+        : componentProps
       const Comp = component && (componentMap.get(component) as ReturnType<typeof defineComponent>)
       const size = props.formProps['size']
       const propsData: Recordable = {
@@ -653,24 +662,17 @@ export default defineComponent({
       const setMaxLengthComponentNames = ['Input', 'InputPassword', 'InputSearch', 'InputTextArea'] // 可以设置默认字符数的组件
       if (component && setMaxLengthComponentNames.includes(component)) {
         if (component === 'InputTextArea') {
-          compAttr.maxlength = (componentProps as any)?.maxLength ?? 256
-          compAttr.showCount = (componentProps as any)?.showCount ?? true
-          compAttr.autoSize = (componentProps as any)?.autoSize ?? { minRows: 4, maxRows: 4 }
+          compAttr.maxlength = (realComponetProps as any)?.maxLength ?? 256
+          compAttr.showCount = (realComponetProps as any)?.showCount ?? true
+          compAttr.autoSize = (realComponetProps as any)?.autoSize ?? { minRows: 4, maxRows: 4 }
         } else {
           compAttr.maxlength = 32
         }
       }
       if (component === 'InputNumber') {
-        compAttr.max = (componentProps as any)?.max ?? NUMBER_MAX
-        compAttr.min = (componentProps as any)?.min ?? 0
-        if (isFunction(componentProps)) {
-          const { schema, tableAction, formModel, formActionType } = props
-          compAttr.precision =
-            componentProps({ schema, tableAction, formModel, formActionType })?.precision ??
-            undefined
-        } else {
-          compAttr.precision = (componentProps as any)?.precision ?? undefined
-        }
+        compAttr.max = (realComponetProps as any)?.max ?? NUMBER_MAX
+        compAttr.min = (realComponetProps as any)?.min ?? 0
+        compAttr.precision = (realComponetProps as any)?.precision ?? undefined
       }
 
       if (unref(hasEditable)) {
@@ -687,15 +689,25 @@ export default defineComponent({
           }
         }
       }
-      // if (!renderComponentContent) return <Comp {...compAttr} />;
       if (!renderComponentContent) {
         return unref(hasEditable) ? (
-          <>{withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])} 222</>
+          <>
+            {withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])}
+            {showNumberToChinese() && (
+              <div class="number-to-chinese">
+                {numberToChinese(itemValue.value, realComponetProps?.chineseMultip)}
+              </div>
+            )}
+          </>
         ) : (
           <>
             <Comp {...compAttr}></Comp>
             {showNumberToChinese() && (
-              <div class="number-to-chinese">{numberToChinese(itemValue.value)}</div>
+              // <transition name="fade-bottom" mode="out-in">
+              <div class="number-to-chinese">
+                {numberToChinese(itemValue.value, realComponetProps?.chineseMultip)}
+              </div>
+              // </transition>
             )}
           </>
         )
@@ -856,6 +868,7 @@ export default defineComponent({
 
         return (
           <Form.Item
+            ref={AntItemRef}
             name={field}
             colon={props.formProps['colon']}
             class={{

@@ -32,10 +32,21 @@
         align-items: center;
       }
     }
+    .number-to-chinese {
+      position: absolute;
+      right: 5px;
+      top: 100%;
+      // margin-top: 5px;
+    }
   }
 
   .ant-form-explain {
     font-size: 14px;
+  }
+  .ant-form-item-has-error {
+    .number-to-chinese {
+      display: none;
+    }
   }
 
   &--compact {

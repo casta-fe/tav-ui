@@ -1,4 +1,4 @@
-import { round } from 'lodash-es'
+import { round, trimEnd } from 'lodash-es'
 import { isNullOrUnDef } from './is'
 
 /**
@@ -50,10 +50,19 @@ export function formatNumber(
   }
   return s.join(decPoint)
 }
-export function numberToChinese(number) {
-  console.log(number)
-  if (isNullOrUnDef(number)) {
+
+/**
+ * @param number 要格式化的数字
+ * @param multip 倍率，如果单位是万元的时候可以传10000
+ * @returns string
+ */
+export function numberToChinese(num: number | string, multip = 1) {
+  if (isNullOrUnDef(num) || (typeof num === 'string' && /[^\d.]/.test(num))) {
     return ''
+  }
+  let number = multiply(Number(num), multip)
+  if (number > 9999999999) {
+    number = 9999999999
   }
   const chineseNums = ['零', '壹', '贰', '贰', '肆', '伍', '陆', '柒', '捌', '玖']
   const chineseUnits = [
@@ -62,17 +71,35 @@ export function numberToChinese(number) {
     '佰',
     '仟',
     '万',
+    '十',
+    '百',
+    '千',
     '亿',
+    '十',
+    '百',
+    '千',
     '兆',
+    '十',
+    '百',
+    '千',
     '京',
+    '十',
+    '百',
+    '千',
     '垓',
+    '十',
+    '百',
+    '千',
     '秭',
-    '穣',
-    '沟',
-    '涧',
-    '正',
-    '载',
-    '极',
+    '十',
+    '百',
+    '千',
+    // '穣',
+    // '沟',
+    // '涧',
+    // '正',
+    // '载',
+    // '极',
   ]
   const chineseDecimals = ['角', '分', '厘', '毫']
 
@@ -97,7 +124,7 @@ export function numberToChinese(number) {
     } else {
       // 处理连续的零，只添加一个零
       if (result[result.length - 1] !== chineseNums[0]) {
-        result += chineseNums[digit]
+        result += chineseNums[digit] || '--'
       }
     }
   }
@@ -105,7 +132,7 @@ export function numberToChinese(number) {
   // 处理小数部分
   const decimalLen = decimalPart.length
   if (decimalLen > 0) {
-    result += '。'
+    result += '圆'
   }
   for (let i = 0; i < decimalLen; i++) {
     const digit = parseInt(decimalPart[i])
@@ -113,6 +140,80 @@ export function numberToChinese(number) {
       result += chineseNums[digit] + (i < chineseDecimals.length ? chineseDecimals[i] : '')
     }
   }
+  // if (result.endsWith('零')) {
+  //   result = result.
+  // }
+  return trimEnd(result, '零')
+}
 
-  return result
+export function add(arg1, arg2) {
+  let r1, r2
+  try {
+    r1 = arg1.toString().split('.')[1].length
+  } catch (e) {
+    r1 = 0
+  }
+  try {
+    r2 = arg2.toString().split('.')[1].length
+  } catch (e) {
+    r2 = 0
+  }
+  const c = Math.abs(r1 - r2)
+  const m = 10 ** Math.max(r1, r2)
+  if (c > 0) {
+    const cm = 10 ** c
+    if (r1 > r2) {
+      arg1 = Number(arg1.toString().replace('.', ''))
+      arg2 = Number(arg2.toString().replace('.', '')) * cm
+    } else {
+      arg1 = Number(arg1.toString().replace('.', '')) * cm
+      arg2 = Number(arg2.toString().replace('.', ''))
+    }
+  } else {
+    arg1 = Number(arg1.toString().replace('.', ''))
+    arg2 = Number(arg2.toString().replace('.', ''))
+  }
+  return (arg1 + arg2) / m
+}
+export function subtract(arg1, arg2) {
+  let r1, r2
+  try {
+    r1 = arg1.toString().split('.')[1].length
+  } catch (e) {
+    r1 = 0
+  }
+  try {
+    r2 = arg2.toString().split('.')[1].length
+  } catch (e) {
+    r2 = 0
+  }
+  const m = 10 ** Math.max(r1, r2) //last modify by deeka //动态控制精度长度
+  const n = r1 >= r2 ? r1 : r2
+  return ((arg1 * m - arg2 * m) / m).toFixed(n)
+}
+export function multiply(arg1: number, arg2: number) {
+  let m = 0
+  const s1 = arg1.toString(),
+    s2 = arg2.toString()
+  try {
+    m += s1.split('.')[1].length
+  } catch (e) {}
+  try {
+    m += s2.split('.')[1].length
+  } catch (e) {}
+  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / 10 ** m
+}
+export function divide(arg1, arg2) {
+  let t1 = 0,
+    t2 = 0
+
+  try {
+    t1 = arg1.toString().split('.')[1].length
+  } catch (e) {}
+  try {
+    t2 = arg2.toString().split('.')[1].length
+  } catch (e) {}
+  const r1 = Number(arg1.toString().replace('.', ''))
+  const r2 = Number(arg2.toString().replace('.', ''))
+  return (r1 / r2) * 10 ** (t2 - t1)
 }
