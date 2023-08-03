@@ -64,7 +64,7 @@ export function numberToChinese(num: number | string, multip = 1) {
   if (number > 9999999999) {
     number = 9999999999
   }
-  const chineseNums = ['零', '壹', '贰', '贰', '肆', '伍', '陆', '柒', '捌', '玖']
+  const chineseNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
   const chineseUnits = [
     '',
     '拾',
