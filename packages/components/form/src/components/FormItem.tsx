@@ -573,7 +573,6 @@ export default defineComponent({
         // eslint-disable-next-line vue/no-mutating-props
         props.schema.componentProps = { precision }
       } else {
-        console.log(getDomValue)
         // eslint-disable-next-line vue/no-mutating-props
         props.schema.componentProps['precision'] = precision
       }
@@ -585,7 +584,6 @@ export default defineComponent({
         ? componentProps({ schema, tableAction, formModel, formActionType })
         : componentProps
       const regRes = AntItemRef.value
-      console.log(regRes)
       return (
         component === 'InputNumber' &&
         realComponetProps.useChinese &&
