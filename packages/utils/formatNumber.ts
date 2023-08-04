@@ -56,13 +56,13 @@ export function formatNumber(
  * @param multip 倍率，如果单位是万元的时候可以传10000
  * @returns string
  */
-export function numberToChinese(num: number | string, multip = 1) {
+export function numberToChinese(num: number | string, multip = 1, max = 1e12) {
   if (isNullOrUnDef(num) || (typeof num === 'string' && /[^\d.]/.test(num))) {
     return ''
   }
-  let number = multiply(Number(num), multip)
-  if (number > 9999999999) {
-    number = 9999999999
+  const number = multiply(Number(num), multip)
+  if (number > max) {
+    return '金额过大暂不支持'
   }
   const chineseNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
   const chineseUnits = [
