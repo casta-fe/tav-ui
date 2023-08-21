@@ -346,7 +346,7 @@ export default defineComponent({
         //  添加针对0的兼容 by hyb
         // eslint-disable-next-line eqeqeq
         if (schema.component == 'InputNumber') {
-          if (schemaValue !== undefined && !isNull(schemaValue)) hide()
+          if (!isNullOrUnDef(schemaValue)) hide()
         } else {
           if (!isNullOrUnDef(schemaValue)) {
             hide()
@@ -562,10 +562,10 @@ export default defineComponent({
         const newValDecimal = String(value).split('.')[1]
         if (!newValDecimal || newValDecimal.length <= 2) {
           precision = 2
-        } else if (newValDecimal.length > 5) {
-          precision = 5
+        } else if (newValDecimal.length >= 6) {
+          precision = 6
         } else {
-          precision = newValDecimal.length
+          precision = newValDecimal.length + 1
         }
       }
 
@@ -583,7 +583,6 @@ export default defineComponent({
       const realComponetProps = isFunction(componentProps)
         ? componentProps({ schema, tableAction, formModel, formActionType })
         : componentProps
-      const regRes = AntItemRef.value
       return (
         component === 'InputNumber' &&
         realComponetProps.useChinese &&
@@ -795,7 +794,6 @@ export default defineComponent({
             return getSlot(slots, editSlot, unref(getValues))
           }
           let realContent = editableItemValue.value
-
           if (
             props.schema.component === 'InputNumber' &&
             typeof editableItemValue.value == 'number'
@@ -828,6 +826,7 @@ export default defineComponent({
               class={getEditableFormItemClass()}
               title={editableItemValue.value}
               onClick={() => {
+                // debugger
                 if (!unref(getDisable)) {
                   isEditableItemClicked.value = true
                   unref(getComponentsProps).onEditableFormItemVisible &&

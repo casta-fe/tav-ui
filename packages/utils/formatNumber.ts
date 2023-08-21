@@ -53,14 +53,14 @@ export function formatNumber(
 
 /**
  * @param number 要格式化的数字
- * @param multip 倍率，如果单位是万元的时候可以传10000
+ * @param chineseMultip 倍率，如果单位是万元的时候可以传10000
  * @returns string
  */
-export function numberToChinese(num: number | string, multip = 1, max = 1e12) {
+export function numberToChinese(num: number | string, chineseMultip = 1, max = 1e12) {
   if (isNullOrUnDef(num) || (typeof num === 'string' && /[^\d.]/.test(num))) {
     return ''
   }
-  const number = multiply(Number(num), multip)
+  const number = chineseMultiply(Number(num), chineseMultip)
   if (number > max) {
     return '金额过大暂不支持'
   }
@@ -102,10 +102,9 @@ export function numberToChinese(num: number | string, multip = 1, max = 1e12) {
     // '极',
   ]
   const chineseDecimals = ['角', '分', '厘', '毫']
-
+  // console.log(num,number)
   let result = ''
-
-  if (number === 0) {
+  if (number == 0) {
     return chineseNums[0]
   }
 
@@ -115,16 +114,23 @@ export function numberToChinese(num: number | string, multip = 1, max = 1e12) {
 
   // 处理整数部分
   const len = integerPart.length
+  let useLastUni = false
   for (let i = 0; i < len; i++) {
     const digit = parseInt(integerPart[i])
     const unit = len - i - 1
-
     if (digit !== 0) {
       result += chineseNums[digit] + chineseUnits[unit]
     } else {
       // 处理连续的零，只添加一个零
       if (result[result.length - 1] !== chineseNums[0]) {
-        result += chineseNums[digit] || '--'
+        const lastPart = integerPart.slice(i, integerPart.length - 1)
+        // const usedPart = integerPart.slice(0, i)
+        if (lastPart.length > 3 && Number(lastPart) === 0 && !useLastUni) {
+          useLastUni = true
+          result += chineseUnits[unit - (unit % 4)]
+        } else {
+          result += chineseNums[digit]
+        }
       }
     }
   }
@@ -191,7 +197,7 @@ export function subtract(arg1, arg2) {
   const n = r1 >= r2 ? r1 : r2
   return ((arg1 * m - arg2 * m) / m).toFixed(n)
 }
-export function multiply(arg1: number, arg2: number) {
+export function chineseMultiply(arg1: number, arg2: number) {
   let m = 0
   const s1 = arg1.toString(),
     s2 = arg2.toString()
