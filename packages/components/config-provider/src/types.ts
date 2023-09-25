@@ -17,6 +17,10 @@ export const configProviderProps = {
     type: Object as PropType<Record<string, any>>,
     default: () => ({}),
   },
+  tFun: {
+    type: Function as PropType<(...arg: any[]) => any>,
+    defult: (arg) => arg,
+  },
 }
 
 export type ConfigProviderProps = ExtractPropTypes<typeof configProviderProps>
