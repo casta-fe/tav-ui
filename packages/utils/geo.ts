@@ -3894,6 +3894,10 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '临安区',
           },
           {
+            value: '330114',
+            label: '钱塘区',
+          },
+          {
             value: '330122',
             label: '桐庐县',
           },
