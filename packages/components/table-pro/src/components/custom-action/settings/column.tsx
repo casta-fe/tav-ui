@@ -443,7 +443,7 @@ export default defineComponent({
       const dragKey = info.dragNode.eventKey
       const dropPos = info.node.pos.split('-')
       const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
-      const loop = (data: TreeDataItem[], key: string, callback: any) => {
+      const loop = (data: ColumnOption[], key: string, callback: any) => {
         data.forEach((item, index, arr) => {
           if (item.key === key) {
             return callback(item, index, arr)

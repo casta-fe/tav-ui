@@ -497,6 +497,8 @@ export interface BasicColumn extends ColumnProps {
   editable?: boolean
   editComponent?: ComponentType
   editComponentProps?: Recordable
+  minWidth?: number | undefined
+  maxWidth?: number | undefined
   editRule?: boolean | ((text: string, record: Recordable) => Promise<string>)
   editValueMap?: (value: any) => string
   onEditRow?: () => void
