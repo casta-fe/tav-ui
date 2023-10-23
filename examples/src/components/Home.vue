@@ -2,8 +2,8 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
-// import TaConfigProvider from '@tav-ui/components/config-provider'
 import { defineComponent, onMounted, reactive } from 'vue'
+// import TaConfigProvider from '@tav-ui/components/config-provider'
 // import TimeLineListPage from './timeLineList/index.vue'
 // import TimePage from './time/index.vue'
 // import InputNumberRangePage from './InputNumberRange/index.vue'
@@ -12,28 +12,28 @@ import { defineComponent, onMounted, reactive } from 'vue'
 // import ModalPage from './Modal/index.vue'
 // import FollewPage from './Follow/index.vue'
 // import BasicTablePage from './table/Basic.vue'
-import { TaButton } from '@tav-ui/components/button'
-import { TaModal, useModal } from '@tav-ui/components/modal'
+// import { TaButton } from '@tav-ui/components/button'
+// import { TaModal, useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
-import FormPage from './Form/index.vue'
-import { TaUpload, taUploadProvideData } from './TaUpload'
-import SearchableApiSelect from './SearchableApiSelect.vue'
-import TablePro from './TablePro/testTree'
+// import FormPage from './Form/index.vue'
+import { taUploadProvideData } from './TaUpload'
+// import SearchableApiSelect from './SearchableApiSelect.vue'
+import TablePro from './TablePro/test'
 
 export default defineComponent({
   name: 'Home',
   components: {
     // TaConfigProvider,
     TablePro,
-    TaModal,
-    TaButton,
-    TaUpload,
-    SearchableApiSelect,
+    // TaModal,
+    // TaButton,
+    // TaUpload,
+    // SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    FormPage,
+    // FormPage,
     // TreePage,
     // ModalPage,
     // BasicTablePage,
@@ -89,13 +89,18 @@ export default defineComponent({
 </script>
 
 <template>
-  <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
+  <!-- <TaConfigProvider
+    :app-id="10001"
+    :user-info="{ userId: 1 }"
+    :permissions="state.permissions"
+    :components="state.components"
+  > -->
   <!-- <BasicTablePage /> -->
-  <FormPage />
-  <TaUpload />
-  <SearchableApiSelect />
+  <!-- <FormPage /> -->
+  <!-- <TaUpload /> -->
+  <!-- <SearchableApiSelect /> -->
   <TablePro />
-  <TaModal
+  <!-- <TaModal
     :height="500"
     title="新增"
     :width="864"
@@ -109,7 +114,7 @@ export default defineComponent({
     </template>
   </TaModal>
   <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
-  <TablePro />
+  <TablePro /> -->
 
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa

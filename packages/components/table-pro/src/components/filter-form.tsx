@@ -8,13 +8,15 @@ import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { CamelCaseToCls, ComponentFilterFormName } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import type { PropType, Ref, Slots } from 'vue'
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { TableProInstance } from '../types'
 import type { TableProFilterFormConfig } from '../typings'
-
+const i18nFun = useGlobalConfig('i18nFun') as Ref<Record<string, any>>
+console.log(i18nFun)
 const ComponentPrefixCls = CamelCaseToCls(ComponentFilterFormName)
 
 const props = {
@@ -176,7 +178,7 @@ export default defineComponent({
       const actionDom: HTMLDivElement | null = customerActionRef.value
       if (dom && actionDom) {
         const { bottom = 0 } = actionDom.getBoundingClientRect()
-        const { top = 0, width = 0, left = 0 } = dom.getBoundingClientRect()
+        const { width = 0, left = 0 } = dom.getBoundingClientRect()
         state.dialogStyle.top = `${bottom + 16}px`
         state.dialogStyle.left = `${left}px`
         state.dialogStyle.width = `${width}px`
@@ -323,7 +325,7 @@ export default defineComponent({
                 onClick={openPannelFormModal}
               >
                 <div style="position: relative; display: inline-flex; margin: 0 8px">
-                  更多筛选
+                  {i18nFun.value?.t && i18nFun.value?.t('Tav.TablePro.filter.1')}
                   {state.choosedNum > 0 ? (
                     <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '#52c41a' }} />
                   ) : null}

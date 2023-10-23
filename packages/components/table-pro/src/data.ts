@@ -92,7 +92,7 @@ export async function toLogin() {
   })
 
   const {
-    data: { keyId, publicKey },
+    data: { keyId = '1', publicKey },
   } = await fetch('/api/TIANTA-SYSTEM/login/getKey', {
     method: 'POST',
     headers: {

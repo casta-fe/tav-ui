@@ -1,5 +1,12 @@
 import type { ExtractPropTypes, PropType } from 'vue'
-
+type I18nGlobalTranslation = {
+  (key: string): string
+  (key: string, locale: string): string
+  (key: string, locale: string, list: unknown[]): string
+  (key: string, locale: string, named: Record<string, unknown>): string
+  (key: string, list: unknown[]): string
+  (key: string, named: Record<string, unknown>): string
+}
 export const configProviderProps = {
   appId: {
     type: String,
@@ -17,9 +24,9 @@ export const configProviderProps = {
     type: Object as PropType<Record<string, any>>,
     default: () => ({}),
   },
-  tFun: {
-    type: Function as PropType<(...arg: any[]) => any>,
-    defult: (arg) => arg,
+  i18nFun: {
+    type: Object as PropType<{ t: I18nGlobalTranslation; locale?: string }>,
+    defult: () => ({}),
   },
 }
 

@@ -24,11 +24,13 @@ import App from './App.vue'
 import 'vxe-table/lib/style.css'
 // eslint-disable-next-line import/order
 import { TaVXETable } from '@tav-ui/components/table-pro'
+import { setupI18n } from './locales/setupI18n'
 
 const app = createApp(App)
 app.use(router)
 // app.use(TaUi)
 app.use(TaVXETable)
+await setupI18n(app)
 // app.use(TaIcon)
 // app.use(TaButton)
 // app.use(TaBasicTitle)

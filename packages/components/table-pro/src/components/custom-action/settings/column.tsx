@@ -137,7 +137,7 @@ export default defineComponent({
 
     /** 使用tableid+filed的方式做唯一标识，方便持久化 */
     function getColumnId(column: ColumnOption) {
-      const tableIdUUID = unref(columnApiOptions)!.getTableId()
+      const tableIdUUID = unref(columnApiOptions)?.getTableId()
       return `${tableIdUUID}_${column.field || column.type}`
     }
 

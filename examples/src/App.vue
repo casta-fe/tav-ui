@@ -7,12 +7,14 @@ import {
 } from '@tav-ui/components/table-pro/src/data'
 import allUsers from './allUserList'
 import { taUploadProvideData } from './components/TaUpload'
+import { useI18n } from './hooks/useI18n'
 
 export default defineComponent({
   components: {
     TaConfigProvider,
   },
   setup() {
+    const { t } = useI18n()
     const state = reactive({
       appId: '10002',
       userInfo: {
@@ -20,6 +22,9 @@ export default defineComponent({
         name: 'admin',
         organizationId: 1,
         phone: '13999999999',
+      },
+      i18nFun: {
+        t,
       },
       permissions: {},
       components: {
@@ -63,6 +68,7 @@ export default defineComponent({
     :user-info="state.userInfo"
     :permissions="state.permissions"
     :components="state.components"
+    :i18n-fun="state.i18nFun"
   >
     <!-- <div id="nav">
       <router-link to="/"> 首页 </router-link> |
