@@ -145,6 +145,7 @@ importers:
 
   examples:
     specifiers:
+      '@types/lodash-es': ^4.17.10
       '@vitejs/plugin-vue': ^2.3.0
       jsencrypt: ^3.2.1
       typescript: ^4.5.4
@@ -157,6 +158,7 @@ importers:
     dependencies:
       jsencrypt: 3.3.2
     devDependencies:
+      '@types/lodash-es': 4.17.10
       '@vitejs/plugin-vue': 2.3.3_vite@2.8.3+vue@3.2.21
       typescript: 4.7.4
       vite: 2.8.3
@@ -1759,9 +1761,14 @@ packages:
       '@types/node': 18.6.1
     dev: true
 
+  /@types/lodash-es/4.17.10:
+    resolution: {integrity: sha512-YJP+w/2khSBwbUSFdGsSqmDvmnN3cCKoPOL7Zjle6s30ZtemkkqhjVfFqGwPN7ASil5VyjE2GtyU/yqYY6mC0A==}
+    dependencies:
+      '@types/lodash': 4.14.182
+    dev: true
+
   /@types/lodash/4.14.182:
     resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==}
-    dev: false
 
   /@types/mdast/3.0.10:
     resolution: {integrity: sha512-W864tg/Osz1+9f4lrGTZpCSO5/z4608eUp19tbozkq2HJK6i3z1kT0H9tlADXuYIb1YYOBByU4Jsqkk75q48qA==}
