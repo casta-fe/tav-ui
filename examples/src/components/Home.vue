@@ -13,7 +13,7 @@ import { defineComponent, onMounted, reactive } from 'vue'
 // import FollewPage from './Follow/index.vue'
 // import BasicTablePage from './table/Basic.vue'
 // import { TaButton } from '@tav-ui/components/button'
-// import { TaModal, useModal } from '@tav-ui/components/modal'
+import { TaModal, useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
 // import FormPage from './Form/index.vue'
 import { taUploadProvideData } from './TaUpload'
@@ -25,7 +25,7 @@ export default defineComponent({
   components: {
     // TaConfigProvider,
     TablePro,
-    // TaModal,
+    TaModal,
     // TaButton,
     // TaUpload,
     // SearchableApiSelect,
@@ -100,7 +100,7 @@ export default defineComponent({
   <!-- <TaUpload /> -->
   <!-- <SearchableApiSelect /> -->
   <TablePro />
-  <!-- <TaModal
+  <TaModal
     :height="500"
     title="新增"
     :width="864"
@@ -113,6 +113,7 @@ export default defineComponent({
       <TaButton type="default" @click="CloseModal">取消</TaButton>
     </template>
   </TaModal>
+  <!-- 
   <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
   <TablePro /> -->
 

@@ -42,6 +42,7 @@
     "@tav-ui/directives": "workspace:*",
     "@tav-ui/enums": "workspace:*",
     "@tav-ui/hooks": "workspace:*",
+    "@tav-ui/locales": "workspace:*",
     "@tav-ui/settings": "workspace:*",
     "@tav-ui/theme-chalk": "workspace:*",
     "@tav-ui/utils": "workspace:*",

@@ -20,6 +20,7 @@ importers:
       '@tav-ui/enums': workspace:*
       '@tav-ui/eslint-config': workspace:*
       '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
       '@tav-ui/settings': workspace:*
       '@tav-ui/theme-chalk': workspace:*
       '@tav-ui/utils': workspace:*
@@ -75,6 +76,7 @@ importers:
       '@tav-ui/directives': link:packages/directives
       '@tav-ui/enums': link:packages/enums
       '@tav-ui/hooks': link:packages/hooks
+      '@tav-ui/locales': link:packages/locales
       '@tav-ui/settings': link:packages/settings
       '@tav-ui/theme-chalk': link:packages/theme-chalk
       '@tav-ui/utils': link:packages/utils
@@ -259,6 +261,9 @@ importers:
     specifiers: {}
 
   packages/hooks:
+    specifiers: {}
+
+  packages/locales:
     specifiers: {}
 
   packages/settings:
