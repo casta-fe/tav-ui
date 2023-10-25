@@ -491,7 +491,7 @@ export default defineComponent({
           dropParentObj = item
         })
         if (dropParentObj.fixed) {
-          createMessage.warning(ttavI18n('Tav.tablePro.message.3'))
+          createMessage.warning(tavI18n('Tav.tablePro.message.3'))
           return
         }
       } else {
