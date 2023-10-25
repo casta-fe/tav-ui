@@ -19,7 +19,7 @@
     <ScrollContainer
       v-loading="getLoading"
       :style="getScrollContentStyle"
-      :loading-tip="loadingText || '加载中...'"
+      :loading-tip="loadingText || tavI18n('Tav.common.loadingText')"
     >
       <slot />
     </ScrollContainer>
@@ -43,6 +43,7 @@ import {
 } from 'vue'
 import { Drawer } from 'ant-design-vue'
 import ScrollContainer from '@tav-ui/components/container-scroll'
+import { tavI18n } from '@tav-ui/locales'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { deepMerge } from '@tav-ui/utils/basic'
 import { isFunction, isNumber } from '@tav-ui/utils/is'
@@ -176,6 +177,7 @@ export default defineComponent({
     }
 
     return {
+      tavI18n,
       onClose,
       prefixCls,
       getMergeProps: getMergeProps as any,

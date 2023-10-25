@@ -2,7 +2,7 @@
   <div class="ta-member-select-modal">
     <div class="member-box">
       <Tabs v-model:activeKey="tabActive">
-        <TabPane v-if="!hideOrgTabs" key="0" tab="部门">
+        <TabPane v-if="!hideOrgTabs" key="0" :tab="tavI18n('Tav.member.1')">
           <template v-if="propsData.multiple">
             <CheckboxGroup v-model:value="checkboxData">
               <Tree
@@ -19,7 +19,9 @@
                   <template v-if="item.isLeaf">
                     <Checkbox :value="item.id" :disabled="item.disabled">
                       <firstLetter :value="item" />{{ item.name }}
-                      <template v-if="item.status === 0"> (已冻结) </template>
+                      <template v-if="item.status === 0">
+                        ({{ tavI18n('Tav.member.4') }})
+                      </template>
                     </Checkbox>
                   </template>
                   <template v-else>
@@ -48,7 +50,9 @@
                   <template v-if="item.isLeaf">
                     <Radio :value="item.id" :disabled="item.disabled">
                       <firstLetter :value="item" /> {{ item.name }}
-                      <template v-if="item.status === 0"> (已冻结) </template>
+                      <template v-if="item.status === 0">
+                        ({{ tavI18n('Tav.member.4') }})
+                      </template>
                     </Radio>
                   </template>
                   <template v-else>
@@ -60,7 +64,7 @@
             </RadioGroup>
           </template>
         </TabPane>
-        <TabPane key="1" tab="成员">
+        <TabPane key="1" :tab="tavI18n('Tav.member.2')">
           <div class="user-wrap">
             <div class="letter-list">
               <span
@@ -81,7 +85,7 @@
                     <li v-for="v in item.list" :key="v.id">
                       <Checkbox :value="v.id" :disabled="v.disabled">
                         <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> (已冻结) </template>
+                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
                       </Checkbox>
                       <p class="org-name">{{ v.organizationName }}</p>
                     </li>
@@ -97,7 +101,7 @@
                     <li v-for="v in item.list" :key="v.id">
                       <Radio :value="v.id" :disabled="v.disabled">
                         <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> (已冻结) </template>
+                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
                       </Radio>
                       <p class="org-name">{{ v.organizationName }}</p>
                     </li>
@@ -111,8 +115,13 @@
     </div>
     <div v-if="propsData.multiple" class="selected-box">
       <div class="select-hd">
-        <div class="num">已选中 {{ tagList.length }} 个</div>
-        <div class="ctrl"><Button type="primary" @click="clearTag">清空选择</Button></div>
+        <div class="num">
+          {{ tavI18n('Tav.member.5') }} {{ tagList.length }}
+          {{ tavI18n('Tav.member.10') }}
+        </div>
+        <div class="ctrl">
+          <Button type="primary" @click="clearTag">{{ tavI18n('Tav.member.6') }}</Button>
+        </div>
       </div>
       <div class="select-bd">
         <span v-for="item in tagList" :key="item.id" class="tag">
@@ -129,12 +138,12 @@ import { computed, defineComponent, inject, onMounted, reactive, toRefs, watch }
 import { Checkbox, CheckboxGroup, Radio, RadioGroup, TabPane, Tabs, Tree } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
 import { CloseCircleOutlined } from '@ant-design/icons-vue'
-import { isEqual, sortBy } from 'lodash-es'
+import { sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { tavI18n } from '@tav-ui/locales'
 import FirstLetter from './first-letter.vue'
 import type { letterItem } from '../types'
-
 const { createConfirm } = useMessage()
 export default defineComponent({
   components: {
@@ -193,7 +202,7 @@ export default defineComponent({
     const clearTag = (): void => {
       createConfirm({
         iconType: 'warning',
-        content: '确定清空选中的用户？',
+        content: tavI18n('Tav.member.7'),
         onOk() {
           state.checkboxData = []
         },
@@ -244,7 +253,7 @@ export default defineComponent({
       return new Promise((resolve) => {
         const oldData = [...treeNode.dataRef.children]
         if (oldData.length == 0) {
-          console.log('没数据')
+          console.log('empty')
         }
         const children = userList.value
           .filter((v: any) => v.organizationId == treeNode.eventKey)
@@ -356,6 +365,7 @@ export default defineComponent({
     pageInit()
     return {
       ...toRefs(state),
+      tavI18n,
       hideOrgTabs,
       propsData,
       userList,

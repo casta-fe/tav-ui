@@ -2,6 +2,7 @@ import { computed, defineComponent, ref, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
 import Button from '@tav-ui/components/button'
 import { isObject } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import {
   CamelCaseToCls,
   ComponentCustomActionName as _ComponentCustomActionName,
@@ -56,7 +57,7 @@ export default defineComponent({
 
     const refreshButton = () =>
       props.config?.refresh ? (
-        <Tooltip placement="bottom" title="刷新">
+        <Tooltip placement="bottom" title={tavI18n('Tav.common.redo')}>
           <Button
             class={`${ComponentPrefixCls}-btn refresh`}
             type="text"

@@ -9,7 +9,12 @@
       class="flex flex-1 justify-self-stretch items-center cursor-pointer"
     >
       <div v-if="search" :class="getInputSearchCls">
-        <InputSearch v-model:value="searchValue" placeholder="搜索" size="small" allow-clear />
+        <InputSearch
+          v-model:value="searchValue"
+          :placeholder="tavI18n('Tav.common.searchText')"
+          size="small"
+          allow-clear
+        />
       </div>
       <Dropdown v-if="toolbar" @click.prevent>
         <Icon icon="ion:ellipsis-vertical" />
@@ -34,8 +39,8 @@ import { useDebounceFn } from '@vueuse/core'
 import { propTypes } from '@tav-ui/utils/propTypes'
 import BasicTitle from '@tav-ui/components/basic-title'
 import Icon from '@tav-ui/components/icon'
+import { tavI18n } from '@tav-ui/locales'
 import type { PropType } from 'vue'
-
 enum ToolbarEnum {
   SELECT_ALL,
   UN_SELECT_ALL,
@@ -92,9 +97,9 @@ export default defineComponent({
     const toolbarList = computed(() => {
       const { checkable } = props
       const defaultToolbarList = [
-        { label: '展开全部', value: ToolbarEnum.EXPAND_ALL },
+        { label: tavI18n('Tav.tree.1'), value: ToolbarEnum.EXPAND_ALL },
         {
-          label: '折叠全部',
+          label: tavI18n('Tav.tree.2'),
           value: ToolbarEnum.UN_EXPAND_ALL,
           divider: checkable,
         },
@@ -102,15 +107,15 @@ export default defineComponent({
 
       return checkable
         ? [
-            { label: '选择全部', value: ToolbarEnum.SELECT_ALL },
+            { label: tavI18n('Tav.tree.3'), value: ToolbarEnum.SELECT_ALL },
             {
-              label: '取消选择',
+              label: tavI18n('Tav.tree.4'),
               value: ToolbarEnum.UN_SELECT_ALL,
               divider: checkable,
             },
             ...defaultToolbarList,
-            { label: '层级关联', value: ToolbarEnum.CHECK_STRICTLY },
-            { label: '层级独立', value: ToolbarEnum.CHECK_UN_STRICTLY },
+            { label: tavI18n('Tav.tree.5'), value: ToolbarEnum.CHECK_STRICTLY },
+            { label: tavI18n('Tav.tree.6'), value: ToolbarEnum.CHECK_UN_STRICTLY },
           ]
         : defaultToolbarList
     })
@@ -162,7 +167,7 @@ export default defineComponent({
     //   debounceEmitChange(e.target.value);
     // }
 
-    return { toolbarList, handleMenuClick, searchValue, getInputSearchCls }
+    return { tavI18n, toolbarList, handleMenuClick, searchValue, getInputSearchCls }
   },
 })
 </script>

@@ -1,7 +1,7 @@
 <template>
   <Tooltip placement="top">
     <template #title>
-      <span>{{ '刷新' }}</span>
+      <span>{{ tavI18n('Tav.common.redo') }}</span>
     </template>
     <RedoOutlined @click="redo" />
   </Tooltip>
@@ -10,6 +10,7 @@
 import { defineComponent } from 'vue'
 import { Tooltip } from 'ant-design-vue'
 import { RedoOutlined } from '@ant-design/icons-vue'
+import { tavI18n } from '@tav-ui/locales'
 import { useTableContext } from '../../hooks/useTableContext'
 
 export default defineComponent({
@@ -25,7 +26,7 @@ export default defineComponent({
       table.reload()
     }
 
-    return { redo }
+    return { redo, tavI18n }
   },
 })
 </script>

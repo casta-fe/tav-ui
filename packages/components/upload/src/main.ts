@@ -1,4 +1,5 @@
 import { computed, nextTick, ref, watch } from 'vue'
+import { tavI18n } from '@tav-ui/locales'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { isFunction } from '@tav-ui/utils'
@@ -385,7 +386,7 @@ class Handler {
         spliceData()
       })
       .catch(() => {
-        createMessage.warn('删除失败!')
+        createMessage.warn(tavI18n('Tav.file.message.1'))
       })
       .finally(() => (this._isLoading.value = false))
   }
@@ -442,9 +443,9 @@ class Handler {
     const sizeOverflowFiles = this._refFileList.filter((file) => file.size / 1024 / 1024 > 1024)
     if (sizeOverflowFiles.length > 0) {
       createMessage.warn(
-        `文件过大: ${sizeOverflowFiles
+        `${tavI18n('Tav.file.upload.4')} ${sizeOverflowFiles
           .map((file) => `${file.name}:${Math.floor(file.size / 1024 / 1024)}MB`)
-          .join()}大于1GB`
+          .join()}${tavI18n('Tav.common.greater')}1GB`
       )
       this.resetFileList()
       return
@@ -453,7 +454,7 @@ class Handler {
       this._props.maxCount &&
       this._uploadResponse.length + this._refFileList.length > this._props.maxCount
     ) {
-      createMessage.warn(`文件最多上传 ${this._props.maxCount}个`)
+      createMessage.warn(`${tavI18n('Tav.file.message.4')} ${this._props.maxCount}个`)
       this.resetFileList()
       return
     }
@@ -473,7 +474,7 @@ class Handler {
   private realUpload = async () => {
     // 非更新时候 typecode必传
     if (!this._typeCode.value) {
-      createMessage.warn('请选择文件类型')
+      createMessage.warn(tavI18n('Tav.file.message.5'))
       this.resetFileList()
       return
     }
@@ -507,7 +508,7 @@ class Handler {
           this._fileFormatter.upadteVersion(el)
         })
 
-        createMessage.success('上传成功')
+        createMessage.success(tavI18n('Tav.file.message.6'))
       })
       .catch(() => {
         // createMessage.error("上传失败");
@@ -526,7 +527,7 @@ class Handler {
    */
   hyperlinkUpload() {
     if (!this._typeCode.value) {
-      createMessage.warn('请选择文件类型')
+      createMessage.warn(tavI18n('Tav.file.message.5'))
       this.resetFileList()
       return
     }
@@ -547,7 +548,7 @@ class Handler {
         this._fileFormatter.upadteVersion(r)
         this.throwResponse([r], 'upload')
         nextTick(() => this.fillDataSource())
-        createMessage.success('上传成功')
+        createMessage.success(tavI18n('Tav.file.message.6'))
       })
       .catch(() => {
         // createMessage.error("上传失败");
@@ -560,7 +561,7 @@ class Handler {
 
   preOpenChooseFile = (e: MouseEvent) => {
     if (!this._typeCode.value) {
-      createMessage.warn('请先选择文件类型')
+      createMessage.warn(tavI18n('Tav.file.message.5'))
       e.stopPropagation()
     }
   }

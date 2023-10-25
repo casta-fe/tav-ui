@@ -10,8 +10,8 @@
   >
     <CascadePro ref="cascadeProRef" v-bind="getBindValue" />
     <template #footer>
-      <Button type="primary" @click="handleConfirm">确定</Button>
-      <Button @click="handleCancel">取消</Button>
+      <Button type="primary" @click="handleConfirm">{{ tavI18n('Tav.common.okText') }}</Button>
+      <Button @click="handleCancel">{{ tavI18n('Tav.common.cancelText') }}</Button>
     </template>
   </Modal>
 
@@ -60,12 +60,12 @@ import { computed, defineComponent, nextTick, ref, unref, watch } from 'vue'
 import Modal from '@tav-ui/components/modal'
 import Button from '@tav-ui/components/button'
 // import Icon from '@tav-ui/components/icon'
+import { tavI18n } from '@tav-ui/locales'
 import { cascadeProSelectProps } from './types'
 import CascadePro from './components/cascade-pro.vue'
 import { DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG, buildCascadeProId } from './constants'
 import type { CascadeProOption } from './types'
 import type { CascadeProInstance } from './components/cascade-pro.vue'
-
 export default defineComponent({
   name: 'TaCascadeProSelect',
   components: { Modal, Button, CascadePro },
@@ -215,6 +215,7 @@ export default defineComponent({
     }
 
     return {
+      tavI18n,
       cascadeProRef,
       getBindValue,
       visible,

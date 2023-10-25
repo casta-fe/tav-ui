@@ -1,3 +1,4 @@
+import { tavI18n } from '@tav-ui/locales'
 import type { ExtractPropTypes, PropType } from 'vue'
 
 type Recordable<T = any> = Record<string, T>
@@ -9,13 +10,13 @@ export const footerProps = {
    */
   showCancelBtn: { type: Boolean, default: true },
   cancelButtonProps: Object as PropType<Recordable>,
-  cancelText: { type: String, default: '取消' },
+  cancelText: { type: String, default: tavI18n('Tav.common.cancelText') },
   /**
    * @description: Show confirmation button
    */
   showOkBtn: { type: Boolean, default: true },
   okButtonProps: Object as PropType<Recordable>,
-  okText: { type: String, default: '确认' },
+  okText: { type: String, default: tavI18n('Tav.common.okText') },
   okType: { type: String, default: 'primary' },
   showFooter: { type: Boolean },
   footerHeight: {

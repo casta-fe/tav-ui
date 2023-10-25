@@ -1,3 +1,4 @@
+import { tavI18n } from '@tav-ui/locales'
 import { dateUtil } from '@tav-ui/utils/dateUtil'
 import { isNumber, isObject } from '@tav-ui/utils/is'
 import type { ValidationRule } from 'ant-design-vue/lib/form/Form'
@@ -8,9 +9,10 @@ type Recordable<T = any> = Record<string, T>
  * @description: 生成placeholder
  */
 export function createPlaceholderMessage(component: ComponentType, label = '') {
-  if (component.includes('Input') || component.includes('Complete')) return `请输入${label}`
+  if (component.includes('Input') || component.includes('Complete'))
+    return `${tavI18n('Tav.common.inputText')}${label}`
 
-  if (component.includes('Picker')) return `请选择${label}`
+  if (component.includes('Picker')) return `${tavI18n('Tav.common.chooseText')}${label}`
 
   if (
     component.includes('Select') ||
@@ -20,7 +22,7 @@ export function createPlaceholderMessage(component: ComponentType, label = '') {
     component.includes('Switch')
   ) {
     // return `请选择${label}`;
-    return `请选择${label}`
+    return `${tavI18n('Tav.common.chooseText')}${label}`
   }
   return ''
 }

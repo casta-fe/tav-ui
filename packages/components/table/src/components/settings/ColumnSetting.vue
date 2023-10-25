@@ -1,7 +1,7 @@
 <template>
   <Tooltip placement="top">
     <template #title>
-      <span>{{ '列设置' }}</span>
+      <span>{{ '列设置23' }}</span>
     </template>
     <Popover
       placement="bottomLeft"
@@ -284,7 +284,7 @@ export default defineComponent({
         // Drag and drop sort
         const { initSortable } = useSortable(el, {
           handle: '.table-column-drag-icon',
-          onEnd: (evt) => {
+          onEnd: (evt: { oldIndex: any; newIndex: any }) => {
             const { oldIndex, newIndex } = evt
             if (isNullAndUnDef(oldIndex) || isNullAndUnDef(newIndex) || oldIndex === newIndex) {
               return

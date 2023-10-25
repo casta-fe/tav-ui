@@ -1,6 +1,7 @@
 import { defineComponent, reactive } from 'vue'
 import { Input } from 'vxe-table'
 import { TaForm, useForm } from '@tav-ui/components'
+import { tavI18n } from '@tav-ui/locales'
 import { ADDRESS_PATTERN } from './config'
 import type { PropType } from 'vue'
 import type { FileItemType } from '../types'
@@ -68,7 +69,7 @@ export const UpdateNameForm = defineComponent({
             },
             {
               pattern: ADDRESS_PATTERN,
-              message: '请输入正确的链接',
+              message: tavI18n('Tav.file.message.7'),
             },
           ],
           componentProps: {

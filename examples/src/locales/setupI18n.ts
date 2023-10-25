@@ -9,7 +9,7 @@ const { fallback, availableLocales } = localeSetting
 export let i18n: ReturnType<typeof createI18n>
 
 async function createI18nOptions(): Promise<I18nOptions> {
-  const locale = 'zh_CN'
+  const locale = 'en'
   const defaultLocal = await import(`./lang/${locale}.ts`)
   const message = defaultLocal.default?.message ?? {}
   setHtmlPageLang(locale)

@@ -1,3 +1,4 @@
+import { tavI18n } from '@tav-ui/locales'
 import type { ComponentType } from '../../types/componentType'
 
 /**
@@ -5,10 +6,10 @@ import type { ComponentType } from '../../types/componentType'
  */
 export function createPlaceholderMessage(component: ComponentType) {
   if (component.includes('Input')) {
-    return '请输入'
+    return tavI18n('Tav.common.inputText')
   }
   if (component.includes('Picker')) {
-    return '请选择'
+    return tavI18n('Tav.common.chooseText')
   }
 
   if (
@@ -19,7 +20,7 @@ export function createPlaceholderMessage(component: ComponentType) {
     component.includes('DatePicker') ||
     component.includes('TimePicker')
   ) {
-    return '请选择'
+    return tavI18n('Tav.common.chooseText')
   }
   return ''
 }

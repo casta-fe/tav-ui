@@ -3,6 +3,7 @@ import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { Input, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { tavI18n } from '@tav-ui/locales'
 import { inputNumberRangeEmits, inputNumberRangeProps } from './types'
 const { createMessage } = useMessage()
 export interface InputNumberRangeState {
@@ -28,7 +29,7 @@ export default defineComponent({
     const blurValueMin = (e) => {
       const value = e.target.value
       if (value && state.max && Number(value) > Number(state.max)) {
-        createMessage.warning('最小范围不得大于最大范围')
+        createMessage.warning(tavI18n('Tav.form.inputRange.1'))
         emit('change', [null, state.max])
       } else {
         emit('change', [value, state.max])
@@ -38,7 +39,7 @@ export default defineComponent({
     const blurValueMax = (e) => {
       const value = e.target.value
       if (state.min && value && Number(state.min) > Number(value)) {
-        createMessage.warning('最大范围不得小于最小范围')
+        createMessage.warning(tavI18n('Tav.form.inputRange.2'))
         emit('change', [state.min, null])
       } else {
         emit('change', [state.min, value])

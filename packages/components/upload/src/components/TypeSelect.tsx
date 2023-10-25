@@ -1,5 +1,6 @@
 import { type Ref, computed, defineComponent, ref, unref, watch } from 'vue'
 import { Select as TaSelect } from 'ant-design-vue'
+import { tavI18n } from '@tav-ui/locales'
 import { useFileTypeCode } from '../hooks'
 import type { PropType } from 'vue'
 import type {
@@ -167,7 +168,7 @@ export const TypeSelect = defineComponent({
             props.onSelect?.(value, option)
             emit('update:selected', value, option)
           }}
-          placeholder="请选择文件类型"
+          placeholder={tavI18n('Tav.file.message.5')}
           disabled={localTypeCodeOptions.value.length === 1 || props.disabledSelect}
           allowClear={localTypeCodeOptions.value.length !== 1}
           onClear={() => {

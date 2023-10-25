@@ -3,6 +3,7 @@ import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import { isObject } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import {
   ACTION_COLUMNS,
   CamelCaseToCls,
@@ -20,15 +21,15 @@ const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
 const FileDataTypeOptions = [
   {
-    label: '当前页的选中数据',
+    label: tavI18n('Tav.tablePro.export.4o1'),
     value: 'selected',
   },
   {
-    label: '当前页的全部数据',
+    label: tavI18n('Tav.tablePro.export.4o2'),
     value: 'current',
   },
   {
-    label: '全量数据',
+    label: tavI18n('Tav.tablePro.export.4o3'),
     value: 'all',
   },
 ]
@@ -36,10 +37,10 @@ const ExportModalFormSchemas: FormSchema[] = [
   {
     field: 'fileName',
     component: 'Input',
-    label: '文件名',
+    label: tavI18n('Tav.tablePro.export.1'),
     required: true,
     componentProps: {
-      placeholder: '请输入文件名',
+      placeholder: tavI18n('Tav.tablePro.export.1p'),
     },
   },
   // {
@@ -54,18 +55,18 @@ const ExportModalFormSchemas: FormSchema[] = [
   {
     field: 'fileSeq',
     component: 'Select',
-    label: '序号列',
+    label: tavI18n('Tav.tablePro.export.2'),
     required: false,
     defaultValue: 1,
     componentProps: {
-      placeholder: '请选择是否生成表格序号列',
+      placeholder: tavI18n('Tav.tablePro.export.2p'),
       options: [
         {
-          label: '自动生成',
+          label: tavI18n('Tav.tablePro.export.2o1'),
           value: 1,
         },
         {
-          label: '不生成',
+          label: tavI18n('Tav.tablePro.export.2o2'),
           value: 0,
         },
       ],
@@ -74,11 +75,11 @@ const ExportModalFormSchemas: FormSchema[] = [
   {
     field: 'fileType',
     component: 'Select',
-    label: '文件类型',
+    label: tavI18n('Tav.tablePro.export.3'),
     required: true,
     defaultValue: 'xlsx',
     componentProps: {
-      placeholder: '请选择文件类型',
+      placeholder: tavI18n('Tav.tablePro.export.3p'),
       options: [
         {
           label: 'Excel（.xlsx）',
@@ -106,21 +107,21 @@ const ExportModalFormSchemas: FormSchema[] = [
   {
     field: 'fileDataType',
     component: 'Select',
-    label: '文件数据',
+    label: tavI18n('Tav.tablePro.export.4'),
     required: true,
     defaultValue: '',
     componentProps: {
-      placeholder: '请选择文件数据',
+      placeholder: tavI18n('Tav.tablePro.export.4p'),
       options: [],
     },
   },
   {
     field: 'fileContainFields',
     component: 'TreeSelect',
-    label: '文件字段',
+    label: tavI18n('Tav.tablePro.export.5'),
     required: true,
     componentProps: {
-      placeholder: '请选择到导出的文件字段',
+      placeholder: tavI18n('Tav.tablePro.export.5p'),
       treeCheckable: true,
       allowClear: true,
       showCheckedStrategy: 'SHOW_ALL',
@@ -188,7 +189,7 @@ export default defineComponent({
           onClick={handleStatistical}
           permission={getPermission(props.config?.statistical)}
         >
-          统计
+          {tavI18n('Tav.tablePro.setting.6')}
         </Button>
       ) : null
 
@@ -207,7 +208,7 @@ export default defineComponent({
           onClick={handleAdd}
           permission={getPermission(props.config?.add)}
         >
-          新增
+          {tavI18n('Tav.common.addText')}
         </Button>
       ) : null
 
@@ -226,7 +227,7 @@ export default defineComponent({
           onClick={handleDelete}
           permission={getPermission(props.config?.delete)}
         >
-          删除
+          {tavI18n('Tav.common.cancelText')}
         </Button>
       ) : null
 
@@ -245,7 +246,7 @@ export default defineComponent({
           onClick={handleImport}
           permission={getPermission(props.config?.import)}
         >
-          导入
+          {tavI18n('Tav.common.exportText')}
         </Button>
       ) : null
 
@@ -373,7 +374,7 @@ export default defineComponent({
       return (
         <TaModal
           onRegister={exportModalRegister}
-          title={'导出设置'}
+          title={tavI18n('Tav.tablePro.setting.5')}
           width={650}
           wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
           destroyOnClose={true}
@@ -388,10 +389,10 @@ export default defineComponent({
             default: () => exportModalForm(),
             footer: () => (
               <>
+                <Button onClick={exportModalClose}>{tavI18n('Tav.common.cancelText')}</Button>
                 <Button type="primary" onClick={handleExport}>
-                  {'导出'}
+                  {tavI18n('Tav.common.exportText')}
                 </Button>
-                <Button onClick={exportModalClose}>{'取消'}</Button>
               </>
             ),
           }}
@@ -506,7 +507,7 @@ export default defineComponent({
           }
           selectedKeys.push(currentId)
           if (visible && !disabled && SELECT_COMPONENTS.includes(type!)) {
-            item.title = '选中状态'
+            item.title = tavI18n('Tav.tablePro.setting.4')
           }
           // 把选中、操作列设置为不可选择项
           if (
@@ -635,7 +636,7 @@ export default defineComponent({
           onClick={handleExportClick}
           permission={getPermission(props.config?.export)}
         >
-          导出
+          {tavI18n('Tav.common.exportText')}
         </Button>
       ) : null
 

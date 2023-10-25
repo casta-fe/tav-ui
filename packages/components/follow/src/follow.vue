@@ -6,8 +6,8 @@
 <template>
   <TaButton class="basic-follow" type="link" :loading="loading" @click="changFollwStatus">
     <i :class="`basic-follow-icon basic-follow-icon${isFollow ? '-active' : ''}`" />
-    <span v-if="isFollow" class="active"> 已关注 </span>
-    <span v-else>关注</span>
+    <span v-if="isFollow" class="active"> {{ tavI18n('Tav.follow.1') }} </span>
+    <span v-else>{{ tavI18n('Tav.follow.2') }}</span>
   </TaButton>
 </template>
 
@@ -15,6 +15,7 @@
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
 import { TaButton } from '../../button'
 import { followProps } from './types'
 import type { Ref } from 'vue'
@@ -38,8 +39,6 @@ export default defineComponent({
         globalConfig.value.TaFollow.getFollwStatus(props.id).then((res) => {
           state.isFollow = res.data ? !!res.data.status : false
         })
-      } else {
-        console.log('请注入TaFollow相关接口')
       }
     }
     const changFollwStatus = () => {
@@ -47,15 +46,13 @@ export default defineComponent({
       if (globalConfig.value && globalConfig.value.TaFollow) {
         globalConfig.value.TaFollow.updateFollowStatus({ followId: props.id, type: props.type })
           .then(() => {
-            const msg = state.isFollow ? '取消成功' : '关注成功'
+            const msg = state.isFollow ? tavI18n('Tav.follow.3') : tavI18n('Tav.follow.4')
             state.isFollow = !state.isFollow
             createMessage.success(msg)
           })
           .finally(() => {
             state.loading = false
           })
-      } else {
-        console.log('请注入TaFollow相关接口')
       }
     }
     getFollwStatus()
@@ -69,6 +66,7 @@ export default defineComponent({
     )
     return {
       ...toRefs(state),
+      tavI18n,
       getFollwStatus,
       changFollwStatus,
     }

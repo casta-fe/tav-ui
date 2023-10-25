@@ -1,5 +1,5 @@
 import moment from 'moment'
-
+import { tavI18n } from '@tav-ui/locales'
 export interface ApiSelectOptionsItem {
   label: string
   value: string
@@ -15,34 +15,38 @@ export type RadioButtonGroupOptionItem = string | RadioButtonGroupOptionsItem
 
 export const dateRangeRecord = {
   /** 今天 */
-  day: { label: '今天', key: 'day', dateRange: [moment().startOf('day'), moment().endOf('day')] },
+  day: {
+    label: tavI18n('Tav.time.8'),
+    key: 'day',
+    dateRange: [moment().startOf('day'), moment().endOf('day')],
+  },
   /** 本周 */
   week: {
-    label: '本周',
+    label: tavI18n('Tav.time.9'),
     key: 'week',
     dateRange: [moment().startOf('week'), moment().endOf('week')],
   },
   /** 本月 */
   month: {
-    label: '本月',
+    label: tavI18n('Tav.time.10'),
     key: 'month',
     dateRange: [moment().startOf('month'), moment().endOf('month')],
   },
   /** 本季度 */
   quarter: {
-    label: '本季度',
+    label: tavI18n('Tav.time.11'),
     key: 'quarter',
     dateRange: [moment().startOf('quarter'), moment().endOf('quarter')],
   },
   /** 本年 */
   year: {
-    label: '本年',
+    label: tavI18n('Tav.time.12'),
     key: 'year',
     dateRange: [moment().startOf('year'), moment().endOf('year')],
   },
   /** 上周 */
   lastWeek: {
-    label: '上周',
+    label: tavI18n('Tav.time.13'),
     key: 'lastWeek',
     dateRange: [
       moment().subtract(1, 'week').startOf('week'),
@@ -51,7 +55,7 @@ export const dateRangeRecord = {
   },
   /** 上月 */
   lastMonth: {
-    label: '上月',
+    label: tavI18n('Tav.time.14'),
     key: 'lastMonth',
     dateRange: [
       moment().subtract(1, 'month').startOf('month'),
@@ -60,7 +64,7 @@ export const dateRangeRecord = {
   },
   /** 上季度 */
   lastQuarter: {
-    label: '上季度',
+    label: tavI18n('Tav.time.15'),
     key: 'lastQuarter',
     dateRange: [
       moment().subtract(1, 'quarter').startOf('quarter'),
@@ -69,7 +73,7 @@ export const dateRangeRecord = {
   },
   /** 上一年度 */
   lastYear: {
-    label: '上一年度',
+    label: tavI18n('Tav.time.16'),
     key: 'lastYear',
     dateRange: [
       moment().subtract(1, 'year').startOf('year'),
@@ -79,25 +83,25 @@ export const dateRangeRecord = {
 
   /** 第一季度 */
   quarter_1: {
-    label: '第一季度',
+    label: tavI18n('Tav.time.17'),
     key: 'quarter_1',
     dateRange: [moment().quarter(1).startOf('quarter'), moment().quarter(1).endOf('quarter')],
   },
   /** 第二季度 */
   quarter_2: {
-    label: '第二季度',
+    label: tavI18n('Tav.time.18'),
     key: 'quarter_2',
     dateRange: [moment().quarter(2).startOf('quarter'), moment().quarter(2).endOf('quarter')],
   },
   /** 第三季度 */
   quarter_3: {
-    label: '第三季度',
+    label: tavI18n('Tav.time.19'),
     key: 'quarter_3',
     dateRange: [moment().quarter(3).startOf('quarter'), moment().quarter(3).endOf('quarter')],
   },
   /** 第四季度 */
   quarter_4: {
-    label: '第四季度',
+    label: tavI18n('Tav.time.20'),
     key: 'quarter_4',
     dateRange: [moment().quarter(4).startOf('quarter'), moment().quarter(4).endOf('quarter')],
   },

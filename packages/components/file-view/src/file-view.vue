@@ -5,10 +5,10 @@ import { Modal, Spin } from 'ant-design-vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { download } from '@tav-ui/utils/file/_download'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
 import type { Ref } from 'vue'
-
 export default defineComponent({
   name: 'TaFileView',
   components: {
@@ -112,7 +112,7 @@ export default defineComponent({
       () => props.show,
       (newData) => {
         if (newData && ignoreList.includes(currentFile.value.suffix)) {
-          createMessage.warning('暂不支持该文件预览')
+          createMessage.warning(tavI18n('Tav.file.message.1'))
           afterCloseHandle()
           return
         }
@@ -138,6 +138,7 @@ export default defineComponent({
     )
     return {
       ...toRefs(state),
+      tavI18n,
       currentFile,
       fileType,
       downloadFile,
@@ -173,7 +174,7 @@ export default defineComponent({
         <a href="javascript:;"><RightOutlined /></a>
       </div>
     </template>
-    <Spin :spinning="pageLoading" size="default" tip="文件请求中，请稍后">
+    <Spin :spinning="pageLoading" size="default" :tip="tavI18n('Tav.file.message.1')">
       <div class="file-view-content">
         <template v-if="fileType === 'office'">
           <iframe id="fileIframe" :src="filePath" frameborder="0" />
@@ -196,7 +197,7 @@ export default defineComponent({
           </div>
         </template>
         <template v-if="fileType === ''">
-          <div class="empty">暂不支持该格式预览 {{ fileType }}</div>
+          <div class="empty">{{ tavI18n('Tav.file.message.1') }} {{ fileType }}</div>
         </template>
       </div>
     </Spin>

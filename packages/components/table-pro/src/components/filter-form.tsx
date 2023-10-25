@@ -8,15 +8,13 @@ import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
 import { CamelCaseToCls, ComponentFilterFormName } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import type { PropType, Ref, Slots } from 'vue'
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { TableProInstance } from '../types'
 import type { TableProFilterFormConfig } from '../typings'
-const i18nFun = useGlobalConfig('i18nFun') as Ref<Record<string, any>>
-console.log(i18nFun)
 const ComponentPrefixCls = CamelCaseToCls(ComponentFilterFormName)
 
 const props = {
@@ -62,7 +60,6 @@ export default defineComponent({
       label: '',
       component: 'InputSearch',
       componentProps: {
-        placeholder: '请输入',
         allowClear: false,
         'enter-button': true,
         onSearch: useDebounceFn(inputFormSubmit, 300),
@@ -325,14 +322,14 @@ export default defineComponent({
                 onClick={openPannelFormModal}
               >
                 <div style="position: relative; display: inline-flex; margin: 0 8px">
-                  {i18nFun.value?.t && i18nFun.value?.t('Tav.TablePro.filter.1')}
+                  {tavI18n('Tav.tablePro.filter.1')}
                   {state.choosedNum > 0 ? (
                     <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '#52c41a' }} />
                   ) : null}
                 </div>
               </Button>
               <BasicModal
-                title={'更多筛选'}
+                title={tavI18n('Tav.tablePro.filter.1')}
                 wrapClassName={props.filterModalClassName}
                 style={state.dialogStyle}
                 width={state.dialogStyle.width}
@@ -351,10 +348,12 @@ export default defineComponent({
                   ),
                   footer: () => (
                     <>
-                      <Button type={'primary'} onClick={handlePannelFormSubmit}>
-                        确定
+                      <Button onClick={handlePannelFormResetFields}>
+                        {tavI18n('Tav.common.resetText')}
                       </Button>
-                      <Button onClick={handlePannelFormResetFields}>重置</Button>
+                      <Button type={'primary'} onClick={handlePannelFormSubmit}>
+                        {tavI18n('Tav.common.okText')}
+                      </Button>
                     </>
                   ),
                 }}

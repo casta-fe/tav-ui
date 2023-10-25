@@ -1,5 +1,5 @@
+import { tavI18n } from '@tav-ui/locales'
 import type { ExtractPropTypes, PropType } from 'vue'
-
 import type { InputNumberProps } from 'ant-design-vue'
 export interface IInputNumberRangeProps {
   value: Array<number>
@@ -21,11 +21,11 @@ export const inputNumberRangeProps = {
   },
   minPlaceHolder: {
     type: String as PropType<IInputNumberRangeProps['minPlaceHolder']>,
-    default: '请输入数值',
+    default: tavI18n('Tav.form.inputRange.3'),
   },
   maxPlaceHolder: {
     type: String as PropType<IInputNumberRangeProps['maxPlaceHolder']>,
-    default: '请输入数值',
+    default: tavI18n('Tav.form.inputRange.3'),
   },
   size: {
     type: String as PropType<IInputNumberRangeProps['size']>,

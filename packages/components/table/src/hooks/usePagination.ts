@@ -1,4 +1,5 @@
 import { computed, ref, unref, watch } from 'vue'
+import { tavI18n } from '@tav-ui/locales'
 import { isBoolean } from '@tav-ui/utils/is'
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from '../const'
 import type { ComputedRef } from 'vue'
@@ -14,9 +15,9 @@ interface ItemRender {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function itemRender({ page, type, originalElement }: ItemRender) {
   if (type === 'prev') {
-    return '上一页'
+    return tavI18n('Tav.tablePro.page.1')
   } else if (type === 'next') {
-    return '下一页'
+    return tavI18n('Tav.tablePro.page.2')
   }
   return originalElement
 }

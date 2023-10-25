@@ -1,3 +1,4 @@
 import TavUIEn from './lang/en'
 import TavUIZh from './lang/zh-CN'
-export { TavUIEn, TavUIZh }
+import { tavI18n } from './transfer'
+export { TavUIEn, TavUIZh, tavI18n }

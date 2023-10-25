@@ -24,8 +24,13 @@
         >
           <template #option="item">
             <div class="ta-member-select-option-item">
-              <span>{{ item.label }} <template v-if="item.status === 0"> (已冻结) </template></span>
-              <span>{{ item.sex == 1 ? '男' : '女' }}</span>
+              <span
+                >{{ item.label }}
+                <template v-if="item.status === 0">
+                  ({{ tavI18n('Tav.member.4') }})
+                </template></span
+              >
+              <span>{{ item.sex == 1 ? tavI18n('Tav.member.8') : tavI18n('Tav.member.9') }}</span>
               <span>{{ item.phone }}</span>
             </div>
           </template>
@@ -37,7 +42,7 @@
               @mousedown="(e) => e.preventDefault()"
               @click="userShowMore"
             >
-              <a href="javascript:;">查看更多</a>
+              <a href="javascript:;">{{ tavI18n('Tav.common.moreText') }}</a>
             </div>
           </template>
         </Select>
@@ -83,8 +88,8 @@
       </div>
 
       <template #footer>
-        <Button type="primary" @click="modalSubmit">确定</Button>
-        <Button @click="hideModal">取消</Button>
+        <Button type="primary" @click="modalSubmit">{{ tavI18n('Tav.common.okText') }}</Button>
+        <Button @click="hideModal">{{ tavI18n('Tav.common.cancelText') }}</Button>
       </template>
     </BasicModal>
   </div>
@@ -98,6 +103,7 @@ import Button from '@tav-ui/components/button'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
 import MemberModal from './components/member-modal.vue'
 import { memberSelectProps } from './types'
 import type { Ref } from 'vue'
@@ -212,7 +218,7 @@ export default defineComponent({
     }
     // 获取用户数据
     const getUserList = (type) => {
-      // console.log(type)
+      console.log(type)
       state.count++
       // console.log(type, state.count)
       if (Array.isArray(props.options)) {
@@ -375,6 +381,7 @@ export default defineComponent({
     return {
       userSelectRef,
       ...toRefs(state),
+      tavI18n,
       userOptions,
       userShowMore,
       userVisibleChange,

@@ -4,11 +4,11 @@ import { Col, Form } from 'ant-design-vue'
 import { propTypes } from '@tav-ui/utils/propTypes'
 import BasicArrow from '@tav-ui/components/basic-arrow'
 import Button from '@tav-ui/components/button'
+import { tavI18n } from '@tav-ui/locales'
 import { useFormContext } from '../hooks/useFormContext'
 import type { ButtonProps } from '@tav-ui/components/button/src/types'
 import type { PropType } from 'vue'
 import type { ColEx } from '../types/index'
-
 type ButtonOptions = Partial<ButtonProps> & { text: string }
 
 export default defineComponent({
@@ -58,7 +58,7 @@ export default defineComponent({
     const getResetBtnOptions = computed((): ButtonOptions => {
       return Object.assign(
         {
-          text: '重置',
+          text: tavI18n('Tav.common.resetText'),
         },
         props.resetButtonOptions
       )
@@ -67,7 +67,7 @@ export default defineComponent({
     const getSubmitBtnOptions = computed(() => {
       return Object.assign(
         {
-          text: '查询',
+          text: tavI18n('Tav.common.queryText'),
         },
         props.submitButtonOptions
       )
@@ -78,6 +78,7 @@ export default defineComponent({
     }
 
     return {
+      tavI18n,
       actionColOpt,
       getResetBtnOptions,
       getSubmitBtnOptions,
@@ -120,7 +121,7 @@ export default defineComponent({
           size="small"
           @click="toggleAdvanced"
         >
-          {{ isAdvanced ? `收起` : `展开` }}
+          {{ isAdvanced ? tavI18n('Tav.common.openText') : tavI18n('Tav.common.closeText') }}
           <BasicArrow class="ml-1" :expand="!isAdvanced" up />
         </Button>
         <slot name="advanceAfter" />

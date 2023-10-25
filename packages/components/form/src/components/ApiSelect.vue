@@ -20,7 +20,7 @@
     <template v-if="loading" #notFoundContent>
       <span>
         <LoadingOutlined spin class="mr-1" />
-        数据正在加载...
+        {{ tavI18n('Tav.common.loadingText') }}
       </span>
     </template>
   </Select>
@@ -33,6 +33,7 @@ import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isFunction } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
+import { tavI18n } from '@tav-ui/locales'
 import type { PropType } from 'vue'
 type OptionsItem = { label: string; value: string; disabled?: boolean }
 type TypeItems = 'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE' | undefined
@@ -184,6 +185,7 @@ export default defineComponent({
     pageInit()
     return {
       state: state as unknown as string,
+      tavI18n,
       attrs,
       selectState,
       loading,

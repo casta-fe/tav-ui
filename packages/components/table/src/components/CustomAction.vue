@@ -7,7 +7,7 @@
       pre-icon="ant-design:plus-circle-outlined"
       @click="addOpenModal"
     >
-      新增
+      {{ tavI18n('Tav.common.addText') }}
     </Button>
     <Button
       v-if="visible?.isDeleteVisible"
@@ -16,7 +16,7 @@
       pre-icon="ant-design:delete-outlined"
       @click="delOpenModal"
     >
-      删除
+      {{ tavI18n('Tav.common.delText') }}
     </Button>
     <slot />
     <!-- <Button v-if="props.visible?.isImportVisible" class="ml-4" type="primary" preIcon="ant-design:import-outlined">导入</Button> -->
@@ -27,7 +27,7 @@
       pre-icon="ant-design:export-outlined"
       @click="exportOpenModal"
     >
-      导出
+      {{ tavI18n('Tav.common.exportText') }}
     </Button>
     <!-- <ExpExcelModal @register="expModalRegister" @success="exportHandler" /> -->
     <Button
@@ -43,6 +43,7 @@
 // import { useMessage } from '@tav-ui/hooks/web/useMessage';
 import { defineComponent, inject, reactive } from 'vue'
 import { TaButton as Button } from '@tav-ui/components/button'
+import { tavI18n } from '@tav-ui/locales'
 import type { Emitter } from '@tav-ui/utils/mitt'
 import type { PropType } from 'vue'
 // import componentSetting from '@tav-ui/settings/src/componentSetting';
@@ -131,6 +132,7 @@ export default defineComponent({
       })
     }
     return {
+      tavI18n,
       addOpenModal,
       delOpenModal,
       exportOpenModal,

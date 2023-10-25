@@ -1,3 +1,4 @@
+import { tavI18n } from '@tav-ui/locales'
 import type { ExtractPropTypes, PropType } from 'vue'
 export interface Options {
   label: string
@@ -63,7 +64,7 @@ export const memberSelectProps = {
   // 弹窗标题
   title: {
     type: String,
-    default: '成员选择',
+    default: tavI18n('Tav.member.3'),
   },
   // 类型，可用选项 user, org
   type: {
@@ -114,7 +115,7 @@ export const memberSelectProps = {
   },
   placeholder: {
     type: String,
-    default: '请选择',
+    default: tavI18n('Tav.common.chooseText'),
   },
   // 下拉框最大tag树
   maxTagCount: {

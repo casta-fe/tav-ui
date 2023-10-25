@@ -1,6 +1,7 @@
 import { type PropType, defineComponent, ref } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { tavI18n } from '@tav-ui/locales'
 import type { BasicPropsType, Recordable } from '../types'
 
 export const UpdateFile = defineComponent({
@@ -58,7 +59,11 @@ export const UpdateFile = defineComponent({
         const file = files[i]
         if (file.size / 1024 / 1024 > 1024) {
           updateFlag = false
-          createMessage.warn(`${file.name}:${Math.floor(file.size / 1024 / 1024)}MB大于1GB`)
+          createMessage.warn(
+            `${file.name}:${Math.floor(file.size / 1024 / 1024)}MB${tavI18n(
+              'Tav.common.greater'
+            )}1GB`
+          )
         }
         if (!updateFlag) {
           return
@@ -73,7 +78,7 @@ export const UpdateFile = defineComponent({
 
         uploadFile(formData, props.parentProps?.AppId)
           .then((res) => {
-            createMessage.success('更新成功')
+            createMessage.success(tavI18n('Tav.file.message.8'))
             uploadRef.value.value = ''
             emit('updateSuccess', res.data[0], fileActualIds)
           })
@@ -87,7 +92,7 @@ export const UpdateFile = defineComponent({
 
       updateApi(formData, props.parentProps?.AppId, props.parentProps?.immediate)
         .then((res) => {
-          createMessage.success('更新成功')
+          createMessage.success(tavI18n('Tav.file.message.8'))
           uploadRef.value.value = ''
           emit('updateSuccess', res.data[0], fileActualIds)
         })
