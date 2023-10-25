@@ -61,7 +61,7 @@ export default defineComponent({
           <Button
             class={`${ComponentPrefixCls}-btn refresh`}
             type="text"
-            preIcon={'ant-design:redo-outlined'}
+            preIcon={'material-symbols:refresh-rounded'}
             iconSize={20}
             onClick={handleRefresh}
             permission={getPermission(props.config?.refresh)}

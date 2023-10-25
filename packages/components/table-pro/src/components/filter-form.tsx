@@ -315,13 +315,14 @@ export default defineComponent({
               <Button
                 class={`${ComponentPrefixCls}-pannel-activator`}
                 type={'primary'}
-                preIcon={'ant-design:filter-outlined'}
+                preIcon={'material-symbols:manage-search'}
+                iconSize={20}
                 postIcon={
                   state.visible ? 'ant-design:caret-up-outlined' : 'ant-design:caret-down-outlined'
                 }
                 onClick={openPannelFormModal}
               >
-                <div style="position: relative; display: inline-flex; margin: 0 8px">
+                <div style="position: relative; display: inline-flex; margin: 0 4px">
                   {tavI18n('Tav.tablePro.filter.1')}
                   {state.choosedNum > 0 ? (
                     <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '#52c41a' }} />

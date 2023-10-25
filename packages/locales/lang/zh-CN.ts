@@ -1,6 +1,5 @@
 export default {
   locale: 'zh-cn',
-  // locales for all comoponents
   common: {
     okText: '确定',
     cancelText: '取消',
@@ -37,9 +36,9 @@ export default {
     addText: '新增',
     editText: '编辑',
     delText: '删除',
+    delConfirm: '确定要删除',
     importText: '导入',
     exportText: '导出',
-    delConfirm: '确定要删除',
     success: '成功',
     tips: '提示',
     greater: '大于',

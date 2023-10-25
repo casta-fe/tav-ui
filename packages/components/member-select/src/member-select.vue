@@ -18,6 +18,7 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
+          :filter-option="filterOptionHandle"
           @dropdown-visible-change="userVisibleChange"
           @change="emitHandle"
           @blur="handleBlur"
@@ -99,6 +100,7 @@
 import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
 import { isEqual } from 'lodash-es'
+import pinyin from 'js-pinyin'
 import Button from '@tav-ui/components/button'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
@@ -126,10 +128,12 @@ export default defineComponent({
     const userSelectRef = ref<any>(null)
     const state = reactive({
       modalIsShow: false,
+      searchValue: '',
       count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
-      userList: [] as UserItem[],
+      userList: [] as Options[],
+      userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
       orgFileds: {
@@ -155,21 +159,6 @@ export default defineComponent({
     const orgApi = globalConfig.value?.TaMemberSelect?.orgApi || props.orgApi
     const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
-    const userOptions = computed(() => {
-      const list: Options[] = []
-      state.userList.forEach((v) => {
-        // 非ignoreUser的用户才能选择
-        list.push({
-          label: v.name,
-          value: v.id,
-          phone: v.phone,
-          status: v.status,
-          disabled: v.disabled, //已冻结（离职）的不能选
-          sex: v.sex,
-        })
-      })
-      return list
-    })
     const [registerMemberModal, { openModal: openMemberModal, closeModal: closeMemberModal }] =
       useModal()
 
@@ -202,10 +191,11 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
-      const list: UserItem[] = userList
+      const list: Options[] = userList
         .map((v) => {
           // 非ignoreUser的用户才能选择
-          const obj = { ...v }
+          const fullCharts = pinyin.getFullChars(v.name).toLowerCase()
+          const obj = { ...v, label: v.name, value: v.id, fullCharts }
           if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
             obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
           }
@@ -214,10 +204,11 @@ export default defineComponent({
         .sort((a) => {
           return a.disabled ? 1 : -1
         })
+      console.log(list)
       return list
     }
     // 获取用户数据
-    const getUserList = (type) => {
+    const getUserList = async (type) => {
       console.log(type)
       state.count++
       // console.log(type, state.count)
@@ -226,19 +217,19 @@ export default defineComponent({
         // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
       } else {
-        userListApi({
+        const res = await userListApi({
           ...props.userListParams,
-        }).then((res) => {
-          state.userList = getTrueUserList(res.data)
         })
+        state.userList = getTrueUserList(res.data)
       }
+      state.userOptions = [...state.userList]
       checkUserIsExist()
     }
     // 获取组织数据
     const getOrgList = (): void => {
-      orgApi({}).then((res) => {
-        state.orgList = res.data
-      })
+      // orgApi({}).then((res) => {
+      //   state.orgList = res.data
+      // })
     }
     // 弹窗里面的数据变化
     const modalChange = (value) => {
@@ -309,7 +300,9 @@ export default defineComponent({
         }
       }
     }
-
+    const filterOptionHandle = (keyword: string, user: any) => {
+      return user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
+    }
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
       setTimeout(() => {
@@ -380,9 +373,9 @@ export default defineComponent({
     pageInit()
     return {
       userSelectRef,
-      ...toRefs(state),
       tavI18n,
-      userOptions,
+      ...toRefs(state),
+      filterOptionHandle,
       userShowMore,
       userVisibleChange,
       orgVisibleChange,

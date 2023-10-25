@@ -1,15 +1,8 @@
 import { tavI18n } from '@tav-ui/locales'
 import type { ExtractPropTypes, PropType } from 'vue'
-export interface Options {
-  label: string
-  value: string
-  phone: string
-  status: number
-  sex: number
-  disabled: boolean
-}
 export interface UserItem {
   id: string
+  fullCharts: string
   name: string
   organizationId: string
   organizationName: string
@@ -18,6 +11,11 @@ export interface UserItem {
   status: number
   disabled: boolean
 }
+export interface Options extends UserItem {
+  label: string
+  value: string
+}
+
 export type TypeItems = 'user' | 'org'
 export interface LetterItemList {
   id: string

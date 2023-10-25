@@ -732,7 +732,7 @@ export default defineComponent({
                 <TaButton
                   class={`${ComponentPrefixCls}-btn column`}
                   type="text"
-                  preIcon={'ant-design:appstore-outlined'}
+                  preIcon={'material-symbols:lists-rounded'}
                   iconSize={20}
                   onClick={handleColumnClick}
                   permission={getPermission(props.config?.column)}

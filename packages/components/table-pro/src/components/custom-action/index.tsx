@@ -153,7 +153,7 @@ export default defineComponent({
     const { tableEmitter, tablePropsRef } = useTableContext()
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
-
+    const exportLoading = ref<boolean>(false)
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
 
@@ -345,26 +345,31 @@ export default defineComponent({
           }
 
           // console.log(data, _columns, columns)
-          props.tableRef?.value?.exportData({
-            filename: data.fileName,
-            sheetName: data.fileName,
-            type: data.fileType,
-            mode: data.fileDataType,
-            isHeader: true,
-            // isFooter: true,
-            isMerge: true,
-            isColgroup: true,
-            // message: true,
-            // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
-            // original: true,
-            columns,
-            backupColumns,
-            exportModalClose,
-            useStyle: true,
-            fileDescription,
-            fileStyles,
-            fileSeq: !!data.fileSeq,
-          } as any)
+          exportLoading.value = true
+          props.tableRef?.value
+            ?.exportData({
+              filename: data.fileName,
+              sheetName: data.fileName,
+              type: data.fileType,
+              mode: data.fileDataType,
+              isHeader: true,
+              // isFooter: true,
+              isMerge: true,
+              isColgroup: true,
+              // message: true,
+              // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
+              // original: true,
+              columns,
+              backupColumns,
+              exportModalClose,
+              useStyle: true,
+              fileDescription,
+              fileStyles,
+              fileSeq: !!data.fileSeq,
+            } as any)
+            .finally(() => {
+              exportLoading.value = false
+            })
 
           // props.tableRef?.value?.loadColumn(backupColumns.value)
           // exportModalClose()
@@ -390,7 +395,7 @@ export default defineComponent({
             footer: () => (
               <>
                 <Button onClick={exportModalClose}>{tavI18n('Tav.common.cancelText')}</Button>
-                <Button type="primary" onClick={handleExport}>
+                <Button loading={exportLoading.value} type="primary" onClick={handleExport}>
                   {tavI18n('Tav.common.exportText')}
                 </Button>
               </>
