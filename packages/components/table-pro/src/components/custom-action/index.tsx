@@ -20,16 +20,20 @@ const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
 const FileDataTypeOptions = [
   {
+    label: '全量数据(过滤)',
+    value: 'allSearch',
+  },
+  {
+    label: '全量数据',
+    value: 'all',
+  },
+  {
     label: '当前页的选中数据',
     value: 'selected',
   },
   {
     label: '当前页的全部数据',
     value: 'current',
-  },
-  {
-    label: '全量数据',
-    value: 'all',
   },
 ]
 const ExportModalFormSchemas: FormSchema[] = [
@@ -348,7 +352,8 @@ export default defineComponent({
             filename: data.fileName,
             sheetName: data.fileName,
             type: data.fileType,
-            mode: data.fileDataType,
+            mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
+            modeType: data.fileDataType,
             isHeader: true,
             // isFooter: true,
             isMerge: true,
@@ -592,11 +597,15 @@ export default defineComponent({
         let fileDataTypeOptions = FileDataTypeOptions
         // 没配置 handleAllApi，就不显示 all
         if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
-          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value !== 'all')
+          fileDataTypeOptions = fileDataTypeOptions.filter(
+            (fileType) => fileType.value.indexOf('all') > -1
+          )
         }
         if (total / pageSize <= 1) {
           _fileDataTypeDefaultValue = 'all'
-          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value === 'all')
+          fileDataTypeOptions = fileDataTypeOptions.filter(
+            (fileType) => fileType.value.indexOf('all') > -1
+          )
         }
         await exportModalFormUpdateSchema([
           {

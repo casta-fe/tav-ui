@@ -110,12 +110,13 @@ function handleExtenApi(
 
     // 挂载vxetable 导出全部接口
     if (hasExportAllApi) {
-      unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = async () => {
+      unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = async (refParam) => {
         let listField: string | undefined = undefined
         if (hasApiSetting) {
           listField = apiSetting.listField
         }
         params.model!['viewAll'] = true
+        params.model!['modeType'] = refParam?.options?.modeType
         // 郭明说不分页接口返回的就是data数组这里自动包装
         const allApiResult = await (customActionConfig.export as any).handleAllApi(params)
         let data: any[] = []
