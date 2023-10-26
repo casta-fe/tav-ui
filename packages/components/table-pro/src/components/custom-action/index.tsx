@@ -15,7 +15,7 @@ import type { FormSchema } from '@tav-ui/components/form'
 import type { ComputedRef, PropType, Ref, Slots } from 'vue'
 import type { TableProColumnInfo, TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
-
+import './index.less'
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
 const FileDataTypeOptions = [
@@ -380,7 +380,7 @@ export default defineComponent({
           onRegister={exportModalRegister}
           title={'导出设置'}
           width={650}
-          wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
+          wrapClassName={`${ComponentPrefixCls}-btn export-modal export-modal-load-select`}
           destroyOnClose={true}
           maskClosable={false}
           onVisible-change={(isOpen) => {
