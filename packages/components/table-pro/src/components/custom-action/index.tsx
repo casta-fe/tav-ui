@@ -20,11 +20,11 @@ const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
 const FileDataTypeOptions = [
   {
-    label: '全量数据(过滤)',
+    label: '全部数据带查询条件',
     value: 'allSearch',
   },
   {
-    label: '全量数据',
+    label: '全部数据',
     value: 'all',
   },
   {
@@ -593,20 +593,22 @@ export default defineComponent({
         const {
           pager: { pageSize, total },
         } = props.tableRef?.value?.getProxyInfo() ?? {}
-        let _fileDataTypeDefaultValue = 'current'
+        let _fileDataTypeDefaultValue = 'allSearch'
         let fileDataTypeOptions = FileDataTypeOptions
         // 没配置 handleAllApi，就不显示 all
         if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
+          _fileDataTypeDefaultValue = 'current'
           fileDataTypeOptions = fileDataTypeOptions.filter(
-            (fileType) => fileType.value.indexOf('all') > -1
+            (fileType) => fileType.value.indexOf('all') == -1
           )
         }
         if (total / pageSize <= 1) {
-          _fileDataTypeDefaultValue = 'all'
-          fileDataTypeOptions = fileDataTypeOptions.filter(
-            (fileType) => fileType.value.indexOf('all') > -1
-          )
+          // _fileDataTypeDefaultValue = 'current'
+          // fileDataTypeOptions = fileDataTypeOptions.filter(
+          //   (fileType) => fileType.value.indexOf('all') > -1
+          // )
         }
+
         await exportModalFormUpdateSchema([
           {
             field: 'fileDataType',
