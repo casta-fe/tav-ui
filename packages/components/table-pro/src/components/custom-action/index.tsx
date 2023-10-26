@@ -19,118 +19,6 @@ import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } fr
 
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
-const FileDataTypeOptions = [
-  {
-    label: tavI18n('Tav.tablePro.export.4o1'),
-    value: 'selected',
-  },
-  {
-    label: tavI18n('Tav.tablePro.export.4o2'),
-    value: 'current',
-  },
-  {
-    label: tavI18n('Tav.tablePro.export.4o3'),
-    value: 'all',
-  },
-]
-const ExportModalFormSchemas: FormSchema[] = [
-  {
-    field: 'fileName',
-    component: 'Input',
-    label: tavI18n('Tav.tablePro.export.1'),
-    required: true,
-    componentProps: {
-      placeholder: tavI18n('Tav.tablePro.export.1p'),
-    },
-  },
-  // {
-  //   field: 'fileDescription',
-  //   component: 'Input',
-  //   label: '描述',
-  //   required: false,
-  //   componentProps: {
-  //     placeholder: '请输入表格描述',
-  //   },
-  // },
-  {
-    field: 'fileSeq',
-    component: 'Select',
-    label: tavI18n('Tav.tablePro.export.2'),
-    required: false,
-    defaultValue: 1,
-    componentProps: {
-      placeholder: tavI18n('Tav.tablePro.export.2p'),
-      options: [
-        {
-          label: tavI18n('Tav.tablePro.export.2o1'),
-          value: 1,
-        },
-        {
-          label: tavI18n('Tav.tablePro.export.2o2'),
-          value: 0,
-        },
-      ],
-    },
-  },
-  {
-    field: 'fileType',
-    component: 'Select',
-    label: tavI18n('Tav.tablePro.export.3'),
-    required: true,
-    defaultValue: 'xlsx',
-    componentProps: {
-      placeholder: tavI18n('Tav.tablePro.export.3p'),
-      options: [
-        {
-          label: 'Excel（.xlsx）',
-          value: 'xlsx',
-        },
-        // {
-        //   label: 'CSV（.csv）',
-        //   value: 'csv',
-        // },
-        // {
-        //   label: '网页（.html）',
-        //   value: 'html',
-        // },
-        // {
-        //   label: 'XML数据（.xml）',
-        //   value: 'xml',
-        // },
-        // {
-        //   label: '文本数据（.txt）',
-        //   value: 'txt',
-        // },
-      ],
-    },
-  },
-  {
-    field: 'fileDataType',
-    component: 'Select',
-    label: tavI18n('Tav.tablePro.export.4'),
-    required: true,
-    defaultValue: '',
-    componentProps: {
-      placeholder: tavI18n('Tav.tablePro.export.4p'),
-      options: [],
-    },
-  },
-  {
-    field: 'fileContainFields',
-    component: 'TreeSelect',
-    label: tavI18n('Tav.tablePro.export.5'),
-    required: true,
-    componentProps: {
-      placeholder: tavI18n('Tav.tablePro.export.5p'),
-      treeCheckable: true,
-      allowClear: true,
-      showCheckedStrategy: 'SHOW_ALL',
-      treeDefaultExpandAll: true,
-      treeData: [],
-    },
-  },
-]
-
 const props = {
   config: {
     type: Object as PropType<TableProCustomActionConfig>,
@@ -148,6 +36,118 @@ export default defineComponent({
   props,
   emits: ['triggerStatistical'],
   setup(props, { emit, expose }) {
+    const FileDataTypeOptions = [
+      {
+        label: tavI18n('Tav.tablePro.export.4o1'),
+        value: 'selected',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o2'),
+        value: 'current',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o3'),
+        value: 'all',
+      },
+    ]
+
+    const ExportModalFormSchemas: FormSchema[] = [
+      {
+        field: 'fileName',
+        component: 'Input',
+        label: tavI18n('Tav.tablePro.export.1'),
+        required: true,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.1p'),
+        },
+      },
+      // {
+      //   field: 'fileDescription',
+      //   component: 'Input',
+      //   label: '描述',
+      //   required: false,
+      //   componentProps: {
+      //     placeholder: '请输入表格描述',
+      //   },
+      // },
+      {
+        field: 'fileSeq',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.2'),
+        required: false,
+        defaultValue: 1,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.2p'),
+          options: [
+            {
+              label: tavI18n('Tav.tablePro.export.2o1'),
+              value: 1,
+            },
+            {
+              label: tavI18n('Tav.tablePro.export.2o2'),
+              value: 0,
+            },
+          ],
+        },
+      },
+      {
+        field: 'fileType',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.3'),
+        required: true,
+        defaultValue: 'xlsx',
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.3p'),
+          options: [
+            {
+              label: 'Excel（.xlsx）',
+              value: 'xlsx',
+            },
+            // {
+            //   label: 'CSV（.csv）',
+            //   value: 'csv',
+            // },
+            // {
+            //   label: '网页（.html）',
+            //   value: 'html',
+            // },
+            // {
+            //   label: 'XML数据（.xml）',
+            //   value: 'xml',
+            // },
+            // {
+            //   label: '文本数据（.txt）',
+            //   value: 'txt',
+            // },
+          ],
+        },
+      },
+      {
+        field: 'fileDataType',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.4'),
+        required: true,
+        defaultValue: '',
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.4p'),
+          options: [],
+        },
+      },
+      {
+        field: 'fileContainFields',
+        component: 'TreeSelect',
+        label: tavI18n('Tav.tablePro.export.5'),
+        required: true,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.5p'),
+          treeCheckable: true,
+          allowClear: true,
+          showCheckedStrategy: 'SHOW_ALL',
+          treeDefaultExpandAll: true,
+          treeData: [],
+        },
+      },
+    ]
     const settingsRef = ref<CustomActionSetting | null>(null)
     const actionRef = ref<ComputedRef | null>(null)
     const { tableEmitter, tablePropsRef } = useTableContext()

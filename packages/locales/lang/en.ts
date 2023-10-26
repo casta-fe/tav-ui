@@ -46,7 +46,7 @@ export default {
   },
   countButton: {
     text1: 'Send verification code',
-    text2: 'S',
+    text2: 'After {count}',
   },
   modal: {
     '1': 'Reset',
