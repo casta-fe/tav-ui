@@ -12,7 +12,7 @@ import { defineComponent, onMounted, reactive } from 'vue'
 // import ModalPage from './Modal/index.vue'
 // import FollewPage from './Follow/index.vue'
 // import BasicTablePage from './table/Basic.vue'
-// import { TaButton } from '@tav-ui/components/button'
+import { TaButton } from '@tav-ui/components/button'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
 // import FormPage from './Form/index.vue'
@@ -26,7 +26,7 @@ export default defineComponent({
     // TaConfigProvider,
     TablePro,
     TaModal,
-    // TaButton,
+    TaButton,
     // TaUpload,
     // SearchableApiSelect,
     // TimeLineListPage,

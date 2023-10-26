@@ -219,7 +219,7 @@ export default defineComponent({
               // filterFormConfig={{ enabled: false }}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
-              api={handleApi}
+              // api={handleApi}
               onCheckboxChange={handleCheckboxChange}
               onCheckboxAll={handleCheckboxAll}
               onPageChange={handlePageChange}

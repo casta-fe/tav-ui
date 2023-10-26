@@ -1,10 +1,13 @@
 import VXETable from 'vxe-table'
+import { useGlobalConfig } from '@tav-ui/hooks'
 import { VxeCellRenderer } from './components/cell'
 import VXETablePluginExport from './vxe-table-plugin-export'
-import type { App } from 'vue'
+import type { App, Ref } from 'vue'
 import type { VXETableSetupOptions } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
 import 'xe-utils'
+
+const i18nFun = useGlobalConfig('i18nFun') as Ref<Record<string, any>>
 
 export function setupVxeTable(app?: App) {
   // VXETable 全局配置
@@ -268,6 +271,14 @@ export function setupVxeTable(app?: App) {
 
   const setupOptions: VXETableSetupOptions = Object.assign(VXETableGlobalSettings, {
     icon: VXETableGlobalIcons,
+    i18n: (key, args) => i18nFun.value?.i18n.global.t(key, args),
+    // translate(key, args) {
+    //   // 例如，只翻译 "app." 开头的键值
+    //   if (key && key.indexOf('app.') > -1) {
+    //     return i18nFun.value?.i18n.global.t(key, args)
+    //   }
+    //   return key
+    // },
   })
 
   // 自定义渲染 cell

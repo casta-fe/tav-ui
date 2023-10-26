@@ -8,7 +8,7 @@ import {
 import allUsers from './allUserList'
 import { taUploadProvideData } from './components/TaUpload'
 import { useI18n } from './hooks/useI18n'
-
+import { i18n } from './locales/setupI18n'
 export default defineComponent({
   components: {
     TaConfigProvider,
@@ -25,6 +25,7 @@ export default defineComponent({
       },
       i18nFun: {
         t,
+        i18n,
       },
       permissions: {},
       components: {
