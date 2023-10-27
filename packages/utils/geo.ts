@@ -12228,28 +12228,12 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '乐至县',
           },
           {
-            value: '511023',
-            label: '安岳县',
-          },
-          {
             value: '511024',
             label: '威远县',
           },
           {
             value: '511025',
             label: '资中县',
-          },
-          {
-            value: '511026',
-            label: '资阳县',
-          },
-          {
-            value: '511027',
-            label: '简阳县',
-          },
-          {
-            value: '511028',
-            label: '隆昌县',
           },
           {
             value: '511083',
@@ -12952,10 +12936,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '播州区',
           },
           {
-            value: '520321',
-            label: '遵义县',
-          },
-          {
             value: '520322',
             label: '桐梓县',
           },
@@ -13012,10 +12992,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '520403',
             label: '平坝区',
-          },
-          {
-            value: '520421',
-            label: '平坝县',
           },
           {
             value: '520422',
@@ -13136,10 +13112,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '兴仁市',
           },
           {
-            value: '522321',
-            label: '兴义县',
-          },
-          {
             value: '522322',
             label: '兴仁县',
           },
@@ -13176,10 +13148,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '522601',
             label: '凯里市',
-          },
-          {
-            value: '522621',
-            label: '凯里县',
           },
           {
             value: '522622',
@@ -13256,20 +13224,12 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '福泉市',
           },
           {
-            value: '522721',
-            label: '都匀县',
-          },
-          {
             value: '522722',
             label: '荔波县',
           },
           {
             value: '522723',
             label: '贵定县',
-          },
-          {
-            value: '522724',
-            label: '福泉县',
           },
           {
             value: '522725',
@@ -13344,18 +13304,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '晋宁区',
           },
           {
-            value: '530121',
-            label: '呈贡县',
-          },
-          {
-            value: '530122',
-            label: '晋宁县',
-          },
-          {
-            value: '530123',
-            label: '安宁县',
-          },
-          {
             value: '530124',
             label: '富民县',
           },
@@ -13400,10 +13348,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '530304',
             label: '马龙区',
-          },
-          {
-            value: '530321',
-            label: '马龙县',
           },
           {
             value: '530322',
@@ -13452,10 +13396,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '江川区',
           },
           {
-            value: '530421',
-            label: '江川县',
-          },
-          {
             value: '530422',
             label: '澄江县',
           },
@@ -13500,10 +13440,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '530521',
             label: '施甸县',
-          },
-          {
-            value: '530522',
-            label: '腾冲县',
           },
           {
             value: '530523',
@@ -13670,10 +13606,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '禄丰市',
           },
           {
-            value: '532321',
-            label: '楚雄县',
-          },
-          {
             value: '532322',
             label: '双柏县',
           },
@@ -13736,14 +13668,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '弥勒市',
           },
           {
-            value: '532521',
-            label: '开远县',
-          },
-          {
-            value: '532522',
-            label: '蒙自县',
-          },
-          {
             value: '532523',
             label: '屏边苗族自治县',
           },
@@ -13754,10 +13678,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '532525',
             label: '石屏县',
-          },
-          {
-            value: '532526',
-            label: '弥勒县',
           },
           {
             value: '532527',
@@ -13792,10 +13712,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '532601',
             label: '文山市',
-          },
-          {
-            value: '532621',
-            label: '文山县',
           },
           {
             value: '532622',
@@ -13836,10 +13752,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '景洪市',
           },
           {
-            value: '532821',
-            label: '景洪县',
-          },
-          {
             value: '532822',
             label: '勐海县',
           },
@@ -13856,10 +13768,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '532901',
             label: '大理市',
-          },
-          {
-            value: '532921',
-            label: '大理县',
           },
           {
             value: '532922',
@@ -13912,20 +13820,12 @@ export const ProvinceCityOptions: AddressOption[] = [
         label: '德宏傣族景颇族自治州',
         children: [
           {
-            value: '533101',
-            label: '畹町市',
-          },
-          {
             value: '533102',
             label: '瑞丽市',
           },
           {
             value: '533103',
             label: '芒市',
-          },
-          {
-            value: '533121',
-            label: '潞西县',
           },
           {
             value: '533122',
@@ -13938,10 +13838,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '533124',
             label: '陇川县',
-          },
-          {
-            value: '533125',
-            label: '瑞丽县',
           },
           {
             value: '533126',
@@ -13960,10 +13856,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '533321',
             label: '泸水县',
-          },
-          {
-            value: '533322',
-            label: '碧江县',
           },
           {
             value: '533323',
@@ -13986,10 +13878,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '533401',
             label: '香格里拉市',
-          },
-          {
-            value: '533421',
-            label: '香格里拉县',
           },
           {
             value: '533422',
@@ -14038,14 +13926,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '540124',
             label: '曲水县',
-          },
-          {
-            value: '540125',
-            label: '堆龙德庆县',
-          },
-          {
-            value: '540126',
-            label: '达孜县',
           },
           {
             value: '540127',
@@ -14408,28 +14288,12 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '鄠邑区',
           },
           {
-            value: '610121',
-            label: '长安县',
-          },
-          {
             value: '610122',
             label: '蓝田县',
           },
           {
-            value: '610123',
-            label: '临潼县',
-          },
-          {
             value: '610124',
             label: '周至县',
-          },
-          {
-            value: '610125',
-            label: '户县(鄠县)',
-          },
-          {
-            value: '610126',
-            label: '高陵县',
           },
         ],
       },
@@ -14448,10 +14312,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '610204',
             label: '耀州区',
-          },
-          {
-            value: '610221',
-            label: '耀县',
           },
           {
             value: '610222',
@@ -14474,14 +14334,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '610304',
             label: '陈仓区',
-          },
-          {
-            value: '610305',
-            label: '凤翔区',
-          },
-          {
-            value: '610321',
-            label: '宝鸡县',
           },
           {
             value: '610322',
@@ -14538,10 +14390,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '渭城区',
           },
           {
-            value: '610421',
-            label: '兴平县',
-          },
-          {
             value: '610422',
             label: '三原县',
           },
@@ -14560,10 +14408,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '610426',
             label: '永寿县',
-          },
-          {
-            value: '610427',
-            label: '彬县(邠县)',
           },
           {
             value: '610428',
@@ -14602,10 +14446,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '610503',
             label: '华州区',
-          },
-          {
-            value: '610521',
-            label: '华县',
           },
           {
             value: '610522',
@@ -14670,10 +14510,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '子长县',
           },
           {
-            value: '610624',
-            label: '安塞县',
-          },
-          {
             value: '610625',
             label: '志丹县',
           },
@@ -14704,10 +14540,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '610632',
             label: '黄陵县',
-          },
-          {
-            value: '610681',
-            label: '子长市',
           },
         ],
       },
@@ -14774,16 +14606,8 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '横山区',
           },
           {
-            value: '610821',
-            label: '神木县',
-          },
-          {
             value: '610822',
             label: '府谷县',
-          },
-          {
-            value: '610823',
-            label: '横山县',
           },
           {
             value: '610824',
@@ -14932,10 +14756,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '620111',
             label: '红古区',
-          },
-          {
-            value: '620112',
-            label: '白银区',
           },
           {
             value: '620121',
@@ -15402,10 +15222,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '平安区',
           },
           {
-            value: '630221',
-            label: '平安县',
-          },
-          {
             value: '630222',
             label: '民和回族土族自治县',
           },
@@ -15532,10 +15348,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '玉树市',
           },
           {
-            value: '632721',
-            label: '玉树县',
-          },
-          {
             value: '632722',
             label: '杂多县',
           },
@@ -15584,10 +15396,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '632823',
             label: '天峻县',
-          },
-          {
-            value: '632825',
-            label: '大柴旦行政委员会',
           },
         ],
       },
@@ -15658,10 +15466,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '640222',
             label: '陶乐县',
-          },
-          {
-            value: '640223',
-            label: '惠农县',
           },
         ],
       },
@@ -15858,16 +15662,8 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '阜康市',
           },
           {
-            value: '652303',
-            label: '米泉市',
-          },
-          {
             value: '652321',
             label: '昌吉县',
-          },
-          {
-            value: '652322',
-            label: '米泉县',
           },
           {
             value: '652323',
@@ -15880,10 +15676,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '652325',
             label: '奇台县',
-          },
-          {
-            value: '652326',
-            label: '阜康县',
           },
           {
             value: '652327',
@@ -15906,10 +15698,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '652702',
             label: '阿拉山口市',
-          },
-          {
-            value: '652721',
-            label: '博乐县',
           },
           {
             value: '652722',
@@ -15980,10 +15768,6 @@ export const ProvinceCityOptions: AddressOption[] = [
             label: '阿克苏市',
           },
           {
-            value: '652921',
-            label: '阿克苏县',
-          },
-          {
             value: '652922',
             label: '温宿县',
           },
@@ -16024,10 +15808,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '653001',
             label: '阿图什市',
-          },
-          {
-            value: '653021',
-            label: '阿图什县',
           },
           {
             value: '653022',
@@ -16200,10 +15980,6 @@ export const ProvinceCityOptions: AddressOption[] = [
           {
             value: '654203',
             label: '沙湾市',
-          },
-          {
-            value: '654221',
-            label: '额敏县',
           },
           {
             value: '654222',
@@ -17976,6 +17752,7 @@ export const ProvinceCityOptions: AddressOption[] = [
     ],
   },
 ]
+
 // 国家/省/市
 export const CountryProvinceCityOptions: AddressOption[] = [
   {
@@ -20910,12 +20687,8 @@ export const ProvinceCityRecord = {
   '511011': '东兴区',
   '511021': '内江县',
   '511022': '乐至县',
-  '511023': '安岳县',
   '511024': '威远县',
   '511025': '资中县',
-  '511026': '资阳县',
-  '511027': '简阳县',
-  '511028': '隆昌县',
   '511083': '隆昌市',
   '511100': '乐山市',
   '511102': '市中区',
@@ -21083,7 +20856,6 @@ export const ProvinceCityRecord = {
   '520302': '红花岗区',
   '520303': '汇川区',
   '520304': '播州区',
-  '520321': '遵义县',
   '520322': '桐梓县',
   '520323': '绥阳县',
   '520324': '正安县',
@@ -21098,7 +20870,6 @@ export const ProvinceCityRecord = {
   '520400': '安顺市',
   '520402': '西秀区',
   '520403': '平坝区',
-  '520421': '平坝县',
   '520422': '普定县',
   '520423': '镇宁布依族苗族自治县',
   '520424': '关岭布依族苗族自治县',
@@ -21127,7 +20898,6 @@ export const ProvinceCityRecord = {
   '522300': '黔西南布依族苗族自治州',
   '522301': '兴义市',
   '522302': '兴仁市',
-  '522321': '兴义县',
   '522322': '兴仁县',
   '522323': '普安县',
   '522324': '晴隆县',
@@ -21137,7 +20907,6 @@ export const ProvinceCityRecord = {
   '522328': '安龙县',
   '522600': '黔东南苗族侗族自治州',
   '522601': '凯里市',
-  '522621': '凯里县',
   '522622': '黄平县',
   '522623': '施秉县',
   '522624': '三穗县',
@@ -21156,10 +20925,8 @@ export const ProvinceCityRecord = {
   '522700': '黔南布依族苗族自治州',
   '522701': '都匀市',
   '522702': '福泉市',
-  '522721': '都匀县',
   '522722': '荔波县',
   '522723': '贵定县',
-  '522724': '福泉县',
   '522725': '瓮安县',
   '522726': '独山县',
   '522727': '平塘县',
@@ -21177,9 +20944,6 @@ export const ProvinceCityRecord = {
   '530113': '东川区',
   '530114': '呈贡区',
   '530115': '晋宁区',
-  '530121': '呈贡县',
-  '530122': '晋宁县',
-  '530123': '安宁县',
   '530124': '富民县',
   '530125': '宜良县',
   '530126': '石林彝族自治县',
@@ -21191,7 +20955,6 @@ export const ProvinceCityRecord = {
   '530302': '麒麟区',
   '530303': '沾益区',
   '530304': '马龙区',
-  '530321': '马龙县',
   '530322': '陆良县',
   '530323': '师宗县',
   '530324': '罗平县',
@@ -21203,7 +20966,6 @@ export const ProvinceCityRecord = {
   '530400': '玉溪市',
   '530402': '红塔区',
   '530403': '江川区',
-  '530421': '江川县',
   '530422': '澄江县',
   '530423': '通海县',
   '530424': '华宁县',
@@ -21215,7 +20977,6 @@ export const ProvinceCityRecord = {
   '530500': '保山市',
   '530502': '隆阳区',
   '530521': '施甸县',
-  '530522': '腾冲县',
   '530523': '龙陵县',
   '530524': '昌宁县',
   '530581': '腾冲市',
@@ -21255,7 +21016,6 @@ export const ProvinceCityRecord = {
   '532300': '楚雄彝族自治州',
   '532301': '楚雄市',
   '532302': '禄丰市',
-  '532321': '楚雄县',
   '532322': '双柏县',
   '532323': '牟定县',
   '532324': '南华县',
@@ -21271,12 +21031,9 @@ export const ProvinceCityRecord = {
   '532502': '开远市',
   '532503': '蒙自市',
   '532504': '弥勒市',
-  '532521': '开远县',
-  '532522': '蒙自县',
   '532523': '屏边苗族自治县',
   '532524': '建水县',
   '532525': '石屏县',
-  '532526': '弥勒县',
   '532527': '泸西县',
   '532528': '元阳县',
   '532529': '红河县',
@@ -21285,7 +21042,6 @@ export const ProvinceCityRecord = {
   '532532': '河口瑶族自治县',
   '532600': '文山壮族苗族自治州',
   '532601': '文山市',
-  '532621': '文山县',
   '532622': '砚山县',
   '532623': '西畴县',
   '532624': '麻栗坡县',
@@ -21295,12 +21051,10 @@ export const ProvinceCityRecord = {
   '532628': '富宁县',
   '532800': '西双版纳傣族自治州',
   '532801': '景洪市',
-  '532821': '景洪县',
   '532822': '勐海县',
   '532823': '勐腊县',
   '532900': '大理白族自治州',
   '532901': '大理市',
-  '532921': '大理县',
   '532922': '漾濞彝族自治县',
   '532923': '祥云县',
   '532924': '宾川县',
@@ -21313,25 +21067,20 @@ export const ProvinceCityRecord = {
   '532931': '剑川县',
   '532932': '鹤庆县',
   '533100': '德宏傣族景颇族自治州',
-  '533101': '畹町市',
   '533102': '瑞丽市',
   '533103': '芒市',
-  '533121': '潞西县',
   '533122': '梁河县',
   '533123': '盈江县',
   '533124': '陇川县',
-  '533125': '瑞丽县',
   '533126': '畹町镇',
   '533300': '怒江傈僳族自治州',
   '533301': '泸水市',
   '533321': '泸水县',
-  '533322': '碧江县',
   '533323': '福贡县',
   '533324': '贡山独龙族怒族自治县',
   '533325': '兰坪白族普米族自治县',
   '533400': '迪庆藏族自治州',
   '533401': '香格里拉市',
-  '533421': '香格里拉县',
   '533422': '德钦县',
   '533423': '维西傈僳族自治县',
   '540000': '西藏自治区',
@@ -21343,8 +21092,6 @@ export const ProvinceCityRecord = {
   '540122': '当雄县',
   '540123': '尼木县',
   '540124': '曲水县',
-  '540125': '堆龙德庆县',
-  '540126': '达孜县',
   '540127': '墨竹工卡县',
   '540200': '日喀则市',
   '540202': '桑珠孜区',
@@ -21431,24 +21178,17 @@ export const ProvinceCityRecord = {
   '610116': '长安区',
   '610117': '高陵区',
   '610118': '鄠邑区',
-  '610121': '长安县',
   '610122': '蓝田县',
-  '610123': '临潼县',
   '610124': '周至县',
-  '610125': '户县(鄠县)',
-  '610126': '高陵县',
   '610200': '铜川市',
   '610202': '王益区',
   '610203': '印台区',
   '610204': '耀州区',
-  '610221': '耀县',
   '610222': '宜君县',
   '610300': '宝鸡市',
   '610302': '渭滨区',
   '610303': '金台区',
   '610304': '陈仓区',
-  '610305': '凤翔区',
-  '610321': '宝鸡县',
   '610322': '凤翔县',
   '610323': '岐山县',
   '610324': '扶风县',
@@ -21462,13 +21202,11 @@ export const ProvinceCityRecord = {
   '610402': '秦都区',
   '610403': '杨陵区',
   '610404': '渭城区',
-  '610421': '兴平县',
   '610422': '三原县',
   '610423': '泾阳县',
   '610424': '乾县',
   '610425': '礼泉县',
   '610426': '永寿县',
-  '610427': '彬县(邠县)',
   '610428': '长武县',
   '610429': '旬邑县',
   '610430': '淳化县',
@@ -21478,7 +21216,6 @@ export const ProvinceCityRecord = {
   '610500': '渭南市',
   '610502': '临渭区',
   '610503': '华州区',
-  '610521': '华县',
   '610522': '潼关县',
   '610523': '大荔县',
   '610524': '合阳县',
@@ -21494,7 +21231,6 @@ export const ProvinceCityRecord = {
   '610621': '延长县',
   '610622': '延川县',
   '610623': '子长县',
-  '610624': '安塞县',
   '610625': '志丹县',
   '610626': '吴起县',
   '610627': '甘泉县',
@@ -21503,7 +21239,6 @@ export const ProvinceCityRecord = {
   '610630': '宜川县',
   '610631': '黄龙县',
   '610632': '黄陵县',
-  '610681': '子长市',
   '610700': '汉中市',
   '610702': '汉台区',
   '610703': '南郑区',
@@ -21519,9 +21254,7 @@ export const ProvinceCityRecord = {
   '610800': '榆林市',
   '610802': '榆阳区',
   '610803': '横山区',
-  '610821': '神木县',
   '610822': '府谷县',
-  '610823': '横山县',
   '610824': '靖边县',
   '610825': '定边县',
   '610826': '绥德县',
@@ -21557,7 +21290,6 @@ export const ProvinceCityRecord = {
   '620104': '西固区',
   '620105': '安宁区',
   '620111': '红古区',
-  '620112': '白银区',
   '620121': '永登县',
   '620122': '皋兰县',
   '620123': '榆中县',
@@ -21665,7 +21397,6 @@ export const ProvinceCityRecord = {
   '630200': '海东市',
   '630202': '乐都区',
   '630203': '平安区',
-  '630221': '平安县',
   '630222': '民和回族土族自治县',
   '630223': '互助土族自治县',
   '630224': '化隆回族自治县',
@@ -21695,7 +21426,6 @@ export const ProvinceCityRecord = {
   '632626': '玛多县',
   '632700': '玉树藏族自治州',
   '632701': '玉树市',
-  '632721': '玉树县',
   '632722': '杂多县',
   '632723': '称多县',
   '632724': '治多县',
@@ -21708,7 +21438,6 @@ export const ProvinceCityRecord = {
   '632821': '乌兰县',
   '632822': '都兰县',
   '632823': '天峻县',
-  '632825': '大柴旦行政委员会',
   '640000': '宁夏回族自治区',
   '640100': '银川市',
   '640103': '新城区',
@@ -21725,7 +21454,6 @@ export const ProvinceCityRecord = {
   '640205': '惠农区',
   '640221': '平罗县',
   '640222': '陶乐县',
-  '640223': '惠农县',
   '640300': '吴忠市',
   '640302': '利通区',
   '640303': '红寺堡区',
@@ -21770,19 +21498,15 @@ export const ProvinceCityRecord = {
   '652300': '昌吉回族自治州',
   '652301': '昌吉市',
   '652302': '阜康市',
-  '652303': '米泉市',
   '652321': '昌吉县',
-  '652322': '米泉县',
   '652323': '呼图壁县',
   '652324': '玛纳斯县',
   '652325': '奇台县',
-  '652326': '阜康县',
   '652327': '吉木萨尔县',
   '652328': '木垒哈萨克自治县',
   '652700': '博尔塔拉蒙古自治州',
   '652701': '博乐市',
   '652702': '阿拉山口市',
-  '652721': '博乐县',
   '652722': '精河县',
   '652723': '温泉县',
   '652800': '巴音郭楞蒙古自治州',
@@ -21799,7 +21523,6 @@ export const ProvinceCityRecord = {
   '652900': '阿克苏地区',
   '652901': '阿克苏市',
   '652902': '阿克苏市',
-  '652921': '阿克苏县',
   '652922': '温宿县',
   '652923': '库车县',
   '652924': '沙雅县',
@@ -21810,7 +21533,6 @@ export const ProvinceCityRecord = {
   '652929': '柯坪县',
   '653000': '克孜勒苏柯尔克孜自治州',
   '653001': '阿图什市',
-  '653021': '阿图什县',
   '653022': '阿克陶县',
   '653023': '阿合奇县',
   '653024': '乌恰县',
@@ -21852,7 +21574,6 @@ export const ProvinceCityRecord = {
   '654201': '塔城市',
   '654202': '乌苏市',
   '654203': '沙湾市',
-  '654221': '额敏县',
   '654222': '乌苏县',
   '654223': '沙湾县',
   '654224': '托里县',
