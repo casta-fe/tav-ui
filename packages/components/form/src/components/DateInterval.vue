@@ -1,5 +1,5 @@
 <template>
-  <div class="date-range-wrapper">
+  <div class="date-interval-wrapper">
     <RangePicker
       :allow-clear="allowClear"
       :format="format"
