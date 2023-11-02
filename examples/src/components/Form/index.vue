@@ -79,7 +79,7 @@
     <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
   <!-- <TaContainerCollapse title="useForm示例"> -->
-  <TaForm ref="testForm" :schemas="schemas" :label-width="140" editable @submit="handleSubmit">
+  <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
   </TaForm>
   <!-- </TaContainerCollapse> -->
@@ -170,7 +170,7 @@ const schemas = ref([
   // },
   {
     field: 'field1',
-    component: 'InputNumber',
+    component: 'DateInterval',
     label: '普通InputNumber',
     colProps: { span: 8 },
     editSlot: 'testSlot',

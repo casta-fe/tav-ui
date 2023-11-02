@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Button } from 'ant-design-vue'
+import { tavI18n } from '@tav-ui/locales'
 import { basicProps } from '../types'
-
 export default defineComponent({
   name: 'BasicModalFooter',
   components: { AButton: Button },
@@ -17,7 +17,7 @@ export default defineComponent({
       emit('cancel', e)
     }
 
-    return { handleOk, handleCancel }
+    return { handleOk, tavI18n, handleCancel }
   },
 })
 </script>
@@ -31,11 +31,11 @@ export default defineComponent({
       v-bind="okButtonProps"
       @click="handleOk"
     >
-      {{ okText }}
+      {{ okText || tavI18n('Tav.common.okText') }}
     </a-button>
     <slot name="centerFooter" />
     <a-button v-if="showCancelBtn" v-bind="cancelButtonProps" @click="handleCancel">
-      {{ cancelText }}
+      {{ cancelText || tavI18n('Tav.common.cancelText') }}
     </a-button>
     <slot name="appendFooter" />
   </div>

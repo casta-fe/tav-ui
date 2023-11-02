@@ -42,8 +42,22 @@ import 'moment/dist/locale/zh-cn'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
-import { type DateRangeKeyType, type DateRangeValueType, dateRangeRecord } from './types'
+import { getDateRangeRecord } from './types'
 
+type DateRangeKeyType =
+  | 'day'
+  | 'year'
+  | 'month'
+  | 'week'
+  | 'quarter'
+  | 'lastWeek'
+  | 'lastMonth'
+  | 'lastQuarter'
+  | 'lastYear'
+  | 'quarter_1'
+  | 'quarter_2'
+  | 'quarter_3'
+  | 'quarter_4'
 const defaultDateRangeKeyList: DateRangeKeyType[] = [
   'month',
   'quarter_1',
@@ -53,7 +67,6 @@ const defaultDateRangeKeyList: DateRangeKeyType[] = [
   'year',
   'lastYear',
 ]
-
 export default defineComponent({
   name: 'DateInterval',
   components: { RangePicker, Dropdown, TaButton, MenuItem, Menu },
@@ -61,7 +74,7 @@ export default defineComponent({
     defaultRange: { type: String, default: () => 'month' },
     format: { type: String, default: 'YYYY-MM' },
     allowClear: Boolean,
-    dateRangeList: Array as PropType<DateRangeValueType[]>,
+    dateRangeList: Array as PropType<any[]>,
     dateRangeKeyList: {
       type: Array as PropType<DateRangeKeyType[]>,
       default: () => defaultDateRangeKeyList,
@@ -70,6 +83,9 @@ export default defineComponent({
   },
   emits: ['change', 'search', 'getCurDate'],
   setup(props, { emit }) {
+    const dateRangeRecord = getDateRangeRecord()
+    type DateRangeRecordType = typeof dateRangeRecord
+    type DateRangeValueType = DateRangeRecordType[DateRangeKeyType]
     const computedDateRangeList = computed<DateRangeValueType[]>(() => {
       if (props.dateRangeList) return props.dateRangeList
 

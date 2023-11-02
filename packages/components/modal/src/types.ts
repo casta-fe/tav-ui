@@ -1,4 +1,3 @@
-import { tavI18n } from '@tav-ui/locales'
 import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { CSSProperties, ComputedRef, PropType, VNodeChild } from 'vue'
 export type VueNode = VNodeChild | JSX.Element
@@ -10,8 +9,8 @@ export const modalProps = {
   // open drag
   draggable: { type: Boolean, default: false },
   centered: { type: Boolean },
-  cancelText: { type: String, default: tavI18n('Tav.common.cancelText') },
-  okText: { type: String, default: tavI18n('Tav.common.okText') },
+  cancelText: { type: String },
+  okText: { type: String },
 
   closeFunc: Function as PropType<() => Promise<boolean>>,
 }
