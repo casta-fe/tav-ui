@@ -204,14 +204,11 @@ export default defineComponent({
         .sort((a) => {
           return a.disabled ? 1 : -1
         })
-      console.log(list)
       return list
     }
     // 获取用户数据
-    const getUserList = async (type) => {
-      console.log(type)
+    const getUserList = async () => {
       state.count++
-      // console.log(type, state.count)
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));

@@ -3,7 +3,7 @@ import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties, ComputedRef, Ref } from 'vue'
 import type { VxeGridPropTypes } from 'vxe-table'
-import type { TableProColumn, TableProColumnInfo } from './types'
+import type { TableProColumn } from './types'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -20,6 +20,7 @@ export interface TableProFilterFormConfig extends TableProFilterForm {
 
 interface CustomAction {
   permission?: string
+  permissionCode?: 0 | 1
   handleBeforeAction?: (e: Event) => void
   handleAction?: (e: Event) => void
   handleAfterAction?: (e: Event) => void
@@ -136,6 +137,7 @@ export interface TableProActionItem extends ButtonProps {
   enabled?: boolean | ((action: TableProActionItem) => boolean)
   tooltip?: string | TooltipProps
   permission?: string
+  permissionCode?: 0 | 1 //业务的权限，暂时用于inovation
 }
 
 export interface TreeDataItem {

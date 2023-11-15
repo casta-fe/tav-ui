@@ -5,7 +5,7 @@ import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
+import { isBoolean, isFunction, isString, isUnDef } from '@tav-ui/utils/is'
 import {
   CamelCaseToCls,
   ComponentActionName,
@@ -74,26 +74,30 @@ export default defineComponent({
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
 
     // 根据 enabled 控制显隐
-    function isEnabled(action: TableProActionItem): boolean {
-      const enabled = action.enabled
-      let isEnabled = true
-      if (isBoolean(enabled)) {
-        isEnabled = enabled
-      }
-      if (isFunction(enabled)) {
-        isEnabled = enabled(action)
-      }
-      return isEnabled
-    }
+    // function isEnabled(action: TableProActionItem): boolean {
+    //   const enabled = action.enabled
+    //   let isEnabled = true
+    //   if (isBoolean(enabled)) {
+    //     isEnabled = enabled
+    //   }
+    //   if (isFunction(enabled)) {
+    //     isEnabled = enabled(action)
+    //   }
+    //   return isEnabled
+    // }
 
     // 根据 permissions 控制显隐
     function handlePermissions(Permissions) {
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-          return action.permission
-            ? unref(Permissions)[action.permission]?.ifShow && isEnabled(action)
-            : isEnabled(action)
+          const PermissionFlag = isUnDef(action.permission)
+            ? true
+            : unref(Permissions)[action.permission]?.ifShow
+          const PermisionCodeFlag = isUnDef(action.permissionCode)
+            ? true
+            : props.permissionCode === 1
+          return PermissionFlag && PermisionCodeFlag && props.ifShow
         })
       })
     }
@@ -221,13 +225,13 @@ export default defineComponent({
       }
     }
 
-    function getTooltip(data: string | TooltipProps): TooltipProps {
-      return {
-        getPopupContainer: () => unref(actionEl) || (unref(tableRef) as any)?.$el || document.body,
-        placement: 'bottom',
-        ...(isString(data) ? { title: data } : data),
-      }
-    }
+    // function getTooltip(data: string | TooltipProps): TooltipProps {
+    //   return {
+    //     getPopupContainer: () => unref(actionEl) || (unref(tableRef) as any)?.$el || document.body,
+    //     placement: 'bottom',
+    //     ...(isString(data) ? { title: data } : data),
+    //   }
+    // }
 
     async function onCellClick(e: MouseEvent) {
       if (!props.stopButtonPropagation) return

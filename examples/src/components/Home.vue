@@ -18,13 +18,13 @@ import allUsers from '../allUserList'
 import FormPage from './Form/index.vue'
 import { taUploadProvideData } from './TaUpload'
 // import SearchableApiSelect from './SearchableApiSelect.vue'
-// import TablePro from './TablePro/test'
+import TablePro from './TablePro/test'
 
 export default defineComponent({
   name: 'Home',
   components: {
     // TaConfigProvider,
-    // TablePro,
+    TablePro,
     TaModal,
     TaButton,
     // TaUpload,
@@ -53,7 +53,6 @@ export default defineComponent({
     // console.log(components)
     const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
     const state = reactive({
-      permissions: {},
       components: {
         TaUpload: taUploadProvideData,
         TaMemberSelect: {
@@ -63,16 +62,6 @@ export default defineComponent({
         },
       },
     })
-    setTimeout(() => {
-      state.permissions = {
-        aa: {
-          ifShow: true,
-          apiUrl: 'xxx',
-        },
-      }
-      console.log(state)
-    }, 1000)
-
     onMounted(() => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
@@ -89,17 +78,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <!-- <TaConfigProvider
-    :app-id="10001"
-    :user-info="{ userId: 1 }"
-    :permissions="state.permissions"
-    :components="state.components"
-  > -->
   <!-- <BasicTablePage /> -->
   <FormPage />
   <!-- <TaUpload /> -->
   <!-- <SearchableApiSelect /> -->
-  <!-- <TablePro /> -->
+  <TablePro />
   <TaModal
     :height="500"
     title="新增"
@@ -108,15 +91,13 @@ export default defineComponent({
     @register="ModalRegister"
   >
     2333
-    <!-- <TablePro /> -->
     <template #footer>
       <TaButton type="primary">确定</TaButton>
       <TaButton type="default" @click="CloseModal">取消</TaButton>
     </template>
   </TaModal>
   <!-- 
-  <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
-  <TablePro /> -->
+  <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>-->
 
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa

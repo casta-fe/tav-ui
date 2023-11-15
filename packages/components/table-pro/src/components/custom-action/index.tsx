@@ -2,7 +2,7 @@ import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
-import { isObject } from '@tav-ui/utils/is'
+import { isBoolean, isObject } from '@tav-ui/utils/is'
 import { tavI18n } from '@tav-ui/locales'
 import {
   ACTION_COLUMNS,
@@ -188,6 +188,11 @@ export default defineComponent({
           preIcon={'ant-design:calculator-outlined'}
           onClick={handleStatistical}
           permission={getPermission(props.config?.statistical)}
+          permissionCode={
+            isBoolean(props.config?.statistical)
+              ? undefined
+              : props.config?.statistical?.permissionCode
+          }
         >
           {tavI18n('Tav.tablePro.setting.6')}
         </Button>
@@ -207,6 +212,9 @@ export default defineComponent({
           preIcon={'ant-design:plus-circle-outlined'}
           onClick={handleAdd}
           permission={getPermission(props.config?.add)}
+          permissionCode={
+            isBoolean(props.config?.add) ? undefined : props.config?.add?.permissionCode
+          }
         >
           {tavI18n('Tav.common.addText')}
         </Button>
@@ -226,6 +234,9 @@ export default defineComponent({
           preIcon={'ant-design:delete-outlined'}
           onClick={handleDelete}
           permission={getPermission(props.config?.delete)}
+          permissionCode={
+            isBoolean(props.config?.delete) ? undefined : props.config?.delete?.permissionCode
+          }
         >
           {tavI18n('Tav.common.cancelText')}
         </Button>
@@ -245,6 +256,9 @@ export default defineComponent({
           preIcon={'ant-design:import-outlined'}
           onClick={handleImport}
           permission={getPermission(props.config?.import)}
+          permissionCode={
+            isBoolean(props.config?.import) ? undefined : props.config?.import?.permissionCode
+          }
         >
           {tavI18n('Tav.common.exportText')}
         </Button>
@@ -640,6 +654,9 @@ export default defineComponent({
           loading={unref(prepareExport)}
           onClick={handleExportClick}
           permission={getPermission(props.config?.export)}
+          permissionCode={
+            isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
+          }
         >
           {tavI18n('Tav.common.exportText')}
         </Button>
