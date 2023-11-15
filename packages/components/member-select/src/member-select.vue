@@ -165,7 +165,7 @@ export default defineComponent({
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
-        getUserList(2)
+        getUserList()
         if (!props.noOrg) {
           getOrgList()
         }
@@ -332,7 +332,7 @@ export default defineComponent({
       () => props.ignoreUser,
       (a, b) => {
         if (!isEqual(a, b)) {
-          getUserList(4)
+          getUserList()
         }
       }
     )
@@ -340,7 +340,7 @@ export default defineComponent({
       () => props.options,
       (data) => {
         if (data) {
-          getUserList(5)
+          getUserList()
         }
       },
       {
@@ -362,7 +362,7 @@ export default defineComponent({
         if (props.noSelect) {
           return
         }
-        getUserList(1)
+        getUserList()
       } else {
         getOrgList()
       }
