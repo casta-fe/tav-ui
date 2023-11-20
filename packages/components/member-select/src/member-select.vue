@@ -224,9 +224,9 @@ export default defineComponent({
     }
     // 获取组织数据
     const getOrgList = (): void => {
-      // orgApi({}).then((res) => {
-      //   state.orgList = res.data
-      // })
+      orgApi({}).then((res) => {
+        state.orgList = res.data
+      })
     }
     // 弹窗里面的数据变化
     const modalChange = (value) => {
