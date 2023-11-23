@@ -50,12 +50,14 @@ const props = {
  * @param labelMaxLength
  * @returns
  */
-export function limitActionLabel(actions: TableProActionItem[], labelMaxLength = 3) {
+export function limitActionLabel(actions: TableProActionItem[], labelMaxLength) {
+  const TaTableProConfig = unref(useGlobalConfig('components'))?.TaTablePro
+  const max = labelMaxLength || TaTableProConfig['actionLabelMax'] || 3
   return actions.map((action) => {
     const { label } = action
-    if (label && label.length > labelMaxLength) {
+    if (label && label.length > max) {
       action.tooltip = label
-      action.label = `${label.substring(0, 2)}..`
+      action.label = `${label.substring(0, max - 1)}..`
     }
     return action
   })

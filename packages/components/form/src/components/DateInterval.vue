@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { type PropType, computed, defineComponent, onMounted, ref, unref } from 'vue'
+import { type PropType, computed, defineComponent, onMounted, ref, unref, watch } from 'vue'
 import moment, { type unitOfTime } from 'moment'
 import 'moment/dist/locale/zh-cn'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
@@ -71,6 +71,7 @@ export default defineComponent({
   name: 'DateInterval',
   components: { RangePicker, Dropdown, TaButton, MenuItem, Menu },
   props: {
+    value: { type: Array, default: () => [] },
     defaultRange: { type: String, default: () => 'month' },
     format: { type: String, default: 'YYYY-MM' },
     allowClear: Boolean,
@@ -104,6 +105,7 @@ export default defineComponent({
         .find((x) => x.key === unref(currentRange))
         ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
     )
+    console.log(currentDate, currentRange)
 
     // 选中自定义时间触发
     const handleDateChange = (momentList) => {
@@ -149,6 +151,12 @@ export default defineComponent({
         unref(currentDate)?.map((x) => formatToDate(x))
       )
     })
+    watch(
+      () => props.value,
+      (v) => {
+        currentDate.value = v
+      }
+    )
 
     // const isOpen = ref(false)
     // const cacheDate = ref()

@@ -18,7 +18,7 @@ export default defineComponent({
     const state = reactive({
       appId: '10002',
       userInfo: {
-        id: 274,
+        id: 1,
         name: 'admin',
         organizationId: 1,
         phone: '13999999999',
@@ -36,6 +36,7 @@ export default defineComponent({
           }),
         },
         TaTablePro: {
+          actionLabelMax: 5,
           columnsGetApi,
           columnsSetApi,
         },

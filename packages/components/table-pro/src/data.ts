@@ -134,7 +134,7 @@ const address = [
 ]
 const roles = ['Develop', 'Test', 'Designer', 'PM', 'FE', 'BF', 'Manger', 'Boss', 'Saler', 'Hr']
 const ages = [24, 21, 22, 23, 26, 28, 30, 32, 27, 29]
-const recordNum = 1000
+const recordNum = 20
 const Avators = [
   'http://m.imeitou.com/uploads/allimg/2019080515/he0mvtgkbu3.jpg',
   'http://m.imeitou.com/uploads/allimg/2019080515/ilnzrrqglxp.jpg',
@@ -165,7 +165,6 @@ export function MockData() {
 
     data.push(record)
   }
-
   return data
 }
 

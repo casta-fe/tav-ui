@@ -666,6 +666,19 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
         },
       },
       {
+        field: 'time1',
+        component: 'DateInterval',
+        label: '时间',
+        colProps: {
+          span: 12,
+        },
+        componentProps: {
+          format: 'YYYY-MM-DD',
+          defaultRange: '',
+          allowClear: true,
+        },
+      },
+      {
         field: 'customerType',
         component: 'RadioGroup',
         label: '客户类型',

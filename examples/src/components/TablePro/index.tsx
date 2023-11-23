@@ -22,7 +22,6 @@ export default defineComponent({
     const getProps = computed(() => {
       return { ...props, ...unref(innerPropsRef) } as TableProProps
     })
-    console.log(getProps.value)
 
     // 获取实例
     const VxeGridRef = ref<VxeGridInstance | null>(null)

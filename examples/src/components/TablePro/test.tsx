@@ -1,7 +1,7 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
-import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import { TaTablePro, TaTableProAction, getTableProId } from '@tav-ui/components/table-pro'
+import { API__POE_CUSTOM_ALL, MockData } from '@tav-ui/components/table-pro/src/data'
 import Button from '@tav-ui/components/button'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import { columns2, filterForm2, footerMethod2 } from './data'
@@ -20,7 +20,63 @@ export default defineComponent({
     id.value = getTableProId(router, 'play')!
     const state = reactive({
       filterFormConfig: {},
-      columns: [] as any[],
+      columns: [
+        {
+          title: '第一列',
+          field: 'name',
+
+          fixed: 'left',
+        },
+        {
+          title: '第二列',
+          field: 'role',
+        },
+        {
+          field: 'actions',
+          title: '操作',
+          fixed: 'right',
+          // visible: false,
+          slots: {
+            default: () => {
+              return [
+                <TaTableProAction
+                  actions={[
+                    {
+                      label: '编辑这个长文字',
+                      onClick: () => {
+                        console.log('edit')
+                      },
+                    },
+                    {
+                      label: '测试啊啊啊啊',
+                      disabled: true,
+                      onClick: () => {
+                        console.log('test 1')
+                      },
+                    },
+                    {
+                      label: '测试巴巴爸爸吧不不不不不',
+                      disabled: true,
+                      onClick: () => {
+                        console.log('test 2')
+                      },
+                    },
+                    {
+                      label: '删除',
+                      popConfirm: {
+                        title: '删除后将无法恢复，确定删除吗？',
+                        confirm: () => {
+                          console.log('del')
+                        },
+                      },
+                    },
+                  ]}
+                />,
+              ]
+            },
+          },
+        },
+      ] as any[],
     })
     const handleRoutePush = (e: Event, opts: any) => {
       e.stopPropagation()
@@ -210,7 +266,7 @@ export default defineComponent({
               ref={tableRef}
               // pagerConfig={{ enabled: false }}
               rowConfig={{ keyField: 'id' }}
-              // data={MockData()}
+              data={MockData()}
               // columns={columns()}
               columns={state.columns}
               loading={loading.value}

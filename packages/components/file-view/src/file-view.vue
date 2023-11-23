@@ -9,6 +9,7 @@ import { tavI18n } from '@tav-ui/locales'
 import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
 import type { Ref } from 'vue'
+import type { Nullable } from '../../modal/src/types'
 export default defineComponent({
   name: 'TaFileView',
   components: {
@@ -39,7 +40,7 @@ export default defineComponent({
     }
     const currentFile = computed((): FileViewItemType => props.list[state.index] || {})
     const fileType = computed(() => {
-      let type = ''
+      let type: Nullable<string> = null
       const suffix = currentFile.value?.suffix
       if (suffix) {
         for (const item in loadFileTypes) {

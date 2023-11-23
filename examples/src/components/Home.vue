@@ -15,7 +15,7 @@ import { defineComponent, onMounted, reactive } from 'vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
-import FormPage from './Form/index.vue'
+// import FormPage from './Form/index.vue'
 import { taUploadProvideData } from './TaUpload'
 // import SearchableApiSelect from './SearchableApiSelect.vue'
 import TablePro from './TablePro/test'
@@ -33,7 +33,7 @@ export default defineComponent({
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    FormPage,
+    // FormPage,
     // TreePage,
     // ModalPage,
     // BasicTablePage,
@@ -79,7 +79,7 @@ export default defineComponent({
 
 <template>
   <!-- <BasicTablePage /> -->
-  <FormPage />
+  <!-- <FormPage /> -->
   <!-- <TaUpload /> -->
   <!-- <SearchableApiSelect /> -->
   <TablePro />
