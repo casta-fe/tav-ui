@@ -86,13 +86,21 @@ export default defineComponent({
     <template v-else>
       <template v-if="getBindValues.tooltip">
         <Tooltip v-bind="getTooltip(getBindValues.tooltip)">
-          <Button v-bind="getBindValues" class="ta-button-modal" @click="handleButtonClick">
+          <Button
+            v-bind="{ ...getBindValues, onClick: null }"
+            class="ta-button-modal"
+            @click="handleButtonClick"
+          >
             <slot />
           </Button>
         </Tooltip>
       </template>
       <template v-else>
-        <Button v-bind="getBindValues" class="ta-button-modal" @click="handleButtonClick">
+        <Button
+          v-bind="{ ...getBindValues, onClick: null }"
+          class="ta-button-modal"
+          @click="handleButtonClick"
+        >
           <slot />
         </Button>
       </template>
