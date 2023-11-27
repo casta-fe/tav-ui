@@ -36,7 +36,7 @@ export default defineComponent({
           }),
         },
         TaTablePro: {
-          actionLabelMax: 5,
+          actionLabelLimit: 4,
           columnsGetApi,
           columnsSetApi,
         },

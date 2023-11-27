@@ -133,6 +133,7 @@ export interface TableProActionItem extends ButtonProps {
   popConfirm?: TableProPopConfirm
   disabled?: boolean
   divider?: boolean
+  limit?: number
   // 业务控制是否显示
   enabled?: boolean | ((action: TableProActionItem) => boolean)
   tooltip?: string | TooltipProps

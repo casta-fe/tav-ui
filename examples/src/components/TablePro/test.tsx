@@ -42,13 +42,15 @@ export default defineComponent({
                 <TaTableProAction
                   actions={[
                     {
-                      label: '编辑这个长文字',
+                      label: '编辑这个长文字总共十几个字',
+                      limit: 6,
                       onClick: () => {
                         console.log('edit')
                       },
                     },
                     {
-                      label: '测试啊啊啊啊',
+                      label: '测试啊啊啊啊测试啊啊啊啊测试啊啊啊啊',
+                      limit: 9,
                       disabled: true,
                       onClick: () => {
                         console.log('test 1')

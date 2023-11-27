@@ -38,6 +38,7 @@ const props = {
     type: Boolean,
     default: false,
   },
+  limit: { type: Number },
   stopButtonPropagation: {
     type: Boolean,
     default: true,
@@ -52,8 +53,8 @@ const props = {
  */
 export function limitActionLabel(actions: TableProActionItem[], labelMaxLength?: number) {
   const TaTableProConfig = unref(useGlobalConfig('components'))?.TaTablePro
-  const max = labelMaxLength || TaTableProConfig['actionLabelMax'] || 3
   return actions.map((action) => {
+    const max = action.limit || labelMaxLength || TaTableProConfig['actionLabelLimit'] || 3
     const { label } = action
     if (label && label.length > max) {
       action.tooltip = label
