@@ -48,7 +48,7 @@ export const HyperlinkForm = defineComponent({
             },
             {
               pattern: ADDRESS_PATTERN,
-              message: tavI18n('Tav.file.message.9'),
+              message: tavI18n('Tav.file.message.7'),
             },
           ],
           componentProps: {
