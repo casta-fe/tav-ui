@@ -316,7 +316,7 @@ export default defineComponent({
                 class={`${ComponentPrefixCls}-pannel-activator`}
                 type={'primary'}
                 preIcon={'material-symbols:manage-search'}
-                iconSize={20}
+                iconSize={16}
                 postIcon={
                   state.visible ? 'ant-design:caret-up-outlined' : 'ant-design:caret-down-outlined'
                 }
