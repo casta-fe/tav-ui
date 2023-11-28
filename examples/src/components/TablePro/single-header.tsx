@@ -243,7 +243,11 @@ export default defineComponent({
           console.log(params)
         },
         handleDescription: () => 'dsahdjkashjkda',
-        handleAllApi: () => API__POE_CUSTOM_ALL_LIST({}),
+        handleAllApi: (param) => {
+          console.log('--handleAllApi-', param)
+
+          return API__POE_CUSTOM_ALL_LIST({})
+        },
         // handleBackendApi: async ({ filter, model }) => {
         //   console.log(filter, model)
         // },

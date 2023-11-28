@@ -16,7 +16,6 @@ import type { FormSchema } from '@tav-ui/components/form'
 import type { ComputedRef, PropType, Ref, Slots } from 'vue'
 import type { TableProColumnInfo, TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
-
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
 const props = {
@@ -48,6 +47,10 @@ export default defineComponent({
       {
         label: tavI18n('Tav.tablePro.export.4o3'),
         value: 'all',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o4'),
+        value: 'allSearch',
       },
     ]
 
@@ -359,31 +362,27 @@ export default defineComponent({
           }
 
           // console.log(data, _columns, columns)
-          exportLoading.value = true
-          props.tableRef?.value
-            ?.exportData({
-              filename: data.fileName,
-              sheetName: data.fileName,
-              type: data.fileType,
-              mode: data.fileDataType,
-              isHeader: true,
-              // isFooter: true,
-              isMerge: true,
-              isColgroup: true,
-              // message: true,
-              // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
-              // original: true,
-              columns,
-              backupColumns,
-              exportModalClose,
-              useStyle: true,
-              fileDescription,
-              fileStyles,
-              fileSeq: !!data.fileSeq,
-            } as any)
-            .finally(() => {
-              exportLoading.value = false
-            })
+          props.tableRef?.value?.exportData({
+            filename: data.fileName,
+            sheetName: data.fileName,
+            type: data.fileType,
+            mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
+            modeType: data.fileDataType,
+            isHeader: true,
+            // isFooter: true,
+            isMerge: true,
+            isColgroup: true,
+            // message: true,
+            // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
+            // original: true,
+            columns,
+            backupColumns,
+            exportModalClose,
+            useStyle: true,
+            fileDescription,
+            fileStyles,
+            fileSeq: !!data.fileSeq,
+          } as any)
 
           // props.tableRef?.value?.loadColumn(backupColumns.value)
           // exportModalClose()
@@ -608,16 +607,22 @@ export default defineComponent({
         const {
           pager: { pageSize, total },
         } = props.tableRef?.value?.getProxyInfo() ?? {}
-        let _fileDataTypeDefaultValue = 'current'
+        let _fileDataTypeDefaultValue = 'allSearch'
         let fileDataTypeOptions = FileDataTypeOptions
         // 没配置 handleAllApi，就不显示 all
         if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
-          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value !== 'all')
+          _fileDataTypeDefaultValue = 'current'
+          fileDataTypeOptions = fileDataTypeOptions.filter(
+            (fileType) => fileType.value.indexOf('all') == -1
+          )
         }
         if (total / pageSize <= 1) {
-          _fileDataTypeDefaultValue = 'all'
-          fileDataTypeOptions = fileDataTypeOptions.filter((fileType) => fileType.value === 'all')
+          // _fileDataTypeDefaultValue = 'current'
+          // fileDataTypeOptions = fileDataTypeOptions.filter(
+          //   (fileType) => fileType.value.indexOf('all') > -1
+          // )
         }
+
         await exportModalFormUpdateSchema([
           {
             field: 'fileDataType',
