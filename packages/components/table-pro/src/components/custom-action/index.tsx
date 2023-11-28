@@ -604,9 +604,6 @@ export default defineComponent({
           handleUninitField(value)
         }
         await nextTick()
-        const {
-          pager: { pageSize, total },
-        } = props.tableRef?.value?.getProxyInfo() ?? {}
         let _fileDataTypeDefaultValue = 'allSearch'
         let fileDataTypeOptions = FileDataTypeOptions
         // 没配置 handleAllApi，就不显示 all
@@ -616,12 +613,15 @@ export default defineComponent({
             (fileType) => fileType.value.indexOf('all') == -1
           )
         }
-        if (total / pageSize <= 1) {
-          // _fileDataTypeDefaultValue = 'current'
-          // fileDataTypeOptions = fileDataTypeOptions.filter(
-          //   (fileType) => fileType.value.indexOf('all') > -1
-          // )
-        }
+        // const {
+        //   pager: { pageSize, total },
+        // } = props.tableRef?.value?.getProxyInfo() ?? {}
+        // if (total / pageSize <= 1) {
+        //   _fileDataTypeDefaultValue = 'current'
+        //   fileDataTypeOptions = fileDataTypeOptions.filter(
+        //     (fileType) => fileType.value.indexOf('all') > -1
+        //   )
+        // }
 
         await exportModalFormUpdateSchema([
           {
@@ -639,10 +639,18 @@ export default defineComponent({
           },
         ])
         await nextTick()
-        await exportModalFormSetFieldsValue({
-          fileContainFields: selectedKeys,
-          fileDataType: _fileDataTypeDefaultValue,
-        })
+        console.log(props.config)
+        const defaultFileName = isBoolean(props.config?.export)
+          ? ''
+          : props.config?.export?.fileName
+        await exportModalFormSetFieldsValue(
+          {
+            fileName: defaultFileName || '',
+            fileContainFields: selectedKeys,
+            fileDataType: _fileDataTypeDefaultValue,
+          },
+          false
+        )
         selectedKeys.forEach((key) => {
           handleUnvisibleField(key)
           handleUninitField(key)

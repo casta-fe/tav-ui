@@ -33,6 +33,7 @@ export interface TableProCustomActionConfig {
   import?: CustomAction | boolean
   export?:
     | (CustomAction & {
+        fileName?: string
         /** 这里是对数据中全量字段进行配置，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
         columns: {
           field: string
