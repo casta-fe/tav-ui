@@ -131,6 +131,7 @@ export default {
       '4o1': 'Selected data for the current page',
       '4o2': 'All data of the current page',
       '4o3': 'All data',
+      '4o4': 'All data by search',
       '5': 'File fields',
       '5p': 'Please select the file fields to export.',
     },
