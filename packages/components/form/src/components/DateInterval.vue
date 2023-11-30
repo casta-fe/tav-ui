@@ -110,16 +110,14 @@ export default defineComponent({
     // 选中自定义时间触发
     const handleDateChange = (momentList) => {
       currentRange.value = ''
-
       if (props.allowClear && momentList.length === 0) {
         currentDate.value = []
       } else if (props.autoChoose === 'none') {
         currentDate.value = momentList
       } else {
-        currentDate.value = [
-          moment(momentList[0]).startOf(props.autoChoose),
-          moment(momentList[1]).endOf(props.autoChoose),
-        ].map((el) => el.format('YYYY-MM-DD'))
+        currentDate.value = [moment(momentList[0]), moment(momentList[1])].map((el) =>
+          el.format('YYYY-MM-DD')
+        )
       }
       handleEmitEvent()
     }

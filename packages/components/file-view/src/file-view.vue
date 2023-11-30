@@ -26,7 +26,7 @@ export default defineComponent({
     const state = reactive({
       index: props.index,
       filePath: '',
-      showModal: props.show,
+      showModal: false,
       pageLoading: false,
     })
 
@@ -66,7 +66,7 @@ export default defineComponent({
     const afterCloseHandle = () => {
       emit('update:show', false)
     }
-    const getFile = () => {
+    const getFile = (cb?) => {
       if (!globalConfig.value || !globalConfig.value.TaFileView) {
         return
       }
@@ -81,6 +81,7 @@ export default defineComponent({
           state.pageLoading = false
           state.filePath = res.data
           loadIframeHandle()
+          cb && cb()
         })
         .catch(() => {
           // console.log(err);
@@ -117,11 +118,12 @@ export default defineComponent({
           afterCloseHandle()
           return
         }
-        state.showModal = newData
-        state.index = props.index
         if (newData) {
           nextTick(() => {
-            getFile()
+            getFile(() => {
+              state.showModal = newData
+              state.index = props.index
+            })
           })
         } else {
           state.filePath = ''
