@@ -67,30 +67,21 @@ export default defineComponent({
       emit('update:show', false)
     }
     const getFile = (cb?) => {
-      console.error(3)
-      console.log(globalConfig.value)
       if (!globalConfig.value || !globalConfig.value.TaFileView) {
-        console.error(4)
         afterCloseHandle()
         return
       }
-      console.error(1)
       // 防止多次请求
-      console.error(5)
       const id = currentFile.value?.fileId || currentFile.value?.id
       if (state.pageLoading || !id || fileType.value == '') {
-        console.error(6)
         afterCloseHandle()
         return
       }
-      console.error(7)
 
       state.filePath = ''
       state.pageLoading = true
-      console.error(8)
       globalConfig.value.TaFileView.previewFile(id, props.AppId)
         .then((res) => {
-          console.error(9)
           state.pageLoading = false
           state.filePath = res.data
           loadIframeHandle()
@@ -99,7 +90,7 @@ export default defineComponent({
         .catch(() => {
           // console.log(err);
           state.pageLoading = false
-          setTimeout(afterCloseHandle, 50)
+          setTimeout(afterCloseHandle, 1000)
           // state.pageLoading = false;
         })
     }
@@ -126,22 +117,17 @@ export default defineComponent({
     watch(
       () => props.show,
       (newData) => {
-        console.error()
         if (newData && ignoreList.includes(currentFile.value.suffix)) {
-          console.error('001')
           createMessage.warning(tavI18n('Tav.file.message.1'))
           afterCloseHandle()
           return
         }
-        console.error(1)
         if (newData) {
-          console.error(2)
           getFile(() => {
             state.showModal = newData
             state.index = props.index
           })
         } else {
-          console.error(-1)
           afterCloseHandle()
           state.filePath = ''
         }
