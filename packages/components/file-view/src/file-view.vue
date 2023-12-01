@@ -68,11 +68,15 @@ export default defineComponent({
     }
     const getFile = (cb?) => {
       if (!globalConfig.value || !globalConfig.value.TaFileView) {
+        afterCloseHandle()
         return
       }
       // 防止多次请求
       const id = currentFile.value?.fileId || currentFile.value?.id
-      if (state.pageLoading || !id || fileType.value == '') return
+      if (state.pageLoading || !id || fileType.value == '') {
+        afterCloseHandle()
+        return
+      }
 
       state.filePath = ''
       state.pageLoading = true
@@ -86,7 +90,7 @@ export default defineComponent({
         .catch(() => {
           // console.log(err);
           state.pageLoading = false
-          setTimeout(afterCloseHandle, 1000)
+          setTimeout(afterCloseHandle, 50)
           // state.pageLoading = false;
         })
     }
@@ -119,26 +123,25 @@ export default defineComponent({
           return
         }
         if (newData) {
-          nextTick(() => {
-            getFile(() => {
-              state.showModal = newData
-              state.index = props.index
-            })
+          getFile(() => {
+            state.showModal = newData
+            state.index = props.index
           })
         } else {
+          afterCloseHandle()
           state.filePath = ''
         }
       }
     )
-    watch(
-      () => currentFile.value,
-      () => {
-        nextTick(() => {
-          getFile()
-        })
-        // console.log("文件改变");
-      }
-    )
+    // watch(
+    //   () => currentFile.value,
+    //   () => {
+    //     nextTick(() => {
+    //       getFile()
+    //     })
+    //     // console.log("文件改变");
+    //   }
+    // )
     return {
       ...toRefs(state),
       tavI18n,
