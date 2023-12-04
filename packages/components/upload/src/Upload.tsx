@@ -46,8 +46,8 @@ export default defineComponent({
     },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
-      // .tar,.tar.gz,.tgz,.rar,去掉压缩包
-      default: '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.zip,.7z,.txt',
+      // .tar,.tar.gz,.tgz,.rar,zip,.7z,去掉压缩包
+      default: '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.txt',
     },
     // maxSize: {
     //   type: Number as PropType<BasicPropsType["maxSize"]>,
