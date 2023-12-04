@@ -35,11 +35,11 @@ export default defineComponent({
             return { label: v.name, value: v.id, ...v }
           }),
         },
-        TaTablePro: {
-          actionLabelLimit: 4,
-          columnsGetApi,
-          columnsSetApi,
-        },
+        // TaTablePro: {
+        //   actionLabelLimit: 4,
+        //   columnsGetApi,
+        //   columnsSetApi,
+        // },
       },
     })
     setTimeout(() => {
