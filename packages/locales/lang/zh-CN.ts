@@ -46,7 +46,7 @@ export default {
   },
   countButton: {
     text1: '获取验证码',
-    text2: '秒后重新获取',
+    text2: '{0}秒后重新获取',
   },
   modal: {
     '1': '还原',

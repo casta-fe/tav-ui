@@ -23,7 +23,7 @@ export default defineComponent({
     const getButtonText = computed(() => {
       return !unref(isStart)
         ? tavI18n('Tav.countButton.text1')
-        : tavI18n('Tav.countButton.text2', { count: unref(currentCount) })
+        : tavI18n('Tav.countButton.text2', [unref(currentCount)])
     })
 
     watchEffect(() => {
