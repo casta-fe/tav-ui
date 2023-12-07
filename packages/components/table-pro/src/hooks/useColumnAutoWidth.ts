@@ -3,7 +3,17 @@ import { MAX_ACTION_NUMBER } from '../const'
 import type { TableProActionItem } from '../typings'
 
 const containDotTextWidth = 12 * 2 + 7.5
-const textWidth = (n: number) => 12 * n
+const textWidth = (label: string) => {
+  let width = 0
+  for (let i = 0; i < label.length; i++) {
+    if (/[a-z0-9_]/.test(label[i])) {
+      width += 6
+    } else {
+      width += 12
+    }
+  }
+  return width
+}
 const dividerWidth = 17
 const padding = 10 * 3 // 多乘一个避免vxetable手动添加tooltip时自动截断
 const moreBtnWidth = 13.5 + 10
@@ -16,7 +26,7 @@ export function isOverMaxWidth(actions: TableProActionItem[] | null) {
   const getTotal = (_actions: TableProActionItem[]) => {
     return _actions.reduce((total, action, idx) => {
       if (action.label) {
-        total += textWidth(action.label.length)
+        total += textWidth(action.label)
       } else {
         total += 0
       }
@@ -41,7 +51,7 @@ export function useColumnActionAutoWidth(actions: TableProActionItem[] | null, h
         if (action.label.includes('..')) {
           total += containDotTextWidth
         } else {
-          total += textWidth(action.label.length)
+          total += textWidth(action.label)
         }
       } else {
         total += 0
