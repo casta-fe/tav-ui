@@ -605,14 +605,20 @@ export default defineComponent({
         }
         await nextTick()
         let _fileDataTypeDefaultValue = 'allSearch'
+        const selectData = props.tableRef?.value?.getCheckboxRecords()
         let fileDataTypeOptions = FileDataTypeOptions
-        // 没配置 handleAllApi，就不显示 all
-        if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
-          _fileDataTypeDefaultValue = 'current'
-          fileDataTypeOptions = fileDataTypeOptions.filter(
-            (fileType) => fileType.value.indexOf('all') == -1
-          )
+        if (selectData && selectData?.length > 0) {
+          _fileDataTypeDefaultValue = 'selected'
+        } else {
+          // 没配置 handleAllApi，就不显示 all
+          if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
+            _fileDataTypeDefaultValue = 'current'
+            fileDataTypeOptions = fileDataTypeOptions.filter(
+              (fileType) => fileType.value.indexOf('all') == -1
+            )
+          }
         }
+
         // const {
         //   pager: { pageSize, total },
         // } = props.tableRef?.value?.getProxyInfo() ?? {}
@@ -643,6 +649,7 @@ export default defineComponent({
         const defaultFileName = isBoolean(props.config?.export)
           ? ''
           : props.config?.export?.fileName
+        // exportModalFormSetFieldsValue
         await exportModalFormSetFieldsValue(
           {
             fileName: defaultFileName || '',
