@@ -2,7 +2,7 @@ import { limitActionLabel } from '../components/action'
 import { MAX_ACTION_NUMBER } from '../const'
 import type { TableProActionItem } from '../typings'
 
-const containDotTextWidth = 6 * 2 + 7.5
+const containDotTextWidth = 6 * 2 + 4
 const textWidth = (label: string) => {
   let width = 0
   for (let i = 0; i < label.length; i++) {
