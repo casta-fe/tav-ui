@@ -9,7 +9,7 @@
           dropdown-class-name="ta-member-select-option"
           option-filter-prop="label"
           :allow-clear="allowClear"
-          :options="userOptions"
+          :options="userList"
           :max-tag-count="maxTagCount"
           :max-tag-placeholder="maxTagPlaceholder"
           :disabled="disabled"
@@ -219,7 +219,6 @@ export default defineComponent({
         })
         state.userList = getTrueUserList(res.data)
       }
-      state.userOptions = [...state.userList]
       checkUserIsExist()
     }
     // 获取组织数据
