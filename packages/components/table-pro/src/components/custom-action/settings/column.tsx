@@ -638,6 +638,7 @@ export default defineComponent({
 
     expose({
       coverColumnsSetting,
+      handleColumnClick,
     })
 
     function createTreeNode(option: ColumnOption, defaultSolt: any) {

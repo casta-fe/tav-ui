@@ -22,7 +22,7 @@ export default defineComponent({
       filterFormConfig: {},
       columns: [
         {
-          title: '第一列',
+          title: '第一列111',
           field: 'name',
 
           fixed: 'left',
@@ -215,7 +215,10 @@ export default defineComponent({
     //       limit: 50 }
     //   })
     // })
-
+    const testCustomHandle = () => {
+      tableRef.value?.instance?.showCloumnsModal()
+      // console.log(tableRef.value?.instance?.showExportModal())
+    }
     return () => {
       return (
         // <div style={{ height: unref(wrapperHeight), overflow: 'hidden' }}>
@@ -261,6 +264,7 @@ export default defineComponent({
             overflow: 'auto',
           }}
         >
+          <div onClick={testCustomHandle}>测试自定义事件</div>
           <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
             {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
             <TaTablePro

@@ -158,11 +158,13 @@ export type CustomActionSettingColumnOption = TableProColumn & {
 }
 export interface CustomActionSettingColumn {
   coverColumnsSetting: (columns: CustomActionSettingColumnOption[], checkedList: string[]) => void
+  handleColumnClick: () => void
 }
 
 export interface CustomActionSetting {
   refreshRef: null
   columnRef: Ref<CustomActionSettingColumn>
+  showColumnsModa: () => void
 }
 
 export interface CustomActionRef {
@@ -170,6 +172,8 @@ export interface CustomActionRef {
   deleteRef: null
   importRef: null
   exportRef: null
+  showExportModal: () => void
+  showColumnsModa: () => void
   settingsRef: Ref<CustomActionSetting>
   actionRef: Ref<ComputedRef>
 }

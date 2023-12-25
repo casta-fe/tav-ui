@@ -688,6 +688,10 @@ export default defineComponent({
       importRef: null,
       exportRef: null,
       settingsRef,
+      showExportModal: handleExportClick,
+      showColumnsModa: () => {
+        settingsRef.value?.showColumnsModa()
+      },
       actionRef,
     })
 

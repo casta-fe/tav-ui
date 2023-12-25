@@ -72,6 +72,9 @@ export default defineComponent({
     expose({
       refreshRef: null,
       columnRef,
+      showColumnsModa: () => {
+        columnRef.value?.handleColumnClick()
+      },
     })
 
     return () => {
