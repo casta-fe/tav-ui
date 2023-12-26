@@ -5,13 +5,15 @@ import type { TableProActionItem } from '../typings'
 const containDotTextWidth = 6 * 2 + 4
 const textWidth = (label: string) => {
   let width = 0
+  let count = 0
   for (let i = 0; i < label.length; i++) {
     if (/[A-Za-z0-9_-]/.test(label[i])) {
+      count++
       if (/[a-z]/.test(label[i])) {
-        if (['f', 'j', 'l', 'i'].includes(label[i])) {
+        if (['j', 'f', 'l', 'i'].includes(label[i])) {
           width += 3
         } else {
-          width += 4
+          width += 5
         }
       } else {
         width += 6
@@ -19,6 +21,9 @@ const textWidth = (label: string) => {
     } else {
       width += 12
     }
+  }
+  if (count === label.length) {
+    width += 10
   }
   return width
 }
