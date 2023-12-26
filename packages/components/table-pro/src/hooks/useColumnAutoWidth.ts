@@ -8,10 +8,10 @@ const textWidth = (label: string) => {
   for (let i = 0; i < label.length; i++) {
     if (/[A-Za-z0-9_-]/.test(label[i])) {
       if (/[a-z]/.test(label[i])) {
-        if (['f', 'j', 'l'].includes(label[i])) {
-          width += 1.5
-        } else {
+        if (['f', 'j', 'l', 'i'].includes(label[i])) {
           width += 3
+        } else {
+          width += 4
         }
       } else {
         width += 6
