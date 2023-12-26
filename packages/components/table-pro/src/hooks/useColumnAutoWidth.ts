@@ -6,8 +6,16 @@ const containDotTextWidth = 6 * 2 + 4
 const textWidth = (label: string) => {
   let width = 0
   for (let i = 0; i < label.length; i++) {
-    if (/[a-z0-9_]/.test(label[i])) {
-      width += 6
+    if (/[A-Za-z0-9_-]/.test(label[i])) {
+      if (/[a-z]/.test(label[i])) {
+        if (['f', 'j', 'l'].includes(label[i])) {
+          width += 1.5
+        } else {
+          width += 3
+        }
+      } else {
+        width += 6
+      }
     } else {
       width += 12
     }
