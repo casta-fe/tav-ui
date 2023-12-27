@@ -25,7 +25,7 @@ const textWidth = (label: string) => {
   if (count === label.length) {
     width += 10
   }
-  return width
+  return width < 80 ? 80 : width
 }
 const dividerWidth = 17
 const padding = 10 * 3 // 多乘一个避免vxetable手动添加tooltip时自动截断
