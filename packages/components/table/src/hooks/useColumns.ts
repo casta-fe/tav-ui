@@ -13,7 +13,7 @@ import type {
   BasicTableProps,
   CellFormat,
   GetColumnsParams,
-  Key,
+  RowKeyType,
 } from '../types/table'
 
 type Recordable<T = any> = Record<string, T>
@@ -23,7 +23,7 @@ function handleItem(item: BasicColumn, ellipsis: boolean) {
   item.align = item.align || DEFAULT_ALIGN
   if (ellipsis) {
     if (!key) {
-      item.key = dataIndex as Key
+      item.key = dataIndex as RowKeyType
     }
     if (!isBoolean(item.ellipsis)) {
       Object.assign(item, {
