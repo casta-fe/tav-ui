@@ -4,7 +4,7 @@ import type { FormActionType, FormProps, FormSchema } from '@tav-ui/components/f
 import type { RoleEnum } from '@tav-ui/enums/roleEnum'
 import type { VueNode } from '@tav-ui/utils/propTypes'
 import type {
-  ColumnProps,
+  ColumnType as ColumnProps,
   TableRowSelection as ITableRowSelection,
 } from 'ant-design-vue/lib/table/interface'
 import type { VNodeChild } from 'vue'

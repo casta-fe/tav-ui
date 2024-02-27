@@ -1,7 +1,7 @@
 import { dateUtil } from '@tav-ui/utils/dateUtil'
 import { isNumber, isObject } from '@tav-ui/utils/is'
-import type { ValidationRule } from 'ant-design-vue/lib/form/Form'
 import type { ComponentType } from './types/index'
+import type { RuleObject as ValidationRule } from 'ant-design-vue/lib/form/interface'
 
 type Recordable<T = any> = Record<string, T>
 /**

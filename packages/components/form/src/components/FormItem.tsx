@@ -33,7 +33,7 @@ import {
 import { createPlaceholderMessage, setComponentRuleType } from '../helper'
 import { useItemLabelWidth } from '../hooks/useLabelWidth'
 import type { PropType, Ref } from 'vue'
-import type { ValidationRule } from 'ant-design-vue/lib/form/Form'
+import type { RuleObject as ValidationRule } from 'ant-design-vue/lib/form/interface'
 import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FormActionType, FormProps, FormSchema } from '../types/form'
 

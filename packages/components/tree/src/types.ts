@@ -1,5 +1,8 @@
 import type { ExtractPropTypes } from 'vue'
-import type { CheckEvent as CheckEventOrigin, TreeDataItem } from 'ant-design-vue/es/tree/Tree'
+import type {
+  AntTreeNodeCheckedEvent as CheckEventOrigin,
+  TreeDataItem,
+} from 'ant-design-vue/es/tree/Tree'
 
 export const treeProps = {}
 
