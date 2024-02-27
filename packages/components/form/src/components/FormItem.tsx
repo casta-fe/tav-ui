@@ -33,7 +33,7 @@ import {
 import { createPlaceholderMessage, setComponentRuleType } from '../helper'
 import { useItemLabelWidth } from '../hooks/useLabelWidth'
 import type { PropType, Ref } from 'vue'
-import type { RuleObject as ValidationRule } from 'ant-design-vue/lib/form/interface'
+import type { RuleType, RuleObject as ValidationRule } from 'ant-design-vue/lib/form/interface'
 import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FormActionType, FormProps, FormSchema } from '../types/form'
 
@@ -453,7 +453,7 @@ export default defineComponent({
       const {
         rules: defRules = [],
         component,
-        valueType = 'string',
+        valueType,
         rulesMessageJoinLabel,
         label,
         dynamicRules,
@@ -513,8 +513,11 @@ export default defineComponent({
 
         if (component) {
           if (!Reflect.has(rule, 'type')) {
-            if (valueType) rule.type = valueType
-            else rule.type = component === 'InputNumber' ? 'number' : 'string'
+            if (valueType) {
+              rule.type = valueType as RuleType
+            } else {
+              rule.type = component === 'InputNumber' ? 'number' : 'string'
+            }
           }
 
           rule.message = rule.message || defaultMsg

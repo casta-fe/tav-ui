@@ -49,7 +49,7 @@ export interface TreeActionType {
   insertNodeByKey: (opt: InsertNodeParams) => void
   insertNodesByKey: (opt: InsertNodeParams) => void
   deleteNodeByKey: (key: string) => void
-  updateNodeByKey: (key: string, node: Omit<TreeDataItem, 'key'>) => void
+  updateNodeByKey: (key: string, node: TreeDataItem) => void
   setSearchValue: (value: string) => void
   getSearchValue: () => string
 }

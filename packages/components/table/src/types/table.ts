@@ -44,13 +44,13 @@ export interface FilterForms {
   inputForm?: Omit<FormSchema, 'label' | 'component'> | FormSchema
   pannelForm?: FormSchema[]
 }
-
+type Key = string | number
 export interface TableRowSelection<T = any> extends ITableRowSelection {
   /**
    * Callback executed when selected rows change
    * @type Function
    */
-  onChange?: (selectedRowKeys: string[] | number[], selectedRows: T[]) => any
+  onChange?: (selectedRowKeys: Key[], selectedRows: T[]) => any
 
   /**
    * Callback executed when select/deselect one row
@@ -68,7 +68,7 @@ export interface TableRowSelection<T = any> extends ITableRowSelection {
    * Callback executed when row selection is inverted
    * @type Function
    */
-  onSelectInvert?: (selectedRows: string[] | number[]) => any
+  onSelectInvert?: (selectedRows: Key[]) => any
 }
 
 export interface TableCustomRecord<T = Recordable> {

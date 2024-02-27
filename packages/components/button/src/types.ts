@@ -1,9 +1,9 @@
 import { propTypes } from '@tav-ui/utils/propTypes'
 import type { ExtractPropTypes, PropType } from 'vue'
-
+import type { ButtonShape } from 'ant-design-vue/lib/button'
 const tuple = <T extends string[]>(...args: T) => args
 const ButtonTypes = tuple('default', 'primary', 'ghost', 'dashed', 'link', 'text')
-const ButtonShapes = tuple('circle', 'round')
+// const ButtonShapes = tuple('circle', 'round')
 const ButtonHTMLTypes = tuple('submit', 'button', 'reset')
 
 export const buttonProps = {
@@ -11,7 +11,9 @@ export const buttonProps = {
   prefixCls: propTypes.string,
   type: propTypes.oneOf(ButtonTypes),
   htmlType: propTypes.oneOf(ButtonHTMLTypes).def('button'),
-  shape: propTypes.oneOf(ButtonShapes),
+  shape: {
+    type: String as PropType<ButtonShape>,
+  },
   size: {
     type: String as PropType<'small' | 'middle' | 'large' | undefined>,
   },

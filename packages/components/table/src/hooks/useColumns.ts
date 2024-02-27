@@ -219,7 +219,7 @@ export function useColumns(
       cacheColumns.forEach((item) => {
         newColumns.push({
           ...item,
-          defaultHidden: !columnKeys.includes(item.dataIndex! || (item.key as string)),
+          defaultHidden: !columnKeys.includes(item.dataIndex?.toString() || (item.key as string)),
         })
       })
       // Sort according to another array

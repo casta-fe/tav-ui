@@ -16,7 +16,7 @@ import {
   ComponentCustomActionName as _ComponentCustomActionName,
 } from '../../../const'
 import { useTableContext } from '../../../hooks/useTableContext'
-import type { DropEvent, TreeDataItem } from 'ant-design-vue/es/tree/Tree'
+import type { AntTreeNodeDropEvent, TreeDataItem } from 'ant-design-vue/es/tree/Tree'
 import type { PropType, Ref, Slots } from 'vue'
 import type { TableProColumn, TableProInstance } from '../../../types'
 import type {
@@ -438,12 +438,12 @@ export default defineComponent({
      * @param info
      * @returns
      */
-    async function handleColumnOptionsSort(info: DropEvent) {
-      const dropKey = info.node.eventKey
-      const dragKey = info.dragNode.eventKey
-      const dropPos = info.node.pos.split('-')
-      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
-      const loop = (data: TreeDataItem[], key: string, callback: any) => {
+    async function handleColumnOptionsSort(info: AntTreeNodeDropEvent) {
+      const dropKey = info.node.eventKey || ''
+      const dragKey = info.dragNode.eventKey || ''
+      const dropPos = info.node.pos ? info.node.pos.split('-') : []
+      const dropPosition = info.dropPosition - (dropPos ? Number(dropPos[dropPos.length - 1]) : 0)
+      const loop = (data: TreeDataItem[], key: string | number, callback: any) => {
         data.forEach((item, index, arr) => {
           if (item.key === key) {
             return callback(item, index, arr)
@@ -480,9 +480,9 @@ export default defineComponent({
         return
       }
 
-      if (dropKey.includes('-')) {
+      if (dropKey.toString().includes('-')) {
         // 如果drop节点的父节点为fixed节点，那么不允许拖入children中
-        const dropParentKey = dropKey.split('-')[0]
+        const dropParentKey = dropKey.toString().split('-')[0]
         let dropParentObj: TreeDataItem = {
           value: '',
           key: '',

@@ -352,33 +352,33 @@ export default defineComponent({
         /* eslint-disable  */
         isArray(props.record[cbs])
           ? props.record[cbs]?.push(handle)
-          : (props.record[cbs] = [handle]);
+          : (props.record[cbs] = [handle])
       }
     }
 
     if (props.record) {
-      initCbs('submitCbs', handleSubmit);
-      initCbs('validCbs', handleSubmiRule);
-      initCbs('cancelCbs', handleCancel);
+      initCbs('submitCbs', handleSubmit)
+      initCbs('validCbs', handleSubmiRule)
+      initCbs('cancelCbs', handleCancel)
 
       if (props.column?.dataIndex) {
-        if (!props.record.editValueRefs) props.record.editValueRefs = {};
-        props.record.editValueRefs[props.column?.dataIndex] = currentValueRef;
+        if (!props.record.editValueRefs) props.record.editValueRefs = {}
+        props.record.editValueRefs[props.column?.dataIndex.toString()] = currentValueRef
       }
       /* eslint-disable  */
       props.record.onCancelEdit = () => {
-        isArray(props.record?.cancelCbs) && props.record?.cancelCbs.forEach((fn) => fn());
-      };
+        isArray(props.record?.cancelCbs) && props.record?.cancelCbs.forEach((fn) => fn())
+      }
       /* eslint-disable */
       props.record.onSubmitEdit = async () => {
         if (isArray(props.record?.submitCbs)) {
-          if (!props.record?.onValid?.()) return;
-          const submitFns = props.record?.submitCbs || [];
-          submitFns.forEach((fn) => fn(false, false));
-          table.emit?.('edit-row-end');
-          return true;
+          if (!props.record?.onValid?.()) return
+          const submitFns = props.record?.submitCbs || []
+          submitFns.forEach((fn) => fn(false, false))
+          table.emit?.('edit-row-end')
+          return true
         }
-      };
+      }
     }
 
     return {
@@ -404,7 +404,7 @@ export default defineComponent({
       handleEnter,
       handleSubmitClick,
       spinning,
-    };
+    }
   },
-});
+})
 </script>

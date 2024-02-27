@@ -159,7 +159,7 @@ export default defineComponent({
 
     const plainSortOptions = ref<Options[]>([])
 
-    const columnListRef = ref<ComponentRef>(null)
+    const columnListRef = ref<any>(null)
 
     const state = reactive<State>({
       checkAll: true,
@@ -175,20 +175,6 @@ export default defineComponent({
     const getValues = computed(() => {
       return unref(table?.getBindValues)
     })
-
-    watchEffect(() => {
-      const columns = table.getColumns()
-      if (columns.length) {
-        init()
-      }
-    })
-
-    watchEffect(() => {
-      const values = unref(getValues)
-      checkIndex.value = !!values?.showIndexColumn
-      checkSelect.value = !!values?.rowSelection
-    })
-
     function getColumns() {
       const ret: Options[] = []
       table.getColumns({ ignoreIndex: true, ignoreAction: true }).forEach((item) => {
@@ -200,7 +186,6 @@ export default defineComponent({
       })
       return ret
     }
-
     function init() {
       const columns = getColumns()
 
@@ -233,7 +218,6 @@ export default defineComponent({
       }
       state.checkedList = checkList
     }
-
     // checkAll change
     function onCheckAllChange(e: ChangeEvent) {
       const checkList = plainOptions.value.map((item) => item.value)
@@ -252,18 +236,30 @@ export default defineComponent({
       unref(checkIndex) && checkedLen--
       return checkedLen > 0 && checkedLen < len
     })
-
-    // Trigger when check/uncheck a column
-    function onChange(checkedList: string[]) {
-      const len = plainSortOptions.value.length
-      state.checkAll = checkedList.length === len
-      const sortList = unref(plainSortOptions).map((item) => item.value)
-      checkedList.sort((prev, next) => {
-        return sortList.indexOf(prev) - sortList.indexOf(next)
+    // Control whether the check box is displayed
+    function handleSelectCheckChange(e: ChangeEvent) {
+      table.setProps({
+        rowSelection: e.target.checked ? defaultRowSelection : undefined,
       })
-      setColumns(checkedList)
     }
 
+    function handleColumnFixed(item: BasicColumn, fixed?: 'left' | 'right') {
+      if (!state.checkedList.includes(item.dataIndex as string)) return
+
+      const columns = getColumns() as BasicColumn[]
+      const isFixed = item.fixed === fixed ? false : fixed
+      const index = columns.findIndex((col) => col.dataIndex === item.dataIndex)
+      if (index !== -1) {
+        columns[index].fixed = isFixed
+      }
+      item.fixed = isFixed
+
+      if (isFixed && !item.width) {
+        item.width = 100
+      }
+      table.setCacheColumnsByField?.(item.dataIndex?.toString(), { fixed: isFixed })
+      setColumns(columns)
+    }
     // reset columns
     function reset() {
       state.checkedList = [...state.defaultCheckList]
@@ -279,7 +275,7 @@ export default defineComponent({
       nextTick(() => {
         const columnListEl = unref(columnListRef)
         if (!columnListEl) return
-        const el = columnListEl.$el as any
+        const el = columnListEl?.$el as any
         if (!el) return
         // Drag and drop sort
         const { initSortable } = useSortable(el, {
@@ -316,29 +312,15 @@ export default defineComponent({
       })
     }
 
-    // Control whether the check box is displayed
-    function handleSelectCheckChange(e: ChangeEvent) {
-      table.setProps({
-        rowSelection: e.target.checked ? defaultRowSelection : undefined,
+    // Trigger when check/uncheck a column
+    function onChange(checkedList: string[]) {
+      const len = plainSortOptions.value.length
+      state.checkAll = checkedList.length === len
+      const sortList = unref(plainSortOptions).map((item) => item.value)
+      checkedList.sort((prev, next) => {
+        return sortList.indexOf(prev) - sortList.indexOf(next)
       })
-    }
-
-    function handleColumnFixed(item: BasicColumn, fixed?: 'left' | 'right') {
-      if (!state.checkedList.includes(item.dataIndex as string)) return
-
-      const columns = getColumns() as BasicColumn[]
-      const isFixed = item.fixed === fixed ? false : fixed
-      const index = columns.findIndex((col) => col.dataIndex === item.dataIndex)
-      if (index !== -1) {
-        columns[index].fixed = isFixed
-      }
-      item.fixed = isFixed
-
-      if (isFixed && !item.width) {
-        item.width = 100
-      }
-      table.setCacheColumnsByField?.(item.dataIndex, { fixed: isFixed })
-      setColumns(columns)
+      setColumns(checkedList)
     }
 
     function setColumns(columns: BasicColumn[] | string[]) {
@@ -358,6 +340,19 @@ export default defineComponent({
     function getPopupContainer() {
       return isFunction(attrs.getPopupContainer) ? attrs.getPopupContainer() : getParentContainer()
     }
+
+    watchEffect(() => {
+      const columns = table.getColumns()
+      if (columns.length) {
+        init()
+      }
+    })
+
+    watchEffect(() => {
+      const values = unref(getValues)
+      checkIndex.value = !!values?.showIndexColumn
+      checkSelect.value = !!values?.rowSelection
+    })
 
     return {
       ...toRefs(state),
