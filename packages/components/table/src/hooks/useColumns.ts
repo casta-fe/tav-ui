@@ -8,7 +8,13 @@ import { renderEditCell } from '../components/editable'
 import { ACTION_COLUMN_FLAG, DEFAULT_ALIGN, INDEX_COLUMN_FLAG, PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
 import type { PaginationProps } from '../types/pagination'
-import type { BasicColumn, BasicTableProps, CellFormat, GetColumnsParams } from '../types/table'
+import type {
+  BasicColumn,
+  BasicTableProps,
+  CellFormat,
+  GetColumnsParams,
+  Key,
+} from '../types/table'
 
 type Recordable<T = any> = Record<string, T>
 
@@ -17,7 +23,7 @@ function handleItem(item: BasicColumn, ellipsis: boolean) {
   item.align = item.align || DEFAULT_ALIGN
   if (ellipsis) {
     if (!key) {
-      item.key = dataIndex
+      item.key = dataIndex as Key
     }
     if (!isBoolean(item.ellipsis)) {
       Object.assign(item, {
