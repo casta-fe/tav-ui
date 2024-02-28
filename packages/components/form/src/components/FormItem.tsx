@@ -778,7 +778,6 @@ export default defineComponent({
               v-click-outside={handleClickOutside}
               style="flex: 1;  max-width:100%; position: relative;"
             >
-              6666
               {getContent()}
               {showSuffix && <span class="suffix">{getSuffix}</span>}
             </div>
