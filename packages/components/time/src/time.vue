@@ -46,8 +46,8 @@ export default defineComponent({
       if (mode === 'relative') {
         date.value = getRelativeTime(time)
       } else {
-        if (mode === 'datetime') date.value = formatToDateTime(value)
-        else if (mode === 'date') date.value = formatToDate(value)
+        if (mode === 'datetime') date.value = formatToDateTime(value as string)
+        else if (mode === 'date') date.value = formatToDate(value as string)
       }
     }
 

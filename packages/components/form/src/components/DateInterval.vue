@@ -65,7 +65,7 @@ export default defineComponent({
       type: Array as PropType<DateRangeKeyType[]>,
       default: () => defaultDateRangeKeyList,
     },
-    autoChoose: { type: String as PropType<unitOfTime.StartOf | 'none'>, default: 'month' },
+    autoChoose: { type: String as PropType<any | 'none'>, default: 'month' },
   },
   emits: ['change', 'search', 'getCurDate'],
   setup(props, { emit }) {

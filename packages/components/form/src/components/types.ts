@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
-
+import quarterOfYear from 'dayjs/plugin/quarterOfYear'
+dayjs.extend(quarterOfYear)
 export interface ApiSelectOptionsItem {
   label: string
   value: string
