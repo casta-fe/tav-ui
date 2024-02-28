@@ -13,6 +13,8 @@ import { createFormContext } from './hooks/useFormContext'
 import { useFormEvents } from './hooks/useFormEvents'
 import { useFormValues } from './hooks/useFormValues'
 import { formProps } from './props'
+import type dayjs from 'dayjs'
+
 import type { Ref } from 'vue'
 import type { FormActionType, FormProps, FormSchema } from './types/form'
 import type { AdvanceState } from './types/hooks'
@@ -96,7 +98,7 @@ export default defineComponent({
           if (!Array.isArray(defaultValue)) {
             schema.defaultValue = dateUtil(defaultValue)
           } else {
-            const def: moment.Moment[] = []
+            const def: dayjs.Dayjs[] = []
             defaultValue.forEach((item) => {
               def.push(dateUtil(item))
             })

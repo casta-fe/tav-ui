@@ -121,7 +121,6 @@ export default defineComponent({
       return {
         size: 'small',
         getPopupContainer: () => unref(table?.wrapRef.value) ?? document.body,
-        getCalendarContainer: () => unref(table?.wrapRef.value) ?? document.body,
         placeholder: createPlaceholderMessage(unref(getComponent)),
         ...apiSelectProps,
         ...omit(compProps, 'onChange'),

@@ -45,7 +45,7 @@ export default defineComponent({
           state.time = null
           emit('change', undefined)
         }}
-        getCalendarContainer={props.getPopupContainer}
+        getPopupContainer={props.getPopupContainer}
       />
     )
   },

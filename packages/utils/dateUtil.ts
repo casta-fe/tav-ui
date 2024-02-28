@@ -1,24 +1,21 @@
 /**
  * Independent time operation tool to facilitate subsequent switch to dayjs
  */
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-export function formatToDateTime(
-  date: moment.MomentInput = undefined,
-  format = DATE_TIME_FORMAT
-): string {
-  return moment(date).format(format)
+export function formatToDateTime(date: dayjs.Dayjs | string, format = DATE_TIME_FORMAT): string {
+  return dayjs(date).format(format)
 }
 
-export function formatToDate(date: moment.MomentInput = undefined, format = DATE_FORMAT): string {
-  return date ? moment(date).format(format) : ''
+export function formatToDate(date: dayjs.Dayjs | string, format = DATE_FORMAT): string {
+  return date ? dayjs(date).format(format) : ''
 }
 
 export function formatToTimestamp(date: string, format = DATE_TIME_FORMAT): number {
-  return moment(date, format).valueOf()
+  return dayjs(date, format).valueOf()
 }
 
 export function formatToExcelTime(date: string): number {
@@ -26,12 +23,11 @@ export function formatToExcelTime(date: string): number {
   return (timeStamp / 1000 + 8 * 3600) / 86400 + 70 * 365 + 19
 }
 
-export const dateUtil = moment
+export const dateUtil = dayjs
 
-export function getMomentFormatString(date, valueFormat = DATE_TIME_FORMAT) {
+export function getMomentFormatString(date, valueFormat = DATE_FORMAT) {
   // 通过defaultvalue传入的是moment对象要把原本的值取出来
-  if (date._isAMomentObject) return date.format(valueFormat)
-
+  if (dayjs.isDayjs(date)) return date.format(valueFormat)
   if (typeof date === 'string' && !(date.includes('T') || date.includes('Z'))) {
     // 通过组件选择出来的是处理好的string
     return date

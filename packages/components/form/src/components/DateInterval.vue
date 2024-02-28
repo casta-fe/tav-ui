@@ -37,8 +37,7 @@
 
 <script lang="ts">
 import { type PropType, computed, defineComponent, onMounted, ref, unref } from 'vue'
-import moment, { type unitOfTime } from 'moment'
-import 'moment/dist/locale/zh-cn'
+import dayjs, { type OpUnitType } from 'dayjs'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
@@ -99,8 +98,8 @@ export default defineComponent({
         currentDate.value = momentList
       } else {
         currentDate.value = [
-          moment(momentList[0]).startOf(props.autoChoose),
-          moment(momentList[1]).endOf(props.autoChoose),
+          dayjs(momentList[0]).startOf(props.autoChoose as OpUnitType),
+          dayjs(momentList[1]).endOf(props.autoChoose as OpUnitType),
         ].map((el) => el.format('YYYY-MM-DD'))
       }
       handleEmitEvent()
@@ -138,7 +137,7 @@ export default defineComponent({
     // const cacheDate = ref()
     // const onPanelChange = (v) => {
     //   // console.error(v.map((el) => el._d.getMonth() + 1))
-    //   cacheDate.value = [moment(v[0]).startOf('month'), moment(v[1]).endOf('month')]
+    //   cacheDate.value = [dayjs(v[0]).startOf('month'), dayjs(v[1]).endOf('month')]
     // }
     // const onOpenChange = async (status) => {
     //   if (status) {

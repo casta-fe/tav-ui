@@ -2,7 +2,8 @@
 import { computed, defineComponent, h, ref, toRefs, unref, watch, withDirectives } from 'vue'
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { Col, Divider, Form } from 'ant-design-vue'
-import { cloneDeep, upperFirst } from 'lodash-es'
+import { cloneDeep, uniqBy, upperFirst } from 'lodash-es'
+import dayjs from 'dayjs'
 import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
 import clickOutside from '@tav-ui/directives/src/clickOutside'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -177,7 +178,6 @@ export default defineComponent({
     function setEditableFormItemValue(schema, _value) {
       const value = unref(_value)
       let { componentProps = {} } = schema
-
       if (isFunction(componentProps)) {
         const { schema: propsSchema, tableAction, formModel, formActionType } = props
         componentProps =
@@ -199,8 +199,6 @@ export default defineComponent({
           } else {
             editableItemValue.value = '-'
           }
-
-          // editableItemValue.value = value ? formatToDate(value, valueFormat) : "-";
         } else {
           // input 回显值
           // inputNumber 清空后也是空字符串进到这
@@ -218,6 +216,7 @@ export default defineComponent({
           } else {
             schemaOptions = componentProps?.options
           }
+
           const target = schemaOptions.find(
             (option) => option.value === value || option.label === value
           )
@@ -246,7 +245,7 @@ export default defineComponent({
           if (schema.component == 'MemberSelect') {
             const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
             const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
-            schemaOptions = [...(componentProps?.options || []), ...allUserList]
+            schemaOptions = uniqBy([...(componentProps?.options || []), ...allUserList], 'id')
           } else if (schema.component == 'SearchableApiSelect') {
             const item = value?.[1]
             if (!item) return
@@ -260,13 +259,13 @@ export default defineComponent({
             ?.reduce((result, option) => {
               if (value.includes(option.value) || value.includes(option.label))
                 result.push(option.label)
-
               return result
             }, [])
             .filter((v) => v)
           editableItemValue.value = target && target.length > 0 ? target.join(',') : '-'
         } else {
           // date 回显 string
+          editableItemValue.value = value
           const valueFormat = componentProps?.valueFormat
           const [startTime, endTime] = value
           if (isNullOrUnDef(startTime) || isNullOrUnDef(endTime)) {
@@ -280,6 +279,9 @@ export default defineComponent({
         }
       } else if (isBoolean(value)) {
         editableItemValue.value = value ? '开启' : '关闭'
+      } else if (dayjs.isDayjs(value)) {
+        const valueFormat = componentProps?.valueFormat
+        editableItemValue.value = formatToDate(value, valueFormat)
       } else {
         // 其他情况
         // 1. 没有给 defaultvalue，此时调用 resetFields，newval 为 undefined
@@ -339,9 +341,6 @@ export default defineComponent({
         }
       }
       if (schema.required) {
-        // if (props.schema.field === "purposeInvestScale") {
-        //   debugger;
-        // }
         const schemaValue = props.formModel[schema.field]
         //  添加针对0的兼容 by hyb
         // eslint-disable-next-line eqeqeq
@@ -682,7 +681,7 @@ export default defineComponent({
           compAttr.getPopupContainer = () => unref(itemRef)
         } else if (component && editableComponentTimeTypeMap.has(component)) {
           compAttr.open = true
-          compAttr.getCalendarContainer = () => unref(itemRef)
+          compAttr.getPopupContainer = () => unref(itemRef)
           compAttr.onOk = (dates) => {
             props.setFormModel(field, dates)
             handleOnChange(true)
@@ -779,6 +778,7 @@ export default defineComponent({
               v-click-outside={handleClickOutside}
               style="flex: 1;  max-width:100%; position: relative;"
             >
+              6666
               {getContent()}
               {showSuffix && <span class="suffix">{getSuffix}</span>}
             </div>
@@ -829,7 +829,6 @@ export default defineComponent({
               class={getEditableFormItemClass()}
               title={editableItemValue.value}
               onClick={() => {
-                // debugger
                 if (!unref(getDisable)) {
                   isEditableItemClicked.value = true
                   unref(getComponentsProps).onEditableFormItemVisible &&

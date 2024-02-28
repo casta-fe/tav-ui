@@ -1,5 +1,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive } from 'vue'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import { ConfigProvider } from 'ant-design-vue'
+import dayjs from 'dayjs'
 import TaConfigProvider from '@tav-ui/components/config-provider'
 import {
   API__SYSTEM_USER_TABLE_INFO_GET as columnsGetApi,
@@ -7,10 +10,12 @@ import {
 } from '@tav-ui/components/table-pro/src/data'
 import allUsers from './allUserList'
 import { taUploadProvideData } from './components/TaUpload'
-
+import 'dayjs/locale/zh-cn'
+dayjs.locale('zh-cn')
 export default defineComponent({
   components: {
     TaConfigProvider,
+    ConfigProvider,
   },
   setup() {
     const state = reactive({
@@ -51,6 +56,7 @@ export default defineComponent({
     })
 
     return {
+      zhCN,
       state,
     }
   },
@@ -64,11 +70,8 @@ export default defineComponent({
     :permissions="state.permissions"
     :components="state.components"
   >
-    <!-- <div id="nav">
-      <router-link to="/"> 首页 </router-link> |
-      <router-link to="/test">测试 </router-link>
-    </div>
-    <br /> -->
-    <router-view />
+    <ConfigProvider :locale="zhCN">
+      <RouterView />
+    </ConfigProvider>
   </TaConfigProvider>
 </template>

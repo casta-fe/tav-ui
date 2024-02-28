@@ -274,6 +274,7 @@ importers:
       exceljs: 4.2.0
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
+      moment: ^2.27.0
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
@@ -293,6 +294,7 @@ importers:
       exceljs: 4.2.0
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
+      moment: 2.30.1
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
@@ -6710,6 +6712,10 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
+
+  /moment/2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+    dev: false
 
   /mri/1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
