@@ -2,6 +2,9 @@
 @prefix-cls-basic-form: ~'@{namespace}-basic-form';
 
 .@{prefix-cls-basic-form} {
+  &.ant-form-horizontal .ant-form-item-control {
+    min-width: auto;
+  }
   .ant-form-item {
     &-label label::after {
       margin: 0 6px 0 2px;
@@ -20,9 +23,9 @@
         display: flex;
       }
 
-      .ant-form-item-control {
-        margin-top: 4px;
-      }
+      // .ant-form-item-control {
+      //   margin-top: 4px;
+      // }
 
       .suffix {
         display: inline-flex;

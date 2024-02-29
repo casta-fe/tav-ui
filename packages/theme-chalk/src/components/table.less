@@ -1,12 +1,11 @@
-@import "../var/index.less";
+@import '../var/index.less';
 
 @border-color: #cecece4d;
 @prefix-cls-basic-table: ~'@{namespace}-basic-table';
 
 [data-theme='dark'] {
-
-  .ant-table-tbody>tr:hover.ant-table-row-selected>td,
-  .ant-table-tbody>tr.ant-table-row-selected td {
+  .ant-table-tbody > tr:hover.ant-table-row-selected > td,
+  .ant-table-tbody > tr.ant-table-row-selected td {
     background-color: #262626;
   }
 }
@@ -128,7 +127,7 @@
     align-items: center;
     justify-content: flex-end;
 
-    >* {
+    > * {
       margin-right: 8px;
     }
   }
@@ -136,7 +135,7 @@
 
 // table setting
 .table-settings {
-  &>* {
+  & > * {
     margin-right: 12px;
   }
 
@@ -227,7 +226,7 @@
 .edit-cell-align-left {
   text-align: left;
 
-  input:not(.ant-calendar-picker-input, .ant-time-picker-input) {
+  input:not(.ant-picker-input, .ant-time-picker-input) {
     text-align: left;
   }
 }
@@ -235,7 +234,7 @@
 .edit-cell-align-center {
   text-align: center;
 
-  input:not(.ant-calendar-picker-input, .ant-time-picker-input) {
+  input:not(.ant-picker-input, .ant-time-picker-input) {
     text-align: center;
   }
 }
@@ -265,7 +264,7 @@
     align-items: center;
     justify-content: center;
 
-    >.ant-select {
+    > .ant-select {
       min-width: calc(100% - 50px);
     }
   }
