@@ -451,39 +451,37 @@
         .ant-checkbox-group {
           width: 100%;
         }
+        .ant-tree {
+          &-treenode {
+            width: 100%;
+          }
 
-        .ant-tree > li {
-          &:first-child {
-            padding-top: 0;
+          &-node-content-wrapper {
+            flex: 1;
+            &-open {
+              position: relative;
+            }
+          }
+          &-title {
+            display: block;
           }
         }
-
         &-tree-option {
           position: relative;
-
-          .ant-tree-node-content-wrapper {
-            width: calc(100% - 24px - 22px - 20px);
-          }
-
-          .ant-tree-node-content-wrapper-open {
-            position: relative;
-            width: calc(100% - 24px - 22px);
-          }
-
-          .ant-tree-title {
-            & > span.anticon {
-              position: absolute;
-              top: 50%;
-              right: 20px;
-              transform: translateY(-50%);
-            }
+          display: flex;
+          justify-content: space-between;
+          span.anticon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
           }
         }
       }
     }
   }
 
-  &-operations-statistical{
+  &-operations-statistical {
     width: 100%;
   }
 

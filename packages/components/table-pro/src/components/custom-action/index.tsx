@@ -82,6 +82,7 @@ const ExportModalFormSchemas: FormSchema[] = [
     defaultValue: 'xlsx',
     componentProps: {
       placeholder: '请选择文件类型',
+      disabled: true,
       options: [
         {
           label: 'Excel（.xlsx）',

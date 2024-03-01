@@ -86,7 +86,7 @@
 
         .ant-tabs-ink-bar {
           visibility: visible !important;
-          left: 8px !important;
+          // left: 8px !important;
         }
       }
 
@@ -279,17 +279,6 @@
       .ant-spin-nested-loading > div > .ant-spin {
         max-height: fit-content;
       }
-
-      // placeholder 居中
-      .ant-table-placeholder {
-        // position: relative;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-
-      // tablecontent 撑满，可能会导致横向滚动条消失!  end
     }
 
     .ant-spin-container {
@@ -348,18 +337,6 @@
       th {
         position: relative;
         border-bottom: none;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 12px;
-          right: 2px;
-          left: auto;
-          bottom: auto;
-          width: 1px;
-          height: calc(100% - 24px);
-          background-color: #eaeaea;
-        }
 
         &.ant-table-column-has-actions.ant-table-column-has-filters {
           padding-right: 0 !important;
@@ -506,12 +483,6 @@
       padding: 8px !important;
       font-size: 14px !important;
       font-weight: bold !important;
-    }
-
-    .ant-table .ant-table-tbody > tr > td {
-      padding: 6px 10px !important;
-      font-size: 14px !important;
-      // height: 43px !important;
     }
 
     .ant-table-footer {

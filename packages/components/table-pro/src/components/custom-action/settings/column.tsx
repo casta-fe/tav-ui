@@ -23,6 +23,7 @@ import type {
   CustomActionSettingColumnOption as ColumnOption,
   TableProCustomActionConfig,
 } from '../../../typings'
+import type { EventDataNode } from 'ant-design-vue/lib/tree'
 
 interface IState {
   isInit: boolean
@@ -431,7 +432,17 @@ export default defineComponent({
         }
       }
     }
+    /**
+     * 判断是否是一个父级
+     */
+    function isSameParent(dragNode: EventDataNode, targetNode: EventDataNode) {
+      const dragNodeArr = dragNode.pos?.split('-') || []
+      const targetNodeArr = targetNode.pos?.split('-') || []
 
+      const dragNodeArrWithoutLast = dragNodeArr.slice(0, -1)
+      const targetNodeArrWithoutLast = targetNodeArr.slice(0, -1)
+      return dragNodeArrWithoutLast.toString() == targetNodeArrWithoutLast.toString()
+    }
     /**
      * 排序处理
      * drop 拖入，drag 拖出
@@ -504,6 +515,10 @@ export default defineComponent({
 
       if (!info.dropToGap) {
         createMessage.warning('不允许合并列')
+        return
+      }
+      if (!isSameParent(info.dragNode, info.node)) {
+        createMessage.warning('拉出去了')
         return
       }
 
@@ -640,39 +655,39 @@ export default defineComponent({
       coverColumnsSetting,
     })
 
-    function createTreeNode(option: ColumnOption, defaultSolt: any) {
-      return (
-        <TreeNode key={option.key} disabled={option.disabled} class="column-popver-tree-option">
-          {{
-            title: () => (
-              <>
-                <span>{option.title}</span>
-                {option.fixed ? (
-                  <Tooltip placement="top" title="固定列">
-                    <PushpinFilled />
-                  </Tooltip>
-                ) : (
-                  <Tooltip placement="top" title="拖动列">
-                    <OrderedListOutlined />
-                  </Tooltip>
-                )}
-              </>
-            ),
-            default: () => (isFunction(defaultSolt) ? defaultSolt(option.children) : defaultSolt),
-          }}
-        </TreeNode>
-      )
-    }
+    // function createTreeNode(option: ColumnOption, defaultSolt: any) {
+    //   return (
+    //     <TreeNode key={option.key} disabled={option.disabled} class="column-popver-tree-option">
+    //       {{
+    //         title: () => (
+    //           <>
+    //             <span>{option.title}</span>
+    //             {option.fixed ? (
+    //               <Tooltip placement="top" title="固定列">
+    //                 <PushpinFilled />
+    //               </Tooltip>
+    //             ) : (
+    //               <Tooltip placement="top" title="拖动列">
+    //                 <OrderedListOutlined />
+    //               </Tooltip>
+    //             )}
+    //           </>
+    //         ),
+    //         default: () => (isFunction(defaultSolt) ? defaultSolt(option.children) : defaultSolt),
+    //       }}
+    //     </TreeNode>
+    //   )
+    // }
 
-    function createTreeNodes(columns: ColumnOption[]) {
-      return columns.map((option) => {
-        if (option.children && option.children.length) {
-          return createTreeNode(option, createTreeNodes)
-        } else {
-          return createTreeNode(option, null)
-        }
-      })
-    }
+    // function createTreeNodes(columns: ColumnOption[]) {
+    //   return columns.map((option) => {
+    //     if (option.children && option.children.length) {
+    //       return createTreeNode(option, createTreeNodes)
+    //     } else {
+    //       return createTreeNode(option, null)
+    //     }
+    //   })
+    // }
 
     return () => {
       return props.config?.column && unref(columnApiOptions) ? (
@@ -721,11 +736,26 @@ export default defineComponent({
                     checkable
                     draggable
                     // @ts-ignore
+                    treeData={state.columnOptions}
                     onDrop={handleColumnOptionsSort}
                     onCheck={handleColumnOptionsChange}
-                  >
-                    {createTreeNodes(state.columnOptions)}
-                  </Tree>
+                    v-slots={{
+                      title: (option) => (
+                        <div class="column-popver-tree-option">
+                          <span>{option.title}</span>
+                          {option.fixed ? (
+                            <Tooltip placement="top" title="固定列">
+                              <PushpinFilled />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip placement="top" title="拖动列">
+                              <OrderedListOutlined />
+                            </Tooltip>
+                          )}
+                        </div>
+                      ),
+                    }}
+                  />
                 </TaScrollbar>
               ),
               default: () => (
