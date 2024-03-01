@@ -1,7 +1,7 @@
-@import "../../var/index.less";
-@import "./pagination.less";
-@import "./input.less";
-@import "./btn.less";
+@import '../../var/index.less';
+@import './pagination.less';
+@import './input.less';
+@import './btn.less';
 // @import './table.less';
 
 // TODO beta.11 fix
@@ -26,7 +26,7 @@ span.anticon:not(.app-iconify) {
 }
 
 .collapse-container__body {
-  >.ant-descriptions {
+  > .ant-descriptions {
     margin-left: 6px;
   }
 }
@@ -45,23 +45,32 @@ span.anticon:not(.app-iconify) {
 // ==============modal message======
 // =================================
 .modal-icon-warning {
-  color: @warning-color  !important;
+  color: @warning-color !important;
 }
 
 .modal-icon-success {
-  color: @success-color  !important;
+  color: @success-color !important;
 }
 
 .modal-icon-error {
-  color: @error-color  !important;
+  color: @error-color !important;
 }
 
 .modal-icon-info {
-  color: @primary-color  !important;
+  color: @primary-color !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner::after,
 .ant-tree-checkbox-checked .ant-tree-checkbox-inner::after {
   border-top: 0 !important;
   border-left: 0 !important;
+}
+.ant-dropdown {
+  .ant-dropdown-menu-item-disabled,
+  .ant-dropdown-menu-submenu-title-disabled {
+    .ant-btn {
+      cursor: not-allowed;
+      color: #aaa;
+    }
+  }
 }

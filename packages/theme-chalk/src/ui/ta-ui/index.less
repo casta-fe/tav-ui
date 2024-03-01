@@ -238,10 +238,10 @@
 
   //button
   &-basic-button {
-    height: 30px !important;
-    line-height: 30px !important;
-    padding: 0 12px !important;
-    min-width: 100px;
+    padding: 0 12px;
+    &:not(.ant-btn-link, .ant-btn-text) {
+      min-width: 100px;
+    }
   }
 
   //table
