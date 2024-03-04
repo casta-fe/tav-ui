@@ -52,12 +52,13 @@
       :row-class-name="getRowClassName"
       @change="handleTableChange"
     >
-      <template v-for="item in Object.keys($slots)" #[item]="data" :key="item">
-        <slot :name="item" v-bind="data || {}" />
-      </template>
-
+      <!-- headerCell插槽无法正常渲染，去掉先 -->
       <template v-for="column in columns" #[`header-${column.dataIndex}`] :key="column.dataIndex">
         <HeaderCell :column="column" />
+      </template>
+      <!-- 增加对antdv3.x兼容 -->
+      <template #bodyCell="data">
+        <slot name="bodyCell" v-bind="data || {}" />
       </template>
     </Table>
 
@@ -342,6 +343,7 @@ export default defineComponent({
       formRef,
       actionRef
     )
+    console.log(getScrollRef)
 
     // propsRef: ComputedRef<BasicTableProps>,
     // tableElRef: Ref<ComponentRef>,
