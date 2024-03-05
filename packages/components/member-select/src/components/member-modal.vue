@@ -41,7 +41,7 @@
                 :auto-expand-parent="autoExpandParent"
                 :selectable="false"
                 :load-data="getOrgUser"
-                :replace-fields="replaceFields"
+                :field-names="replaceFields"
                 @expand="onExpand"
               >
                 <template #title="item">
