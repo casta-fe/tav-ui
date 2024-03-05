@@ -1,18 +1,25 @@
 <template>
   <div>
     <h2>table Example</h2>
-    <div style="height: 300px">
+    <div style="height: 500px">
       <TaTable
         :columns="columns"
-        :data-source="data"
+        :api="tableApi"
         :can-resize="canResize"
         :loading="loading"
         :bordered="border"
         :pagination="pagination"
-        :filter="filterForms"
         :filter-exclusion="false"
         @columns-change="handleColumnChange"
       >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'name'">
+            <a> {{ record.name }} 244 </a>
+          </template>
+          <template v-if="column.dataIndex === 'action'">
+            <TableAction :actions="getTableActionsButton(record)" />
+          </template>
+        </template>
         <!-- <template #toolbar>
           <a-button type="primary" @click="toggleCanResize">
             {{ !canResize ? '自适应高度' : '取消自适应' }}
@@ -27,9 +34,6 @@
             {{ !striped ? '显示斑马纹' : '隐藏斑马纹' }}
           </a-button>
         </template> -->
-        <template #action="{ record }">
-          <TableAction :actions="getTableActionsButton(record)" />
-        </template>
       </TaTable>
     </div>
   </div>
@@ -54,6 +58,14 @@ export default defineComponent({
     const pagination = ref<any>(true)
     function toggleCanResize() {
       canResize.value = !canResize.value
+    }
+    const tableApi = async () => {
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          return resolve(true)
+        }, 3000)
+      )
+      return Promise.resolve({ data: getBasicData() })
     }
     function toggleStriped() {
       striped.value = !striped.value
@@ -183,6 +195,7 @@ export default defineComponent({
     }
     return {
       columns: getBasicColumns(),
+      tableApi,
       data: getBasicData(),
       canResize,
       loading,

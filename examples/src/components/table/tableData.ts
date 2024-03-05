@@ -43,13 +43,11 @@ export function getBasicColumns(): BasicColumn[] {
       width: 150,
       sorter: true,
       dataIndex: 'endTime',
-      format: 'date|YYYY-MM-DD',
     },
     {
       width: 150,
       title: '操作',
       dataIndex: 'action',
-      slots: { customRender: 'action' },
     },
   ]
 }
@@ -133,13 +131,11 @@ export function getCustomHeaderColumns(): BasicColumn[] {
       // title: '姓名',
       dataIndex: 'name',
       width: 120,
-      slots: { title: 'customTitle' },
     },
     {
       // title: '地址',
       dataIndex: 'address',
       width: 120,
-      slots: { title: 'customAddress' },
       sorter: true,
     },
 
@@ -281,7 +277,7 @@ export function getBasicData() {
     }
     return arr
   })()
-  return data
+  return []
 }
 
 export function getTreeTableData() {
