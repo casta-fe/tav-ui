@@ -21,7 +21,6 @@ export function useTableFullHeight(
     await nextTick()
     const table = unref(tableElRef)
     if (!table) return
-
     const tableEl: HTMLElement = table.$el
     if (!tableEl) return
 
@@ -30,11 +29,9 @@ export function useTableFullHeight(
       if (!bodyEl) return
     }
 
-    contentEl = tableEl.querySelector('.ant-table-content')
     headEl = tableEl.querySelector('.ant-table-thead')
 
     if (!headEl) return
-    if (!contentEl) return
     // const { height: headHeight } = headEl.getBoundingClientRect();
     // const { height: bodyHeight } = bodyEl.getBoundingClientRect();
     // const { height: contentHeight } = contentEl.getBoundingClientRect();

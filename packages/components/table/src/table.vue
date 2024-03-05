@@ -343,7 +343,6 @@ export default defineComponent({
       formRef,
       actionRef
     )
-    console.log(getScrollRef)
 
     // propsRef: ComputedRef<BasicTableProps>,
     // tableElRef: Ref<ComponentRef>,

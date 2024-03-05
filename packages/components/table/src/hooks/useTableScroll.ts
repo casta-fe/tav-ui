@@ -75,21 +75,18 @@ export function useTableScroll(
       formRefMarginTopDistance,
       tablePaddingDistance,
     } = unref(propsRef)
-    const tableData = unref(getDataSourceRef)
+    // const tableData = unref(getDataSourceRef)
     const table = unref(tableElRef)
     if (!table) return
     // debugger;
     const tableEl: Element = table.$el
     if (!tableEl) return
 
-    if (!bodyEl) {
-      bodyEl = tableEl.querySelector('.ant-table-body') || tableEl.querySelector('.ant-table-tbody')
-      if (!bodyEl) return
-      if (unref(propsRef).keepScrollTop) {
-        useKeepScroll({ scrollEl: bodyEl })
-      }
+    bodyEl = tableEl.querySelector('.ant-table-body') || tableEl.querySelector('.ant-table-tbody')
+    if (!bodyEl) return
+    if (unref(propsRef).keepScrollTop) {
+      useKeepScroll({ scrollEl: bodyEl })
     }
-
     const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight
     const hasScrollBarX = bodyEl.scrollWidth > bodyEl.clientWidth
 
@@ -108,7 +105,6 @@ export function useTableScroll(
     // bodyEl!.style.height = "100%";
 
     // if (!unref(getCanResize) || tableData.length === 0) return;
-    // debugger
     if (isCanResizeParent) {
       // console.log(isCanResizeParent, 'isCanResizeParent111111')
       bodyEl!.style.height = '100%'
@@ -199,19 +195,9 @@ export function useTableScroll(
     // console.log(bodyEl!.style.height, 'beforeCHange')
     if (isCanResizeParent) {
       bodyEl!.style.height = `${height}px`
-      if (tableData.length === 0) {
-        //处理空数据时滚动条消失问题
-        const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
-        TbodyEl!.style.height = `1px`
-      }
     } else {
       if (!slots.footer) {
         bodyEl!.style.height = `${height}px`
-        if (tableData.length === 0) {
-          //处理空数据时滚动条消失问题
-          const TbodyEl = bodyEl.querySelector('.ant-table-tbody') as HTMLElement
-          TbodyEl!.style.height = `1px`
-        }
       }
     }
   }
