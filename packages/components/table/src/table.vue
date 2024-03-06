@@ -71,6 +71,8 @@ import {
   computed,
   defineComponent,
   inject,
+  onActivated,
+  onMounted,
   provide,
   ref,
   toRaw,
@@ -87,7 +89,6 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
-import { onMountedOrActivated } from '@tav-ui/hooks'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
@@ -333,7 +334,7 @@ export default defineComponent({
       getCacheColumns,
     } = useColumns(getProps, getPaginationInfo)
 
-    const { getScrollRef, redoHeight, fnInit } = useTableScroll(
+    const { getScrollRef, redoHeight, fnInit, keepScrollIns } = useTableScroll(
       getProps,
       tableElRef,
       getColumnsRef,
@@ -481,12 +482,16 @@ export default defineComponent({
         deep: true,
       }
     )
-    onMountedOrActivated(() => {
-      console.log('monted')
+    onMounted(() => {
       fnInit()
     })
+    onActivated(() => {
+      if (keepScrollIns.value) {
+        console.log(keepScrollIns.value?.scrollTop)
+        keepScrollIns.value.scrollFn()
+      }
+    })
     onUnmountedOrOnDeactivated(() => {
-      console.log('unmonted')
       cacheActionWidths.value = {}
       columnsForAction.value = []
       maxWidthForAction.value = 0

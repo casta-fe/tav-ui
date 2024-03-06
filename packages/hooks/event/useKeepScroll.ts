@@ -9,9 +9,7 @@ export type KeepScrollType = Partial<{
 export function useKeepScroll(keepScrollOpt: KeepScrollType) {
   if (!keepScrollOpt.scrollEl && (!keepScrollOpt.getScrollTop || !keepScrollOpt.setScrollTop))
     throw new Error('invalid params!')
-
   let scrollTop = 0
-
   const getScrollTop =
     keepScrollOpt.getScrollTop ??
     function () {
@@ -23,16 +21,14 @@ export function useKeepScroll(keepScrollOpt: KeepScrollType) {
     function (value) {
       keepScrollOpt.scrollEl!.scrollTop = value
     }
-
   function onScroll() {
     scrollTop = getScrollTop()
   }
-  setScrollTop(scrollTop)
-  // 暂时注释升级后会无限循环
-  // onActivated(() => {
-  //   setScrollTop(scrollTop)
-  // })
+  const scrollFn = () => {
+    setScrollTop(scrollTop)
+  }
 
+  scrollFn()
   if (keepScrollOpt.scrollEl) {
     keepScrollOpt.scrollEl.addEventListener('scroll', onScroll)
 
@@ -41,5 +37,5 @@ export function useKeepScroll(keepScrollOpt: KeepScrollType) {
     })
   }
 
-  return { onScroll }
+  return { onScroll, scrollFn, scrollTop }
 }

@@ -1,4 +1,4 @@
-import { computed, nextTick, onActivated, ref, unref, watch } from 'vue'
+import { computed, nextTick, ref, unref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import { getViewportOffset } from '@tav-ui/utils/domUtils'
@@ -50,7 +50,7 @@ export function useTableScroll(
 
   function redoHeight() {
     nextTick(() => {
-      calcTableHeight(3)
+      calcTableHeight()
     })
   }
 
@@ -64,8 +64,8 @@ export function useTableScroll(
   // let paginationEl: HTMLElement | null
   let footerEl: HTMLElement | null
   let bodyEl: HTMLElement | null
-
-  async function calcTableHeight(t = -1) {
+  const keepScrollIns = ref<{ onScroll: () => void; scrollFn: () => void } | null>(null)
+  async function calcTableHeight() {
     const {
       resizeHeightOffset,
       pagination,
@@ -75,17 +75,18 @@ export function useTableScroll(
       tablePaddingDistance,
     } = unref(propsRef)
     // const tableData = unref(getDataSourceRef)
-    console.log(t)
     const table = unref(tableElRef)
     if (!table) return
     // debugger;
     const tableEl: Element = table.$el
     if (!tableEl) return
-    bodyEl = tableEl.querySelector('.ant-table-body')
-    console.log(bodyEl)
-    if (!bodyEl) return
+
+    if (!bodyEl) {
+      bodyEl = tableEl.querySelector('.ant-table-body')
+      if (!bodyEl) return
+    }
     if (unref(propsRef).keepScrollTop) {
-      useKeepScroll({ scrollEl: bodyEl })
+      keepScrollIns.value = useKeepScroll({ scrollEl: bodyEl })
     }
     const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight
     const hasScrollBarX = bodyEl.scrollWidth > bodyEl.clientWidth
@@ -189,7 +190,7 @@ export function useTableScroll(
     }
   }
   const fnInit = () => {
-    calcTableHeight(1)
+    calcTableHeight()
     nextTick(() => {
       debounceRedoHeight()
     })
@@ -220,7 +221,6 @@ export function useTableScroll(
     const tableWidth = table?.$el?.offsetWidth ?? 0
     return tableWidth > width ? '100%' : width
   })
-
   const getScrollRef = computed(() => {
     const tableHeight = unref(tableHeightRef)
     const { canResize, scroll } = unref(propsRef)
@@ -231,5 +231,5 @@ export function useTableScroll(
       ...scroll,
     }
   })
-  return { getScrollRef, redoHeight, fnInit }
+  return { getScrollRef, redoHeight, fnInit, keepScrollIns }
 }
