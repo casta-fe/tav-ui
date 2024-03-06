@@ -87,6 +87,7 @@ import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicForm from '@tav-ui/components/form'
+import { onMountedOrActivated } from '@tav-ui/hooks'
 import CustomAction from './components/CustomAction.vue'
 import expandIcon from './components/ExpandIcon'
 import Filter from './components/Filter.vue'
@@ -332,7 +333,7 @@ export default defineComponent({
       getCacheColumns,
     } = useColumns(getProps, getPaginationInfo)
 
-    const { getScrollRef, redoHeight } = useTableScroll(
+    const { getScrollRef, redoHeight, fnInit } = useTableScroll(
       getProps,
       tableElRef,
       getColumnsRef,
@@ -480,7 +481,9 @@ export default defineComponent({
         deep: true,
       }
     )
-
+    onMountedOrActivated(() => {
+      fnInit()
+    })
     onUnmountedOrOnDeactivated(() => {
       cacheActionWidths.value = {}
       columnsForAction.value = []

@@ -245,6 +245,5 @@ export function useTableScroll(
       ...scroll,
     }
   })
-  fnInit()
-  return { getScrollRef, redoHeight }
+  return { getScrollRef, redoHeight, fnInit }
 }
