@@ -1,6 +1,5 @@
-import { computed, nextTick, ref, unref, watch } from 'vue'
+import { computed, nextTick, onActivated, ref, unref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import { getViewportOffset } from '@tav-ui/utils/domUtils'
 import { isBoolean } from '@tav-ui/utils/is'
@@ -203,13 +202,13 @@ export function useTableScroll(
       }
     }
   }
-  useWindowSizeFn(calcTableHeight, 280)
-  onMountedOrActivated(() => {
+  const fnInit = () => {
     calcTableHeight(1)
     nextTick(() => {
       debounceRedoHeight()
     })
-  })
+  }
+  useWindowSizeFn(calcTableHeight, 280)
 
   const getScrollX = computed(() => {
     let width = 0
@@ -246,6 +245,9 @@ export function useTableScroll(
       ...scroll,
     }
   })
-
+  fnInit()
+  onActivated(() => {
+    fnInit()
+  })
   return { getScrollRef, redoHeight }
 }

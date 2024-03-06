@@ -1,6 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Test from '../components/Test.vue'
-import Home from '../components/Home.vue'
 import TableProSingleHeader from '../components/TablePro/single-header'
 import TableProMultiHeader from '../components/TablePro/multi-header'
 import TestDemo from '../components/TablePro/test-demo.vue'
@@ -10,12 +8,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import('../components/Home.vue'),
   },
   {
     path: '/test',
     name: 'Test',
-    component: Test,
+    component: () => import('../components/Test.vue'),
   },
   {
     path: '/table-pro-single-header',
