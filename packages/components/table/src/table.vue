@@ -487,7 +487,6 @@ export default defineComponent({
     })
     onActivated(() => {
       if (keepScrollIns.value) {
-        console.log(keepScrollIns.value?.scrollTop)
         keepScrollIns.value.scrollFn()
       }
     })
