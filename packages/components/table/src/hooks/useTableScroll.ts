@@ -207,7 +207,7 @@ export function useTableScroll(
   onMountedOrActivated(() => {
     calcTableHeight(1)
     nextTick(() => {
-      debounceRedoHeight(2)
+      debounceRedoHeight()
     })
   })
 
