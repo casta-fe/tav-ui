@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, reactive } from 'vue'
+import { KeepAlive, defineComponent, onMounted, reactive } from 'vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { ConfigProvider } from 'ant-design-vue'
 import dayjs from 'dayjs'
@@ -15,6 +15,7 @@ dayjs.locale('zh-cn')
 export default defineComponent({
   components: {
     TaConfigProvider,
+    KeepAlive,
     ConfigProvider,
   },
   setup() {
@@ -71,7 +72,9 @@ export default defineComponent({
     :components="state.components"
   >
     <ConfigProvider :locale="zhCN">
-      <RouterView />
+      <Keep-alive>
+        <RouterView />
+      </Keep-alive>
     </ConfigProvider>
   </TaConfigProvider>
 </template>

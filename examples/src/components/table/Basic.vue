@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>table Example</h2>
-    <div style="height: 500px">
+    <div style="height: 70vh">
       <TaTable
         :columns="columns"
         :api="tableApi"

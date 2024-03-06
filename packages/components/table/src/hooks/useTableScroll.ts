@@ -246,8 +246,5 @@ export function useTableScroll(
     }
   })
   fnInit()
-  onActivated(() => {
-    fnInit()
-  })
   return { getScrollRef, redoHeight }
 }
