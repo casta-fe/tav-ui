@@ -51,7 +51,7 @@ export function useTableScroll(
 
   function redoHeight() {
     nextTick(() => {
-      calcTableHeight()
+      calcTableHeight(3)
     })
   }
 
@@ -66,7 +66,7 @@ export function useTableScroll(
   let footerEl: HTMLElement | null
   let bodyEl: HTMLElement | null
 
-  async function calcTableHeight() {
+  async function calcTableHeight(t = -1) {
     const {
       resizeHeightOffset,
       pagination,
@@ -76,6 +76,7 @@ export function useTableScroll(
       tablePaddingDistance,
     } = unref(propsRef)
     // const tableData = unref(getDataSourceRef)
+    console.log(t)
     const table = unref(tableElRef)
     if (!table) return
     // debugger;
@@ -204,9 +205,9 @@ export function useTableScroll(
   }
   useWindowSizeFn(calcTableHeight, 280)
   onMountedOrActivated(() => {
-    calcTableHeight()
+    calcTableHeight(1)
     nextTick(() => {
-      debounceRedoHeight()
+      debounceRedoHeight(2)
     })
   })
 
