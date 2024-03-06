@@ -62,7 +62,7 @@ export function useTableScroll(
   }
 
   // No need to repeat queries
-  let paginationEl: HTMLElement | null
+  // let paginationEl: HTMLElement | null
   let footerEl: HTMLElement | null
   let bodyEl: HTMLElement | null
 
@@ -82,7 +82,8 @@ export function useTableScroll(
     const tableEl: Element = table.$el
     if (!tableEl) return
 
-    bodyEl = tableEl.querySelector('.ant-table-body') || tableEl.querySelector('.ant-table-tbody')
+    bodyEl = tableEl.querySelector('.ant-table-body')
+    console.log(bodyEl)
     if (!bodyEl) return
     if (unref(propsRef).keepScrollTop) {
       useKeepScroll({ scrollEl: bodyEl })
@@ -126,7 +127,7 @@ export function useTableScroll(
     // Pager height
     let paginationHeight = 32 // 默认高度？
     if (!isBoolean(pagination)) {
-      paginationEl = tableEl.querySelector('.ant-pagination') as HTMLElement
+      // paginationEl = tableEl.querySelector('.ant-pagination') as HTMLElement
       paginationHeight = 32
     } else {
       paginationHeight = 0
@@ -239,7 +240,7 @@ export function useTableScroll(
     const { canResize, scroll } = unref(propsRef)
     return {
       x: unref(getScrollX),
-      y: canResize ? tableHeight : null,
+      y: canResize ? tableHeight || 1 : null,
       scrollToFirstRowOnChange: true,
       ...scroll,
     }

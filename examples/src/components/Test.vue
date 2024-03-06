@@ -1,16 +1,19 @@
 <template>
   <div class="wrapper">
+    <h1>测试页面</h1>
+    <a href="/#/">首页</a><a href="/#/test">测试</a>
     <TaForm :schemas="state.schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
+    <BasicTablePage />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 import { TaForm } from '@tav-ui/components'
-
+import BasicTablePage from './table/Basic.vue'
 export default defineComponent({
   name: 'Test',
-  components: { TaForm },
+  components: { TaForm, BasicTablePage },
   setup() {
     const state = reactive<Record<string, any>>({
       schemas: [
@@ -20,7 +23,7 @@ export default defineComponent({
           label: '合同类型',
           required: true,
           defaultValue: [1], // 默认为合同
-          componentProps: ({ formActionType, formModel }) => {
+          componentProps: ({ formActionType }) => {
             return {
               options: [
                 { label: '合同', value: 1 },
@@ -52,11 +55,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="less" scoprd>
-.wrapper {
-  width: 100%;
-  height: 800px;
-  padding: 16px;
-  background-color: #ccc;
-}
-</style>
+<style lang="less" scoprd></style>

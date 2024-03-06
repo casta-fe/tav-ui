@@ -10,14 +10,19 @@
         :bordered="border"
         :pagination="pagination"
         :filter-exclusion="false"
+        :action-column="{
+          width: 150,
+          title: '操作',
+          dataIndex: 'action',
+        }"
         @columns-change="handleColumnChange"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'name'">
-            <a> {{ record.name }} 244 </a>
+            <a> {{ record.name }} </a>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <TableAction :actions="getTableActionsButton(record)" />
+            <TableAction :actions="getTableActionsButton()" />
           </template>
         </template>
         <!-- <template #toolbar>
@@ -60,11 +65,11 @@ export default defineComponent({
       canResize.value = !canResize.value
     }
     const tableApi = async () => {
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          return resolve(true)
-        }, 3000)
-      )
+      // await new Promise((resolve) =>
+      //   setTimeout(() => {
+      //     return resolve(true)
+      //   }, 3000)
+      // )
       return Promise.resolve({ data: getBasicData() })
     }
     function toggleStriped() {
@@ -163,7 +168,7 @@ export default defineComponent({
     const state = reactive({
       filterForms,
     })
-    const getTableActionsButton = (record) => {
+    const getTableActionsButton = () => {
       return [
         // {
         //   label: '查看',

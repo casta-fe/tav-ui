@@ -277,7 +277,8 @@ export function getBasicData() {
     }
     return arr
   })()
-  return []
+  return data
+  // return []
 }
 
 export function getTreeTableData() {

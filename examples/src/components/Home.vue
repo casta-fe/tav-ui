@@ -11,32 +11,32 @@ import { defineComponent, onMounted, reactive } from 'vue'
 // import TreePage from './Tree/index.vue'
 // import ModalPage from './Modal/index.vue'
 // import FollewPage from './Follow/index.vue'
-// import BasicTablePage from './table/Basic.vue'
-import { TaButton } from '@tav-ui/components/button'
-import { TaModal, useModal } from '@tav-ui/components/modal'
+import { useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
-import FormPage from './Form/index.vue'
-import { TaUpload, taUploadProvideData } from './TaUpload'
-import SearchableApiSelect from './SearchableApiSelect.vue'
-import TablePro from './TablePro/testTree'
+import BasicTablePage from './table/Basic.vue'
+// import { TaButton } from '@tav-ui/components/button'
 
+// import FormPage from './Form/index.vue'
+import { taUploadProvideData } from './TaUpload'
+// import SearchableApiSelect from './SearchableApiSelect.vue'
+// import TablePro from './TablePro/testTree'
 export default defineComponent({
   name: 'Home',
   components: {
     // TaConfigProvider,
-    TablePro,
-    TaModal,
-    TaButton,
-    TaUpload,
-    SearchableApiSelect,
+    // TablePro,
+    // TaModal,
+    // TaButton,
+    // TaUpload,
+    // SearchableApiSelect,
     // TimeLineListPage,
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    FormPage,
+    // FormPage,
     // TreePage,
     // ModalPage,
-    // BasicTablePage,
+    BasicTablePage,
     // FollewPage,
   },
   setup() {
@@ -89,9 +89,11 @@ export default defineComponent({
 </script>
 
 <template>
+  <h1>首页</h1>
+  <a href="/#/">首页</a><a href="/#/test">测试</a>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
-  <!-- <BasicTablePage /> -->
-  <FormPage />
+  <BasicTablePage />
+  <!-- <FormPage />
   <TaUpload />
   <SearchableApiSelect />
   <TablePro />
@@ -109,7 +111,7 @@ export default defineComponent({
     </template>
   </TaModal>
   <TaButton type="default" @click="OpenModal">测试modalTable</TaButton>
-  <TablePro />
+  <TablePro /> -->
 
   <!-- <TaButton type="primary" pre-icon="ant-design:plus-square-filled" pre-icon-color="#276dff">
       aaa
