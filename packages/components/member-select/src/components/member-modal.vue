@@ -208,7 +208,11 @@ export default defineComponent({
         const upperChart = chart.toUpperCase()
         // 如果列表中有了就往他的list中插入
         Reflect.has(v, 'disabled') ||
-          (v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0)
+          (v.disabled = propsData.value.useDisabledUser
+            ? false
+            : propsData.value.ignoreFrozenUser
+            ? v.status === 0
+            : false)
         const item = list.find((v) => v.key === upperChart)
         if (item) {
           item.list.push(v)
@@ -251,7 +255,11 @@ export default defineComponent({
           .map((v: any) => {
             v.isLeaf = true
             // 忽略列表中的用户需要禁止选中
-            v.disabled = propsData.value.ignoreUser.includes(v.id) || v.status === 0
+            v.disabled = propsData.value.useDisabledUser
+              ? false
+              : propsData.value.ignoreFrozenUser
+              ? v.status === 0
+              : false
             return v
           })
         treeNode.dataRef.children = deWeightThree([...oldData, ...children])

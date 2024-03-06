@@ -133,6 +133,10 @@ export const memberSelectProps = {
     type: Function,
     default: () => document.body,
   },
+  useDisabledUser: {
+    type: Boolean,
+    default: false,
+  },
   size: {
     type: String,
   },

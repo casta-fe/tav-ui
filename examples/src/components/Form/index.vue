@@ -152,22 +152,19 @@ const schemas = ref([
   //     // }
   //   },
   // },
-  // {
-  //   field: 'field0',
-  //   component: 'MemberSelect',
-  //   label: '字段1',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   componentProps: {
-  //     multiple: true,
-  //     onChange(ids, list) {
-  //       console.log(ids, list)
-  //     },
-  //     options: allUserList,
-  //     placeholder: '自定义placeholder',
-  //   },
-  // },
+  {
+    field: 'field0',
+    component: 'MemberSelect',
+    label: '人员选择',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      multiple: true,
+      options: allUserList,
+      placeholder: '自定义placeholder',
+    },
+  },
   {
     field: 'field1',
     component: 'InputNumber',

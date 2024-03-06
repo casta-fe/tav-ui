@@ -201,7 +201,11 @@ export default defineComponent({
           // 非ignoreUser的用户才能选择
           const obj = { ...v }
           if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
-            obj.disabled = props.ignoreFrozenUser ? obj.status === 0 : false
+            obj.disabled = props.useDisabledUser
+              ? false
+              : props.ignoreFrozenUser
+              ? obj.status === 0
+              : false
           }
           return obj
         })
