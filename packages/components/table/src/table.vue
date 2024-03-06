@@ -482,9 +482,11 @@ export default defineComponent({
       }
     )
     onMountedOrActivated(() => {
+      console.log('monted')
       fnInit()
     })
     onUnmountedOrOnDeactivated(() => {
+      console.log('unmonted')
       cacheActionWidths.value = {}
       columnsForAction.value = []
       maxWidthForAction.value = 0

@@ -81,7 +81,6 @@ export function useTableScroll(
     // debugger;
     const tableEl: Element = table.$el
     if (!tableEl) return
-
     bodyEl = tableEl.querySelector('.ant-table-body')
     console.log(bodyEl)
     if (!bodyEl) return
@@ -90,21 +89,17 @@ export function useTableScroll(
     }
     const hasScrollBarY = bodyEl.scrollHeight > bodyEl.clientHeight
     const hasScrollBarX = bodyEl.scrollWidth > bodyEl.clientWidth
-
     if (hasScrollBarY) {
       tableEl.classList.contains('hide-scrollbar-y') && tableEl.classList.remove('hide-scrollbar-y')
     } else {
       !tableEl.classList.contains('hide-scrollbar-y') && tableEl.classList.add('hide-scrollbar-y')
     }
-
     if (hasScrollBarX) {
       tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.remove('hide-scrollbar-x')
     } else {
       !tableEl.classList.contains('hide-scrollbar-x') && tableEl.classList.add('hide-scrollbar-x')
     }
-
-    // bodyEl!.style.height = "100%";
-
+    bodyEl!.style.height = '100%'
     // if (!unref(getCanResize) || tableData.length === 0) return;
     if (isCanResizeParent) {
       // console.log(isCanResizeParent, 'isCanResizeParent111111')
@@ -117,13 +112,10 @@ export function useTableScroll(
     }
     await nextTick()
     //Add a delay to get the correct bottomIncludeBody paginationHeight footerHeight headerHeight
-
     const headEl = tableEl.querySelector('.ant-table-thead')
     if (!headEl) return
-
     // Table height from bottom
     // hack:底部padding + table底部padding
-
     // Pager height
     let paginationHeight = 32 // 默认高度？
     if (!isBoolean(pagination)) {
@@ -132,7 +124,6 @@ export function useTableScroll(
     } else {
       paginationHeight = 0
     }
-
     let footerHeight = 0
     if (!isBoolean(pagination)) {
       if (!footerEl) {
@@ -142,20 +133,16 @@ export function useTableScroll(
         footerHeight += offsetHeight || 0
       }
     }
-
     let headerHeight = 0
     if (headEl) {
       headerHeight = (headEl as HTMLElement).offsetHeight
     }
-
     let bottomIncludeBody = 0
     let height = 0
     const tablePadding = tablePaddingDistance
-
     if (unref(wrapRef) && isCanResizeParent) {
       const formMargin = formRefMarginTopDistance
       const TableMargin = 0
-
       const wrapHeight = unref(wrapRef)?.offsetHeight ?? 0
       let formHeight = unref(formRef)?.offsetHeight ?? 0
       const actionHeight = unref(actionRef)?.offsetHeight ?? 0
@@ -189,7 +176,6 @@ export function useTableScroll(
         footerHeight -
         headerHeight
     }
-
     height = (height > maxHeight! ? (maxHeight as number) : height) ?? height
     setHeight(height)
     // debugger

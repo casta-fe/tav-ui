@@ -3,7 +3,7 @@
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 // import { TaLoadingCreate } from '../../dist/index.esm.js'
 // import TaConfigProvider from '@tav-ui/components/config-provider'
-import { defineComponent, onMounted, reactive } from 'vue'
+import { defineComponent, onMounted, reactive, ref } from 'vue'
 // import TimeLineListPage from './timeLineList/index.vue'
 // import TimePage from './time/index.vue'
 // import InputNumberRangePage from './InputNumberRange/index.vue'
@@ -77,9 +77,10 @@ export default defineComponent({
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
     })
-
+    const test = ref('home')
     return {
       state,
+      test,
       ModalRegister,
       OpenModal,
       CloseModal,
@@ -89,9 +90,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <h1>首页</h1>
-  <a href="/#/">首页</a><a href="/#/test">测试</a>
+  <div><a href="/#/">首页</a><a href="/#/test">测试</a></div>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
+  <input v-model="test" style="border: 1px solid #000" />
   <BasicTablePage />
   <!-- <FormPage />
   <TaUpload />

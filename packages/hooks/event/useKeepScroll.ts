@@ -1,4 +1,4 @@
-import { onActivated, onBeforeUnmount } from 'vue'
+import { onBeforeUnmount } from 'vue'
 
 export type KeepScrollType = Partial<{
   scrollEl: HTMLElement
@@ -27,10 +27,11 @@ export function useKeepScroll(keepScrollOpt: KeepScrollType) {
   function onScroll() {
     scrollTop = getScrollTop()
   }
-
-  onActivated(() => {
-    setScrollTop(scrollTop)
-  })
+  setScrollTop(scrollTop)
+  // 暂时注释升级后会无限循环
+  // onActivated(() => {
+  //   setScrollTop(scrollTop)
+  // })
 
   if (keepScrollOpt.scrollEl) {
     keepScrollOpt.scrollEl.addEventListener('scroll', onScroll)

@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper">
-    <h1>测试页面</h1>
-    <a href="/#/">首页</a><a href="/#/test">测试</a>
+    <div><a href="/#/">首页</a><a href="/#/test">测试</a></div>
+    <input v-model="test" style="border: 1px solid #000" />
     <TaForm :schemas="state.schemas" :label-width="140" :editable="true" @submit="handleSubmit" />
     <BasicTablePage />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import { TaForm } from '@tav-ui/components'
 import BasicTablePage from './table/Basic.vue'
 export default defineComponent({
@@ -50,7 +50,8 @@ export default defineComponent({
     const handleSubmit = () => {
       console.log(1)
     }
-    return { state, handleSubmit }
+    const test = ref('test')
+    return { state, handleSubmit, test }
   },
 })
 </script>
