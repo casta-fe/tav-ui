@@ -63,7 +63,7 @@ importers:
       vue-i18n: ^9.1.9
       vue-tsc: 0.29.3
       vue-types: 4.1.1
-      vxe-table: 4.2.6
+      vxe-table: 4.5.21
       xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
@@ -92,7 +92,7 @@ importers:
       sortablejs: 1.15.0
       vue-i18n: 9.5.0_vue@3.2.21
       vue-types: 4.1.1_vue@3.2.21
-      vxe-table: 4.2.6_vue@3.2.21+xe-utils@3.5.4
+      vxe-table: 4.5.21_vue@3.2.21
       xe-utils: 3.5.4
     devDependencies:
       '@commitlint/cli': 16.3.0
@@ -287,7 +287,7 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.2.6
+      vxe-table: 4.5.21
       xe-utils: 3.5.4
     dependencies:
       '@ant-design/colors': 6.0.0
@@ -306,7 +306,7 @@ importers:
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
       vue-types: 4.1.1
-      vxe-table: 4.2.6_xe-utils@3.5.4
+      vxe-table: 4.5.21
       xe-utils: 3.5.4
 
   packages/theme-chalk:
@@ -2982,6 +2982,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
     dev: false
@@ -3983,6 +3984,10 @@ packages:
       entities: 2.2.0
     dev: true
 
+  /dom-zindex/1.0.1:
+    resolution: {integrity: sha512-M/MERVDZ8hguvjl6MAlLWSLYLS7PzEyXaTb5gEeJ+SF+e9iUC0sdvlzqe91MMDHBoy+nqw7wKcUOrDSyvMCrRg==}
+    dev: false
+
   /domelementtype/2.3.0:
     resolution: {integrity: sha512-OLETBj6w0OsagBwdXnPdN0cnMfF9opN69co+7ZrbfPGrdpPVNBUj02spi6B1N7wChLQiPn4CSH/zJvXw56gmHw==}
     dev: true
@@ -4843,6 +4848,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -6810,6 +6816,7 @@ packages:
 
   /nan/2.16.0:
     resolution: {integrity: sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -9519,23 +9526,23 @@ packages:
       '@vue/shared': 3.2.37
     dev: true
 
-  /vxe-table/4.2.6_vue@3.2.21+xe-utils@3.5.4:
-    resolution: {integrity: sha512-hxjwJIanUn9KWU0+twHQ12YHZhjrWLTFwJos8m2RSrA9YV3UfHg15dmQYSsvDE9/x5NDDCoDOxpQi/dhp7aZvQ==}
+  /vxe-table/4.5.21:
+    resolution: {integrity: sha512-yp+BNGCy61lk7ayf0LI3UNcR2fRmipGSiIAh3lNOIdyW1nAobf/GwIx3rXghjzFb0a6NNJeYxv2NM+gwXxtmww==}
     peerDependencies:
-      vue: ^3.2.2
-      xe-utils: ^3.5.0
+      vue: ^3.2.28
     dependencies:
-      vue: 3.2.21
-      xe-utils: 3.5.4
+      dom-zindex: 1.0.1
+      xe-utils: 3.5.22
     dev: false
 
-  /vxe-table/4.2.6_xe-utils@3.5.4:
-    resolution: {integrity: sha512-hxjwJIanUn9KWU0+twHQ12YHZhjrWLTFwJos8m2RSrA9YV3UfHg15dmQYSsvDE9/x5NDDCoDOxpQi/dhp7aZvQ==}
+  /vxe-table/4.5.21_vue@3.2.21:
+    resolution: {integrity: sha512-yp+BNGCy61lk7ayf0LI3UNcR2fRmipGSiIAh3lNOIdyW1nAobf/GwIx3rXghjzFb0a6NNJeYxv2NM+gwXxtmww==}
     peerDependencies:
-      vue: ^3.2.2
-      xe-utils: ^3.5.0
+      vue: ^3.2.28
     dependencies:
-      xe-utils: 3.5.4
+      dom-zindex: 1.0.1
+      vue: 3.2.21
+      xe-utils: 3.5.22
     dev: false
 
   /warning/4.0.3:
@@ -9670,6 +9677,10 @@ packages:
     dependencies:
       js-yaml: 4.1.0
       write-file-atomic: 3.0.3
+
+  /xe-utils/3.5.22:
+    resolution: {integrity: sha512-rhWuM2fVXsdrqUtyjRAsYTDLvVzYSSZqg/uCRyDqcw96AweB1AWsnTJZyl9g68ejnP0xhxfSoNBSrIcOeX1yxA==}
+    dev: false
 
   /xe-utils/3.5.4:
     resolution: {integrity: sha512-oH7VOgvHv34pn198dhKPVKnuEHV22Q06YpCTVnAS3JuutylmZj/rtJGvn0BxxWQ37w2LgCknoebLA4uIGXwFtw==}
