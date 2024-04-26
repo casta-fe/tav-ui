@@ -41,9 +41,10 @@ export default defineComponent({
           state.isopen = false
           emit('change', formatToDateTime(v, props.valueFormat))
         }}
-        onChange={() => {
-          state.time = null
-          emit('change', undefined)
+        onChange={(v) => {
+          state.time = v
+          state.isopen = false
+          emit('change', formatToDateTime(v, props.valueFormat))
         }}
         getPopupContainer={props.getPopupContainer}
       />

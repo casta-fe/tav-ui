@@ -224,9 +224,7 @@ export default defineComponent({
         // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
       } else {
-        userListApi({
-          ...props.userListParams,
-        }).then((res) => {
+        userListApi(props.userListParams).then((res) => {
           state.userList = getTrueUserList(res.data)
         })
       }

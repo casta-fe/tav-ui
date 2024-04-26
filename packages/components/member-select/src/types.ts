@@ -7,15 +7,21 @@ export interface Options {
   sex: number
   disabled: boolean
 }
+export interface UserOrgs {
+  organizationId: number
+  organizationName: string
+  userId: number
+  userName: string
+  type: string
+}
 export interface UserItem {
   id: string
   name: string
-  organizationId: string
-  organizationName: string
   phone: string
   sex: number
   status: number
   disabled: boolean
+  userOrgs: UserOrgs[]
 }
 export type TypeItems = 'user' | 'org'
 export interface LetterItemList {

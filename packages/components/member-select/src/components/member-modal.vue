@@ -133,7 +133,7 @@ import { isEqual, sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import FirstLetter from './first-letter.vue'
-import type { letterItem } from '../types'
+import type { UserItem, letterItem } from '../types'
 
 const { createConfirm } = useMessage()
 export default defineComponent({
@@ -161,11 +161,7 @@ export default defineComponent({
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
     const state = reactive({
-      replaceFields: {
-        title: 'name',
-        value: 'id',
-        key: 'id',
-      },
+      replaceFields: { children: 'children', label: 'title', key: 'key', value: 'value' },
       orgExpandedKeys: [] as any[],
       autoExpandParent: true,
       tabActive: '1', //tab切换默认栏
@@ -251,7 +247,9 @@ export default defineComponent({
           console.log('没数据')
         }
         const children = userList.value
-          .filter((v: any) => v.organizationId == treeNode.eventKey)
+          .filter((user: UserItem) => {
+            return user.userOrgs.map((v) => v.organizationId).includes(treeNode.eventKey)
+          })
           .map((v: any) => {
             v.isLeaf = true
             // 忽略列表中的用户需要禁止选中
