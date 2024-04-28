@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import ExcelJS from 'exceljs'
 import XEUtils from 'xe-utils'
+
+import { tavI18n } from '@tav-ui/locales'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { ACTION_COLUMNS, SELECT_COMPONENTS } from './const'
 import type {
@@ -272,7 +274,7 @@ function setSeq(sheet, useStyle, fileDescription, headerList, contentList, foote
     `${mergeColRange[0]}${fileDescription ? headerDeep + 1 : headerDeep}`
   )
   const firstCell = sheet.getCell(`${mergeColRange[0]}${fileDescription ? 1 + 1 : 1}`)
-  firstCell.value = '序号'
+  firstCell.value = tavI18n('Tav.tablePro.columns.1')
 
   setExcelCellStyle(firstCell, defaultDescriptionAlign || allAlign)
   if (useStyle) {

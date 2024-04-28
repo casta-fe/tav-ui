@@ -2,6 +2,7 @@ import { computed, defineComponent, ref, watch } from 'vue'
 import { Spin } from 'ant-design-vue'
 // import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
+import { tavI18n } from '@tav-ui/locales'
 import { Cell } from '../../../table-pro/src/components/cell'
 import { getActionColumnMaxWidth } from '../hooks'
 import { UpdateTypeForm } from '../components/UpdateTypeForm'
@@ -98,18 +99,20 @@ export const PreviewTable = defineComponent({
       const labels: string[] = []
 
       // #region 配置显示的操作列
-      labels.push('查看')
+      labels.push(tavI18n('Tav.file.actions.1'))
       if (props.showTableAction.download !== false) {
-        if (props.showTableAction.downloadWatermark === false) labels.push('下载')
-        else labels.push('源文..')
+        if (props.showTableAction.downloadWatermark === false)
+          labels.push(tavI18n('Tav.file.actions.2'))
+        else labels.push(tavI18n('Tav.file.actions.31'))
       }
-      if (props.showTableAction.downloadWatermark !== false) labels.push('水印..')
-      if (props.showTableAction.delete !== false) labels.push('删除')
+      if (props.showTableAction.downloadWatermark !== false)
+        labels.push(tavI18n('Tav.file.actions.41'))
+      if (props.showTableAction.delete !== false) labels.push(tavI18n('Tav.file.actions.6'))
 
       // #endregion
       const columns: TableProColumn[] = [
         {
-          title: props.coverColumnTitle?.fullName ?? '文件名称',
+          title: props.coverColumnTitle?.fullName ?? tavI18n('Tav.file.columns.1'),
           field: 'fullName',
           fixed: 'left',
           visible: !props?.hideColumnFields!.includes('fullName'),
@@ -212,7 +215,7 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          title: props.coverColumnTitle?.typeName ?? '文件类型',
+          title: props.coverColumnTitle?.typeName ?? tavI18n('Tav.file.columns.2'),
           field: 'typeName',
           visible: !props?.hideColumnFields!.includes('typeName'),
           minWidth: 100,
@@ -272,18 +275,18 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          title: props.coverColumnTitle?.fileSize ?? '文件大小',
+          title: props.coverColumnTitle?.fileSize ?? tavI18n('Tav.file.columns.3'),
           field: 'fileSize',
           visible: !props?.hideColumnFields!.includes('fileSize'),
           minWidth: 100,
         },
         {
-          title: props.coverColumnTitle?.createByName ?? '上传人',
+          title: props.coverColumnTitle?.createByName ?? tavI18n('Tav.file.columns.5'),
           field: 'createByName',
           visible: !props?.hideColumnFields!.includes('createByName'),
         },
         {
-          title: props.coverColumnTitle?.version ?? '版本',
+          title: props.coverColumnTitle?.version ?? tavI18n('Tav.file.columns.4'),
           field: 'version',
           visible: !props?.hideColumnFields!.includes('version') && hasBranch.value,
           minWidth: 100,
@@ -329,7 +332,7 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          title: props.coverColumnTitle?.createTime ?? '更新时间',
+          title: props.coverColumnTitle?.createTime ?? tavI18n('Tav.file.columns.8'),
           field: 'createTime',
           minWidth: 150,
           visible: !props?.hideColumnFields!.includes('createTime'),
@@ -338,7 +341,7 @@ export const PreviewTable = defineComponent({
         {
           width: getActionColumnMaxWidth(labels),
           fixed: 'right',
-          title: props.coverColumnTitle?.action ?? '操作',
+          title: props.coverColumnTitle?.action ?? tavI18n('Tav.common.actions'),
           field: 'action',
           visible: !props?.hideColumnFields!.includes('action'),
           align: 'center',
@@ -376,7 +379,7 @@ export const PreviewTable = defineComponent({
     const getActions = (record) => {
       const actions: TableProActionItem[] = [
         {
-          label: '查看',
+          label: tavI18n('Tav.file.actions.1'),
           permission: props.tableActionPermission.preview,
           enabled: record.hyperlink !== 1,
           onClick() {
@@ -389,7 +392,7 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          label: '更新',
+          label: tavI18n('Tav.file.actions.5'),
           enabled: !!(record.hyperlink === 1
             ? false
             : props.readonly
@@ -404,7 +407,7 @@ export const PreviewTable = defineComponent({
       ]
       actions.push(
         {
-          label: '下载水印文件',
+          label: tavI18n('Tav.file.actions.4'),
           permission: props.tableActionPermission.download,
           enabled: !!(record.hyperlink === 1
             ? false
@@ -429,12 +432,12 @@ export const PreviewTable = defineComponent({
           },
         },
         {
-          label: '删除',
+          label: tavI18n('Tav.file.actions.6'),
           permission: props.tableActionPermission.delete,
           enabled: props.showTableAction.delete ?? !props.readonly,
           // @ts-ignore
           popConfirm: {
-            title: '是否确认删除?',
+            title: tavI18n('Tav.file.message.9'),
             confirm: () => {
               emit('delete', record)
             },

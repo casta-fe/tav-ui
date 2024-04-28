@@ -1,8 +1,12 @@
 <template>
   <div class="ta-cascade-pro-search-result">
     <div class="ta-cascade-pro-search-result-title">
-      <div class="ta-cascade-pro-search-result-tip">已选（{{ options.length }}）</div>
-      <Button type="link" size="small" @click="handleClearAll">清空</Button>
+      <div class="ta-cascade-pro-search-result-tip">
+        {{ tavI18n('Tav.common.selectedText') }}{{ options.length }}）
+      </div>
+      <Button type="link" size="small" @click="handleClearAll">
+        {{ tavI18n('Tav.common.clearText') }}
+      </Button>
     </div>
     <div class="ta-cascade-pro-search-result-list">
       <Tag
@@ -22,11 +26,11 @@ import { defineComponent, ref, unref, watch } from 'vue'
 import { Tag } from 'ant-design-vue'
 import Button from '@tav-ui/components/button'
 // import { cascadeProSelectResultProps } from '../types'
+import { tavI18n } from '@tav-ui/locales'
 import { useCascadeProContext } from '../hooks'
 // import { findChilds, findParents } from '../utils'
 import type { CascadeProOption } from '../types'
 import type { Ref } from 'vue'
-
 export interface CascadeProSelectResultInstance {
   handleClear: (option: CascadeProOption) => void
   options: Ref<CascadeProOption[]>
@@ -200,6 +204,7 @@ export default defineComponent({
     })
 
     return {
+      tavI18n,
       visible,
       options,
       handleClear,

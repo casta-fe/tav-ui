@@ -3,7 +3,7 @@ import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties, ComputedRef, Ref } from 'vue'
 import type { VxeGridPropTypes } from 'vxe-table'
-import type { TableProColumn, TableProColumnInfo } from './types'
+import type { TableProColumn } from './types'
 
 export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
   controller?: 'backend' | 'frontend'
@@ -20,6 +20,7 @@ export interface TableProFilterFormConfig extends TableProFilterForm {
 
 interface CustomAction {
   permission?: string
+  permissionCode?: number
   handleBeforeAction?: (e: Event) => void
   handleAction?: (e: Event) => void
   handleAfterAction?: (e: Event) => void
@@ -32,6 +33,7 @@ export interface TableProCustomActionConfig {
   import?: CustomAction | boolean
   export?:
     | (CustomAction & {
+        fileName?: string
         /** 这里是对数据中全量字段进行配置，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
         columns: {
           field: string
@@ -132,10 +134,12 @@ export interface TableProActionItem extends ButtonProps {
   popConfirm?: TableProPopConfirm
   disabled?: boolean
   divider?: boolean
+  limit?: number
   // 业务控制是否显示
   enabled?: boolean | ((action: TableProActionItem) => boolean)
   tooltip?: string | TooltipProps
   permission?: string
+  permissionCode?: number //业务的权限，暂时用于inovation
 }
 
 export interface TreeDataItem {
@@ -154,11 +158,13 @@ export type CustomActionSettingColumnOption = TableProColumn & {
 }
 export interface CustomActionSettingColumn {
   coverColumnsSetting: (columns: CustomActionSettingColumnOption[], checkedList: string[]) => void
+  handleColumnClick: () => void
 }
 
 export interface CustomActionSetting {
   refreshRef: null
   columnRef: Ref<CustomActionSettingColumn>
+  showColumnsModa: () => void
 }
 
 export interface CustomActionRef {
@@ -166,6 +172,8 @@ export interface CustomActionRef {
   deleteRef: null
   importRef: null
   exportRef: null
+  showExportModal: () => void
+  showColumnsModa: () => void
   settingsRef: Ref<CustomActionSetting>
   actionRef: Ref<ComputedRef>
 }

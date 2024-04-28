@@ -1,13 +1,13 @@
 import { type ComputedRef, defineComponent, nextTick, onBeforeUnmount, ref, unref } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
 // import { debounce } from 'lodash-es'
+import { tavI18n } from '@tav-ui/locales'
 import { cascadeProPannelProps } from '../types'
 import { useCascadeProContext, useFieldRequest, useLoading } from '../hooks'
 // import { DebounceDely } from '../constants'
 import { DEFAULT_CASCADE_PRO_SELECT_RECORD } from '../utils'
 import type { DebouncedFunc } from 'lodash-es'
 import type { CascadeProOption } from '../types'
-
 export interface CascadeProPannelInstance {
   handlePannelFieldScrollToLetter: (letter: string) => Promise<void>
   handleFieldClear: (options: CascadeProOption[], idx?: number) => Promise<void>
@@ -75,7 +75,10 @@ export default defineComponent({
     const createNotFound = () => {
       return !(unref(result) && unref(result).length) || unref(error) ? (
         <div class="ta-cascade-pro-pannel--not-found">
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={unref(error) || '暂无数据'} />
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={unref(error) || tavI18n('Tav.common.emptyText')}
+          />
         </div>
       ) : null
     }
@@ -202,7 +205,7 @@ export default defineComponent({
                   data-is-selected={isAllSelected(options, idx)}
                   onClick={() => handleFieldClear(options, idx)}
                 >
-                  全部
+                  {tavI18n('Tav.common.allText')}
                 </div>
                 {unref(options) && unref(options).length
                   ? unref(options).map((option) => (

@@ -4,6 +4,7 @@ import { Button } from 'ant-design-vue'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { isUnDef } from '@tav-ui/utils'
 import { buttonProps } from './types'
 import type { Ref } from 'vue'
 
@@ -30,7 +31,9 @@ export default defineComponent({
 
     const IfShow = computed(() => (code) => {
       const permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-      return code ? unref(permissions)[code]?.ifShow && props.ifShow : props.ifShow
+      const PermissionFlag = isUnDef(code) ? true : unref(permissions)[code]?.ifShow
+      const PermisionCodeFlag = isUnDef(props.permissionCode) ? true : props.permissionCode === 1
+      return PermissionFlag && PermisionCodeFlag && props.ifShow
     })
     return { getButtonClass, getBindValue, IfShow }
   },

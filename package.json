@@ -42,6 +42,7 @@
     "@tav-ui/directives": "workspace:*",
     "@tav-ui/enums": "workspace:*",
     "@tav-ui/hooks": "workspace:*",
+    "@tav-ui/locales": "workspace:*",
     "@tav-ui/settings": "workspace:*",
     "@tav-ui/theme-chalk": "workspace:*",
     "@tav-ui/utils": "workspace:*",
@@ -55,8 +56,9 @@
     "qrcode": "1.4.4",
     "resize-observer-polyfill": "1.5.1",
     "sortablejs": "1.15.0",
+    "vue-i18n": "^9.1.9",
     "vue-types": "4.1.1",
-    "vxe-table": "4.2.6",
+    "vxe-table": "4.5.21",
     "xe-utils": "3.5.4"
   },
   "devDependencies": {

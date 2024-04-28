@@ -1,9 +1,9 @@
 import { defineComponent, reactive } from 'vue'
 import { DatePicker } from 'ant-design-vue'
 import { formatToDateTime } from '@tav-ui/utils/dateUtil'
+import { tavI18n } from '@tav-ui/locales'
 import type { PropType } from 'vue'
 // import { getPopupContainer } from "/@/utils";
-
 type Format = 'YYYY' | 'YYYY-01-01' | 'YYYY-01-01 00:00:00' | 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm:ss'
 
 export default defineComponent({
@@ -30,7 +30,7 @@ export default defineComponent({
         value={state.time}
         open={state.isopen}
         mode="year"
-        placeholder="请选择年份"
+        placeholder={tavI18n('Tav.form.message.2')}
         format="YYYY"
         valueFormat={props.valueFormat}
         onOpenChange={(status) => {

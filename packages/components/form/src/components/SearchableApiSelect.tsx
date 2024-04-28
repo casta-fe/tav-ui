@@ -13,6 +13,7 @@ import { Dropdown, Empty, Input, Menu, MenuItem, Spin } from 'ant-design-vue'
 import { useThrottleFn } from '@vueuse/core'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { getPopupContainer } from '@tav-ui/utils/basic'
+import { tavI18n } from '@tav-ui/locales'
 import type { PropType } from 'vue'
 
 const { Search } = Input
@@ -146,7 +147,7 @@ export default defineComponent({
      */
     const fetchCurrentKeyword = async (keyword = state.value) => {
       if (keyword.length < 2) {
-        createMessage.warn('请至少输入两个字进行搜索')
+        createMessage.warn(tavI18n('Tav.form.message.1'))
         return Promise.reject()
       }
 
@@ -395,7 +396,7 @@ export default defineComponent({
                                   })
                               }}
                             >
-                              <a> 加载更多</a>
+                              <a> {tavI18n('Tav.common.loadMoreText')}</a>
                             </div>
                           )}
                         </MenuItem>

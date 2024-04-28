@@ -1,7 +1,7 @@
 import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
-import { TaTablePro, getTableProId } from '@tav-ui/components/table-pro'
-import { API__POE_CUSTOM_ALL } from '@tav-ui/components/table-pro/src/data'
+import { TaTablePro, TaTableProAction, getTableProId } from '@tav-ui/components/table-pro'
+import { API__POE_CUSTOM_ALL, MockData } from '@tav-ui/components/table-pro/src/data'
 import Button from '@tav-ui/components/button'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import { columns2, filterForm2, footerMethod2 } from './data'
@@ -20,7 +20,65 @@ export default defineComponent({
     id.value = getTableProId(router, 'play')!
     const state = reactive({
       filterFormConfig: {},
-      columns: [] as any[],
+      columns: [
+        {
+          title: '第一列111',
+          field: 'name',
+
+          fixed: 'left',
+        },
+        {
+          title: '第二列',
+          field: 'role',
+        },
+        {
+          field: 'actions',
+          title: '操作',
+          fixed: 'right',
+          // visible: false,
+          slots: {
+            default: () => {
+              return [
+                <TaTableProAction
+                  actions={[
+                    {
+                      label: '编辑这个长文字总共十几个字',
+                      limit: 6,
+                      onClick: () => {
+                        console.log('edit')
+                      },
+                    },
+                    {
+                      label: '测试啊啊啊啊测试啊啊啊啊测试啊啊啊啊',
+                      limit: 9,
+                      disabled: true,
+                      onClick: () => {
+                        console.log('test 1')
+                      },
+                    },
+                    {
+                      label: '测试巴巴爸爸吧不不不不不',
+                      disabled: true,
+                      onClick: () => {
+                        console.log('test 2')
+                      },
+                    },
+                    {
+                      label: '删除',
+                      popConfirm: {
+                        title: '删除后将无法恢复，确定删除吗？',
+                        confirm: () => {
+                          console.log('del')
+                        },
+                      },
+                    },
+                  ]}
+                />,
+              ]
+            },
+          },
+        },
+      ] as any[],
     })
     const handleRoutePush = (e: Event, opts: any) => {
       e.stopPropagation()
@@ -157,7 +215,10 @@ export default defineComponent({
     //       limit: 50 }
     //   })
     // })
-
+    const testCustomHandle = () => {
+      tableRef.value?.instance?.showCloumnsModal()
+      // console.log(tableRef.value?.instance?.showExportModal())
+    }
     return () => {
       return (
         // <div style={{ height: unref(wrapperHeight), overflow: 'hidden' }}>
@@ -203,6 +264,7 @@ export default defineComponent({
             overflow: 'auto',
           }}
         >
+          <div onClick={testCustomHandle}>测试自定义事件</div>
           <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
             {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
             <TaTablePro
@@ -210,7 +272,7 @@ export default defineComponent({
               ref={tableRef}
               // pagerConfig={{ enabled: false }}
               rowConfig={{ keyField: 'id' }}
-              // data={MockData()}
+              data={MockData()}
               // columns={columns()}
               columns={state.columns}
               loading={loading.value}
@@ -219,7 +281,7 @@ export default defineComponent({
               // filterFormConfig={{ enabled: false }}
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
-              api={handleApi}
+              // api={handleApi}
               onCheckboxChange={handleCheckboxChange}
               onCheckboxAll={handleCheckboxAll}
               onPageChange={handlePageChange}

@@ -1,6 +1,7 @@
 // import { usePermission } from "/@/hooks/web/usePermission";
 import { computed, ref, toRaw, unref, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash-es'
+import { tavI18n } from '@tav-ui/locales'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
 import { formatNumber } from '@tav-ui/utils'
 import { isArray, isBoolean, isFunction, isMap, isString } from '@tav-ui/utils/is'
@@ -72,7 +73,7 @@ function handleIndexColumn(
   columns.unshift({
     flag: INDEX_COLUMN_FLAG,
     width: 50,
-    title: '序号',
+    title: tavI18n('Tav.tablePro.columns.1'),
     align: 'center',
     customRender: ({ index }) => {
       const getPagination = unref(getPaginationRef)

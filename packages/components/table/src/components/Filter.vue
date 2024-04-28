@@ -15,7 +15,7 @@
       @click="openPannelFormModal"
     >
       <div style="position: relative; display: inline-flex; margin: 0 8px">
-        更多筛选
+        {{ tavI18n('Tav.tablePro.filter.1') }}
         <Badge
           v-if="state.choosedNum > 0"
           :count="state.choosedNum"
@@ -24,7 +24,7 @@
       </div>
     </Button>
     <BasicModal
-      title="更多筛选"
+      :title="tavI18n('Tav.tablePro.filter.1')"
       :style="state.dialogStyle"
       :width="state.dialogStyle.width"
       :mask-style="{ background: 'rgba(0,0,0,0)' }"
@@ -34,8 +34,12 @@
     >
       <BasicForm ref="pannelFormRef" class="filter-pannel-form" @register="pannelFormRegister" />
       <template #footer>
-        <Button type="primary" @click="handlePannelFormSubmit">确定</Button>
-        <Button @click="handlePannelFormResetFields">重置</Button>
+        <Button type="primary" @click="handlePannelFormSubmit">
+          {{ tavI18n('Tav.common.okText') }}
+        </Button>
+        <Button @click="handlePannelFormResetFields">
+          {{ tavI18n('Tav.common.cancelText') }}
+        </Button>
       </template>
     </BasicModal>
   </div>
@@ -50,6 +54,7 @@ import Button from '@tav-ui/components/button'
 import BasicForm from '@tav-ui/components/form'
 import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicModal from '@tav-ui/components/modal'
+import { tavI18n } from '@tav-ui/locales'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import type { FilterForms, TableActionType } from '../types/table'
@@ -99,7 +104,6 @@ export default defineComponent({
       label: '',
       component: 'InputSearch',
       componentProps: {
-        placeholder: '请输入',
         allowClear: false,
         'enter-button': true,
         onSearch: useDebounceFn(inputFormSubmit, 300),
@@ -302,6 +306,7 @@ export default defineComponent({
 
     return {
       state,
+      tavI18n,
       tableFilterParams,
       inputFormRef,
       pannelFormRef,

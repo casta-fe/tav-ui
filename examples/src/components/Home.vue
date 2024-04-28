@@ -53,7 +53,6 @@ export default defineComponent({
     // console.log(components)
     const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
     const state = reactive({
-      permissions: {},
       components: {
         TaUpload: taUploadProvideData,
         TaMemberSelect: {
@@ -63,16 +62,6 @@ export default defineComponent({
         },
       },
     })
-    setTimeout(() => {
-      state.permissions = {
-        aa: {
-          ifShow: true,
-          apiUrl: 'xxx',
-        },
-      }
-      console.log(state)
-    }, 1000)
-
     onMounted(() => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
@@ -105,7 +94,7 @@ export default defineComponent({
     :destroy-on-close="true"
     @register="ModalRegister"
   >
-    <TablePro />
+    2333
     <template #footer>
       <TaButton type="primary">确定</TaButton>
       <TaButton type="default" @click="CloseModal">取消</TaButton>
@@ -132,6 +121,6 @@ export default defineComponent({
   <FileViewPage />
   <TreePage />
   <ModalPage />
-  <FormPage /> -->
+ -->
   <!-- </TaConfigProvider> -->
 </template>

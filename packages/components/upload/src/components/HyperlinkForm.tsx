@@ -1,5 +1,6 @@
 import { type Ref, defineComponent, unref } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
+import { tavI18n } from '@tav-ui/locales'
 import { ADDRESS_PATTERN } from './config'
 import type { PropType } from 'vue'
 
@@ -28,7 +29,7 @@ export const HyperlinkForm = defineComponent({
       schemas: [
         {
           field: 'name',
-          label: '文件名',
+          label: tavI18n('Tav.file.columns.1'),
           required: true,
           component: 'Input',
           colProps: { span: 10 },
@@ -38,7 +39,7 @@ export const HyperlinkForm = defineComponent({
         },
         {
           field: 'address',
-          label: '链接地址',
+          label: tavI18n('Tav.file.columns.9'),
           component: 'Input',
           colProps: { span: 10 },
           rules: [
@@ -47,7 +48,7 @@ export const HyperlinkForm = defineComponent({
             },
             {
               pattern: ADDRESS_PATTERN,
-              message: '请输入正确的链接',
+              message: tavI18n('Tav.file.message.7'),
             },
           ],
           componentProps: {
@@ -104,7 +105,7 @@ export const HyperlinkForm = defineComponent({
             >
               {/* <UploadOutlined /> */}
               <i class="ta-upload-btn-icon" />
-              上传链接
+              {tavI18n('Tav.file.upload.3')}
             </TaButton>
           ),
         }}

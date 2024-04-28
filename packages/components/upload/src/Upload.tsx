@@ -2,11 +2,11 @@ import { defineComponent, ref, toRefs, watch } from 'vue'
 import { ButtonGroup, Upload } from 'ant-design-vue'
 import { TaIcon } from '@tav-ui/components'
 import { TaButton } from '@tav-ui/components/button'
+import { tavI18n } from '@tav-ui/locales'
 import { HyperlinkForm, PreviewTable, TypeSelect } from './components'
 import { Handler } from './main'
 import type { PropType, Slot } from 'vue'
 import type { BasicPropsType, LabelValueOptions, Recordable } from './types'
-
 export default defineComponent({
   name: 'TaUpload',
   components: { PreviewTable },
@@ -46,8 +46,8 @@ export default defineComponent({
     },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
-      default:
-        '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.zip,.7z,.tar,.tar.gz,.tgz,.rar,.txt',
+      // .tar,.tar.gz,.tgz,.rar,zip,.7z,去掉压缩包
+      default: '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.txt',
     },
     // maxSize: {
     //   type: Number as PropType<BasicPropsType["maxSize"]>,
@@ -241,7 +241,7 @@ export default defineComponent({
           >
             {/* <i class="ta-upload-btn-icon" /> */}
             <TaIcon icon={props.uploadIcon} />
-            上传文件
+            {tavI18n('Tav.file.upload.1')}
           </TaButton>
         )
 
@@ -269,7 +269,9 @@ export default defineComponent({
             handler.currentTypeCodeIsHyperlink.value = !handler.currentTypeCodeIsHyperlink.value
           }}
         >
-          {handler.currentTypeCodeIsHyperlink.value ? '隐藏超链接上传' : '上传超链接'}
+          {handler.currentTypeCodeIsHyperlink.value
+            ? tavI18n('Tav.file.upload.2')
+            : tavI18n('Tav.file.upload.3')}
         </TaButton>
       )
 

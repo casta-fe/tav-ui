@@ -233,6 +233,12 @@ export default defineComponent({
             setLoading,
             resetFilterInput: () => filterRef.value.resetFilterInput(),
             resizeTableHeight: setHeight,
+            showExportModal: () => {
+              customActionRef.value?.showExportModal()
+            },
+            showColumnsModa: () => {
+              customActionRef.value?.showColumnsModa()
+            },
           },
           filterRef
         )

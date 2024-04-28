@@ -7,6 +7,7 @@
 import { computed, defineComponent, ref, unref, watchEffect } from 'vue'
 import { Button } from 'ant-design-vue'
 import { isFunction } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import { useCountdown } from './useCountdown'
 import { countDownButtonProps } from './types'
 
@@ -20,7 +21,9 @@ export default defineComponent({
     const { currentCount, isStart, start, reset } = useCountdown(props.count)
 
     const getButtonText = computed(() => {
-      return !unref(isStart) ? '获取验证码' : `${unref(currentCount)}秒后重新获取`
+      return !unref(isStart)
+        ? tavI18n('Tav.countButton.text1')
+        : tavI18n('Tav.countButton.text2', [unref(currentCount)])
     })
 
     watchEffect(() => {

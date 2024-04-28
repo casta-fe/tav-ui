@@ -25,8 +25,7 @@
     "jsonc"
   ],
   "i18n-ally.localesPaths": [
-    "src/i18n",
-    "packages/theme-chalk/src/i18n",
-    "packages/utils/src/i18n"
+    "examples/src/locales",
+    "examples/src/locales/lang"
   ]
 }

@@ -11,6 +11,8 @@ import {
 import allUsers from './allUserList'
 import { taUploadProvideData } from './components/TaUpload'
 import 'dayjs/locale/zh-cn'
+import { useI18n } from './hooks/useI18n'
+import { i18n } from './locales/setupI18n'
 dayjs.locale('zh-cn')
 export default defineComponent({
   components: {
@@ -18,13 +20,18 @@ export default defineComponent({
     ConfigProvider,
   },
   setup() {
+    const { t } = useI18n()
     const state = reactive({
       appId: '10002',
       userInfo: {
-        id: 274,
+        id: 1,
         name: 'admin',
         organizationId: 1,
         phone: '13999999999',
+      },
+      i18nFun: {
+        t,
+        i18n,
       },
       permissions: {},
       components: {
@@ -34,10 +41,11 @@ export default defineComponent({
             return { label: v.name, value: v.id, ...v }
           }),
         },
-        TaTablePro: {
-          columnsGetApi,
-          columnsSetApi,
-        },
+        // TaTablePro: {
+        //   actionLabelLimit: 4,
+        //   columnsGetApi,
+        //   columnsSetApi,
+        // },
       },
     })
     setTimeout(() => {
@@ -69,6 +77,7 @@ export default defineComponent({
     :user-info="state.userInfo"
     :permissions="state.permissions"
     :components="state.components"
+    :i18n-fun="state.i18nFun"
   >
     <ConfigProvider :locale="zhCN">
       <router-view v-slot="{ Component }">

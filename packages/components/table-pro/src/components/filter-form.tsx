@@ -8,13 +8,13 @@ import { useForm } from '@tav-ui/components/form/src/hooks/useForm'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
+import { tavI18n } from '@tav-ui/locales'
 import { CamelCaseToCls, ComponentFilterFormName } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import type { PropType, Ref, Slots } from 'vue'
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
 import type { TableProInstance } from '../types'
 import type { TableProFilterFormConfig } from '../typings'
-
 const ComponentPrefixCls = CamelCaseToCls(ComponentFilterFormName)
 
 const props = {
@@ -60,7 +60,6 @@ export default defineComponent({
       label: '',
       component: 'InputSearch',
       componentProps: {
-        placeholder: '请输入',
         allowClear: false,
         'enter-button': true,
         onSearch: useDebounceFn(inputFormSubmit, 300),
@@ -176,7 +175,7 @@ export default defineComponent({
       const actionDom: HTMLDivElement | null = customerActionRef.value
       if (dom && actionDom) {
         const { bottom = 0 } = actionDom.getBoundingClientRect()
-        const { top = 0, width = 0, left = 0 } = dom.getBoundingClientRect()
+        const { width = 0, left = 0 } = dom.getBoundingClientRect()
         state.dialogStyle.top = `${bottom + 16}px`
         state.dialogStyle.left = `${left}px`
         state.dialogStyle.width = `${width}px`
@@ -316,21 +315,22 @@ export default defineComponent({
               <Button
                 class={`${ComponentPrefixCls}-pannel-activator`}
                 type={'primary'}
-                preIcon={'ant-design:filter-outlined'}
+                preIcon={'material-symbols:manage-search'}
+                iconSize={16}
                 postIcon={
                   state.visible ? 'ant-design:caret-up-outlined' : 'ant-design:caret-down-outlined'
                 }
                 onClick={openPannelFormModal}
               >
-                <div style="position: relative; display: inline-flex; margin: 0 8px">
-                  更多筛选
+                <div style="position: relative; display: inline-flex; margin: 0 4px">
+                  {tavI18n('Tav.tablePro.filter.1')}
                   {state.choosedNum > 0 ? (
                     <Badge count={state.choosedNum} numberStyle={{ backgroundColor: '#52c41a' }} />
                   ) : null}
                 </div>
               </Button>
               <BasicModal
-                title={'更多筛选'}
+                title={tavI18n('Tav.tablePro.filter.1')}
                 wrapClassName={props.filterModalClassName}
                 style={state.dialogStyle}
                 width={state.dialogStyle.width}
@@ -349,10 +349,12 @@ export default defineComponent({
                   ),
                   footer: () => (
                     <>
-                      <Button type={'primary'} onClick={handlePannelFormSubmit}>
-                        确定
+                      <Button onClick={handlePannelFormResetFields}>
+                        {tavI18n('Tav.common.resetText')}
                       </Button>
-                      <Button onClick={handlePannelFormResetFields}>重置</Button>
+                      <Button type={'primary'} onClick={handlePannelFormSubmit}>
+                        {tavI18n('Tav.common.okText')}
+                      </Button>
                     </>
                   ),
                 }}

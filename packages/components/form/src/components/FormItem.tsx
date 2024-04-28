@@ -9,6 +9,7 @@ import clickOutside from '@tav-ui/directives/src/clickOutside'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { formatToDate, getMomentFormatString } from '@tav-ui/utils/dateUtil'
 import { getSlot } from '@tav-ui/utils/helper/tsxHelper'
+import { tavI18n } from '@tav-ui/locales'
 import {
   isArray,
   isBoolean,
@@ -278,7 +279,9 @@ export default defineComponent({
           }
         }
       } else if (isBoolean(value)) {
-        editableItemValue.value = value ? '开启' : '关闭'
+        editableItemValue.value = value
+          ? tavI18n('Tav.common.closeText')
+          : tavI18n('Tav.common.openText')
       } else if (dayjs.isDayjs(value)) {
         const valueFormat = componentProps?.valueFormat
         editableItemValue.value = formatToDate(value, valueFormat)
@@ -665,7 +668,7 @@ export default defineComponent({
           compAttr.showCount = (realComponetProps as any)?.showCount ?? true
           compAttr.autoSize = (realComponetProps as any)?.autoSize ?? { minRows: 4, maxRows: 4 }
         } else {
-          compAttr.maxlength = 32
+          compAttr.maxlength = (realComponetProps as any)?.maxLength ?? 32
         }
       }
       if (component === 'InputNumber') {

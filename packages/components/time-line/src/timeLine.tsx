@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue'
 import { Button, List, ListItem, Tag, Tooltip } from 'ant-design-vue'
+import { tavI18n } from '@tav-ui/locales'
 import TimeLineItemDefault from './components/listItem'
 import { timeLineListEmits, timeLineProps } from './types'
 // import { timeLineProps } from "./types";
@@ -32,7 +33,7 @@ export default defineComponent({
           ) : (
             <div class="ta-timeline-list-loading-more">
               {/* postIcon="ant-design:cloud-download-outlined" */}
-              <Button onClick={handleLoadingMore}>加载更多</Button>
+              <Button onClick={handleLoadingMore}>{tavI18n('Tav.common.loadMoreText')}</Button>
             </div>
           )
         ) : (

@@ -5,6 +5,7 @@ import { TaButton, TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/comp
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
+import { tavI18n } from '@tav-ui/locales'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem, TableProColumn } from '@tav-ui/components/table-pro'
 import type {
@@ -67,7 +68,7 @@ export const FileBranch = defineComponent({
     const previewRecord = ref<FileItemType[]>([])
     const columns: TableProColumn[] = [
       {
-        title: '版本',
+        title: tavI18n('Tav.file.columns.4'),
         field: 'version',
         minWidth: 50,
         customRender: ({ row }) => {
@@ -75,24 +76,24 @@ export const FileBranch = defineComponent({
         },
       },
       {
-        title: '文件名称',
+        title: tavI18n('Tav.file.columns.1'),
         field: 'fullName',
         customRender: ({ row }) => {
           return <>{row.hyperlink === 0 ? row.fullName : row.name}</>
         },
       },
       {
-        title: '文件大小',
+        title: tavI18n('Tav.file.columns.3'),
         field: 'fileSize',
         minWidth: 100,
       },
       {
-        title: '上传人',
+        title: tavI18n('Tav.file.columns.5'),
         field: 'createByName',
       },
 
       {
-        title: '更新时间',
+        title: tavI18n('Tav.file.columns.8'),
         field: 'createTime',
         minWidth: 150,
         // customRender: ({ row: { createTime } }) => formatToDate(createTime),
@@ -100,7 +101,7 @@ export const FileBranch = defineComponent({
       {
         width: '240px',
         fixed: 'right',
-        title: '操作',
+        title: tavI18n('Tav.common.actions'),
         field: 'action',
         align: 'center',
         customRender: ({ row }) => {
@@ -116,7 +117,7 @@ export const FileBranch = defineComponent({
     const getActions = (record) => {
       const actions: TableProActionItem[] = [
         {
-          label: '查看',
+          label: tavI18n('Tav.file.actions.1'),
           enabled: record.hyperlink !== 1,
           onClick() {
             if (record.hyperlink === 1) {
@@ -128,7 +129,7 @@ export const FileBranch = defineComponent({
           },
         },
         {
-          label: '下载水印文件',
+          label: tavI18n('Tav.file.actions.4'),
           enabled: !!(record.hyperlink === 1
             ? false
             : (props.showTableAction.downloadWatermark ?? true) && record.watermarkFileDownload),

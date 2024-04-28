@@ -2,7 +2,7 @@
 import { computed, defineComponent } from 'vue'
 import { CloseOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons-vue'
 import { Tooltip } from 'ant-design-vue'
-
+import { tavI18n } from '@tav-ui/locales'
 export default defineComponent({
   name: 'BasicModalClose',
   components: { Tooltip, FullscreenExitOutlined, FullscreenOutlined, CloseOutlined },
@@ -35,6 +35,7 @@ export default defineComponent({
     }
 
     return {
+      tavI18n,
       getClass,
       prefixCls,
       handleCancel,
@@ -46,14 +47,14 @@ export default defineComponent({
 <template>
   <div :class="getClass">
     <template v-if="canFullscreen">
-      <Tooltip v-if="fullScreen" title="还原" placement="bottom">
+      <Tooltip v-if="fullScreen" :title="tavI18n('Tav.modal.1')" placement="bottom">
         <FullscreenExitOutlined role="full" @click="handleFullScreen" />
       </Tooltip>
-      <Tooltip v-else title="最大化" placement="bottom">
+      <Tooltip v-else :title="tavI18n('Tav.modal.2')" placement="bottom">
         <FullscreenOutlined role="close" @click="handleFullScreen" />
       </Tooltip>
     </template>
-    <Tooltip title="关闭" placement="bottom">
+    <Tooltip :title="tavI18n('Tav.common.closeText')" placement="bottom">
       <CloseOutlined @click="handleCancel" />
     </Tooltip>
   </div>

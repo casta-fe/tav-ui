@@ -126,6 +126,8 @@ type OuterExtendApis = {
   setLoading: (loading: boolean) => void
   resetFilterInput: () => void
   resizeTableHeight: () => void
+  showExportModal: () => void
+  showColumnsModa: () => void
 }
 export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 

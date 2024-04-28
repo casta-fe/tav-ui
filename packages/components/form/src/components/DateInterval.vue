@@ -1,5 +1,5 @@
 <template>
-  <div class="date-range-wrapper">
+  <div class="date-interval-wrapper">
     <RangePicker
       :allow-clear="allowClear"
       :format="format"
@@ -36,13 +36,27 @@
 </template>
 
 <script lang="ts">
-import { type PropType, computed, defineComponent, onMounted, ref, unref } from 'vue'
+import { type PropType, computed, defineComponent, onMounted, ref, unref, watch } from 'vue'
 import dayjs, { type OpUnitType } from 'dayjs'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
-import { type DateRangeKeyType, type DateRangeValueType, dateRangeRecord } from './types'
+import { getDateRangeRecord } from './types'
 
+type DateRangeKeyType =
+  | 'day'
+  | 'year'
+  | 'month'
+  | 'week'
+  | 'quarter'
+  | 'lastWeek'
+  | 'lastMonth'
+  | 'lastQuarter'
+  | 'lastYear'
+  | 'quarter_1'
+  | 'quarter_2'
+  | 'quarter_3'
+  | 'quarter_4'
 const defaultDateRangeKeyList: DateRangeKeyType[] = [
   'month',
   'quarter_1',
@@ -52,15 +66,15 @@ const defaultDateRangeKeyList: DateRangeKeyType[] = [
   'year',
   'lastYear',
 ]
-
 export default defineComponent({
   name: 'DateInterval',
   components: { RangePicker, Dropdown, TaButton, MenuItem, Menu },
   props: {
+    value: { type: Array, default: () => [] },
     defaultRange: { type: String, default: () => 'month' },
     format: { type: String, default: 'YYYY-MM' },
     allowClear: Boolean,
-    dateRangeList: Array as PropType<DateRangeValueType[]>,
+    dateRangeList: Array as PropType<any[]>,
     dateRangeKeyList: {
       type: Array as PropType<DateRangeKeyType[]>,
       default: () => defaultDateRangeKeyList,
@@ -69,6 +83,9 @@ export default defineComponent({
   },
   emits: ['change', 'search', 'getCurDate'],
   setup(props, { emit }) {
+    const dateRangeRecord = getDateRangeRecord()
+    type DateRangeRecordType = typeof dateRangeRecord
+    type DateRangeValueType = DateRangeRecordType[DateRangeKeyType]
     const computedDateRangeList = computed<DateRangeValueType[]>(() => {
       if (props.dateRangeList) return props.dateRangeList
 
@@ -87,11 +104,11 @@ export default defineComponent({
         .find((x) => x.key === unref(currentRange))
         ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
     )
+    console.log(currentDate, currentRange)
 
     // 选中自定义时间触发
     const handleDateChange = (momentList) => {
       currentRange.value = ''
-
       if (props.allowClear && momentList.length === 0) {
         currentDate.value = []
       } else if (props.autoChoose === 'none') {
@@ -132,6 +149,12 @@ export default defineComponent({
         unref(currentDate)?.map((x) => formatToDate(x))
       )
     })
+    watch(
+      () => props.value,
+      (v) => {
+        currentDate.value = v
+      }
+    )
 
     // const isOpen = ref(false)
     // const cacheDate = ref()

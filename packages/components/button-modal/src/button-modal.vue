@@ -6,9 +6,9 @@ import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Button from '@tav-ui/components/button'
 import Icon from '@tav-ui/components/icon'
 import { isString } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import { buttonModalProps } from './types'
 import type { TooltipProps } from 'ant-design-vue'
-
 declare type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
@@ -24,8 +24,8 @@ export default defineComponent({
     const getBindValues: Recordable = computed(() => {
       return Object.assign(
         {
-          okText: '确认',
-          cancelText: '取消',
+          okText: tavI18n('Tav.common.okText'),
+          cancelText: tavI18n('Tav.common.cancelText'),
         },
         {
           ...props,
@@ -87,8 +87,7 @@ export default defineComponent({
       <template v-if="getBindValues.tooltip">
         <Tooltip v-bind="getTooltip(getBindValues.tooltip)">
           <Button
-            :type="getBindValues.type"
-            :size="getBindValues.size"
+            v-bind="{ ...getBindValues, onClick: null }"
             class="ta-button-modal"
             @click="handleButtonClick"
           >
@@ -98,8 +97,7 @@ export default defineComponent({
       </template>
       <template v-else>
         <Button
-          :type="getBindValues.type"
-          :size="getBindValues.size"
+          v-bind="{ ...getBindValues, onClick: null }"
           class="ta-button-modal"
           @click="handleButtonClick"
         >

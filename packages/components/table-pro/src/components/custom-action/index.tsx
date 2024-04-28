@@ -2,7 +2,8 @@ import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
-import { isObject } from '@tav-ui/utils/is'
+import { isBoolean, isObject } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import {
   ACTION_COLUMNS,
   CamelCaseToCls,
@@ -16,123 +17,6 @@ import type { ComputedRef, PropType, Ref, Slots } from 'vue'
 import type { TableProColumnInfo, TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
 const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
-
-const FileDataTypeOptions = [
-  {
-    label: '全部数据带查询条件',
-    value: 'allSearch',
-  },
-  {
-    label: '全部数据',
-    value: 'all',
-  },
-  {
-    label: '当前页的选中数据',
-    value: 'selected',
-  },
-  {
-    label: '当前页的全部数据',
-    value: 'current',
-  },
-]
-const ExportModalFormSchemas: FormSchema[] = [
-  {
-    field: 'fileName',
-    component: 'Input',
-    label: '文件名',
-    required: true,
-    componentProps: {
-      placeholder: '请输入文件名',
-    },
-  },
-  // {
-  //   field: 'fileDescription',
-  //   component: 'Input',
-  //   label: '描述',
-  //   required: false,
-  //   componentProps: {
-  //     placeholder: '请输入表格描述',
-  //   },
-  // },
-  {
-    field: 'fileSeq',
-    component: 'Select',
-    label: '序号列',
-    required: false,
-    defaultValue: 1,
-    componentProps: {
-      placeholder: '请选择是否生成表格序号列',
-      options: [
-        {
-          label: '自动生成',
-          value: 1,
-        },
-        {
-          label: '不生成',
-          value: 0,
-        },
-      ],
-    },
-  },
-  {
-    field: 'fileType',
-    component: 'Select',
-    label: '文件类型',
-    required: true,
-    defaultValue: 'xlsx',
-    componentProps: {
-      placeholder: '请选择文件类型',
-      disabled: true,
-      options: [
-        {
-          label: 'Excel（.xlsx）',
-          value: 'xlsx',
-        },
-        // {
-        //   label: 'CSV（.csv）',
-        //   value: 'csv',
-        // },
-        // {
-        //   label: '网页（.html）',
-        //   value: 'html',
-        // },
-        // {
-        //   label: 'XML数据（.xml）',
-        //   value: 'xml',
-        // },
-        // {
-        //   label: '文本数据（.txt）',
-        //   value: 'txt',
-        // },
-      ],
-    },
-  },
-  {
-    field: 'fileDataType',
-    component: 'Select',
-    label: '文件数据',
-    required: true,
-    defaultValue: '',
-    componentProps: {
-      placeholder: '请选择文件数据',
-      options: [],
-    },
-  },
-  {
-    field: 'fileContainFields',
-    component: 'TreeSelect',
-    label: '文件字段',
-    required: true,
-    componentProps: {
-      placeholder: '请选择到导出的文件字段',
-      treeCheckable: true,
-      allowClear: true,
-      showCheckedStrategy: 'SHOW_ALL',
-      treeDefaultExpandAll: true,
-      treeData: [],
-    },
-  },
-]
 
 const props = {
   config: {
@@ -151,12 +35,128 @@ export default defineComponent({
   props,
   emits: ['triggerStatistical'],
   setup(props, { emit, expose }) {
+    const FileDataTypeOptions = [
+      {
+        label: tavI18n('Tav.tablePro.export.4o1'),
+        value: 'selected',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o2'),
+        value: 'current',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o3'),
+        value: 'all',
+      },
+      {
+        label: tavI18n('Tav.tablePro.export.4o4'),
+        value: 'allSearch',
+      },
+    ]
+
+    const ExportModalFormSchemas: FormSchema[] = [
+      {
+        field: 'fileName',
+        component: 'Input',
+        label: tavI18n('Tav.tablePro.export.1'),
+        required: true,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.1p'),
+        },
+      },
+      // {
+      //   field: 'fileDescription',
+      //   component: 'Input',
+      //   label: '描述',
+      //   required: false,
+      //   componentProps: {
+      //     placeholder: '请输入表格描述',
+      //   },
+      // },
+      {
+        field: 'fileSeq',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.2'),
+        required: false,
+        defaultValue: 1,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.2p'),
+          options: [
+            {
+              label: tavI18n('Tav.tablePro.export.2o1'),
+              value: 1,
+            },
+            {
+              label: tavI18n('Tav.tablePro.export.2o2'),
+              value: 0,
+            },
+          ],
+        },
+      },
+      {
+        field: 'fileType',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.3'),
+        required: true,
+        defaultValue: 'xlsx',
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.3p'),
+          options: [
+            {
+              label: 'Excel（.xlsx）',
+              value: 'xlsx',
+            },
+            // {
+            //   label: 'CSV（.csv）',
+            //   value: 'csv',
+            // },
+            // {
+            //   label: '网页（.html）',
+            //   value: 'html',
+            // },
+            // {
+            //   label: 'XML数据（.xml）',
+            //   value: 'xml',
+            // },
+            // {
+            //   label: '文本数据（.txt）',
+            //   value: 'txt',
+            // },
+          ],
+        },
+      },
+      {
+        field: 'fileDataType',
+        component: 'Select',
+        label: tavI18n('Tav.tablePro.export.4'),
+        required: true,
+        defaultValue: '',
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.4p'),
+          options: [],
+        },
+      },
+      {
+        field: 'fileContainFields',
+        component: 'TreeSelect',
+        label: tavI18n('Tav.tablePro.export.5'),
+        required: true,
+        componentProps: {
+          placeholder: tavI18n('Tav.tablePro.export.5p'),
+          treeCheckable: true,
+          allowClear: true,
+          showCheckedStrategy: 'SHOW_ALL',
+          treeDefaultExpandAll: true,
+          treeData: [],
+        },
+      },
+    ]
     const settingsRef = ref<CustomActionSetting | null>(null)
     const actionRef = ref<ComputedRef | null>(null)
     const { tableEmitter, tablePropsRef } = useTableContext()
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
-
+    const exportLoading = ref<boolean>(false)
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
 
@@ -191,8 +191,13 @@ export default defineComponent({
           preIcon={'ant-design:calculator-outlined'}
           onClick={handleStatistical}
           permission={getPermission(props.config?.statistical)}
+          permissionCode={
+            isBoolean(props.config?.statistical)
+              ? undefined
+              : props.config?.statistical?.permissionCode
+          }
         >
-          统计
+          {tavI18n('Tav.tablePro.setting.6')}
         </Button>
       ) : null
 
@@ -210,8 +215,11 @@ export default defineComponent({
           preIcon={'ant-design:plus-circle-outlined'}
           onClick={handleAdd}
           permission={getPermission(props.config?.add)}
+          permissionCode={
+            isBoolean(props.config?.add) ? undefined : props.config?.add?.permissionCode
+          }
         >
-          新增
+          {tavI18n('Tav.common.addText')}
         </Button>
       ) : null
 
@@ -229,8 +237,11 @@ export default defineComponent({
           preIcon={'ant-design:delete-outlined'}
           onClick={handleDelete}
           permission={getPermission(props.config?.delete)}
+          permissionCode={
+            isBoolean(props.config?.delete) ? undefined : props.config?.delete?.permissionCode
+          }
         >
-          删除
+          {tavI18n('Tav.common.cancelText')}
         </Button>
       ) : null
 
@@ -248,8 +259,11 @@ export default defineComponent({
           preIcon={'ant-design:import-outlined'}
           onClick={handleImport}
           permission={getPermission(props.config?.import)}
+          permissionCode={
+            isBoolean(props.config?.import) ? undefined : props.config?.import?.permissionCode
+          }
         >
-          导入
+          {tavI18n('Tav.common.exportText')}
         </Button>
       ) : null
 
@@ -378,7 +392,7 @@ export default defineComponent({
       return (
         <TaModal
           onRegister={exportModalRegister}
-          title={'导出设置'}
+          title={tavI18n('Tav.tablePro.setting.5')}
           width={650}
           wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
           destroyOnClose={true}
@@ -393,10 +407,10 @@ export default defineComponent({
             default: () => exportModalForm(),
             footer: () => (
               <>
-                <Button type="primary" onClick={handleExport}>
-                  {'导出'}
+                <Button onClick={exportModalClose}>{tavI18n('Tav.common.cancelText')}</Button>
+                <Button loading={exportLoading.value} type="primary" onClick={handleExport}>
+                  {tavI18n('Tav.common.exportText')}
                 </Button>
-                <Button onClick={exportModalClose}>{'取消'}</Button>
               </>
             ),
           }}
@@ -511,7 +525,7 @@ export default defineComponent({
           }
           selectedKeys.push(currentId)
           if (visible && !disabled && SELECT_COMPONENTS.includes(type!)) {
-            item.title = '选中状态'
+            item.title = tavI18n('Tav.tablePro.setting.4')
           }
           // 把选中、操作列设置为不可选择项
           if (
@@ -590,24 +604,30 @@ export default defineComponent({
           handleUninitField(value)
         }
         await nextTick()
-        const {
-          pager: { pageSize, total },
-        } = props.tableRef?.value?.getProxyInfo() ?? {}
         let _fileDataTypeDefaultValue = 'allSearch'
+        const selectData = props.tableRef?.value?.getCheckboxRecords()
         let fileDataTypeOptions = FileDataTypeOptions
-        // 没配置 handleAllApi，就不显示 all
-        if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
-          _fileDataTypeDefaultValue = 'current'
-          fileDataTypeOptions = fileDataTypeOptions.filter(
-            (fileType) => fileType.value.indexOf('all') == -1
-          )
+        if (selectData && selectData?.length > 0) {
+          _fileDataTypeDefaultValue = 'selected'
+        } else {
+          // 没配置 handleAllApi，就不显示 all
+          if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
+            _fileDataTypeDefaultValue = 'current'
+            fileDataTypeOptions = fileDataTypeOptions.filter(
+              (fileType) => fileType.value.indexOf('all') == -1
+            )
+          }
         }
-        if (total / pageSize <= 1) {
-          // _fileDataTypeDefaultValue = 'current'
-          // fileDataTypeOptions = fileDataTypeOptions.filter(
-          //   (fileType) => fileType.value.indexOf('all') > -1
-          // )
-        }
+
+        // const {
+        //   pager: { pageSize, total },
+        // } = props.tableRef?.value?.getProxyInfo() ?? {}
+        // if (total / pageSize <= 1) {
+        //   _fileDataTypeDefaultValue = 'current'
+        //   fileDataTypeOptions = fileDataTypeOptions.filter(
+        //     (fileType) => fileType.value.indexOf('all') > -1
+        //   )
+        // }
 
         await exportModalFormUpdateSchema([
           {
@@ -625,10 +645,19 @@ export default defineComponent({
           },
         ])
         await nextTick()
-        await exportModalFormSetFieldsValue({
-          fileContainFields: selectedKeys,
-          fileDataType: _fileDataTypeDefaultValue,
-        })
+        console.log(props.config)
+        const defaultFileName = isBoolean(props.config?.export)
+          ? ''
+          : props.config?.export?.fileName
+        // exportModalFormSetFieldsValue
+        await exportModalFormSetFieldsValue(
+          {
+            fileName: defaultFileName || '',
+            fileContainFields: selectedKeys,
+            fileDataType: _fileDataTypeDefaultValue,
+          },
+          false
+        )
         selectedKeys.forEach((key) => {
           handleUnvisibleField(key)
           handleUninitField(key)
@@ -645,8 +674,11 @@ export default defineComponent({
           loading={unref(prepareExport)}
           onClick={handleExportClick}
           permission={getPermission(props.config?.export)}
+          permissionCode={
+            isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
+          }
         >
-          导出
+          {tavI18n('Tav.common.exportText')}
         </Button>
       ) : null
 
@@ -656,6 +688,10 @@ export default defineComponent({
       importRef: null,
       exportRef: null,
       settingsRef,
+      showExportModal: handleExportClick,
+      showColumnsModa: () => {
+        settingsRef.value?.showColumnsModa()
+      },
       actionRef,
     })
 

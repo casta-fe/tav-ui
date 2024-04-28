@@ -25,7 +25,7 @@ export default defineConfig({
     // Load proxy configuration from .env
     proxy: {
       '/api': {
-        target: 'http://192.168.10.29:8080/',
+        target: '192.168.10.52:80',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

@@ -9,6 +9,7 @@ import ScrollContainer from '@tav-ui/components/container-scroll'
 import Icon from '@tav-ui/components/icon'
 import SvgIcon from '@tav-ui/components/icon-svg'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { tavI18n } from '@tav-ui/locales'
 import iconsData from '../data/icons.data'
 import { iconPickerProps } from './types'
 import type { ChangeEvent } from './types'
@@ -73,7 +74,7 @@ export default defineComponent({
       currentSelect.value = icon
       if (props.copy) {
         clipboardRef.value = icon
-        if (unref(isSuccessRef)) createMessage.success('复制图标成功')
+        if (unref(isSuccessRef)) createMessage.success(tavI18n('Tav.icon.2'))
       }
     }
 
@@ -88,6 +89,7 @@ export default defineComponent({
     }
     return {
       isSvgMode,
+      tavI18n,
       icons,
       currentSelect,
       visible,
@@ -107,7 +109,7 @@ export default defineComponent({
     v-model:value="currentSelect"
     disabled
     :style="{ width }"
-    placeholder="点击选择图标"
+    :placeholder="tavI18n('Tav.icon.1')"
     :class="prefixCls"
   >
     <template #addonAfter>
@@ -119,7 +121,11 @@ export default defineComponent({
       >
         <template #title>
           <div class="flex justify-between">
-            <AInput placeholder="搜索图标" allow-clear @change="debounceHandleSearchChange" />
+            <AInput
+              :placeholder="tavI18n('Tav.common.queryText')"
+              allow-clear
+              @change="debounceHandleSearchChange"
+            />
           </div>
         </template>
 

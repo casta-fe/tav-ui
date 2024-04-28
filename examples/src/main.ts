@@ -8,10 +8,31 @@ import 'vxe-table/lib/style.css'
 // eslint-disable-next-line import/order
 import { TaVXETable } from '@tav-ui/components/table-pro'
 import { router } from './router'
-
+import { setupI18n } from './locales/setupI18n'
+// import { i18n } from './locales/setupI18n'
+// console.log(TaVXETable)
+// TaVXETable.setup({
+//   i18n: (key, args) => i18n.global.t(key, args),
+// })
 const app = createApp(App)
 app.use(router)
+// app.use(TaUi)
+await setupI18n(app)
 app.use(TaVXETable)
+
+// app.use(TaIcon)
+// app.use(TaButton)
+// app.use(TaBasicTitle)
+// app.use(TaBasicArrow)
+// app.use(TaBasicHelp)
+// app.use(TaLoading)
+// app.use(TaModal)
+// app.use(TaTimeLine)
+// app.use(TaTime)
+// app.use(TaInputNumberRange)
+// app.use(TaFileView)
+// app.use(TaForm)
+// app.use(TaContainerCollapse)
 if ('3003' === location.port) {
   app.mount('#app')
 } else {

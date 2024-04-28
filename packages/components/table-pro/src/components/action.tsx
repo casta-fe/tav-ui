@@ -5,7 +5,7 @@ import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { isBoolean, isFunction, isString } from '@tav-ui/utils/is'
+import { isBoolean, isFunction, isString, isUnDef } from '@tav-ui/utils/is'
 import {
   CamelCaseToCls,
   ComponentActionName,
@@ -38,6 +38,7 @@ const props = {
     type: Boolean,
     default: false,
   },
+  limit: { type: Number },
   stopButtonPropagation: {
     type: Boolean,
     default: true,
@@ -50,12 +51,14 @@ const props = {
  * @param labelMaxLength
  * @returns
  */
-export function limitActionLabel(actions: TableProActionItem[], labelMaxLength = 3) {
+export function limitActionLabel(actions: TableProActionItem[], labelMaxLength?: number) {
+  const TaTableProConfig = unref(useGlobalConfig('components'))?.TaTablePro
   return actions.map((action) => {
+    const max = action.limit || labelMaxLength || TaTableProConfig?.actionLabelLimit || 3
     const { label } = action
-    if (label && label.length > labelMaxLength) {
+    if (label && label.length > max) {
       action.tooltip = label
-      action.label = `${label.substring(0, 2)}..`
+      action.label = `${label.substring(0, max - 1)}..`
     }
     return action
   })
@@ -91,9 +94,13 @@ export default defineComponent({
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
-          return action.permission
-            ? unref(Permissions)[action.permission]?.ifShow && isEnabled(action)
-            : isEnabled(action)
+          const PermissionFlag = isUnDef(action.permission)
+            ? true
+            : unref(Permissions)[action.permission || '']?.ifShow
+          const PermisionCodeFlag = isUnDef(action.permissionCode)
+            ? true
+            : action.permissionCode === 1
+          return PermissionFlag && PermisionCodeFlag && isEnabled(action)
         })
       })
     }
@@ -221,13 +228,13 @@ export default defineComponent({
       }
     }
 
-    function getTooltip(data: string | TooltipProps): TooltipProps {
-      return {
-        getPopupContainer: () => unref(actionEl) || (unref(tableRef) as any)?.$el || document.body,
-        placement: 'bottom',
-        ...(isString(data) ? { title: data } : data),
-      }
-    }
+    // function getTooltip(data: string | TooltipProps): TooltipProps {
+    //   return {
+    //     getPopupContainer: () => unref(actionEl) || (unref(tableRef) as any)?.$el || document.body,
+    //     placement: 'bottom',
+    //     ...(isString(data) ? { title: data } : data),
+    //   }
+    // }
 
     async function onCellClick(e: MouseEvent) {
       if (!props.stopButtonPropagation) return

@@ -1,12 +1,5 @@
+import { tavI18n } from '@tav-ui/locales'
 import type { ExtractPropTypes, PropType } from 'vue'
-export interface Options {
-  label: string
-  value: string
-  phone: string
-  status: number
-  sex: number
-  disabled: boolean
-}
 export interface UserOrgs {
   organizationId: number
   organizationName: string
@@ -16,6 +9,7 @@ export interface UserOrgs {
 }
 export interface UserItem {
   id: string
+  fullCharts: string
   name: string
   phone: string
   sex: number
@@ -23,6 +17,11 @@ export interface UserItem {
   disabled: boolean
   userOrgs: UserOrgs[]
 }
+export interface Options extends UserItem {
+  label: string
+  value: string
+}
+
 export type TypeItems = 'user' | 'org'
 export interface LetterItemList {
   id: string
@@ -69,7 +68,7 @@ export const memberSelectProps = {
   // 弹窗标题
   title: {
     type: String,
-    default: '成员选择',
+    default: tavI18n('Tav.member.3'),
   },
   // 类型，可用选项 user, org
   type: {
@@ -120,7 +119,7 @@ export const memberSelectProps = {
   },
   placeholder: {
     type: String,
-    default: '请选择',
+    default: tavI18n('Tav.common.chooseText'),
   },
   // 下拉框最大tag树
   maxTagCount: {

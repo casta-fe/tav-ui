@@ -54,6 +54,7 @@ export const buttonProps = {
   iconSize: { type: Number, default: 14 },
   onClick: { type: Function as PropType<(...args) => any>, default: null },
   permission: { type: String },
+  permissionCode: { type: Number },
   ifShow: { type: Boolean, default: true },
 }
 

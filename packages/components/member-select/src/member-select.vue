@@ -9,7 +9,7 @@
           dropdown-class-name="ta-member-select-option"
           option-filter-prop="label"
           :allow-clear="allowClear"
-          :options="userOptions"
+          :options="userList"
           :max-tag-count="maxTagCount"
           :max-tag-placeholder="maxTagPlaceholder"
           :disabled="disabled"
@@ -18,14 +18,20 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
+          :filter-option="filterOptionHandle"
           @dropdown-visible-change="userVisibleChange"
           @change="emitHandle"
           @blur="handleBlur"
         >
           <template #option="item">
             <div class="ta-member-select-option-item">
-              <span>{{ item.label }} <template v-if="item.status === 0"> (已冻结) </template></span>
-              <span>{{ item.sex == 1 ? '男' : '女' }}</span>
+              <span
+                >{{ item.label }}
+                <template v-if="item.status === 0">
+                  ({{ tavI18n('Tav.member.4') }})
+                </template></span
+              >
+              <span>{{ item.sex == 1 ? tavI18n('Tav.member.8') : tavI18n('Tav.member.9') }}</span>
               <span>{{ item.phone }}</span>
             </div>
           </template>
@@ -37,7 +43,7 @@
               @mousedown="(e) => e.preventDefault()"
               @click="userShowMore"
             >
-              <a href="javascript:;">查看更多</a>
+              <a href="javascript:;">{{ tavI18n('Tav.common.moreText') }}</a>
             </div>
           </template>
         </Select>
@@ -83,8 +89,8 @@
       </div>
 
       <template #footer>
-        <Button type="primary" @click="modalSubmit">确定</Button>
-        <Button @click="hideModal">取消</Button>
+        <Button type="primary" @click="modalSubmit">{{ tavI18n('Tav.common.okText') }}</Button>
+        <Button @click="hideModal">{{ tavI18n('Tav.common.cancelText') }}</Button>
       </template>
     </BasicModal>
   </div>
@@ -94,10 +100,12 @@
 import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
 import { Select, TreeSelect } from 'ant-design-vue'
 import { isEqual } from 'lodash-es'
+import pinyin from 'js-pinyin'
 import Button from '@tav-ui/components/button'
 import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
 import MemberModal from './components/member-modal.vue'
 import { memberSelectProps } from './types'
 import type { Ref } from 'vue'
@@ -120,10 +128,12 @@ export default defineComponent({
     const userSelectRef = ref<any>(null)
     const state = reactive({
       modalIsShow: false,
+      searchValue: '',
       count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
-      userList: [] as UserItem[],
+      userList: [] as labelvalue,
+      userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
       orgFileds: { children: 'children', label: 'title', key: 'key', value: 'value' },
@@ -144,28 +154,13 @@ export default defineComponent({
     const orgApi = globalConfig.value?.TaMemberSelect?.orgApi || props.orgApi
     const allUserList = globalConfig.value?.TaMemberSelect?.allUserList || []
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
-    const userOptions = computed(() => {
-      const list: Options[] = []
-      state.userList.forEach((v) => {
-        // 非ignoreUser的用户才能选择
-        list.push({
-          label: v.name,
-          value: v.id,
-          phone: v.phone,
-          status: v.status,
-          disabled: v.disabled, //已冻结（离职）的不能选
-          sex: v.sex,
-        })
-      })
-      return list
-    })
     const [registerMemberModal, { openModal: openMemberModal, closeModal: closeMemberModal }] =
       useModal()
 
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
-        getUserList(2)
+        getUserList()
         if (!props.noOrg) {
           getOrgList()
         }
@@ -191,10 +186,11 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
-      const list: UserItem[] = userList
+      const list: Options[] = userList
         .map((v) => {
           // 非ignoreUser的用户才能选择
-          const obj = { ...v }
+          const fullCharts = pinyin.getFullChars(v.name).toLowerCase()
+          const obj = { ...v, label: v.name, value: v.id, fullCharts }
           if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
             obj.disabled = props.useDisabledUser
               ? false
@@ -210,10 +206,8 @@ export default defineComponent({
       return list
     }
     // 获取用户数据
-    const getUserList = (type) => {
-      // console.log(type)
+    const getUserList = async () => {
       state.count++
-      // console.log(type, state.count)
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));
@@ -300,7 +294,9 @@ export default defineComponent({
         }
       }
     }
-
+    const filterOptionHandle = (keyword: string, user: any) => {
+      return user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
+    }
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
       setTimeout(() => {
@@ -333,7 +329,7 @@ export default defineComponent({
       () => props.ignoreUser,
       (a, b) => {
         if (!isEqual(a, b)) {
-          getUserList(4)
+          getUserList()
         }
       }
     )
@@ -341,7 +337,7 @@ export default defineComponent({
       () => props.options,
       (data) => {
         if (data) {
-          getUserList(5)
+          getUserList()
         }
       },
       {
@@ -363,7 +359,7 @@ export default defineComponent({
         if (props.noSelect) {
           return
         }
-        getUserList(1)
+        getUserList()
       } else {
         getOrgList()
       }
@@ -371,8 +367,9 @@ export default defineComponent({
     pageInit()
     return {
       userSelectRef,
+      tavI18n,
       ...toRefs(state),
-      userOptions,
+      filterOptionHandle,
       userShowMore,
       userVisibleChange,
       orgVisibleChange,

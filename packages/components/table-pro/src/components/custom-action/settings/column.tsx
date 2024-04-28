@@ -8,6 +8,7 @@ import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { getPopupContainer } from '@tav-ui/utils/basic'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { warn } from '@tav-ui/utils/log'
+import { tavI18n } from '@tav-ui/locales'
 import {
   ACTION_COLUMNS,
   COLUMN_SETTING_TREE_DATA_ITEM_DEFAULT,
@@ -97,7 +98,6 @@ export default defineComponent({
       warn(
         '请在业务中的 TaConfigProvider 组件，其属性 components 中配置 TaTablePro 所需数据。开启 column 后所需数据为 userInfo, columnsGetApi, columnsSetApi'
       )
-
     const { createMessage } = useMessage()
 
     watchEffect(() => {
@@ -138,7 +138,7 @@ export default defineComponent({
 
     /** 使用tableid+filed的方式做唯一标识，方便持久化 */
     function getColumnId(column: ColumnOption) {
-      const tableIdUUID = unref(columnApiOptions)!.getTableId()
+      const tableIdUUID = unref(columnApiOptions)?.getTableId()
       return `${tableIdUUID}_${column.field || column.type}`
     }
 
@@ -217,7 +217,7 @@ export default defineComponent({
       const currentFixed = parentColumn ? parentColumn.fixed : fixed
       // 修改select的title
       if (visible && !_disabled && SELECT_COMPONENTS.includes(type!)) {
-        column.title = '选中'
+        column.title = tavI18n('Tav.tablePro.columns.2')
       }
       // 将选中、操作列、传入的固定列设置为disable
       let disabled = false
@@ -426,9 +426,9 @@ export default defineComponent({
         const { success } = await api(params)
         // state.visible = false
         if (success) {
-          createMessage.success('表格列保存成功！点击弹窗外区域失焦后自动消失')
+          createMessage.success(tavI18n('Tav.tablePro.message.1'))
         } else {
-          createMessage.warning('表格列保存失败，请刷新重试！')
+          createMessage.warning(tavI18n('Tav.tablePro.message.2'))
         }
       }
     }
@@ -487,7 +487,7 @@ export default defineComponent({
 
       // drop 节点为固定列，不允许
       if (dropObj.fixed) {
-        createMessage.warning('不允许拖入固定列')
+        createMessage.warning(tavI18n('Tav.tablePro.message.3'))
         return
       }
 
@@ -502,19 +502,19 @@ export default defineComponent({
           dropParentObj = item
         })
         if (dropParentObj.fixed) {
-          createMessage.warning('不允许拖入固定列')
+          createMessage.warning(tavI18n('Tav.tablePro.message.3'))
           return
         }
       } else {
         // 如果drop节点为fixed节点，那么不允许拖入
         if (dropObj.fixed) {
-          createMessage.warning('不允许拖入固定列')
+          createMessage.warning(tavI18n('Tav.tablePro.message.3'))
           return
         }
       }
 
       if (!info.dropToGap) {
-        createMessage.warning('不允许合并列')
+        createMessage.warning(tavI18n('Tav.tablePro.message.4'))
         return
       }
       if (!isSameParent(info.dragNode, info.node)) {
@@ -653,6 +653,7 @@ export default defineComponent({
 
     expose({
       coverColumnsSetting,
+      handleColumnClick,
     })
 
     // function createTreeNode(option: ColumnOption, defaultSolt: any) {
@@ -663,11 +664,11 @@ export default defineComponent({
     //           <>
     //             <span>{option.title}</span>
     //             {option.fixed ? (
-    //               <Tooltip placement="top" title="固定列">
+    //               <Tooltip placement="top" title={tavI18n('Tav.tablePro.setting.2')}>
     //                 <PushpinFilled />
     //               </Tooltip>
     //             ) : (
-    //               <Tooltip placement="top" title="拖动列">
+    //               <Tooltip placement="top" title={tavI18n('Tav.tablePro.setting.3')}>
     //                 <OrderedListOutlined />
     //               </Tooltip>
     //             )}
@@ -691,7 +692,7 @@ export default defineComponent({
 
     return () => {
       return props.config?.column && unref(columnApiOptions) ? (
-        <Tooltip placement="bottomLeft" title="列设置">
+        <Tooltip placement="bottomLeft" title={tavI18n('Tav.tablePro.setting.1')}>
           <Popover
             placement="bottomLeft"
             trigger="click"
@@ -707,7 +708,7 @@ export default defineComponent({
                     checked={state.checkAll}
                     onChange={handleColumnCheckAllChange}
                   >
-                    全选
+                    {tavI18n('Tav.common.selectAllText')}
                   </Checkbox>
                   <div class={`column-popver-title-btns`}>
                     <TaButton
@@ -715,14 +716,14 @@ export default defineComponent({
                       type="link"
                       onClick={handleColumnReset}
                     >
-                      {'重置'}
+                      {tavI18n('Tav.common.resetText')}
                     </TaButton>
                     <TaButton
                       class={`column-popver-title-btn submit`}
                       type="link"
                       onClick={handleColumnSubmit}
                     >
-                      {'确定'}
+                      {tavI18n('Tav.common.okText')}
                     </TaButton>
                   </div>
                 </div>
@@ -762,7 +763,7 @@ export default defineComponent({
                 <TaButton
                   class={`${ComponentPrefixCls}-btn column`}
                   type="text"
-                  preIcon={'ant-design:appstore-outlined'}
+                  preIcon={'material-symbols:lists-rounded'}
                   iconSize={20}
                   onClick={handleColumnClick}
                   permission={getPermission(props.config?.column)}

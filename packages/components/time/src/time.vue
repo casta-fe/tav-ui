@@ -3,8 +3,8 @@ import { defineComponent, ref, watch } from 'vue'
 import { useIntervalFn } from '@vueuse/core'
 import { dateUtil, formatToDate, formatToDateTime } from '@tav-ui/utils/dateUtil'
 import { isNumber, isObject, isString } from '@tav-ui/utils/is'
+import { tavI18n } from '@tav-ui/locales'
 import { timeProps } from './types'
-
 const ONE_SECONDS = 1000 * 1
 const ONE_MINUTES = ONE_SECONDS * 60
 const ONE_HOUR = ONE_MINUTES * 60
@@ -61,23 +61,23 @@ export default defineComponent({
       if (!isBefore) diff = -diff
 
       let resStr = ''
-      const dirStr = isBefore ? '前' : '后'
+      const dirStr = isBefore ? tavI18n('Tav.time.1') : tavI18n('Tav.time.2')
 
       if (diff < ONE_SECONDS) {
-        resStr = '刚刚'
+        resStr = tavI18n('Tav.time.3')
         // Less than or equal to 59 seconds
       } else if (diff < ONE_MINUTES) {
         const result = (diff / ONE_SECONDS).toString()
-        resStr = `${parseInt(result)}秒${dirStr}`
+        resStr = `${parseInt(result)}${tavI18n('Tav.time.4')}${dirStr}`
         // More than 59 seconds, less than or equal to 59 minutes and 59 seconds
       } else if (diff >= ONE_MINUTES && diff < ONE_HOUR) {
-        resStr = `${Math.floor(diff / ONE_MINUTES)}分钟${dirStr}`
+        resStr = `${Math.floor(diff / ONE_MINUTES)}${tavI18n('Tav.time.5')}${dirStr}`
         // More than 59 minutes and 59 seconds, less than or equal to 23 hours, 59 minutes and 59 seconds
       } else if (diff >= ONE_HOUR && diff < ONE_DAY) {
-        resStr = `${Math.floor(diff / ONE_HOUR)}小时${dirStr}`
+        resStr = `${Math.floor(diff / ONE_HOUR)}${tavI18n('Tav.time.6')}${dirStr}`
         // More than 23 hours, 59 minutes and 59 seconds, less than or equal to 29 days, 59 minutes and 59 seconds
       } else if (diff >= ONE_DAY && diff < 2623860000) {
-        resStr = `${Math.floor(diff / ONE_DAY)}天${dirStr}`
+        resStr = `${Math.floor(diff / ONE_DAY)}${tavI18n('Tav.time.7')}${dirStr}`
         // More than 29 days, 59 minutes, 59 seconds, less than 364 days, 23 hours, 59 minutes, 59 seconds, and the incoming timestamp is earlier than the current
       } else if (diff >= 2623860000 && diff <= 31567860000 && isBefore) {
         resStr = dateUtil(timeStamp).format('MM-DD-HH-mm')
