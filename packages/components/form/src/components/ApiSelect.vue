@@ -151,7 +151,7 @@ export default defineComponent({
 
     function handleChange(_, ...args) {
       emitData.value = args
-      emit('change', state.value)
+      emit('change', state.value, ...args)
     }
     function handleSearch(data) {
       // 如果加载远端数据 就请求接口

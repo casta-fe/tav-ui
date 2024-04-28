@@ -12,22 +12,18 @@
                 :auto-expand-parent="autoExpandParent"
                 :selectable="false"
                 :load-data="getOrgUser"
-                :replace-fields="replaceFields"
+                :field-names="fieldNames"
                 @expand="onExpand"
               >
                 <template #title="item">
-                  <template v-if="item.isLeaf">
-                    <Checkbox :value="item.id" :disabled="item.disabled">
+                  <!-- ant的bug 如果没查到会把他转成isleaf，但是 组织我们有不让选的 -->
+                  <template v-if="item.isLeaf && !item.leaf">
+                    <Checkbox :value="item.userId" :disabled="item.disabled">
                       <firstLetter :value="item" />{{ item.name }}
                       <template v-if="item.status === 0"> (已冻结) </template>
                     </Checkbox>
                   </template>
-                  <template v-else>
-                    <i v-if="item.type == 1" class="icon-select-company" />
-                    <i v-if="item.type == 2" class="icon-select-org" />
-                    <i v-if="item.type == 3" class="icon-select-group" />
-                    {{ item.name }}
-                  </template>
+                  <template v-else> <i class="icon-select-org" /> {{ item.name }} </template>
                 </template>
               </Tree>
             </CheckboxGroup>
@@ -41,12 +37,12 @@
                 :auto-expand-parent="autoExpandParent"
                 :selectable="false"
                 :load-data="getOrgUser"
-                :field-names="replaceFields"
+                :field-names="fieldNames"
                 @expand="onExpand"
               >
                 <template #title="item">
-                  <template v-if="item.isLeaf">
-                    <Radio :value="item.id" :disabled="item.disabled">
+                  <template v-if="item.isLeaf && !item.leaf">
+                    <Radio :value="item.userId" :disabled="item.disabled">
                       <firstLetter :value="item" /> {{ item.name }}
                       <template v-if="item.status === 0"> (已冻结) </template>
                     </Radio>
@@ -161,7 +157,7 @@ export default defineComponent({
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
     const state = reactive({
-      replaceFields: { children: 'children', label: 'title', key: 'key', value: 'value' },
+      fieldNames: { children: 'children', title: 'name' },
       orgExpandedKeys: [] as any[],
       autoExpandParent: true,
       tabActive: '1', //tab切换默认栏
@@ -247,18 +243,18 @@ export default defineComponent({
           console.log('没数据')
         }
         const children = userList.value
-          .filter((user: UserItem) => {
+          .filter((user) => {
             return user.userOrgs.map((v) => v.organizationId).includes(treeNode.eventKey)
           })
-          .map((v: any) => {
-            v.isLeaf = true
+          .map((user: any) => {
+            const obj = { ...user }
+            obj.isLeaf = true
+            //  用户id可能和组织id冲突，所以加个类型区分下
+            obj.userId = user.id
+            obj.id = `name-${user.id}`
             // 忽略列表中的用户需要禁止选中
-            v.disabled = propsData.value.useDisabledUser
-              ? false
-              : propsData.value.ignoreFrozenUser
-              ? v.status === 0
-              : false
-            return v
+            obj.disabled = propsData.value.ignoreUser.includes(user.userId) || user.status === 0
+            return obj
           })
         treeNode.dataRef.children = deWeightThree([...oldData, ...children])
         resolve(null)

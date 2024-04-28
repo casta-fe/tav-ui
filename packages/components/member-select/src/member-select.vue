@@ -126,12 +126,7 @@ export default defineComponent({
       userList: [] as UserItem[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
-      orgFileds: {
-        children: 'children',
-        title: 'name',
-        key: 'id',
-        value: 'id',
-      },
+      orgFileds: { children: 'children', label: 'title', key: 'key', value: 'value' },
     })
     provide(
       'propsData',
