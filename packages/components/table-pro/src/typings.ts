@@ -153,7 +153,7 @@ export interface TreeDataItem {
 /** 把tree需要的数据融合进column */
 export type CustomActionSettingColumnOption = TableProColumn & {
   key?: string
-  value: any
+  value?: any
   // title: string // title 复用 column 中的配置即可
   disabled?: boolean
 }
