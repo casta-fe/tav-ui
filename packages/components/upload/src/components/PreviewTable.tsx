@@ -125,7 +125,7 @@ export const PreviewTable = defineComponent({
 
               return [
                 <UpdateNameForm
-                  row={row}
+                  row={row as FileItemType}
                   onEnter={() => {
                     clearEdit()
                   }}
@@ -150,7 +150,7 @@ export const PreviewTable = defineComponent({
                         ? (row.address = payload.address)
                         : (row.fullName = `${payload.name}.${row.suffix}`)
 
-                      props.handler.updateItem(row, row.actualId)
+                      props.handler.updateItem(row as FileItemType, row.actualId)
 
                       return
                     }
@@ -227,14 +227,14 @@ export const PreviewTable = defineComponent({
 
               return [
                 <UpdateTypeForm
-                  row={row}
+                  row={row as FileItemType}
                   onSelect={setTimeout.bind(null, clearEdit, 0)}
                   onChange={(option: LabelValueOption, callPromise: () => Promise<void>) => {
                     if (!props.parentProps?.immediate) {
                       row.typeName = option.label
                       row.typeCode = option.value
 
-                      props.handler.updateItem(row, row.actualId)
+                      props.handler.updateItem(row as FileItemType, row.actualId)
 
                       return
                     }
@@ -315,7 +315,7 @@ export const PreviewTable = defineComponent({
                     isShowDeleteAction={props.parentProps?.fileBranchIsShowDeleteAction}
                     showTableAction={props.showTableAction}
                     download={props.download}
-                    file={row}
+                    file={row as FileItemType}
                     getPopupContainer={() => taTableProInstanceRef.value?.instance.$el}
                     getAppendNewestFile={() =>
                       props.handler.getFileFormatter.getNewestFileByActualId(row.actualId) ??

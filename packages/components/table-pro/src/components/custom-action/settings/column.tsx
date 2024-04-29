@@ -104,7 +104,7 @@ export default defineComponent({
       const isColumnOpen = tablePropsRef.value.customActionConfig.column
       const columns = tablePropsRef.value.columns
       if (isColumnOpen && columns && columns.length && !state.isInit) {
-        init(columns)
+        init(columns as ColumnOption[])
       }
     })
 
@@ -454,7 +454,7 @@ export default defineComponent({
       const dragKey = info.dragNode.eventKey || ''
       const dropPos = info.node.pos ? info.node.pos.split('-') : []
       const dropPosition = info.dropPosition - (dropPos ? Number(dropPos[dropPos.length - 1]) : 0)
-      const loop = (data: TreeDataItem[], key: string | number, callback: any) => {
+      const loop = (data: ColumnOption[], key: string | number, callback: any) => {
         data.forEach((item, index, arr) => {
           if (item.key === key) {
             return callback(item, index, arr)

@@ -53,7 +53,11 @@
       @change="handleTableChange"
     >
       <!-- headerCell插槽无法正常渲染，去掉先 -->
-      <template v-for="column in columns" #[`header-${column.dataIndex}`] :key="column.dataIndex">
+      <template
+        v-for="column in columns"
+        #[`header-${column.dataIndex}`]
+        :key="column.dataIndex?.toString()"
+      >
         <HeaderCell :column="column" />
       </template>
       <!-- 增加对antdv3.x兼容 -->
@@ -467,7 +471,10 @@ export default defineComponent({
         const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
         if (!isEqual(newCol, preCol) || (_tableData && maxWidth > unref(maxWidthForAction))) {
           const columns = unref(getViewColumns).map((column) => {
-            if (column.dataIndex && ['action', 'actions'].includes(column.dataIndex)) {
+            if (
+              typeof column.dataIndex === 'string' &&
+              ['action', 'actions'].includes(column.dataIndex)
+            ) {
               column.width = Math.ceil(maxWidth)
               column.minWidth = Math.ceil(maxWidth)
               return column

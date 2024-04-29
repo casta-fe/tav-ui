@@ -132,7 +132,7 @@ export default defineComponent({
       count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
-      userList: [] as labelvalue,
+      userList: [] as UserItem[],
       userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据

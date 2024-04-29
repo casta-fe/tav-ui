@@ -26,7 +26,7 @@ export function useRowSelection(
     return {
       ...(changing.value ? { selectedRowKeys: unref(tempSelectedRowKeysRef) } : {}),
       // selectedRowKeys: unref(selectedRowKeysRef),
-      hideDefaultSelections: false,
+      hideSelectAll: false,
       onChange: (selectedRowKeys: any) => {
         setSelectedRowKeys(selectedRowKeys, false)
         // selectedRowKeysRef.value = selectedRowKeys;

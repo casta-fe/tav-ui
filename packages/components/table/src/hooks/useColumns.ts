@@ -3,7 +3,7 @@ import { computed, ref, toRaw, unref, watch } from 'vue'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { tavI18n } from '@tav-ui/locales'
 import { formatToDate } from '@tav-ui/utils/dateUtil'
-import { formatNumber } from '@tav-ui/utils'
+import { type VueNode, formatNumber } from '@tav-ui/utils'
 import { isArray, isBoolean, isFunction, isMap, isString } from '@tav-ui/utils/is'
 import { renderEditCell } from '../components/editable'
 import { ACTION_COLUMN_FLAG, DEFAULT_ALIGN, INDEX_COLUMN_FLAG, PAGE_SIZE } from '../const'
@@ -164,7 +164,7 @@ export function useColumns(
 
         if (!slots || !slots?.title) {
           column.slots = { title: `header-${dataIndex}`, ...(slots || {}) }
-          column.customTitle = column.title
+          column.customTitle = column.title as VueNode
           Reflect.deleteProperty(column, 'title')
         }
         const isDefaultAction = [INDEX_COLUMN_FLAG, ACTION_COLUMN_FLAG].includes(flag!)
