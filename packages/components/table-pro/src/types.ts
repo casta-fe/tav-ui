@@ -34,7 +34,7 @@ export type TableProColumn = VxeTableDefines.ColumnOptions & {
   customRender?: (params: VxeColumnSlotTypes.DefaultSlotParams) => JSX.Element | VNode | string
   children?: TableProColumn[]
   key?: string
-  value: any
+  value?: any
   // title: string // title 复用 column 中的配置即可
   disabled?: boolean
   /** vxetable内部会对column上的属性按照内部定义筛选 */
