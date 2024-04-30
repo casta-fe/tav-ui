@@ -24,12 +24,33 @@ export default defineComponent({
         {
           title: '第一列111',
           field: 'name',
-
           fixed: 'left',
+          width: 500,
         },
         {
           title: '第二列',
           field: 'role',
+          width: 200,
+        },
+        {
+          title: '第一列111',
+          field: 'name1',
+          width: 200,
+        },
+        {
+          title: '第二列',
+          field: 'role1',
+          width: 200,
+        },
+        {
+          title: '第一列111',
+          field: 'name2',
+          width: 200,
+        },
+        {
+          title: '第二列',
+          field: 'role2',
+          width: 200,
         },
         {
           field: 'actions',
@@ -43,22 +64,38 @@ export default defineComponent({
                   actions={[
                     {
                       label: '编辑这个长文字总共十几个字',
-                      limit: 6,
+                      // limit: 6,
                       onClick: () => {
                         console.log('edit')
                       },
                     },
                     {
-                      label: '测试啊啊啊啊测试啊啊啊啊测试啊啊啊啊',
-                      limit: 9,
-                      disabled: true,
+                      label: '测试1',
+                      // limit: 9,
+                      enabled: true,
                       onClick: () => {
                         console.log('test 1')
                       },
                     },
                     {
-                      label: '测试巴巴爸爸吧不不不不不',
-                      disabled: true,
+                      label: '测试2',
+                      // limit: 9,
+                      enabled: true,
+                      onClick: () => {
+                        console.log('test 1')
+                      },
+                    },
+                    {
+                      label: '测试3',
+                      // limit: 9,
+                      enabled: false,
+                      onClick: () => {
+                        console.log('test 1')
+                      },
+                    },
+                    {
+                      label: '巴巴爸爸吧不不不不不',
+                      enabled: true,
                       onClick: () => {
                         console.log('test 2')
                       },

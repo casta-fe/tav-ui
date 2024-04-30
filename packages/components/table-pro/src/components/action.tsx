@@ -5,7 +5,7 @@ import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { isBoolean, isFunction, isString, isUnDef } from '@tav-ui/utils/is'
+import { isBoolean, isFunction, isUnDef } from '@tav-ui/utils/is'
 import {
   CamelCaseToCls,
   ComponentActionName,
@@ -14,7 +14,6 @@ import {
 } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import { isOverMaxWidth, useColumnActionAutoWidth } from '../hooks/useColumnAutoWidth'
-import type { TooltipProps } from 'ant-design-vue'
 import type { PropType, Ref } from 'vue'
 import type { TableProActionItem } from '../typings'
 
@@ -55,9 +54,13 @@ export function limitActionLabel(actions: TableProActionItem[], labelMaxLength?:
   const TaTableProConfig = unref(useGlobalConfig('components'))?.TaTablePro
   return actions.map((action) => {
     const max = action.limit || labelMaxLength || TaTableProConfig?.actionLabelLimit || 3
-    const { label } = action
+    const { label, blankLabel } = action
+    // 备份下，防止修改了label后 重新渲染时候将tooltips显示不全的问题
+    if (!blankLabel) {
+      action.blankLabel = label
+    }
     if (label && label.length > max) {
-      action.tooltip = label
+      action.tooltip = blankLabel || label
       action.label = `${label.substring(0, max - 1)}..`
     }
     return action

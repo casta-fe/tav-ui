@@ -13,18 +13,18 @@ import { defineComponent, onMounted, reactive, ref } from 'vue'
 // import FollewPage from './Follow/index.vue'
 import { useModal } from '@tav-ui/components/modal'
 import allUsers from '../allUserList'
-import BasicTablePage from './table/Basic.vue'
+// import BasicTablePage from './table/Basic.vue'
 // import { TaButton } from '@tav-ui/components/button'
 
 // import FormPage from './Form/index.vue'
 import { taUploadProvideData } from './TaUpload'
 // import SearchableApiSelect from './SearchableApiSelect.vue'
-// import TablePro from './TablePro/testTree'
+import TablePro from './TablePro/test'
 export default defineComponent({
   name: 'Home',
   components: {
     // TaConfigProvider,
-    // TablePro,
+    TablePro,
     // TaModal,
     // TaButton,
     // TaUpload,
@@ -36,7 +36,7 @@ export default defineComponent({
     // FormPage,
     // TreePage,
     // ModalPage,
-    BasicTablePage,
+    // BasicTablePage,
     // FollewPage,
   },
   setup() {
@@ -82,7 +82,8 @@ export default defineComponent({
   <div><a href="/#/">首页</a><a href="/#/test">测试</a></div>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
   <input v-model="test" style="border: 1px solid #000" />
-  <BasicTablePage />
+  <TablePro />
+  <!-- <BasicTablePage /> -->
   <!-- <FormPage />
   <TaUpload />
   <SearchableApiSelect />

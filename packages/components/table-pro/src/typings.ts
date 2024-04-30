@@ -129,6 +129,7 @@ export interface TableProPopConfirm {
 export interface TableProActionItem extends ButtonProps {
   onClick?: (...arg: any[]) => any
   label?: string
+  blankLabel?: string
   color?: 'success' | 'error' | 'warning'
   icon?: string
   popConfirm?: TableProPopConfirm

@@ -29,6 +29,7 @@ export default defineComponent({
       <DatePicker
         value={state.time}
         open={state.isopen}
+        picker="year"
         mode="year"
         placeholder={tavI18n('Tav.form.message.2')}
         format="YYYY"

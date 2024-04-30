@@ -63,7 +63,7 @@
           :placeholder="placeholder"
           :multiple="multiple"
           :tree-data="orgList"
-          :replace-fields="orgFileds"
+          :field-names="orgFileds"
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
