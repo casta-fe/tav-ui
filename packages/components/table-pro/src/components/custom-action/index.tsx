@@ -241,7 +241,7 @@ export default defineComponent({
             isBoolean(props.config?.delete) ? undefined : props.config?.delete?.permissionCode
           }
         >
-          {tavI18n('Tav.common.cancelText')}
+          {tavI18n('Tav.common.delText')}
         </Button>
       ) : null
 
