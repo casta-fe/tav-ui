@@ -136,7 +136,7 @@ export default defineComponent({
       userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
-      orgFileds: { children: 'children', label: 'title', key: 'key', value: 'value' },
+      orgFileds: { children: 'children', title: 'name', key: 'id', value: 'id' },
     })
     provide(
       'propsData',

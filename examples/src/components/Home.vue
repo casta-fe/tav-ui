@@ -16,7 +16,7 @@ import allUsers from '../allUserList'
 // import BasicTablePage from './table/Basic.vue'
 // import { TaButton } from '@tav-ui/components/button'
 
-// import FormPage from './Form/index.vue'
+import FormPage from './Form/index.vue'
 import { taUploadProvideData } from './TaUpload'
 // import SearchableApiSelect from './SearchableApiSelect.vue'
 import TablePro from './TablePro/test'
@@ -33,7 +33,7 @@ export default defineComponent({
     // TimePage,
     // InputNumberRangePage,
     // FileViewPage,
-    // FormPage,
+    FormPage,
     // TreePage,
     // ModalPage,
     // BasicTablePage,
@@ -81,10 +81,11 @@ export default defineComponent({
 <template>
   <div><a href="/#/">首页</a><a href="/#/test">测试</a></div>
   <!-- <TaConfigProvider :permissions="state.permissions" :components="state.components"> -->
-  <input v-model="test" style="border: 1px solid #000" />
+  <!-- <input v-model="test" style="border: 1px solid #000" /> -->
   <TablePro />
+  <FormPage />
   <!-- <BasicTablePage /> -->
-  <!-- <FormPage />
+  <!--
   <TaUpload />
   <SearchableApiSelect />
   <TablePro />

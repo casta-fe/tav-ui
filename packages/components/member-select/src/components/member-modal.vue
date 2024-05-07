@@ -254,7 +254,7 @@ export default defineComponent({
         }
         const children = userList.value
           .filter((user) => {
-            return user.userOrgs.map((v) => v.organizationId).includes(treeNode.eventKey)
+            return user.userOrgs.map((v) => v.organizationId).includes(treeNode.id)
           })
           .map((user: any) => {
             const obj = { ...user }
