@@ -4,11 +4,12 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { ConfigProvider } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import TaConfigProvider from '@tav-ui/components/config-provider'
-import {
-  API__SYSTEM_USER_TABLE_INFO_GET as columnsGetApi,
-  API__SYSTEM_USER_TABLE_INFO_SET as columnsSetApi,
-} from '@tav-ui/components/table-pro/src/data'
+// import {
+//   API__SYSTEM_USER_TABLE_INFO_GET as columnsGetApi,
+//   API__SYSTEM_USER_TABLE_INFO_SET as columnsSetApi,
+// } from '@tav-ui/components/table-pro/src/data'
 import allUsers from './allUserList'
+import orgTree from './orgTree'
 import { taUploadProvideData } from './components/TaUpload'
 import 'dayjs/locale/zh-cn'
 import { useI18n } from './hooks/useI18n'
@@ -21,6 +22,10 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
+    const orgApi = () =>
+      new Promise((resolve) => {
+        resolve(orgTree)
+      })
     const state = reactive({
       appId: '10002',
       userInfo: {
@@ -37,6 +42,7 @@ export default defineComponent({
       components: {
         TaUpload: taUploadProvideData,
         TaMemberSelect: {
+          orgApi,
           allUserList: allUsers.data.map((v) => {
             return { label: v.name, value: v.id, ...v }
           }),

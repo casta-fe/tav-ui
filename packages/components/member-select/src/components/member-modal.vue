@@ -167,7 +167,11 @@ export default defineComponent({
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
     const state = reactive({
-      fieldNames: { children: 'children', title: 'name' },
+      fieldNames: {
+        title: 'name',
+        value: 'id',
+        key: 'id',
+      },
       orgExpandedKeys: [] as any[],
       autoExpandParent: true,
       tabActive: '1', //tab切换默认栏
