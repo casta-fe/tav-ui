@@ -100,9 +100,7 @@ export default defineComponent({
     const currentRange = ref(props.defaultRange)
     // 当前默认时间
     const currentDate = ref<any>(
-      unref(computedDateRangeList)
-        .find((x) => x.key === unref(currentRange))
-        ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
+      unref(computedDateRangeList).find((x) => x.key === unref(currentRange))?.dateRange
     )
     console.log(currentDate, currentRange)
 
@@ -117,7 +115,7 @@ export default defineComponent({
         currentDate.value = [
           dayjs(momentList[0]).startOf(props.autoChoose as OpUnitType),
           dayjs(momentList[1]).endOf(props.autoChoose as OpUnitType),
-        ].map((el) => el.format('YYYY-MM-DD'))
+        ]
       }
       handleEmitEvent()
     }
@@ -125,9 +123,7 @@ export default defineComponent({
     // 选中时间区间触发
     const handleRangeChange = ({ key }) => {
       currentRange.value = key
-      currentDate.value = unref(computedDateRangeList)
-        .find((x) => x.key === key)
-        ?.dateRange.map((el) => el.format('YYYY-MM-DD'))
+      currentDate.value = unref(computedDateRangeList).find((x) => x.key === key)?.dateRange
       handleEmitEvent()
     }
 
@@ -152,7 +148,8 @@ export default defineComponent({
     watch(
       () => props.value,
       (v) => {
-        currentDate.value = v
+        console.log(props.value)
+        currentDate.value = v.map((item: any) => dayjs(item))
       }
     )
 
