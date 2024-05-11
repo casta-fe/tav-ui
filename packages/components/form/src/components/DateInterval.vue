@@ -2,7 +2,7 @@
   <div class="date-interval-wrapper">
     <RangePicker
       :allow-clear="allowClear"
-      :format="format"
+      :value-format="format"
       :value="currentDate"
       @change="handleDateChange"
     />
@@ -72,7 +72,7 @@ export default defineComponent({
   props: {
     value: { type: Array, default: () => [] },
     defaultRange: { type: String, default: () => 'month' },
-    format: { type: String, default: 'YYYY-MM' },
+    format: { type: String, default: 'YYYY-MM-DD HH:mm:ss' },
     allowClear: Boolean,
     dateRangeList: Array as PropType<any[]>,
     dateRangeKeyList: {
