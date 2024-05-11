@@ -19,6 +19,15 @@ export const inputNumberRangeProps = {
     type: Boolean as PropType<IInputNumberRangeProps['disabled']>,
     default: false,
   },
+  minProps: {
+    type: Object as PropType<InputNumberProps>,
+    default: () => ({}),
+  },
+
+  maxProps: {
+    type: Object as PropType<InputNumberProps>,
+    default: () => ({}),
+  },
   minPlaceHolder: {
     type: String as PropType<IInputNumberRangeProps['minPlaceHolder']>,
     default: tavI18n('Tav.form.inputRange.3'),
@@ -26,6 +35,13 @@ export const inputNumberRangeProps = {
   maxPlaceHolder: {
     type: String as PropType<IInputNumberRangeProps['maxPlaceHolder']>,
     default: tavI18n('Tav.form.inputRange.3'),
+  },
+  min: {
+    type: Number,
+  },
+  max: {
+    type: Number,
+    default: Infinity,
   },
   size: {
     type: String as PropType<IInputNumberRangeProps['size']>,

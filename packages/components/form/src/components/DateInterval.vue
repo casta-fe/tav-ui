@@ -40,7 +40,7 @@ import { type PropType, computed, defineComponent, onMounted, ref, unref, watch 
 import dayjs, { type OpUnitType } from 'dayjs'
 import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
-import { formatToDate } from '@tav-ui/utils/dateUtil'
+import { formatToDateTime } from '@tav-ui/utils/dateUtil'
 import { getDateRangeRecord } from './types'
 
 type DateRangeKeyType =
@@ -130,11 +130,11 @@ export default defineComponent({
     const handleEmitEvent = () => {
       emit(
         'change',
-        unref(currentDate)?.map((x) => formatToDate(x))
+        unref(currentDate)?.map((x) => formatToDateTime(x))
       )
       emit(
         'search',
-        unref(currentDate)?.map((x) => formatToDate(x))
+        unref(currentDate)?.map((x) => formatToDateTime(x))
       )
     }
 
@@ -142,7 +142,7 @@ export default defineComponent({
       // 抛出当前默认时间
       emit(
         'getCurDate',
-        unref(currentDate)?.map((x) => formatToDate(x))
+        unref(currentDate)?.map((x) => formatToDateTime(x))
       )
     })
     watch(
@@ -162,7 +162,7 @@ export default defineComponent({
     // const onOpenChange = async (status) => {
     //   if (status) {
     //     isOpen.value = status
-    //     currentDate.value = currentDate.value.map((el) => formatToDate(el))
+    //     currentDate.value = currentDate.value.map((el) => formatToDateTime(el))
     //     await nextTick()
     //     document
     //       .querySelector('.ant-calendar-range-right')
@@ -178,7 +178,7 @@ export default defineComponent({
     //   currentDate.value = cacheDate.value
     //   handleEmitEvent()
     //   isOpen.value = false
-    //   // console.log(currentDate.value.map((x) => formatToDate(x)))
+    //   // console.log(currentDate.value.map((x) => formatToDateTime(x)))
     // }
     // const handleCancel = () => {
     //   isOpen.value = false
