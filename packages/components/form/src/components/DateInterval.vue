@@ -2,7 +2,7 @@
   <div class="date-interval-wrapper">
     <RangePicker
       :allow-clear="allowClear"
-      :value-format="format"
+      :format="format"
       :value="currentDate"
       @change="handleDateChange"
     />
@@ -142,14 +142,14 @@ export default defineComponent({
       // 抛出当前默认时间
       emit(
         'getCurDate',
-        unref(currentDate)?.map((x) => formatToDateTime(x))
+        unref(currentDate) ? unref(currentDate).map((x) => formatToDateTime(x)) : []
       )
     })
     watch(
       () => props.value,
       (v) => {
         console.log(props.value)
-        currentDate.value = v.map((item: any) => dayjs(item))
+        currentDate.value = props.value.map((item: any) => dayjs(item))
       }
     )
 
