@@ -87,7 +87,9 @@ export default defineComponent({
     const currentRange = ref(props.defaultRange)
     // 当前默认时间
     const currentDate = ref<any>(
-      unref(computedDateRangeList).find((x) => x.key === unref(currentRange))?.dateRange
+      unref(computedDateRangeList)
+        .find((x) => x.key === unref(currentRange))
+        ?.dateRange?.map((x) => formatToDateTime(x)) || []
     )
     console.log(currentDate, currentRange)
 
@@ -115,21 +117,20 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      const data = unref(currentDate)?.map((x) => formatToDateTime(x))
+      const data = unref(currentDate) || []
       emit('change', data)
       emit('search', data)
     }
 
     onMounted(() => {
       // 抛出当前默认时间
-      const data = unref(currentDate) ? unref(currentDate).map((x) => formatToDateTime(x)) : []
+      const data = unref(currentDate) || []
       emit('getCurDate', data)
     })
     watch(
       () => props.value,
       (v) => {
-        console.log(props.value)
-        currentDate.value = props.value.map((item: any) => dayjs(item))
+        currentDate.value = [...props.value]
       }
     )
 
