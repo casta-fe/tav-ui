@@ -2,25 +2,11 @@
   <div class="date-interval-wrapper">
     <RangePicker
       :allow-clear="allowClear"
+      :value-format="valueFormat"
       :format="format"
       :value="currentDate"
       @change="handleDateChange"
     />
-    <!-- <RangePicker
-      :allow-clear="false"
-      :value="currentDate"
-      :open="isOpen"
-      :mode="[`month`, `month`]"
-      format="YYYY-MM"
-      dropdown-class-name="data-interval-footer"
-      @open-change="onOpenChange"
-      @panel-change="onPanelChange"
-    >
-      <template #renderExtraFooter>
-        <TaButton type="primary" @click="handleOk">确定</TaButton>
-        <TaButton @click="handleCancel">取消</TaButton>
-      </template>
-    </RangePicker> -->
 
     <Dropdown trigger="click">
       <TaButton pre-icon="ant-design:calendar-filled" />
@@ -72,7 +58,8 @@ export default defineComponent({
   props: {
     value: { type: Array, default: () => [] },
     defaultRange: { type: String, default: () => 'month' },
-    format: { type: String, default: 'YYYY-MM-DD HH:mm:ss' },
+    format: { type: String, default: 'YYYY-MM-DD' },
+    valueFormat: { type: String, default: 'YYYY-MM-DD  HH:mm:ss' },
     allowClear: Boolean,
     dateRangeList: Array as PropType<any[]>,
     dateRangeKeyList: {
@@ -128,22 +115,15 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      emit(
-        'change',
-        unref(currentDate)?.map((x) => formatToDateTime(x))
-      )
-      emit(
-        'search',
-        unref(currentDate)?.map((x) => formatToDateTime(x))
-      )
+      const data = unref(currentDate)?.map((x) => formatToDateTime(x))
+      emit('change', data)
+      emit('search', data)
     }
 
     onMounted(() => {
       // 抛出当前默认时间
-      emit(
-        'getCurDate',
-        unref(currentDate) ? unref(currentDate).map((x) => formatToDateTime(x)) : []
-      )
+      const data = unref(currentDate) ? unref(currentDate).map((x) => formatToDateTime(x)) : []
+      emit('getCurDate', data)
     })
     watch(
       () => props.value,
@@ -153,43 +133,7 @@ export default defineComponent({
       }
     )
 
-    // const isOpen = ref(false)
-    // const cacheDate = ref()
-    // const onPanelChange = (v) => {
-    //   // console.error(v.map((el) => el._d.getMonth() + 1))
-    //   cacheDate.value = [dayjs(v[0]).startOf('month'), dayjs(v[1]).endOf('month')]
-    // }
-    // const onOpenChange = async (status) => {
-    //   if (status) {
-    //     isOpen.value = status
-    //     currentDate.value = currentDate.value.map((el) => formatToDateTime(el))
-    //     await nextTick()
-    //     document
-    //       .querySelector('.ant-calendar-range-right')
-    //       ?.querySelector('.ant-calendar-month-panel-next-year-btn')
-    //       ?.addEventListener('click', () => {
-    //         console.log('!23')
-    //         currentDate.value = [undefined, undefined]
-    //       })
-    //   }
-    // }
-    // const handleOk = () => {
-    //   currentRange.value = ''
-    //   currentDate.value = cacheDate.value
-    //   handleEmitEvent()
-    //   isOpen.value = false
-    //   // console.log(currentDate.value.map((x) => formatToDateTime(x)))
-    // }
-    // const handleCancel = () => {
-    //   isOpen.value = false
-    // }
-
     return {
-      // isOpen,
-      // onPanelChange,
-      // onOpenChange,
-      // handleOk,
-      // handleCancel,
       computedDateRangeList,
       currentRange,
       currentDate,
