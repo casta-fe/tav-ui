@@ -104,7 +104,7 @@ export default defineComponent({
         currentDate.value = [
           dayjs(momentList[0]).startOf(props.autoChoose as OpUnitType),
           dayjs(momentList[1]).endOf(props.autoChoose as OpUnitType),
-        ]
+        ].map((x) => formatToDateTime(x))
       }
       handleEmitEvent()
     }
