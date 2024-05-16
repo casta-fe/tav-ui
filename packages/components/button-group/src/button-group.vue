@@ -53,12 +53,14 @@ export default defineComponent({
         emit('update:active', -1)
       }
     }
-    const getNumber = (num) => {
+    const getNumber = (num, item): string | number => {
       if (isNullOrUnDef(num)) {
         return 0
       }
+      // 可以给组件配，也可以自定义配置
+      const badgeMax = item.badgeMax || props.badgeMax
       if (props.badgeMax) {
-        return num > props.badgeMax ? props.badgeMax : num
+        return num > badgeMax ? `${badgeMax}+` : num
       } else {
         return num
       }
@@ -88,10 +90,10 @@ export default defineComponent({
         <span v-if="item.number != null">（{{ item.number }}）</span>
         <sup v-if="item.badge != null" class="badge-count">
           <template v-if="item.badge !== true">
-            {{ getNumber(item.badge) }}
+            {{ getNumber(item.badge, item) }}
           </template>
           <template v-else-if="item.number != null">
-            {{ getNumber(item.number) }}
+            {{ getNumber(item.number, item) }}
           </template>
         </sup>
       </Button>
