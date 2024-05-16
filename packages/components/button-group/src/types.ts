@@ -24,6 +24,9 @@ export const buttonGroupProps = {
     type: Array as PropType<ButtonGroupItem[]>,
     default: () => [] as ButtonGroupItem[],
   },
+  badgeMax: {
+    type: Number,
+  },
 }
 
 export declare type ButtonGroupProps = ExtractPropTypes<typeof buttonGroupProps>

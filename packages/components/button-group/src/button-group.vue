@@ -3,6 +3,7 @@ import { computed, defineComponent, ref, watch } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import Button from '@tav-ui/components/button'
 import { useScrollToCenter } from '@tav-ui/hooks'
+import { isNullOrUnDef } from '@tav-ui/utils'
 import { buttonGroupProps } from './types'
 import type { Ref } from 'vue'
 import type { ButtonGroupItem } from './types'
@@ -52,9 +53,19 @@ export default defineComponent({
         emit('update:active', -1)
       }
     }
-
+    const getNumber = (num) => {
+      if (isNullOrUnDef(num)) {
+        return 0
+      }
+      if (props.badgeMax) {
+        return num > props.badgeMax ? props.badgeMax : num
+      } else {
+        return num
+      }
+    }
     return {
       scrollRef,
+      getNumber,
       clickHandle,
       filterButton,
     }
@@ -77,10 +88,10 @@ export default defineComponent({
         <span v-if="item.number != null">（{{ item.number }}）</span>
         <sup v-if="item.badge != null" class="badge-count">
           <template v-if="item.badge !== true">
-            {{ item.badge }}
+            {{ getNumber(item.badge) }}
           </template>
           <template v-else-if="item.number != null">
-            {{ item.number }}
+            {{ getNumber(item.number) }}
           </template>
         </sup>
       </Button>
