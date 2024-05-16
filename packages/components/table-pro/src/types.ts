@@ -12,6 +12,7 @@ import type { TableProExtendApis } from './hooks/useExtendInstance'
 import type { ExtractPropTypes, PropType, VNode } from 'vue'
 import type {
   VxeColumnPropTypes,
+  VxeColumnSlotTypes,
   VxeGridEventProps,
   VxeGridInstance,
   VxeGridPropTypes,
@@ -30,7 +31,7 @@ import type {
 export type TableProColumn = VxeTableDefines.ColumnOptions & {
   /** 使用customrender后template插槽失效，如果想使用template插槽，请使用slot-default */
   // customRender 在运行时不会用到，传进来后用vxetable提供的cellrender接收
-  customRender?: (params: VxeColumnPropTypes.DefaultSlotParams) => JSX.Element | VNode | string
+  customRender?: (params: VxeColumnSlotTypes.DefaultSlotParams) => JSX.Element | VNode | string
   children?: TableProColumn[]
   /** vxetable内部会对column上的属性按照内部定义筛选 */
   params?: VxeColumnPropTypes.Params
