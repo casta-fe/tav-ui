@@ -6,6 +6,7 @@ export interface ButtonGroupItem {
   url?: string
   number?: number | null | undefined
   badge?: true | number | null | undefined
+  badgeMax?: number
   disabled?: boolean
   permission?: string
   loading?: boolean
@@ -23,6 +24,9 @@ export const buttonGroupProps = {
   buttons: {
     type: Array as PropType<ButtonGroupItem[]>,
     default: () => [] as ButtonGroupItem[],
+  },
+  badgeMax: {
+    type: Number,
   },
 }
 
