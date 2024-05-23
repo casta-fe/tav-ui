@@ -119,6 +119,7 @@ export type ComponentType =
   | 'InputNumberRange'
   | 'CascadeProSelect'
   | 'DateInterval'
+  | 'SelectPro'
 
 export type EditableComponentType =
   | 'Input'
@@ -158,3 +159,4 @@ export type EditableComponentType =
   | 'InputNumberRange'
   | 'CascadeProSelect'
   | 'DateInterval'
+  | 'SelectPro'
