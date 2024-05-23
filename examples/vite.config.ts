@@ -21,7 +21,8 @@ export default defineConfig({
   server: {
     // Listening on all local IPs
     host: true,
-    port: 3002,
+    // port: 3002,
+    port: 3003,
     // Load proxy configuration from .env
     proxy: {
       '/api': {
