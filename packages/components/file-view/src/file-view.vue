@@ -3,7 +3,7 @@ import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } fro
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Button, Image, Modal, Spin } from 'ant-design-vue'
 //@ts-ignore
-import WebOfficeSDK from 'i7eo-web-office-sdk'
+// import WebOfficeSDK from 'i7eo-web-office-sdk'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { download } from '@tav-ui/utils/file/_download'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -14,6 +14,7 @@ import type { Ref } from 'vue'
 import type { Nullable } from '../../modal/src/types'
 // import WebOfficeSDK from './web-office-sdk-solution-v2.0.6.es.js'
 
+const WebOfficeSDK = {} as any
 async function handlePreview(fileId: string, token: string, officeType: string) {
   const WebOfficeSDKInstance = (WebOfficeSDK as any).init({
     officeType,
