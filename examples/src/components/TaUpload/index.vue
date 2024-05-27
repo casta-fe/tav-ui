@@ -18,12 +18,15 @@
       ]"
       :disabled-select="true"
       :before-upload="beforeUpload"
+      :upload="upload"
+      :query-file="queryFile"
+      :query-file-type="queryFileType"
       :cover-column-title="{ fullName: '全称' }"
       :hide-column-fields="['createTime']"
       :file-branch-is-show-delete-action="fileBranchIsShowDeleteAction"
-      :permission-control="0"
       @select="onSelect"
     >
+      <!-- :permission-control="0" -->
       <template #beforeButton="{ loading }">
         <TaButton :loading="loading">beforeButton</TaButton>
       </template>
@@ -43,6 +46,7 @@
 // @ts-nocheck
 import { defineComponent, reactive, ref } from 'vue'
 import { TaButton, TaUpload } from '@tav-ui/components'
+import { taUploadProvideData } from './provideData'
 import type { Handler } from '@tav-ui/components/upload/src/main'
 
 export default defineComponent({
@@ -54,13 +58,15 @@ export default defineComponent({
     const uploadRef = ref<Handler>()
 
     const params = reactive({
-      moduleCode: 'tg_invest',
-      typeCode: 'FUND_GLR_QTZL',
+      // moduleCode: 'tg_invest',
+      // typeCode: 'FUND_GLR_QTZL',
       // businessId: 'id0',
+      moduleCode: 'kf_pitch',
+      typeCode: 'POE_TH_PITCH_QR',
     })
 
     setTimeout(() => {
-      params.businessKey = 'abc'
+      params.businessKey = '1624_INVESTMENT_PITCH_FILE'
     }, 1000)
 
     function switchModule() {
@@ -88,11 +94,18 @@ export default defineComponent({
       //   return true
       // }
     }
+
+    const upload = taUploadProvideData.upload
+    const queryFile = taUploadProvideData.queryFile
+    const queryFileType = taUploadProvideData.queryFileType
     // setTimeout(switchModule, 2000)
 
     return {
       uploadRef,
       beforeUpload,
+      upload,
+      queryFile,
+      queryFileType,
       params,
       getRes,
       onSelect: console.log,

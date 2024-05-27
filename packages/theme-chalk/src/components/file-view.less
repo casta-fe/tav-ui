@@ -4,6 +4,10 @@
   .ant-modal {
     top: 0;
     padding: 0;
+    margin: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
   }
 
   &-next,
@@ -40,6 +44,43 @@
     right: 20px;
   }
 
+  .file-view-title {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: calc(100% - 100px);
+    max-height: 40px;
+
+    svg {
+      font-size: 32px;
+    }
+  }
+
+  .file-view-title-content {
+    flex: 1;
+    margin-left: 12px;
+
+    .main {
+      font-size: 16px !important;
+      color: rgba(0,0,0, .85);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+
+    .other {
+      font-size: 12px !important;
+      color: #646a73;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+  }
+
   .ant-modal-content {
     height: 100vh;
     border-radius: 0;
@@ -49,14 +90,25 @@
 
     .ant-modal-header {
       border-radius: 0;
-      background: @primary-color;
+      // background: @primary-color;
       border-bottom: none;
 
       .ant-modal-title {
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         color: #fff;
-        line-height: 30px;
+        // line-height: 30px;
         font-size: 14px;
         font-weight: normal;
+
+        .line {
+          border-right: 1px solid #dee0e3;
+          margin-left: 6px;
+          margin-right: 12px;
+          height: 36px;
+        }
       }
     }
 
@@ -79,6 +131,7 @@
     }
 
     .ant-modal-body {
+      border-top: 1px solid #dee0e3;
       flex: 1;
       // padding: 0 10%;
       max-height: 100%;
@@ -105,8 +158,9 @@
       }
 
       .file-view-content {
-        // background: #fff;
-        height: calc(100vh - 50px);
+        position: relative;
+        background: #fff;
+        height: calc(100vh - 64px);
         box-sizing: border-box;
         display: flex;
         align-items: center;
@@ -126,6 +180,34 @@
           background: #fff;
           height: 100%;
           width: 800px;
+        }
+
+        .ant-image-preview-mask {
+          display: none;
+        }
+
+        .ant-image-preview-wrap {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+        }
+
+        .ant-image-preview-operations {
+          top: unset;
+          right: unset;
+          width: auto;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          border-radius: 6px;
+
+          .ant-image-preview-operations-operation {
+            &:first-child {
+              display: none;
+            }
+          }
         }
       }
 

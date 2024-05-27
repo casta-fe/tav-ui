@@ -36,6 +36,7 @@
     "@ant-design/icons-vue": "6.1.0",
     "@floating-ui/dom": "^0.5.4",
     "@iconify/iconify": "2.2.1",
+    "@mercurial/web-office-sdk": "2.0.7",
     "@purge-icons/generated": "0.7.0",
     "@tav-ui/build": "workspace:*",
     "@tav-ui/components": "workspace:*",

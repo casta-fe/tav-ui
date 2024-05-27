@@ -84,12 +84,12 @@ export async function toLogin() {
   // const phone = '13629273499'
   const password = '123456'
 
-  await fetch('/api/TIANTA-SYSTEM/test.html', {
-    method: 'GET',
-    mode: 'cors',
-    cache: 'no-store',
-    credentials: 'include',
-  })
+  // await fetch('/api/TIANTA-SYSTEM/test.html', {
+  //   method: 'GET',
+  //   mode: 'cors',
+  //   cache: 'no-store',
+  //   credentials: 'include',
+  // })
 
   const {
     data: { keyId = '1', publicKey },
@@ -168,8 +168,8 @@ export function MockData() {
   return data
 }
 
-export async function __post(url = '', data = {}) {
-  const response = await fetch(url, {
+export async function __post(url = '', data: any = {}, isFormData = false) {
+  const options: any = {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -184,7 +184,14 @@ export async function __post(url = '', data = {}) {
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data), // body data type must match "Content-Type" header
-  })
+  }
+
+  if (isFormData) {
+    Reflect.deleteProperty(options.headers, 'Content-Type')
+    options.body = data
+  }
+
+  const response = await fetch(url, options)
   return response.json() // parses JSON response into native JavaScript objects
 }
 
