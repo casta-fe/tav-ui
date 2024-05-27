@@ -23,14 +23,19 @@ export default defineConfig({
     host: true,
     port: 3002,
     // Load proxy configuration from .env
-    proxy: {
-      '/api': {
-        target: '192.168.10.52:80',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: '192.168.10.52:80',
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, ''),
+    //   },
+    // },
   },
+  // server: {
+  //   // Listening on all local IPs
+  //   host: true,
+  //   port: 3003,
+  // },
   optimizeDeps: {
     include: ['vue', '@vue/shared'],
   },

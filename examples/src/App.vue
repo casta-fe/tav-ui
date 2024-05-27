@@ -14,6 +14,7 @@ import { taUploadProvideData } from './components/TaUpload'
 import 'dayjs/locale/zh-cn'
 import { useI18n } from './hooks/useI18n'
 import { i18n } from './locales/setupI18n'
+import { previewFile, previewWPSFile } from './components/TaUpload/provideData'
 dayjs.locale('zh-cn')
 export default defineComponent({
   components: {
@@ -52,6 +53,10 @@ export default defineComponent({
         //   columnsGetApi,
         //   columnsSetApi,
         // },
+        TaFileView: {
+          previewFile,
+          previewWPSFile,
+        },
       },
     })
     setTimeout(() => {
