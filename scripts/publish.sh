@@ -2,7 +2,7 @@
 
 set -e
 
-pnpm i
+pnpm i --frozen-lockfile
 # pnpm i
 pnpm update:version
 
