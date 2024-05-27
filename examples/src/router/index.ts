@@ -1,4 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import TableProSingleHeader from '../components/TablePro/single-header'
+import TableProMultiHeader from '../components/TablePro/multi-header'
+import TestDemo from '../components/TablePro/test-demo.vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
@@ -15,22 +18,17 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table-pro-single-header',
     name: 'TableProSingleHeader',
-    component: () => import('../components/TablePro/single-header'),
+    component: TableProSingleHeader,
   },
   {
     path: '/table-pro-multi-header',
     name: 'TableProMultiHeader',
-    component: () => import('../components/TablePro/multi-header'),
+    component: TableProMultiHeader,
   },
   {
     path: '/test-demo',
     name: 'TestDemo',
-    component: () => import('../components/TablePro/test-demo.vue'),
-  },
-  {
-    path: '/upload',
-    name: 'Upload',
-    component: () => import('../components/TaUpload/index.vue'),
+    component: TestDemo,
   },
 ]
 

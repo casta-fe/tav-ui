@@ -11,6 +11,6 @@
     "api": "plop api"
   },
   "devDependencies": {
-    "plop": "3.0.5"
+    "plop": "^3.0.5"
   }
 }
