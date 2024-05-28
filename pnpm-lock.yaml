@@ -254,40 +254,33 @@ importers:
       plop: 3.0.5
 
   packages/components:
-    specifiers: {}
-
-  packages/directives:
-    specifiers: {}
-
-  packages/enums:
-    specifiers: {}
-
-  packages/hooks:
-    specifiers: {}
-
-  packages/locales:
-    specifiers: {}
-
-  packages/settings:
-    specifiers: {}
-
-  packages/tav-ui:
     specifiers:
       '@ant-design/colors': 6.0.0
       '@ant-design/icons-vue': 6.1.0
       '@floating-ui/dom': 0.5.4
       '@iconify/iconify': 2.2.1
       '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
       '@vueuse/core': 8.6.0
       '@vueuse/shared': 6.8.0
       '@zxcvbn-ts/core': 1.0.0
       ant-design-vue: 3.2.20
       exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
+      vue-i18n: 9.1.9
       vue-types: 4.1.1
       vxe-table: 4.5.21
       xe-utils: 3.5.4
@@ -297,35 +290,475 @@ importers:
       '@floating-ui/dom': 0.5.4
       '@iconify/iconify': 2.2.1
       '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': 'link:'
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
       '@vueuse/core': 8.6.0
       '@vueuse/shared': 6.8.0
       '@zxcvbn-ts/core': 1.0.0
       ant-design-vue: 3.2.20
       exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
       js-pinyin: 0.1.9
       lodash-es: 4.17.21
       qrcode: 1.4.4
       resize-observer-polyfill: 1.5.1
       sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/directives:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': 'link:'
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/enums:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': 'link:'
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/hooks:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': 'link:'
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/locales:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': 'link:'
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/settings:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': 'link:'
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+
+  packages/tav-ui:
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
       vue-types: 4.1.1
       vxe-table: 4.5.21
       xe-utils: 3.5.4
 
   packages/theme-chalk:
     specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
       '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
       '@types/gulp-autoprefixer': 0.0.33
       '@types/gulp-clean-css': 4.3.0
       '@types/gulp-less': 0.0.32
       '@types/gulp-rename': 2.0.1
       '@types/gulp-sass': 5.0.0
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
       gulp-autoprefixer: 8.0.0
       gulp-clean-css: 4.3.0
       gulp-less: 5.0.0
       gulp-rename: 2.0.0
       gulp-sass: 5.1.0
-    devDependencies:
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
       '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': 'link:'
+      '@tav-ui/utils': link:../utils
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    devDependencies:
       '@types/gulp-autoprefixer': 0.0.33
       '@types/gulp-clean-css': 4.3.0
       '@types/gulp-less': 0.0.32
@@ -338,7 +771,66 @@ importers:
       gulp-sass: 5.1.0
 
   packages/utils:
-    specifiers: {}
+    specifiers:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': workspace:*
+      '@tav-ui/components': workspace:*
+      '@tav-ui/directives': workspace:*
+      '@tav-ui/enums': workspace:*
+      '@tav-ui/hooks': workspace:*
+      '@tav-ui/locales': workspace:*
+      '@tav-ui/settings': workspace:*
+      '@tav-ui/theme-chalk': workspace:*
+      '@tav-ui/utils': workspace:*
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
+    dependencies:
+      '@ant-design/colors': 6.0.0
+      '@ant-design/icons-vue': 6.1.0
+      '@floating-ui/dom': 0.5.4
+      '@iconify/iconify': 2.2.1
+      '@purge-icons/generated': 0.7.0
+      '@tav-ui/build': link:../../internal/build
+      '@tav-ui/components': link:../components
+      '@tav-ui/directives': link:../directives
+      '@tav-ui/enums': link:../enums
+      '@tav-ui/hooks': link:../hooks
+      '@tav-ui/locales': link:../locales
+      '@tav-ui/settings': link:../settings
+      '@tav-ui/theme-chalk': link:../theme-chalk
+      '@tav-ui/utils': 'link:'
+      '@vueuse/core': 8.6.0
+      '@vueuse/shared': 6.8.0
+      '@zxcvbn-ts/core': 1.0.0
+      ant-design-vue: 3.2.20
+      exceljs: 4.2.0
+      i7eo-web-office-sdk: 2.0.7
+      js-pinyin: 0.1.9
+      lodash-es: 4.17.21
+      qrcode: 1.4.4
+      resize-observer-polyfill: 1.5.1
+      sortablejs: 1.15.0
+      vue-i18n: 9.1.9
+      vue-types: 4.1.1
+      vxe-table: 4.5.21
+      xe-utils: 3.5.4
 
 packages:
 
@@ -1099,6 +1591,7 @@ packages:
 
   /@iconify/iconify/2.2.1:
     resolution: {integrity: sha512-WJzw+3iicrF/tbjbxxRinSgy5FHdJoz/egTqwi3xCDkNRJPq482RX1iyaWrjNuY2vMNSPkQMuqHvZDXgA+WnwQ==}
+    deprecated: no longer maintained, switch to modern iconify-icon web component
     dev: false
 
   /@intlify/core-base/9.1.9:
@@ -5351,6 +5844,7 @@ packages:
   /fstream/1.0.12:
     resolution: {integrity: sha512-WvJ193OHa0GHPEL+AycEJgxvBEwyfRkN1vhjca23OaPVMCaLCXTd5qAu82AjTcgP1UJmytkOKb63Ypde7raDIg==}
     engines: {node: '>=0.6'}
+    deprecated: This package is no longer supported.
     dependencies:
       graceful-fs: 4.2.10
       inherits: 2.0.4
@@ -8208,6 +8702,7 @@ packages:
 
   /rimraf/2.7.1:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
@@ -9672,6 +10167,18 @@ packages:
       semver: 7.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /vue-i18n/9.1.9:
+    resolution: {integrity: sha512-JeRdNVxS2OGp1E+pye5XB6+M6BBkHwAv9C80Q7+kzoMdUDGRna06tjC0vCB/jDX9aWrl5swxOMFcyAr7or8XTA==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      '@intlify/core-base': 9.1.9
+      '@intlify/shared': 9.1.9
+      '@intlify/vue-devtools': 9.1.9
+      '@vue/devtools-api': 6.5.1
     dev: false
 
   /vue-i18n/9.1.9_vue@3.2.21:
