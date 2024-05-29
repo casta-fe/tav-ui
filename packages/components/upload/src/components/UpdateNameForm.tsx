@@ -95,6 +95,7 @@ export const UpdateNameForm = defineComponent({
           onKeydown={({ $event: { code } }) => {
             'Enter' === code && props.onEnter?.()
           }}
+          //@ts-ignore
           style={{
             display: 'inline-block',
             width: 'calc(100% - 22px)',
