@@ -84,7 +84,8 @@ export default defineComponent({
       const suffix = currentFile.value?.suffix
       if (suffix) {
         for (const item in loadFileTypes) {
-          if (loadFileTypes[item].some((v) => suffix == v)) {
+          //@ts-ignore
+          if ((loadFileTypes[item] as any).some((v: any) => suffix == v)) {
             type = item
             break
           }
@@ -106,7 +107,7 @@ export default defineComponent({
     const afterCloseHandle = () => {
       emit('update:show', false)
     }
-    const getFile = (cb?) => {
+    const getFile = (cb?: any) => {
       if (!globalConfig.value || !globalConfig.value.TaFileView) {
         afterCloseHandle()
         return
@@ -125,7 +126,7 @@ export default defineComponent({
       console.log(currentFile.value)
 
       previewWPSFile(id, props.AppId)
-        .then((res) => {
+        .then((res: any) => {
           state.pageLoading = false
           state.supportWPS = !!res.data.wps
           cb && cb()

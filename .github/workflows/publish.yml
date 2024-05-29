@@ -42,12 +42,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
         with:
-          node-version: '16.15.0'
-          registry-url: https://registry.npmjs.com/
+          fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.com/
 
       - name: Get version
         # 这里取决于顶部 on 的动作如果是 tag/release  则获取到的是tag 如果是pull等分支操作，这里获取到的是分支名称

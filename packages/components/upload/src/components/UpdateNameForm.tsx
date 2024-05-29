@@ -48,7 +48,7 @@ export const UpdateNameForm = defineComponent({
           colProps: { span: 12 },
           componentProps: {
             maxLength: 100,
-            onPressEnter: ({ code }) => {
+            onPressEnter: ({ code }: any) => {
               'Enter' === code && props.onEnter?.()
             },
             onBlur: throwResult,
@@ -74,7 +74,7 @@ export const UpdateNameForm = defineComponent({
           ],
           componentProps: {
             maxLength: 400,
-            onPressEnter: ({ code }) => {
+            onPressEnter: ({ code }: any) => {
               'Enter' === code && props.onEnter?.()
             },
             onBlur: throwResult,
