@@ -30,7 +30,7 @@ export const generateTypesDefinitions = async () => {
       emitDeclarationOnly: true,
       outDir,
       baseUrl: projRoot,
-      preserveSymlinks: true,
+      // preserveSymlinks: true,
       skipLibCheck: true,
       noImplicitAny: false,
       noUnusedLocals: false,
