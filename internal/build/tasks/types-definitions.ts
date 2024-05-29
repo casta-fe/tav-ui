@@ -30,7 +30,7 @@ export const generateTypesDefinitions = async () => {
       emitDeclarationOnly: true,
       outDir,
       baseUrl: projRoot,
-      // preserveSymlinks: true,
+      preserveSymlinks: true,
       skipLibCheck: true,
       noImplicitAny: false,
       noUnusedLocals: false,
@@ -42,7 +42,7 @@ export const generateTypesDefinitions = async () => {
     skipAddingFilesFromTsConfig: true,
   })
 
-  const globAnyFile = '**/*.{js?(x),ts?(x),vue}'
+  const globAnyFile = '**/*.{ts?(x),vue}'
   const filePaths = excludeFiles(
     await glob([globAnyFile, `!${PKG_NAME}/**/*`], {
       cwd: pkgRoot,

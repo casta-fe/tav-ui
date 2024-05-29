@@ -64,7 +64,6 @@
     "@zxcvbn-ts/core": "1.0.0",
     "ant-design-vue": "3.2.20",
     "exceljs": "4.2.0",
-    "i7eo-web-office-sdk": "2.0.7",
     "js-pinyin": "0.1.9",
     "lodash-es": "4.17.21",
     "qrcode": "1.4.4",

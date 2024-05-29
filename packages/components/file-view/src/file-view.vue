@@ -3,7 +3,7 @@ import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } fro
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Button, Image, Modal, Spin } from 'ant-design-vue'
 //@ts-ignore
-import WebOfficeSDK from 'i7eo-web-office-sdk'
+import WebOfficeSDK from '@tav-ui/utils/web-office-sdk'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { download } from '@tav-ui/utils/file/_download'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
