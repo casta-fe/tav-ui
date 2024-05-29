@@ -9,6 +9,8 @@
     "sourceMap": true,
     "lib": ["ES2018", "DOM", "DOM.Iterable"],
     "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": false,
+    "preserveValueImports": false,
     "types": ["unplugin-vue-define-options"]
   },
   "include": ["packages", "typings"],
