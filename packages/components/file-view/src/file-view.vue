@@ -16,7 +16,8 @@ import type { Nullable } from '../../modal/src/types'
 async function handlePreview(fileId: string, token: string, officeType: string) {
   const WebOfficeSDKInstance = (WebOfficeSDK as any).init({
     officeType,
-    appId: 'SX20240514VODTXS',
+    // appId: 'SX20240514VODTXS',
+    appId: 'AK20240528LDMTIA',
     // fileId: '66870',
     fileId,
     token,
