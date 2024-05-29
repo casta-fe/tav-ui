@@ -400,33 +400,6 @@ importers:
       '@purge-icons/generated':
         specifier: 0.7.0
         version: 0.7.0
-      '@tav-ui/build':
-        specifier: workspace:*
-        version: link:../../internal/build
-      '@tav-ui/components':
-        specifier: workspace:*
-        version: link:../components
-      '@tav-ui/directives':
-        specifier: workspace:*
-        version: link:../directives
-      '@tav-ui/enums':
-        specifier: workspace:*
-        version: link:../enums
-      '@tav-ui/hooks':
-        specifier: workspace:*
-        version: link:../hooks
-      '@tav-ui/locales':
-        specifier: workspace:*
-        version: link:../locales
-      '@tav-ui/settings':
-        specifier: workspace:*
-        version: link:../settings
-      '@tav-ui/theme-chalk':
-        specifier: workspace:*
-        version: link:../theme-chalk
-      '@tav-ui/utils':
-        specifier: workspace:*
-        version: link:../utils
       '@vueuse/core':
         specifier: 8.6.0
         version: 8.6.0(vue@3.2.21)
