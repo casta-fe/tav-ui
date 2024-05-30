@@ -1,5 +1,46 @@
 import { JSEncrypt } from 'jsencrypt'
 
+const __CurrentMainDomain__ = (function () {
+  const hostnameArray = location.hostname.split('.')
+  return `.${hostnameArray.slice(-2).join('.')}`
+})()
+
+function setCookie(name: string, val: any, expires: string | number, domain?: string) {
+  let text = String(encodeURIComponent(val))
+  const date = new Date()
+  date.setTime(date.getTime() + Number(expires) * 1000)
+  text += `; expires=${date.toUTCString()}`
+  // domain
+  text += '; path=/'
+  if (typeof domain != 'undefined' && domain != '') {
+    text += `; domain=${__CurrentMainDomain__}`
+  }
+  document.cookie = `${name}=${text}`
+}
+function getCookie(objName: string) {
+  const arrStr = document.cookie.split('; ')
+  for (let i = 0; i < arrStr.length; i++) {
+    const temp = arrStr[i].split('=')
+    if (temp[0] == objName) return unescape(temp[1])
+  }
+}
+function isCookie(objName: string, objValue: any, expires: string | number) {
+  const cookie = getCookie(objName)
+  if (cookie) {
+    return cookie
+  } else {
+    setCookie(objName, objValue, expires)
+    return getCookie(objName)
+  }
+}
+function delCookie(objName: string) {
+  //删除cookie
+  const exp = new Date()
+  exp.setTime(exp.getTime() - 1)
+  const cval = getCookie(objName)
+  if (cval != null) document.cookie = `${name}=${cval};expires=${exp.toUTCString()}`
+}
+
 // data: [
 //   {
 //     id: 10001,
@@ -93,17 +134,21 @@ export async function toLogin() {
 
   const {
     data: { keyId = '1', publicKey },
-  } = await fetch('/api/TIANTA-SYSTEM/login/getKey', {
+  } = await fetch(`/api/TIANTA-SYSTEM/login/getKey?t=${new Date().getTime()}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ai,
     },
-  }).then((r) => r.json())
+  }).then((r) => {
+    console.log(r)
+    // console.log(getCookie('___gu_'))
+    return r.json()
+  })
 
   Encryptor.setPublicKey(publicKey)
 
-  await fetch('/api/TIANTA-SYSTEM/login/enter', {
+  await fetch(`/api/TIANTA-SYSTEM/login/enter?t=${new Date().getTime()}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

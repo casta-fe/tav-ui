@@ -10,6 +10,27 @@
     height: 100% !important;
   }
 
+  &.hide-modal-header {
+    .ant-modal-header {
+      height: 0;
+      padding: 0;
+    }
+    .file-view-close-btn {
+      position: absolute;
+      top: 16px;
+      left: 6px;
+      z-index: 1;
+    }
+  }
+
+  .file-view-close-btn {
+    color: rgb(82 82 82 / 1);
+
+    &:hover {
+      background-color: rgb(0 0 0 / .08);
+    }
+  }
+
   &-next,
   &-prev {
     position: absolute;
@@ -62,7 +83,7 @@
 
     .main {
       font-size: 16px !important;
-      color: rgba(0,0,0, .85);
+      color: rgb(82 82 82 / 1);
       overflow: hidden;
       text-overflow: ellipsis;
       text-align: left;
@@ -72,7 +93,7 @@
 
     .other {
       font-size: 12px !important;
-      color: #646a73;
+      color: rgb(163 163 163 / 1);
       overflow: hidden;
       text-overflow: ellipsis;
       text-align: left;
@@ -89,6 +110,8 @@
     background: rgba(#000, 0.65);
 
     .ant-modal-header {
+      padding-left: 8px;
+      padding-right: 8px;
       border-radius: 0;
       // background: @primary-color;
       border-bottom: none;
@@ -105,8 +128,8 @@
 
         .line {
           border-right: 1px solid #dee0e3;
-          margin-left: 6px;
-          margin-right: 12px;
+          margin-left: 8px;
+          margin-right: 16px;
           height: 36px;
         }
       }

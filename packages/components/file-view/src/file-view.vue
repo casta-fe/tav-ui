@@ -2,8 +2,6 @@
 import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue'
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { Button, Image, Modal, Spin } from 'ant-design-vue'
-//@ts-ignore
-import WebOfficeSDK from '@tav-ui/utils/web-office-sdk'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { download } from '@tav-ui/utils/file/_download'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -12,39 +10,6 @@ import { fileViewProps } from './types'
 import type { FileViewItemType } from './types'
 import type { Ref } from 'vue'
 import type { Nullable } from '../../modal/src/types'
-
-async function handlePreview(fileId: string, token: string, officeType: string) {
-  const WebOfficeSDKInstance = (WebOfficeSDK as any).init({
-    officeType,
-    // appId: 'SX20240514VODTXS',
-    appId: 'AK20240528LDMTIA',
-    // fileId: '66870',
-    fileId,
-    token,
-    mode: 'simple',
-    mount: '.file-view-content',
-  })
-
-  function toggleDocumentMap(app: any, active = false) {
-    let activeInstance: any = null
-
-    if (app.ActiveDocument && app.ActiveDocument.ActiveWindow) {
-      activeInstance = app.ActiveDocument.ActiveWindow
-    } else if (app.ActivePDF) {
-      activeInstance = app.ActivePDF
-    }
-
-    if (activeInstance && activeInstance.DocumentMap) {
-      activeInstance.DocumentMap = active
-    }
-  }
-
-  if (WebOfficeSDKInstance && WebOfficeSDKInstance.ready) {
-    await WebOfficeSDKInstance.ready()
-    const app = WebOfficeSDKInstance.Application
-    toggleDocumentMap(app, true)
-  }
-}
 
 export default defineComponent({
   name: 'TaFileView',
@@ -129,12 +94,38 @@ export default defineComponent({
       previewWPSFile(id, props.AppId)
         .then((res: any) => {
           state.pageLoading = false
-          state.supportWPS = !!res.data.wps
+          state.supportWPS = !!res?.data?.wps
           cb && cb()
           if (state.supportWPS) {
-            nextTick(() => {
-              handlePreview(res.data.fileId, res.data.token, res.data.officeType)
-            })
+            const {
+              createByName,
+              createTime,
+              fileId,
+              fileName,
+              fileSize,
+              officeType,
+              pageUrl,
+              suffix,
+              token,
+              watermark,
+            } = res.data
+
+            const options = {
+              officeType,
+              fileId,
+              token,
+              suffix,
+              fileName,
+              fileSize,
+              userName: createByName,
+              time: `${new Date(createTime).getTime()}`,
+              watermarker: watermark,
+              from: 'desktop',
+            }
+
+            state.filePath = `${pageUrl}/wps-file-view/?${encodeURIComponent(
+              new URLSearchParams({ ...options }) as unknown as string
+            )}`
           } else {
             state.filePath = res.data.onlineUrl
             // previewFile(id, props.AppId)
@@ -229,110 +220,19 @@ export default defineComponent({
     :footer="null"
     width="100%"
     :after-close="afterCloseHandle"
-    wrap-class-name="file-view-modal"
+    :wrap-class-name="`file-view-modal ${supportWPS ? 'hide-modal-header' : ''}`"
   >
     <template #title>
       <!-- <div class="file-view-action">
         <Button type="text" @click="downloadFile">下载</Button>
       </div>
       <span class="file-view-num">{{ index + 1 }}/{{ list.length }}</span> -->
-      <Button type="text" @click="() => (showModal = !showModal)">
+      <Button type="text" class="file-view-close-btn" @click="() => (showModal = !showModal)">
         <template #icon><CloseOutlined /></template>
         {{ tavI18n('Tav.common.closeText') }}
       </Button>
       <div class="line line--vertical" />
       <div class="file-view-title">
-        <template v-if="fileType === 'office' && currentFile?.suffix.startsWith('doc')">
-          <svg
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 3a2 2 0 0 1 2-2h9.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3Z"
-              fill="#336DF4"
-            />
-            <path
-              opacity="0.7"
-              d="M15 1.483a.2.2 0 0 1 .341-.142L20.66 6.66a.2.2 0 0 1-.142.341H17a2 2 0 0 1-2-2V1.483Z"
-              fill="#0442D2"
-            />
-            <path
-              d="m12.004 12.25-1.474 5.456a.152.152 0 0 1-.147.112h-.868a.152.152 0 0 1-.146-.11l-2-7.06a.152.152 0 0 1 .146-.193h.871c.07 0 .13.046.147.113l1.423 5.504 1.478-5.505a.152.152 0 0 1 .146-.112h.849c.069 0 .129.046.147.112l1.468 5.503 1.422-5.502a.152.152 0 0 1 .147-.113h.871a.152.152 0 0 1 .146.193l-2 7.06a.152.152 0 0 1-.145.11h-.869a.152.152 0 0 1-.146-.112l-1.466-5.457Z"
-              fill="#fff"
-            />
-          </svg>
-        </template>
-        <template v-if="fileType === 'office' && currentFile?.suffix.startsWith('xls')">
-          <svg
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 3a2 2 0 0 1 2-2h9.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3Z"
-              fill="#35BD4B"
-            />
-            <path
-              opacity="0.9"
-              d="M15 1.483a.2.2 0 0 1 .341-.142L20.66 6.66a.2.2 0 0 1-.142.341H17a2 2 0 0 1-2-2V1.483Z"
-              fill="#32A645"
-            />
-            <path
-              d="M8.547 9.91h1.091c.049 0 .094.023.122.063l2.098 3.041 2.11-3.041a.147.147 0 0 1 .121-.064h1.092a.147.147 0 0 1 .12.233l-2.733 3.834 2.95 4.155a.147.147 0 0 1-.12.233h-1.092a.147.147 0 0 1-.121-.064l-2.327-3.363L9.543 18.3a.147.147 0 0 1-.122.064H8.33a.147.147 0 0 1-.12-.232l2.928-4.156-2.71-3.835a.147.147 0 0 1 .12-.232Z"
-              fill="#fff"
-            />
-          </svg>
-        </template>
-        <template v-if="fileType === 'office' && currentFile?.suffix.startsWith('ppt')">
-          <svg
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 3a2 2 0 0 1 2-2h9.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3Z"
-              fill="#FF811A"
-            />
-            <path
-              opacity="0.5"
-              d="M15 1.483a.2.2 0 0 1 .341-.142L20.66 6.66a.2.2 0 0 1-.142.341H17a2 2 0 0 1-2-2V1.483Z"
-              fill="#C25705"
-            />
-            <path
-              d="M10.383 18.495V14.91h1.702c.409 0 .816-.036 1.22-.108a3.484 3.484 0 0 0 1.11-.386 2.3 2.3 0 0 0 .814-.77c.212-.329.316-.742.316-1.236a3.3 3.3 0 0 0-.132-.937 1.95 1.95 0 0 0-.478-.815c-.23-.236-.538-.42-.923-.552-.381-.131-.86-.196-1.435-.196H9.414a.141.141 0 0 0-.142.141v8.445c0 .078.064.142.142.142h.828a.141.141 0 0 0 .14-.142Zm2.735-4.622a6.67 6.67 0 0 1-1.01.069h-1.725v-3.066h1.966c.746 0 1.282.13 1.608.38.318.245.478.605.478 1.094 0 .339-.054.608-.158.809-.104.2-.25.355-.44.47-.194.119-.433.2-.719.244Z"
-              fill="#fff"
-            />
-          </svg>
-        </template>
-        <template v-if="fileType === 'office' && currentFile?.suffix.startsWith('pdf')">
-          <svg
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 3a2 2 0 0 1 2-2h9.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3Z"
-              fill="#F54A45"
-            />
-            <path
-              d="M15 1.483a.2.2 0 0 1 .341-.142L20.66 6.66a.2.2 0 0 1-.142.341H17a2 2 0 0 1-2-2V1.483Z"
-              fill="#C02A26"
-            />
-            <path
-              d="M17.55 15.551c-.247-.29-.756-.432-1.555-.432-.464 0-1.104.012-1.747.107-1.755-1.265-2.167-2.625-2.167-2.625s.3-.753.319-1.982c.012-.777-.111-1.357-.425-1.606a.883.883 0 0 0-.524-.195.7.7 0 0 0-.413.13c-.913.658.084 3.762.11 3.845a27.6 27.6 0 0 1-1.531 3.125c-.182.316-.182.322-.304.466 0 0-1.597.792-2.347 1.67-.423.497-.437.838-.414 1.093.036.307.427.58.82.58l.048-.001c.4-.024.844-.134 1.339-.602.358-.339.76-1.258 1.278-2.158 1.485-.417 2.792-.713 3.887-.883.803.427 1.998.91 2.811.91.273 0 .493-.056.653-.164.191-.13.272-.29.323-.589.05-.298-.02-.525-.16-.689Zm-1.745.467c.742 0 1.143.131 1.35.241.063.034.11.067.142.094-.058.045-.172.102-.379.102-.342 0-.792-.145-1.34-.433.077-.002.153-.004.227-.004Zm-4.26-6.542.002-.003c.116.085.17.684.16 1.031-.016.466-.019.646-.078.933-.158-.597-.17-1.67-.083-1.961Zm.037 4.36c.362.596.82 1.2 1.338 1.66-1.01.217-1.847.415-2.45.626a18.647 18.647 0 0 0 1.112-2.285ZM7.51 18.885c.092-.134.341-.396.974-.902-.34.782-.721.902-1.075 1.09.026-.061.06-.126.101-.188Z"
-              fill="#fff"
-            />
-          </svg>
-        </template>
         <template v-if="fileType === 'pic'">
           <svg
             width="1em"
@@ -371,8 +271,8 @@ export default defineComponent({
           </div>
           <div class="ant-row">
             <span class="file-size other">{{ currentFile?.fileSize }}</span>
-            <span class="file-author other">{{ currentFile?.createByName }}</span>
-            <span class="file-date other">{{ currentFile?.createTime }}</span>
+            <span class="user-name other">{{ currentFile?.createByName }}</span>
+            <span class="time other">{{ currentFile?.createTime }}</span>
           </div>
         </div>
       </div>
@@ -387,7 +287,10 @@ export default defineComponent({
     </template>
     <Spin :spinning="pageLoading" size="default" :tip="tavI18n('Tav.file.message.1')">
       <div ref="fileViewContentElRef" class="file-view-content">
-        <template v-if="!supportWPS">
+        <template v-if="supportWPS">
+          <iframe id="wps-file-view" :src="filePath" frameborder="0" />
+        </template>
+        <template v-else>
           <!-- <template v-if="fileType === 'office'">
             <iframe id="fileIframe" :src="filePath" frameborder="0" />
           </template>
