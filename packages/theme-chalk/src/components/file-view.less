@@ -1,6 +1,6 @@
 @import '../var/index.less';
 .file-view-modal {
-  z-index: 2000 !important;
+  z-index: 100000 !important;
   .ant-modal {
     top: 0;
     padding: 0;
@@ -18,16 +18,31 @@
     .file-view-close-btn {
       position: absolute;
       top: 16px;
-      left: 6px;
+      left: 8px;
       z-index: 1;
+    }
+
+    .file-view-content {
+      height: 100vh;
     }
   }
 
+  .file-view-content {
+    height: calc(100vh - 64px);
+  }
+
   .file-view-close-btn {
+    max-width: 90px;
+    display: flex;
+    align-items: center;
     color: rgb(82 82 82 / 1);
 
     &:hover {
-      background-color: rgb(0 0 0 / .08);
+      background-color: rgb(0 0 0 / 0.08);
+    }
+
+    .anticon-close {
+      font-size: 16px;
     }
   }
 
@@ -183,7 +198,6 @@
       .file-view-content {
         position: relative;
         background: #fff;
-        height: calc(100vh - 64px);
         box-sizing: border-box;
         display: flex;
         align-items: center;
