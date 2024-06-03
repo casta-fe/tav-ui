@@ -28,7 +28,7 @@ import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDateTime } from '@tav-ui/utils/dateUtil'
 import { getDateRangeRecord } from './types'
-
+import type { Dayjs } from 'dayjs'
 type DateRangeKeyType =
   | 'day'
   | 'year'
@@ -94,16 +94,17 @@ export default defineComponent({
     console.log(currentDate, currentRange)
 
     // 选中自定义时间触发
-    const handleDateChange = (momentList) => {
+    const handleDateChange = (val: [string, string] | [Dayjs, Dayjs]) => {
       currentRange.value = ''
-      if (props.allowClear && momentList.length === 0) {
+      const relVal = val || []
+      if (val === null) {
         currentDate.value = []
       } else if (props.autoChoose === 'none') {
-        currentDate.value = momentList
+        currentDate.value = relVal
       } else {
         currentDate.value = [
-          dayjs(momentList[0]).startOf(props.autoChoose as OpUnitType),
-          dayjs(momentList[1]).endOf(props.autoChoose as OpUnitType),
+          dayjs(relVal[0]).startOf(props.autoChoose as OpUnitType),
+          dayjs(relVal[1]).endOf(props.autoChoose as OpUnitType),
         ].map((x) => formatToDateTime(x))
       }
       handleEmitEvent()
