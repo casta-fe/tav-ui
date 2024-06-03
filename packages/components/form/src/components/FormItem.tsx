@@ -1,5 +1,15 @@
 /* eslint-disable dot-notation */
-import { computed, defineComponent, h, ref, toRefs, unref, watch, withDirectives } from 'vue'
+import {
+  computed,
+  defineComponent,
+  h,
+  nextTick,
+  ref,
+  toRefs,
+  unref,
+  watch,
+  withDirectives,
+} from 'vue'
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { Col, Divider, Form } from 'ant-design-vue'
 import { cloneDeep, uniqBy, upperFirst } from 'lodash-es'
@@ -88,7 +98,9 @@ export default defineComponent({
     const itemValue = computed(
       () => props.formModel[props.schema.field] || props.schema.defaultValue
     )
-
+    //为了手动输入的时候不让改加的变量
+    const canUpdatePrecision = ref(true)
+    const numberPrecision = ref(2)
     const editableItemValue = ref<any>(itemValue.value) // 默认值
     const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
@@ -115,9 +127,14 @@ export default defineComponent({
     watch(
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          getFormItemPrecision(newVal, true)
+          // debounce(getFormItemPrecision.bind(null, newVal, false), DebounceDely)()
+        }
         if (!unref(hasEditable)) {
           return
         }
+
         if (isBoolean(newVal)) {
           // 处理switch、checkbox
           if (isDef(newVal) && newVal !== oldVal) {
@@ -154,15 +171,6 @@ export default defineComponent({
         //   // 初始化数据
         //   setEditableFormItemValue(props.schema, editableItemValue);
         // }
-      },
-      { immediate: true }
-    )
-    watch(
-      () => props.formModel[props.schema.field],
-      (newVal, oldValue) => {
-        if (newVal !== oldValue) {
-          getFormItemPrecision(newVal, false)
-        }
       },
       { immediate: true }
     )
@@ -347,16 +355,17 @@ export default defineComponent({
         const schemaValue = props.formModel[schema.field]
         //  添加针对0的兼容 by hyb
         // eslint-disable-next-line eqeqeq
-        if (schema.component == 'InputNumber') {
-          if (!isNullOrUnDef(schemaValue)) hide()
-        } else {
-          if (!isNullOrUnDef(schemaValue)) {
-            hide()
-          } else {
-            // 必填项此时无值不能隐藏表单项
-            // 这里最好手动调一下表单项的校验，难点在于怎么抓到失去焦点的时机，因为 async-validator 默认时机是 change blur？
-          }
-        }
+        // if (schema.component == 'InputNumber') {
+        //   if (!isNullOrUnDef(schemaValue)) hide()
+        // } else {
+        //   if (!isNullOrUnDef(schemaValue)) {
+        //     hide()
+        //   } else {
+        //     // 必填项此时无值不能隐藏表单项
+        //     // 这里最好手动调一下表单项的校验，难点在于怎么抓到失去焦点的时机，因为 async-validator 默认时机是 change blur？
+        //   }
+        // }
+        if (!isNullOrUnDef(schemaValue)) hide()
       } else {
         hide()
       }
@@ -541,28 +550,23 @@ export default defineComponent({
       return rules
     }
     // 获取数字类型数据精度 最小为2最大为6
-    function getFormItemPrecision(_value, getDomValue) {
+    function getFormItemPrecision(value: number | undefined, formWatch = false) {
+      console.log(formWatch)
       const { schema, tableAction, formModel, formActionType } = props
-      const { componentProps = {} } = schema
+      const { componentProps = {}, component } = schema
       const realcomponentProps = isFunction(componentProps)
         ? componentProps({ schema, tableAction, formModel, formActionType })
         : componentProps
+      console.log(!unref(canUpdatePrecision))
       if (
-        props.schema.component !== 'InputNumber' ||
-        _value === undefined ||
+        component !== 'InputNumber' ||
+        value === undefined ||
+        !unref(canUpdatePrecision) ||
         realcomponentProps['noAutoPrecision']
       ) {
         return
       }
       let precision = 0
-      let value = _value
-      if (getDomValue && itemRef.value) {
-        const inputEle = itemRef.value.querySelector('input')
-        if (inputEle) {
-          value = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
-        }
-        // inputEle
-      }
       if (!isNullOrUnDef(value)) {
         const newValDecimal = String(value).split('.')[1]
         if (!newValDecimal || newValDecimal.length <= 2) {
@@ -570,17 +574,11 @@ export default defineComponent({
         } else if (newValDecimal.length >= 6) {
           precision = 6
         } else {
-          precision = newValDecimal.length + 1
+          precision = newValDecimal.length
         }
       }
 
-      if (!props.schema.componentProps) {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.schema.componentProps = { precision }
-      } else {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.schema.componentProps['precision'] = precision
-      }
+      numberPrecision.value = precision
     }
     const showNumberToChinese = () => {
       const { tableAction, formModel, formActionType } = props
@@ -608,6 +606,8 @@ export default defineComponent({
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
       const eventKey = `on${upperFirst(changeEvent)}`
+      const focusKey = 'onFocus'
+      const blurKey = 'onBlur'
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
@@ -619,12 +619,38 @@ export default defineComponent({
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
           props.setFormModel(field, value)
-          setTimeout(() => {
-            getFormItemPrecision(value, true)
-          }, 50)
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
+        },
+        [focusKey]: (...args: Nullable<Recordable>[]) => {
+          canUpdatePrecision.value = false
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          if (propsData[focusKey]) {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            propsData[focusKey](...args)
+          }
+        },
+        [blurKey]: (...args: Nullable<Recordable>[]) => {
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          if (propsData[blurKey]) {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            propsData[blurKey](...args)
+          }
+          if (itemRef.value) {
+            const inputEle = itemRef.value.querySelector('input')
+            if (inputEle) {
+              const inputVal = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
+              const value = inputVal ? Number(inputVal) : undefined
+              setTimeout(() => {
+                canUpdatePrecision.value = true
+                getFormItemPrecision(value)
+                nextTick(() => {
+                  props.setFormModel(field, value)
+                })
+              }, 10)
+            }
+          }
         },
       }
       const realComponetProps = isFunction(componentProps)
@@ -674,7 +700,7 @@ export default defineComponent({
       if (component === 'InputNumber') {
         compAttr.max = (realComponetProps as any)?.max ?? NUMBER_MAX
         compAttr.min = (realComponetProps as any)?.min ?? 0
-        compAttr.precision = (realComponetProps as any)?.precision ?? undefined
+        compAttr.precision = (realComponetProps as any)?.precision ?? unref(numberPrecision)
       }
 
       if (unref(hasEditable)) {
