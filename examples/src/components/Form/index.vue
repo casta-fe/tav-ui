@@ -88,7 +88,10 @@
 import { type Ref, computed, defineComponent, h, ref } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { API__CENTER_INDUSTRY_TAG } from '@tav-ui/components/table-pro/src/data'
+import {
+  API__CENTER_COMPANY_LIST,
+  API__CENTER_INDUSTRY_TAG,
+} from '@tav-ui/components/table-pro/src/data'
 import tag from '@tav-ui/components/time-line/src/components/tag'
 import { useGlobalConfig } from '@tav-ui/hooks'
 import type { FormSchema } from '@tav-ui/components/form'
@@ -326,6 +329,21 @@ const schemas = ref([
   //     },
   //   },
   // },
+  {
+    field: 'companyInfo',
+    component: 'SearchableApiSelect',
+    label: '公司名称',
+    colProps: { span: 12 },
+    componentProps: () => {
+      return {
+        placeholder: '请至少输入两个字搜索公司名称，按回车搜索',
+        panelMaxHeight: '300px',
+        api: (keyWord, pageNum) => {
+          return API__CENTER_COMPANY_LIST({ pageNum, word: keyWord })
+        },
+      }
+    },
+  },
 ])
 export default defineComponent({
   components: { TaButton, TaForm },
@@ -342,7 +360,7 @@ export default defineComponent({
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
 
-    API__CENTER_INDUSTRY_TAG({}).then((res) => {
+    API__CENTER_COMPANY_LIST({}).then((res) => {
       const { success, data } = res
       if (success && data) {
         const result = data.map((option) => {
