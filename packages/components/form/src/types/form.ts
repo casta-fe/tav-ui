@@ -123,6 +123,7 @@ export interface FormProps {
   resetFunc?: () => Promise<void>
   submitFunc?: () => Promise<void>
   transformDateFunc?: (date: any) => string
+  getPopupContainer?: () => HTMLElement
   colon?: boolean
   editable?: boolean
 }

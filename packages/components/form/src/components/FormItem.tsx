@@ -32,7 +32,7 @@ import {
 } from '@tav-ui/utils/is'
 import { error } from '@tav-ui/utils/log'
 import BasicHelp from '@tav-ui/components/basic-help'
-import { numberToChinese } from '@tav-ui/utils'
+import { getPopupContainer, numberToChinese } from '@tav-ui/utils'
 import {
   componentMap,
   editableComponentChecksTypeMap,
@@ -107,7 +107,7 @@ export default defineComponent({
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
     const AntItemRef = ref<FormProps | null>(null)
     /** 函数处理 */
-    const componentProps = computed(() => {
+    const componentProps = computed((): any => {
       let componentProps = props.schema.componentProps
       if (isFunction(props.schema.componentProps)) {
         const { schema, tableAction, formModel, formActionType } = props
@@ -581,19 +581,23 @@ export default defineComponent({
       numberPrecision.value = precision
     }
     const showNumberToChinese = () => {
-      const { tableAction, formModel, formActionType } = props
-      const { component, componentProps = {} as any } = props.schema
-      const realComponetProps = isFunction(componentProps)
-        ? componentProps({ schema, tableAction, formModel, formActionType })
-        : componentProps
+      const { component } = props.schema
       return (
         component === 'InputNumber' &&
-        realComponetProps.useChinese &&
+        unref(getComponentsProps).useChinese &&
         !isNullOrUnDef(unref(itemValue))
       )
     }
+    function getRealPopupContainer() {
+      function getBody() {
+        return document.body
+      }
+      return (
+        props.formProps.getPopupContainer || unref(getComponentsProps).getPopupContainer || getBody
+      )
+    }
+
     function renderComponent() {
-      const { tableAction, formModel, formActionType } = props
       const {
         renderComponentContent,
         component,
@@ -601,7 +605,6 @@ export default defineComponent({
         field,
         changeEvent = 'change',
         valueField,
-        componentProps = {},
       } = props.schema
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
@@ -637,7 +640,8 @@ export default defineComponent({
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[blurKey](...args)
           }
-          if (itemRef.value) {
+          // 针对InputNumber精度问题兼容
+          if (component === 'InputNumber' && itemRef.value) {
             const inputEle = itemRef.value.querySelector('input')
             if (inputEle) {
               const inputVal = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
@@ -653,16 +657,12 @@ export default defineComponent({
           }
         },
       }
-      const realComponetProps = isFunction(componentProps)
-        ? componentProps({ schema, tableAction, formModel, formActionType })
-        : componentProps
       const Comp = component && (componentMap.get(component) as ReturnType<typeof defineComponent>)
       const size = props.formProps['size']
       const propsData: Recordable = {
-        // allowClear: unref(hasEditable) ? false : true, // i7eo：添加避免触发clickoutside
-        // getPopupContainer: (trigger: Element) => (trigger ? trigger.parentNode : document.body),
         size,
         ...unref(getComponentsProps),
+        getPopupContainer: getRealPopupContainer(),
         disabled: unref(getDisable),
       }
 
@@ -690,17 +690,20 @@ export default defineComponent({
       const setMaxLengthComponentNames = ['Input', 'InputPassword', 'InputSearch', 'InputTextArea'] // 可以设置默认字符数的组件
       if (component && setMaxLengthComponentNames.includes(component)) {
         if (component === 'InputTextArea') {
-          compAttr.maxlength = (realComponetProps as any)?.maxLength ?? 256
-          compAttr.showCount = (realComponetProps as any)?.showCount ?? true
-          compAttr.autoSize = (realComponetProps as any)?.autoSize ?? { minRows: 4, maxRows: 4 }
+          compAttr.maxlength = (unref(getComponentsProps) as any)?.maxLength ?? 256
+          compAttr.showCount = (unref(getComponentsProps) as any)?.showCount ?? true
+          compAttr.autoSize = (unref(getComponentsProps) as any)?.autoSize ?? {
+            minRows: 4,
+            maxRows: 4,
+          }
         } else {
-          compAttr.maxlength = (realComponetProps as any)?.maxLength ?? 32
+          compAttr.maxlength = (unref(getComponentsProps) as any)?.maxLength ?? 32
         }
       }
       if (component === 'InputNumber') {
-        compAttr.max = (realComponetProps as any)?.max ?? NUMBER_MAX
-        compAttr.min = (realComponetProps as any)?.min ?? 0
-        compAttr.precision = (realComponetProps as any)?.precision ?? unref(numberPrecision)
+        compAttr.max = unref(getComponentsProps)?.max ?? NUMBER_MAX
+        compAttr.min = (unref(getComponentsProps) as any)?.min ?? 0
+        compAttr.precision = unref(getComponentsProps)?.precision ?? unref(numberPrecision)
       }
 
       if (unref(hasEditable)) {
@@ -711,7 +714,7 @@ export default defineComponent({
         } else if (component && editableComponentTimeTypeMap.has(component)) {
           compAttr.open = true
           compAttr.getPopupContainer = () => unref(itemRef)
-          compAttr.onOk = (dates) => {
+          compAttr.onOk = (dates: any) => {
             props.setFormModel(field, dates)
             handleOnChange(true)
           }
@@ -723,7 +726,7 @@ export default defineComponent({
             {withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])}
             {showNumberToChinese() && (
               <div class="number-to-chinese">
-                {numberToChinese(itemValue.value, realComponetProps?.chineseMultip)}
+                {numberToChinese(itemValue.value, unref(getComponentsProps)?.chineseMultip)}
               </div>
             )}
           </>
@@ -733,7 +736,7 @@ export default defineComponent({
             {showNumberToChinese() && (
               // <transition name="fade-bottom" mode="out-in">
               <div class="number-to-chinese">
-                {numberToChinese(itemValue.value, realComponetProps?.chineseMultip)}
+                {numberToChinese(itemValue.value, unref(getComponentsProps)?.chineseMultip)}
               </div>
               // </transition>
             )}
@@ -830,7 +833,7 @@ export default defineComponent({
             typeof editableItemValue.value == 'number'
           ) {
             if (unref(componentProps)) {
-              const precision = unref(componentProps)['precision']
+              const precision = unref(componentProps).precision
               const value = isNullOrUnDef(precision)
                 ? editableItemValue.value
                 : editableItemValue.value.toFixed(precision)

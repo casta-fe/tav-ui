@@ -84,7 +84,7 @@ export const formProps = {
   // 自定义重置函数
   resetFunc: Function as PropType<() => Promise<void>>,
   submitFunc: Function as PropType<() => Promise<void>>,
-
+  getPopupContainer: Function as PropType<() => HTMLElement>,
   // 以下为默认props
   hideRequiredMark: propTypes.bool,
 
