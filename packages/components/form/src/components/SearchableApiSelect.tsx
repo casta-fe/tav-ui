@@ -347,6 +347,7 @@ export default defineComponent({
                           props.onSelect?.(option.value, option as LabelValueOption<string, string>)
                           state.visible = false
                         }}
+                        //@ts-ignore
                         style={{
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
