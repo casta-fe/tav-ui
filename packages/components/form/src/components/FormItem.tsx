@@ -589,11 +589,10 @@ export default defineComponent({
       )
     }
     function getRealPopupContainer() {
-      function getBody() {
-        return document.body
-      }
       return (
-        props.formProps.getPopupContainer || unref(getComponentsProps).getPopupContainer || getBody
+        props.formProps.getPopupContainer ||
+        unref(getComponentsProps).getPopupContainer ||
+        undefined
       )
     }
 
