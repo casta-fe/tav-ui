@@ -96,6 +96,7 @@ export default {
     '8': 'Male',
     '9': 'Female',
     '10': '', // 这个空不能删！
+    '11': 'Pleace enter user name',
   },
   tree: {
     '1': 'Expand all',

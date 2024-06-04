@@ -80,7 +80,15 @@
     }
     .member-box {
       flex: 1;
-
+      position: relative;
+      .search-box {
+        position: absolute;
+        width: 210px;
+        right: 10px;
+        top: 8px;
+        // top: 4px;
+        z-index: 1;
+      }
       .ant-tabs-nav {
         border-color: @border-color-light;
 
@@ -128,17 +136,17 @@
         .user-list {
           flex: 1;
           overflow-y: auto;
-          .org-name {
-            margin-bottom: 1em;
-            margin-left: 45px;
-            font-size: 12px;
-            line-height: 1.5;
-            color: #999;
-          }
-          li {
-            cursor: pointer;
-            line-height: 24px;
-          }
+        }
+        .org-name {
+          margin-bottom: 1em;
+          margin-left: 45px;
+          font-size: 12px;
+          line-height: 1.5;
+          color: #999;
+        }
+        li {
+          cursor: pointer;
+          line-height: 24px;
         }
       }
 
@@ -195,7 +203,7 @@
     text-align: center;
     border-radius: 8px;
     color: #fff;
-    font-size: 12px;
+    font-size: 11px;
     margin-right: 8px;
   }
   .Loop(@index) when (@index<=@len) {
