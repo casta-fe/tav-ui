@@ -2,7 +2,7 @@
   <div class="ta-cascade-pro-search-result">
     <div class="ta-cascade-pro-search-result-title">
       <div class="ta-cascade-pro-search-result-tip">
-        {{ tavI18n('Tav.common.selectedText') }}{{ options.length }}）
+        {{ tavI18n('Tav.common.selectedText') }}（{{ options.length }}）
       </div>
       <Button type="link" size="small" @click="handleClearAll">
         {{ tavI18n('Tav.common.clearText') }}

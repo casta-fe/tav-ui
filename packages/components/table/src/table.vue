@@ -52,10 +52,12 @@
       :row-class-name="getRowClassName"
       @change="handleTableChange"
     >
-      <template v-for="item in Object.keys($slots)" #[item]="data" :key="item">
-        <slot :name="item" v-bind="data || {}" />
-      </template>
-      <template #headerCell="{ column }">
+      <!-- headerCell插槽无法正常渲染，去掉先 -->
+      <template
+        v-for="column in columns"
+        #[`header-${column.dataIndex}`]
+        :key="column.dataIndex?.toString()"
+      >
         <HeaderCell :column="column" />
       </template>
       <!-- 增加对antdv3.x兼容 -->

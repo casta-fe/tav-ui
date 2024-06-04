@@ -24,7 +24,7 @@ export interface Options extends UserItem {
 }
 
 export type TypeItems = 'user' | 'org'
-export interface LetterItemList {
+export interface LetterItemList extends UserItem {
   id: string
   name: string
   checked: boolean

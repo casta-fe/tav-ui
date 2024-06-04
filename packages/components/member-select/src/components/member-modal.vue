@@ -92,6 +92,9 @@
                           <template v-if="v.status === 0">
                             ({{ tavI18n('Tav.member.4') }})
                           </template>
+                          <template v-if="repeatUserNames.includes(v.name)">
+                            <span>（{{ v.phone }}）</span>
+                          </template>
                         </Checkbox>
                         <p class="org-name">{{ getOrgName(v) }}</p>
                       </li>
@@ -110,6 +113,9 @@
                           <template v-if="v.status === 0">
                             ({{ tavI18n('Tav.member.4') }})
                           </template>
+                          <template v-if="repeatUserNames.includes(v.name)">
+                            <span>（{{ v.phone }}）</span>
+                          </template>
                         </Radio>
                         <p class="org-name">{{ getOrgName(v) }}</p>
                       </li>
@@ -127,6 +133,9 @@
                       <Checkbox :value="v.id" :disabled="v.disabled">
                         <firstLetter :value="v" />{{ v.name }}
                         <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
+                        <template v-if="repeatUserNames.includes(v.name)">
+                          <span>（{{ v.phone }}）</span>
+                        </template>
                       </Checkbox>
                       <p class="org-name">{{ getOrgName(v) }}</p>
                     </li>
@@ -140,6 +149,9 @@
                       <Radio :value="v.id" :disabled="v.disabled">
                         <firstLetter :value="v" />{{ v.name }}
                         <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
+                        <template v-if="repeatUserNames.includes(v.name)">
+                          <span>（{{ v.phone }}）</span>
+                        </template>
                       </Radio>
                       <p class="org-name">{{ getOrgName(v) }}</p>
                     </li>
@@ -172,7 +184,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted, reactive, toRefs, watch } from 'vue'
+import { computed, defineComponent, inject, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import {
   Checkbox,
   CheckboxGroup,
@@ -186,7 +198,7 @@ import {
 } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
 import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons-vue'
-import { sortBy } from 'lodash-es'
+import { countBy, pickBy, sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
@@ -237,12 +249,8 @@ export default defineComponent({
       listenScroll: true, //是否监听滚动，点击时候要设置为false
       activeLetter: '', //当前选中的字母
     })
+    const repeatUserNames = ref<string[]>([])
     const realUserList = computed(() => {
-      console.log(
-        userList.value.filter(
-          (v: UserItem) => v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
-        )
-      )
       return userList.value.filter(
         (v: UserItem) => v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
       )
@@ -341,7 +349,7 @@ export default defineComponent({
       })
     }
     // 数据去重
-    const deWeightThree = (arr) => {
+    const deWeightThree = (arr: any[]) => {
       const map = new Map()
       for (const item of arr) {
         if (!map.has(item.id)) {
@@ -422,9 +430,11 @@ export default defineComponent({
         pageInit()
       }
     )
-    onMounted(() => {
-      listenerUserScroll()
-    })
+    const getRepeatUserNames = () => {
+      const counts = countBy(userList.value, 'name')
+      const duplicates = pickBy(counts, (count) => count > 1)
+      repeatUserNames.value = Object.keys(duplicates) as string[]
+    }
     const pageInit = (): void => {
       const data: any[] = props.selectedData
       if (propsData.value.multiple) {
@@ -434,14 +444,19 @@ export default defineComponent({
           state.radioData = data[0]
         }
       }
+      getRepeatUserNames()
       if (propsData.value.type == 'user') {
         userDataRest()
       }
     }
-    pageInit()
+    onMounted(() => {
+      pageInit()
+      listenerUserScroll()
+    })
     return {
       ...toRefs(state),
       tavI18n,
+      repeatUserNames,
       getOrgName,
       hideOrgTabs,
       propsData,
