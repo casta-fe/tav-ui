@@ -313,3 +313,12 @@ export async function API__POE_MENU_ALL(data, url = '/api/TIANTA-SYSTEM//sys/acl
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }
+
+// 关键字搜索企业列表查询（最少2个字）
+export async function API__CENTER_COMPANY_LIST(
+  data,
+  url = '/api/STARLIGHT-CENTRE-WEB/third/serv/search/company'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}

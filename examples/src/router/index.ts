@@ -32,6 +32,11 @@ const routes: RouteRecordRaw[] = [
     name: 'Upload',
     component: () => import('../components/TaUpload/index.vue'),
   },
+  {
+    path: '/form',
+    name: 'Form',
+    component: () => import('../components/Form/index.vue'),
+  },
 ]
 
 export const router = createRouter({
