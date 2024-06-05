@@ -32,7 +32,7 @@ import {
 } from '@tav-ui/utils/is'
 import { error } from '@tav-ui/utils/log'
 import BasicHelp from '@tav-ui/components/basic-help'
-import { getPopupContainer, numberToChinese } from '@tav-ui/utils'
+import { numberToChinese } from '@tav-ui/utils'
 import {
   componentMap,
   editableComponentChecksTypeMap,
@@ -832,7 +832,7 @@ export default defineComponent({
             typeof editableItemValue.value == 'number'
           ) {
             if (unref(componentProps)) {
-              const precision = unref(componentProps).precision
+              const precision = unref(getComponentsProps)?.precision ?? unref(numberPrecision)
               const value = isNullOrUnDef(precision)
                 ? editableItemValue.value
                 : editableItemValue.value.toFixed(precision)

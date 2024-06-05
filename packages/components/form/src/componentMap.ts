@@ -129,6 +129,7 @@ editableComponentTimeTypeMap.set('MonthPicker', DatePicker.MonthPicker)
 editableComponentTimeTypeMap.set('RangePicker', DatePicker.RangePicker)
 editableComponentTimeTypeMap.set('WeekPicker', DatePicker.WeekPicker)
 editableComponentTimeTypeMap.set('TimePicker', TimePicker)
+editableComponentTimeTypeMap.set('DateInterval', DateInterval)
 
 const editableComponentOtherTypeMap = new Map<EditableComponentType, Component>()
 editableComponentOtherTypeMap.set('InputNumberRange', TaInputNumberRange)
