@@ -550,14 +550,12 @@ export default defineComponent({
       return rules
     }
     // 获取数字类型数据精度 最小为2最大为6
-    function getFormItemPrecision(value: number | undefined, formWatch = false) {
-      console.log(formWatch)
+    function getFormItemPrecision(value: number | undefined) {
       const { schema, tableAction, formModel, formActionType } = props
       const { componentProps = {}, component } = schema
       const realcomponentProps = isFunction(componentProps)
         ? componentProps({ schema, tableAction, formModel, formActionType })
         : componentProps
-      console.log(!unref(canUpdatePrecision))
       if (
         component !== 'InputNumber' ||
         value === undefined ||
