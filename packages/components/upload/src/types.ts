@@ -342,6 +342,7 @@ type BasicPropsType = {
    */
   checkboxConfig: VxeTablePropTypes.CheckboxConfig & { enabled: boolean }
   permissionControl?: number
+  getPopupContainer?: () => HTMLElement
 } & ProvideDataType
 
 /**

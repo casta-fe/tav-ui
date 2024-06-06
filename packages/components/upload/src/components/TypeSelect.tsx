@@ -149,6 +149,7 @@ export const TypeSelect = defineComponent({
     onSelect: Function as PropType<TypeSelectPropType['onSelect']>,
     queryFileTypeRecursion: Boolean as PropType<TypeSelectPropType['queryFileTypeRecursion']>,
     permissionControl: Number,
+    getPopupContainer: Function as PropType<() => HTMLElement>,
   },
   emits: ['update:selected', 'update:options'],
   setup(props, { emit, slots }) {
@@ -168,6 +169,7 @@ export const TypeSelect = defineComponent({
             props.onSelect?.(value, option)
             emit('update:selected', value, option)
           }}
+          getPopupContainer={props.getPopupContainer}
           placeholder={tavI18n('Tav.file.message.5')}
           disabled={localTypeCodeOptions.value.length === 1 || props.disabledSelect}
           allowClear={localTypeCodeOptions.value.length !== 1}

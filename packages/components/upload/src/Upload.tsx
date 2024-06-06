@@ -120,6 +120,7 @@ export default defineComponent({
       default: () => ({ enabled: false }),
     },
     permissionControl: Number,
+    getPopupContainer: Function as PropType<() => HTMLElement>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
@@ -201,6 +202,7 @@ export default defineComponent({
         queryFileType: handler.apis.queryFileType,
         queryFileTypeRecursion: props.queryFileTypeRecursion,
         permissionControl: props.permissionControl,
+        getPopupContainer: props.getPopupContainer,
       }
 
       const ISelect = (_, { slots }: Recordable) => <TypeSelect {...selectProps} v-slots={slots} />
