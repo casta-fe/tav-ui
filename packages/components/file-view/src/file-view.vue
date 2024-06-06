@@ -36,7 +36,7 @@ export default defineComponent({
     })
     const fileViewContentElRef = ref<HTMLElement | null>(null)
 
-    const ignoreList = ['zip', 'tar', '7z']
+    const _ignoreList = ['zip', 'tar', '7z']
     const loadFileTypes = {
       office: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'],
       audio: ['mp3', 'mp3', 'wav', 'rm', 'rpm'],
@@ -44,6 +44,12 @@ export default defineComponent({
       video: ['mpeg', 'mpg', 'avi', 'movie'],
       text: ['txt'],
     }
+    const ignoreList = [
+      ..._ignoreList,
+      ...loadFileTypes['audio'],
+      ...loadFileTypes['video'],
+      ...loadFileTypes['txt'],
+    ]
     const currentFile = computed((): FileViewItemType => props.list[state.index] || {})
     const fileType = computed(() => {
       let type: Nullable<string> = null
@@ -179,9 +185,9 @@ export default defineComponent({
           return
         }
         if (newData) {
+          state.index = props.index
           getFile(() => {
             state.showModal = newData
-            state.index = props.index
           })
         } else {
           afterCloseHandle()
