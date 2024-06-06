@@ -183,6 +183,7 @@ export default {
       '2': 'Hide hyperlink upload',
       '3': 'Upload hyperlink',
       '4': 'Too large',
+      '5': 'File name contains illegal char: ',
     },
     message: {
       '1': 'The preview of this format is temporarily not supported.',

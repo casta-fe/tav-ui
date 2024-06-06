@@ -36,19 +36,15 @@ export default defineComponent({
     })
     const fileViewContentElRef = ref<HTMLElement | null>(null)
 
-    const _ignoreList = ['zip', 'tar', '7z']
     const loadFileTypes = {
       office: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'],
-      audio: ['mp3', 'mp3', 'wav', 'rm', 'rpm'],
       pic: ['gif', 'jpeg', 'jpg', 'png'],
-      video: ['mpeg', 'mpg', 'avi', 'movie'],
-      text: ['txt'],
     }
     const ignoreList = [
-      ..._ignoreList,
-      ...loadFileTypes['audio'],
-      ...loadFileTypes['video'],
-      ...loadFileTypes['txt'],
+      ...['zip', 'tar', '7z'], // previous ignoreList
+      ...['mp3', 'mp3', 'wav', 'rm', 'rpm'], // audio
+      ...['mpeg', 'mpg', 'avi', 'movie'], // video
+      ...['txt'], // text
     ]
     const currentFile = computed((): FileViewItemType => props.list[state.index] || {})
     const fileType = computed(() => {
@@ -188,6 +184,7 @@ export default defineComponent({
           state.index = props.index
           getFile(() => {
             state.showModal = newData
+            state.index = props.index
           })
         } else {
           afterCloseHandle()
@@ -291,7 +288,7 @@ export default defineComponent({
         <a href="javascript:;"><RightOutlined /></a>
       </div>
     </template>
-    <Spin :spinning="pageLoading" size="default" :tip="tavI18n('Tav.file.message.1')">
+    <Spin :spinning="pageLoading" size="default" :tip="tavI18n('Tav.common.loadingText')">
       <div ref="fileViewContentElRef" class="file-view-content">
         <template v-if="supportWPS">
           <iframe id="wps-file-view" :src="filePath" frameborder="0" />
