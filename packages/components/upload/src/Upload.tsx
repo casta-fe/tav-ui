@@ -338,7 +338,6 @@ export default defineComponent({
         updateFileNameAndAddress: handler.apis.updateFileNameAndAddress,
         coverColumnTitle: props.coverColumnTitle,
         hideColumnFields: props.hideColumnFields,
-        actionLimit: props.actionLimit,
         insertColumns: props.insertColumns,
         nameColumnWidth: props.nameColumnWidth,
         moduleCode: params.value.moduleCode,
