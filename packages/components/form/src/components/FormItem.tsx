@@ -552,7 +552,7 @@ export default defineComponent({
     // 获取数字类型数据精度 最小为2最大为6
     function getFormItemPrecision(value: number | undefined) {
       const { schema, tableAction, formModel, formActionType } = props
-      const { componentProps = {}, component } = schema
+      const { componentProps = {}, component, field } = schema
       const realcomponentProps = isFunction(componentProps)
         ? componentProps({ schema, tableAction, formModel, formActionType })
         : componentProps
@@ -577,6 +577,7 @@ export default defineComponent({
       }
 
       numberPrecision.value = precision
+      props.setFormModel(field, Number(value.toFixed(precision)))
     }
     const showNumberToChinese = () => {
       const { component } = props.schema
@@ -612,26 +613,29 @@ export default defineComponent({
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          if (propsData[eventKey])
+          if (propsData[eventKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[eventKey](...args)
-
+          }
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
+          console.log(value)
           props.setFormModel(field, value)
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
         },
-        [focusKey]: (...args: Nullable<Recordable>[]) => {
+      }
+      if (component === 'InputNumber') {
+        on[focusKey] = (...args: Nullable<Recordable>[]) => {
           canUpdatePrecision.value = false
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[focusKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[focusKey](...args)
           }
-        },
-        [blurKey]: (...args: Nullable<Recordable>[]) => {
+        }
+        on[blurKey] = (...args: Nullable<Recordable>[]) => {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[blurKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -652,7 +656,7 @@ export default defineComponent({
               }, 10)
             }
           }
-        },
+        }
       }
       const Comp = component && (componentMap.get(component) as ReturnType<typeof defineComponent>)
       const size = props.formProps['size']

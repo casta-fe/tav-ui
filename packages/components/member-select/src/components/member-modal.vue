@@ -332,7 +332,7 @@ export default defineComponent({
         }
         const children = userList.value
           .filter((user: UserItem) => {
-            return user.userOrgs.map((v) => v.organizationId).includes(treeNode.id)
+            return user.userOrgs?.map((v) => v.organizationId).includes(treeNode.id) || []
           })
           .map((user: any) => {
             const obj = { ...user }
@@ -365,7 +365,7 @@ export default defineComponent({
       if (firstOrg && state.orgExpandedKeys.length == 0) {
         state.orgExpandedKeys = [firstOrg.id]
         const children = userList.value
-          .filter((v: any) => v.userOrgs.some((v) => v.organizationId == firstOrg.id))
+          .filter((v: any) => v.userOrgs?.some((v) => v.organizationId == firstOrg.id))
           .map((v: any) => {
             v.isLeaf = true
             return v
@@ -402,7 +402,7 @@ export default defineComponent({
       state.autoExpandParent = false
     }
     const getOrgName = (user: UserItem) => {
-      return user.userOrgs.map((v) => v.organizationName).join('，')
+      return user.userOrgs?.map((v) => v.organizationName).join('，')
     }
     watch(
       () => state.checkboxData,

@@ -142,6 +142,7 @@ export default defineComponent({
         label: tavI18n('Tav.tablePro.export.5'),
         required: true,
         componentProps: {
+          disabled: true,
           placeholder: tavI18n('Tav.tablePro.export.5p'),
           treeCheckable: true,
           allowClear: true,

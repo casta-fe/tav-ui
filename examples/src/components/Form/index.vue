@@ -82,6 +82,7 @@
   <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
   </TaForm>
+  <TaButton class="mr-2" @click="getFormData"> 获取数据 </TaButton>
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
@@ -171,13 +172,19 @@ const schemas = ref([
   {
     field: 'field1',
     component: 'DateInterval',
-    label: '普通InputNumber',
+    label: 'DateInterval',
     colProps: { span: 8 },
-    editSlot: 'testSlot',
     componentProps: {},
   },
   {
-    field: 'field2',
+    field: 'fieldInputNumber',
+    component: 'InputNumber',
+    label: 'InputNumber',
+    colProps: { span: 8 },
+    componentProps: {},
+  },
+  {
+    field: 'fieldformatter',
     component: 'InputNumber',
     label: 'formatter',
     colProps: { span: 8 },
@@ -455,12 +462,17 @@ export default defineComponent({
         // })
       }, 500)
     }, 2000)
+    const getFormData = () => {
+      const res = testForm.value.getFieldsValue()
+      console.log(res)
+    }
     return {
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
       testForm,
+      getFormData,
       setProps,
       handleLoad,
     }

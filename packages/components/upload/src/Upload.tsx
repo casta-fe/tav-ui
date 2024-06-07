@@ -125,7 +125,6 @@ export default defineComponent({
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
     const { params, customOptions, typeCodeArray } = toRefs(props)
-
     const showTitle = ref(props.showTitle)
     const showSelect = ref(props.showSelect)
     const showUploadBtn = ref(props.showUploadBtn)
@@ -339,6 +338,7 @@ export default defineComponent({
         updateFileNameAndAddress: handler.apis.updateFileNameAndAddress,
         coverColumnTitle: props.coverColumnTitle,
         hideColumnFields: props.hideColumnFields,
+        actionLimit: props.actionLimit,
         insertColumns: props.insertColumns,
         nameColumnWidth: props.nameColumnWidth,
         moduleCode: params.value.moduleCode,

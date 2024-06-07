@@ -36,6 +36,7 @@ const uploadArr: any[] = [
 export const taUploadProvideData: Partial<
   ProvideDataType & { queryFileHistory: any; removeFileById: any }
 > = {
+  actionLimit: 4,
   typeCodeRecord: {
     tg_invest: [
       {
@@ -88,14 +89,60 @@ export const taUploadProvideData: Partial<
   queryFile: async (params: any): Promise<any> => {
     // console.log(params, 'queryFile')
 
-    const { data } = await __post('/api/TIANTA-FILE/api/file/queryFile', params)
-
     return new Promise((r) =>
       setTimeout(
         r.bind(null, {
+          success: true,
+          code: '0000',
           data: {
-            result: data && data.result ? data.result : uploadArr,
+            result: [
+              {
+                id: 73086,
+                appId: 10001,
+                actualId: '5d8e721a997348c19c46041178348834',
+                moduleId: 9,
+                businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+                businessId: 'TG-20240607000003-0',
+                type: 9,
+                deleted: 0,
+                version: 1,
+                name: '10',
+                suffix: 'png',
+                fullName: '10.png',
+                size: 45113,
+                address: '/20240607/17177485273641322.png',
+                runtime: null,
+                hyperlink: 0,
+                sourceFileDownload: 1,
+                watermarkFileDownload: 2,
+                fileSize: '44KB',
+                createBy: '1',
+                createByName: '系统管理员',
+                expand: null,
+                dataType: null,
+                toPdf: 0,
+                errorMsg: null,
+                moduleCode: 'tg_invest_evaluation',
+                moduleName: '评估立项',
+                typeCode: 'INVEST_FOUND_BFJY',
+                typeName: '拜访纪要',
+                createTime: '2024-06-07 16:22:07',
+              },
+            ],
+            total: 1,
+            pageSize: 999,
+            pageCount: 1,
+            currentPage: 1,
+            isFirstPage: true,
+            isLastPage: true,
+            hasPreviousPage: false,
+            hasNextPage: false,
+            navigatePages: 10,
+            navigatePageNumbers: [1],
+            expand: null,
           },
+          msg: null,
+          expand: null,
         }),
         900
       )

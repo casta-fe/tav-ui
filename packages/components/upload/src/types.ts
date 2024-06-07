@@ -351,6 +351,7 @@ type BasicPropsType = {
 type ProvideDataType = {
   // 删除文件接口
   removeFile?: PromiseFn
+  actionLimit?: number
   // 查询文件接口
   queryFile?: (parame: {
     filter: QueryFileParamsType

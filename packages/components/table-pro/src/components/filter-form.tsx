@@ -153,6 +153,7 @@ export default defineComponent({
     ] = useForm({
       labelWidth: 120,
       schemas: inputFormSchema,
+      getPopupContainer: props.config?.getPopupContainer,
       showActionButtonGroup: false,
     })
 
