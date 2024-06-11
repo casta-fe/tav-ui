@@ -577,7 +577,7 @@ export default defineComponent({
       }
 
       numberPrecision.value = precision
-      props.setFormModel(field, value ? Number(value.toFixed(precision)) : value)
+      props.setFormModel(field, value ? Number(value).toFixed(precision) : value)
     }
     const showNumberToChinese = () => {
       const { component } = props.schema
