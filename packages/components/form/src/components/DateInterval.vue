@@ -118,7 +118,7 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      const data = unref(currentDate) || []
+      const data = (unref(currentDate) || []).map((v) => dayjs(v).format(props.valueFormat))
       emit('change', data)
       emit('search', data)
     }

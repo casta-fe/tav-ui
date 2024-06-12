@@ -549,6 +549,21 @@ export default defineComponent({
       }
       return rules
     }
+    function getRealInputValue(value: number | undefined, precision: number) {
+      const max = unref(getComponentsProps)?.max ?? NUMBER_MAX
+      const min = unref(getComponentsProps)?.min ?? 0
+      if (value) {
+        if (Number(value) > max) {
+          return max
+        }
+        if (Number(value) < min) {
+          return min
+        }
+        return Number(value).toFixed(precision)
+      } else {
+        return value
+      }
+    }
     // 获取数字类型数据精度 最小为2最大为6
     function getFormItemPrecision(value: number | undefined) {
       const { schema, tableAction, formModel, formActionType } = props
@@ -577,7 +592,7 @@ export default defineComponent({
       }
 
       numberPrecision.value = precision
-      props.setFormModel(field, value ? Number(value).toFixed(precision) : value)
+      props.setFormModel(field, getRealInputValue(value, precision))
     }
     const showNumberToChinese = () => {
       const { component } = props.schema
