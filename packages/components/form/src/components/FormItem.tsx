@@ -559,7 +559,7 @@ export default defineComponent({
         if (Number(value) < min) {
           return min
         }
-        return Number(value).toFixed(precision)
+        return Number(Number(value).toFixed(precision))
       } else {
         return value
       }
@@ -634,7 +634,6 @@ export default defineComponent({
           }
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
-          console.log(value)
           props.setFormModel(field, value)
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()

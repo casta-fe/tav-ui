@@ -49,7 +49,6 @@ export default defineComponent({
     const getProps = computed((): FormProps => {
       // 这两行为了老项目做兼容，最早editable都在shcmeas上配置着，后面放到form上，为了改动小，这样兼容下
       const mergeData = { ...props, ...unref(propsRef) } as FormProps
-      console.log({ ...props })
       mergeData.editable =
         mergeData.editable || mergeData.schemas?.some((v) => v.editable !== undefined)
       return mergeData

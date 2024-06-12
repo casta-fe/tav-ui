@@ -91,21 +91,14 @@ export default defineComponent({
         .find((x) => x.key === unref(currentRange))
         ?.dateRange?.map((x) => formatToDateTime(x)) || []
     )
-    console.log(currentDate, currentRange)
-
     // 选中自定义时间触发
     const handleDateChange = (val: [string, string] | [Dayjs, Dayjs]) => {
       currentRange.value = ''
       const relVal = val || []
       if (val === null) {
         currentDate.value = []
-      } else if (props.autoChoose === 'none') {
-        currentDate.value = relVal
       } else {
-        currentDate.value = [
-          dayjs(relVal[0]).startOf(props.autoChoose as OpUnitType),
-          dayjs(relVal[1]).endOf(props.autoChoose as OpUnitType),
-        ].map((x) => formatToDateTime(x))
+        currentDate.value = relVal
       }
       handleEmitEvent()
     }
@@ -118,7 +111,7 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      const data = (unref(currentDate) || []).map((v) => dayjs(v).format(props.valueFormat))
+      const data = unref(currentDate) || []
       emit('change', data)
       emit('search', data)
     }
@@ -130,7 +123,7 @@ export default defineComponent({
     })
     watch(
       () => props.value,
-      (v) => {
+      (v: any) => {
         currentDate.value = [...props.value]
       }
     )
