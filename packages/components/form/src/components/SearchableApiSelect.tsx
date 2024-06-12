@@ -65,7 +65,7 @@ export default defineComponent({
     },
     panelMaxHeight: {
       type: String,
-      default: '500px',
+      default: '250px',
     },
     onSelect: Function as PropType<SearchableApiSelectBasicProps['onSelect']>,
     onChange: Function as PropType<SearchableApiSelectBasicProps['onChange']>,
