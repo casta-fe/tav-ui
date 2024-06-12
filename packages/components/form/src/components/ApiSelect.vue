@@ -182,12 +182,6 @@ export default defineComponent({
     const pageInit = () => {
       props.immediate && fetch()
     }
-    watch(
-      () => props.value,
-      (v: any) => {
-        state.value = v
-      }
-    )
     pageInit()
     return {
       state: state as unknown as string,
