@@ -128,7 +128,9 @@ export default defineComponent({
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
         if (newVal !== oldVal) {
-          getFormItemPrecision(newVal)
+          setTimeout(() => {
+            getFormItemPrecision(newVal)
+          }, 100)
           // debounce(getFormItemPrecision.bind(null, newVal, false), DebounceDely)()
         }
         if (!unref(hasEditable)) {
