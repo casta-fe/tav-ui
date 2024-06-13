@@ -331,9 +331,7 @@ export default defineComponent({
           console.log('empty')
         }
         const children = userList.value
-          .filter((user: UserItem) => {
-            return user.userOrgs?.some((v) => v.organizationId).includes(treeNode.id) || []
-          })
+          .filter((v: any) => v.userOrgs?.some((v: any) => v.organizationId == treeNode.id))
           .map((user: any) => {
             const obj = { ...user }
             obj.isLeaf = true
