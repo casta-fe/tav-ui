@@ -98,7 +98,7 @@ export default defineComponent({
       if (val === null) {
         currentDate.value = []
       } else {
-        currentDate.value = relVal
+        currentDate.value = relVal.map((v) => dayjs(v).format(props.valueFormat))
       }
       handleEmitEvent()
     }
@@ -111,14 +111,15 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      const data = unref(currentDate) || []
+      const data = (unref(currentDate) || []).map((v: Dayjs) => dayjs(v).format(props.valueFormat))
+      console.log(data)
       emit('change', data)
       emit('search', data)
     }
 
     onMounted(() => {
       // 抛出当前默认时间
-      const data = unref(currentDate) || []
+      const data = (unref(currentDate) || []).map((v) => dayjs(v).format(props.valueFormat))
       emit('getCurDate', data)
     })
     watch(
