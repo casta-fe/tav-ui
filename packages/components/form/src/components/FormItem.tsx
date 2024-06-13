@@ -128,9 +128,7 @@ export default defineComponent({
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
         if (newVal !== oldVal) {
-          setTimeout(() => {
-            getFormItemPrecision(newVal)
-          }, 100)
+          getFormItemPrecision(newVal)
           // debounce(getFormItemPrecision.bind(null, newVal, false), DebounceDely)()
         }
         if (!unref(hasEditable)) {
@@ -551,10 +549,13 @@ export default defineComponent({
       }
       return rules
     }
-    function getRealInputValue(value: number | undefined, precision: number) {
-      const max = unref(getComponentsProps)?.max ?? NUMBER_MAX
-      const min = unref(getComponentsProps)?.min ?? 0
-      if (value) {
+    // 理论不用传，但是watch监听里面某些情况下，取getComponentProps是undefined，所以还是传过来别删
+    function getRealInputValue(value: number | undefined, precision: number, componentsProps: any) {
+      const max = componentsProps?.max ?? NUMBER_MAX
+      const min = componentsProps?.min ?? 0
+      if (isNullOrUnDef(value)) {
+        return value
+      } else {
         if (Number(value) > max) {
           return max
         }
@@ -562,8 +563,6 @@ export default defineComponent({
           return min
         }
         return Number(Number(value).toFixed(precision))
-      } else {
-        return value
       }
     }
     // 获取数字类型数据精度 最小为2最大为6
@@ -594,7 +593,7 @@ export default defineComponent({
       }
 
       numberPrecision.value = precision
-      props.setFormModel(field, getRealInputValue(value, precision))
+      props.setFormModel(field, getRealInputValue(value, precision, realcomponentProps))
     }
     const showNumberToChinese = () => {
       const { component } = props.schema

@@ -19,9 +19,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, nextTick, reactive } from 'vue'
-import { useForm, useModal } from '../../../../dist/tav-ui/es/index.mjs'
-import type { FormSchema } from '../../../../dist/types/components/form/src/types/form.js'
+import { TaButton, TaForm, TaModal, useForm, useModal } from '@tav-ui/components'
+import type { FormSchema } from '@tav-ui/components/form'
 export default defineComponent({
+  components: { TaModal, TaForm, TaButton },
   setup() {
     const state = reactive({
       loading: false,
@@ -29,129 +30,105 @@ export default defineComponent({
     const [ModalRegister, { openModal: OpenModal, closeModal: CloseModal }] = useModal()
     const schemas: FormSchema[] = [
       {
-        field: 'fundManagerName',
+        field: 'name',
         component: 'Input',
-        label: '基金管理人名称',
+        label: '名称',
         colProps: {
           span: 12,
-        },
-        componentProps: {
-          placeholder: '请输入名称',
         },
         rules: [
           {
             required: true,
+            message: '请输入名称',
             trigger: 'blur',
           },
         ],
       },
       {
-        field: 'companyType',
-        component: 'Select',
-        label: '企业类型',
-        required: true,
+        field: 'id',
+        component: 'Input',
+        label: 'ID',
         colProps: {
           span: 12,
         },
         componentProps: {
-          placeholder: '请选择企业类型',
+          placeholder: '如需固定可以在这里输入，否则系统随机生成id',
+        },
+        rules: [
+          {
+            required: true,
+          },
+          {
+            pattern: /^[0-9a-zA-Z_]{1,}$/,
+            message: 'id只能由数字、字母、下划线组成',
+            trigger: 'blur',
+          },
+        ],
+      },
+      {
+        field: 'type',
+        component: 'Select',
+        label: '类型',
+        colProps: {
+          span: 12,
+        },
+        valueType: 'number',
+        componentProps: {
           options: [
             {
-              label: 'slslsl',
-              value: 'slsl',
+              label: '系统',
+              value: 1,
+            },
+            {
+              label: '业务',
+              value: 2,
+            },
+            {
+              label: '业务-审批',
+              value: 3,
             },
           ],
         },
+        rules: [
+          {
+            required: true,
+            message: '请选择类型',
+            trigger: 'blur',
+          },
+        ],
       },
       {
-        field: 'registrationNumber',
-        component: 'Input',
-        label: '基金业协会登记编号',
+        field: 'seq',
+        component: 'InputNumber',
+        label: '排序',
         colProps: {
           span: 12,
         },
-        componentProps: { placeholder: '请输入登记编号' },
-        required: false,
-      },
-      {
-        field: 'registrationTime',
-        component: 'DatePicker',
-        label: '基金业协会登记日期',
-        colProps: {
-          span: 12,
-        },
-        required: false,
+        defaultValue: 0,
         componentProps: {
-          placeholder: '请选择日期',
-          // showTime: true, HH:mm:ss
-          valueFormat: 'YYYY-MM-DD HH:mm:ss',
+          min: 0,
+          max: 999,
         },
+        rules: [
+          {
+            required: true,
+            message: '请输入排序',
+            trigger: 'blur',
+          },
+        ],
       },
+
       {
-        field: 'institutionsIntroduce',
+        field: 'remark',
+        defaultValue: null,
         component: 'InputTextArea',
-        label: '机构简介',
+        label: '备注',
         colProps: {
           span: 24,
         },
         componentProps: {
-          placeholder: '请输入机构简介',
-        },
-      },
-      {
-        field: 'legalPerson',
-        component: 'Input',
-        label: '法定代表人',
-        colProps: {
-          span: 12,
-        },
-        componentProps: {
-          placeholder: '请输入法定代表人',
-        },
-      },
-      {
-        field: 'establishedDate',
-        component: 'DatePicker',
-        label: '成立日期',
-        colProps: {
-          span: 12,
-        },
-        componentProps: {
-          valueFormat: 'YYYY-MM-DD HH:mm:ss',
-          placeholder: '请选择成立日期',
-        },
-      },
-      {
-        field: 'registeredAddress',
-        component: 'InputTextArea',
-        label: '注册地址',
-        colProps: {
-          span: 24,
-        },
-        componentProps: {
-          placeholder: '请输入注册地址',
-        },
-      },
-      {
-        field: 'businessAddress',
-        component: 'InputTextArea',
-        label: '办公地址',
-        colProps: {
-          span: 24,
-        },
-        componentProps: {
-          placeholder: '请输入办公地址',
-        },
-      },
-      {
-        field: 'riskControlPrincipal',
-        component: 'MemberSelect',
-        label: '风控负责人',
-        colProps: {
-          span: 12,
-        },
-        componentProps: {
-          placeholder: '请选择风控负责人',
+          placeholder: '请输入备注信息',
+          maxLength: 1000,
         },
       },
     ]
@@ -174,7 +151,7 @@ export default defineComponent({
       OpenModal()
       nextTick(() => {
         setFieldsValue({
-          businessAddress: 'slslslslslls',
+          seq: 1,
         })
       })
     }
