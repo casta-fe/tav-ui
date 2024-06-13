@@ -82,7 +82,7 @@
   <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
   </TaForm>
-  <TaButton class="mr-2" @click="getFormData"> 获取数据 </TaButton>
+  <TaButton class="mr-2" @click="getFormData()"> 获取数据 </TaButton>
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
@@ -157,6 +157,23 @@ const schemas = ref([
   //   },
   // },
   {
+    field: 'fieldapiSelect',
+    component: 'ApiSelect',
+    label: 'apiSelect',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      api: () => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ code: '0000', data: allUserList.value })
+          }, 100)
+        })
+      },
+    },
+  },
+  {
     field: 'field0',
     component: 'MemberSelect',
     label: '人员选择',
@@ -181,6 +198,7 @@ const schemas = ref([
     component: 'InputNumber',
     label: 'InputNumber',
     colProps: { span: 8 },
+    required: true,
     componentProps: {},
   },
   {
@@ -455,15 +473,15 @@ export default defineComponent({
         },
       ]
       setTimeout(() => {
-        // testForm.value.setFieldsValue({
-        //   field1: 99,
-        //   field2: 66.1256,
-        //   field3: 99,
-        // })
+        testForm.value.setFieldsValue({
+          fieldapiSelect: 1,
+          // fieldInputNumber: null,
+          field3: 99,
+        })
       }, 500)
     }, 2000)
-    const getFormData = () => {
-      const res = testForm.value.getFieldsValue()
+    const getFormData = async () => {
+      const res = await testForm.value.validate()
       console.log(res)
     }
     return {
