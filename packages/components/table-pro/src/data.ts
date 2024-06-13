@@ -24,22 +24,22 @@ function getCookie(objName: string) {
     if (temp[0] == objName) return unescape(temp[1])
   }
 }
-function isCookie(objName: string, objValue: any, expires: string | number) {
-  const cookie = getCookie(objName)
-  if (cookie) {
-    return cookie
-  } else {
-    setCookie(objName, objValue, expires)
-    return getCookie(objName)
-  }
-}
-function delCookie(objName: string) {
-  //删除cookie
-  const exp = new Date()
-  exp.setTime(exp.getTime() - 1)
-  const cval = getCookie(objName)
-  if (cval != null) document.cookie = `${name}=${cval};expires=${exp.toUTCString()}`
-}
+// function isCookie(objName: string, objValue: any, expires: string | number) {
+//   const cookie = getCookie(objName)
+//   if (cookie) {
+//     return cookie
+//   } else {
+//     setCookie(objName, objValue, expires)
+//     return getCookie(objName)
+//   }
+// }
+// function delCookie(objName: string) {
+//   //删除cookie
+//   const exp = new Date()
+//   exp.setTime(exp.getTime() - 1)
+//   const cval = getCookie(objName)
+//   if (cval != null) document.cookie = `${name}=${cval};expires=${exp.toUTCString()}`
+// }
 
 // data: [
 //   {
@@ -318,6 +318,15 @@ export async function API__POE_MENU_ALL(data, url = '/api/TIANTA-SYSTEM//sys/acl
 export async function API__CENTER_COMPANY_LIST(
   data,
   url = '/api/STARLIGHT-CENTRE-WEB/third/serv/search/company'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+// 企业库
+export async function API__INVEST_COMPANY_LIST(
+  data,
+  url = '/api/STARLIGHT-INVEST-WEB/company/information/listPager'
 ) {
   // eslint-disable-next-line no-return-await
   return await __post(url, data)

@@ -46,7 +46,7 @@ function handleExtendProxyConfig(tablePropsRef: ComputedRef<TableProProps>) {
  * @param tableRef
  * @param emit
  */
-function handleExtenAfterApi(
+function handleExtendAfterApi(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>
 ) {
@@ -80,7 +80,7 @@ function handleExtenAfterApi(
  * @param emit
  * @returns
  */
-function handleExtenApi(
+function handleExtendApi(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
@@ -216,8 +216,8 @@ function handleExtendProps(
   emit: TableProGridEmit
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
-  const handleExtendAfterApiResult = handleExtenAfterApi(handleExtendProxyConfigResult, tableRef)
-  const handleExtendApiResult = handleExtenApi(handleExtendAfterApiResult, tableRef, emit)
+  const handleExtendAfterApiResult = handleExtendAfterApi(handleExtendProxyConfigResult, tableRef)
+  const handleExtendApiResult = handleExtendApi(handleExtendAfterApiResult, tableRef, emit)
   return handleExtendApiResult
 }
 

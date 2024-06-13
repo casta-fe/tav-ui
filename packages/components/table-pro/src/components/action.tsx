@@ -71,8 +71,8 @@ export default defineComponent({
   name: ComponentActionName,
   props,
   setup(props, { slots }) {
-    let { tableRef, setCacheActionWidths /*, tableEmitter*/ } = useTableContext()
-    if (!props.outside) tableRef = ref(null)
+    const { /*tableRef,*/ setCacheActionWidths /*, tableEmitter*/ } = useTableContext()
+    // if (!props.outside) tableRef = ref(null)
     const actionEl = ref(null)
     const id = buildTableActionId()
 
@@ -93,7 +93,7 @@ export default defineComponent({
     }
 
     // 根据 permissions 控制显隐
-    function handlePermissions(Permissions) {
+    function handlePermissions(Permissions: any) {
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
@@ -121,12 +121,16 @@ export default defineComponent({
           const isOverMax = isOverMaxWidth(actions)
           if (isOverMax) {
             const handleActions = limitActionLabel(actions)
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+              setCacheActionWidths({ key: id, value: total })
+            }
             return handleActions
           } else {
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
+              setCacheActionWidths({ key: id, value: total })
+            }
             return actions
           }
         } else {
@@ -135,12 +139,16 @@ export default defineComponent({
           const isOverMax = isOverMaxWidth(actions)
           if (isOverMax) {
             const handleActions = limitActionLabel(_actions)
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(unref(permissonFilterActions))
+              setCacheActionWidths({ key: id, value: total })
+            }
             return handleActions
           } else {
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
+              setCacheActionWidths({ key: id, value: total })
+            }
             return _actions
           }
         }

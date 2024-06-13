@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/TablePro/multi-header'),
   },
   {
+    path: '/table-pro-company-list',
+    name: 'TableProCompanyList',
+    component: () => import('../components/TablePro/company-list.vue'),
+  },
+  {
     path: '/test-demo',
     name: 'TestDemo',
     component: () => import('../components/TablePro/test-demo.vue'),

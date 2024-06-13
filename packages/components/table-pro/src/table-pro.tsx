@@ -9,7 +9,8 @@ import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import {
-  ACTION_COLUMNS,
+  // // 测试性能
+  // ACTION_COLUMNS,
   CamelCaseToCls,
   ComponentName,
   ComponentOperationsName,
@@ -148,67 +149,54 @@ export default defineComponent({
     // 执行dom监听的处理
     useWatchDom(tableRef, customActionRef, tableEmitter)
 
-    // 统计 action 渲染数据，动态设置宽度
-    const setCacheActionWidths = ({ key = '', value = 0 }) => {
-      if (key) {
-        cacheActionWidths.value[key] = value
-      }
-    }
-    function handleNotPersistentColumnActionWidth() {
-      const tableData = unref(tableRef)?.getTableData().tableData
-      const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-      if (tableData && maxWidth >= unref(maxWidthForAction)) {
-        const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
-        const columns = currentColumns!.map((column) => {
-          if (column.field && ACTION_COLUMNS.includes(column.field)) {
-            column.width = Math.ceil(maxWidth)
-            column.minWidth = Math.ceil(maxWidth)
-            return column
-          }
-          return column
-        })
-        unref(tableRef)?.loadColumn(columns)
-        maxWidthForAction.value = maxWidth
-      }
-    }
-    if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
-      // 开启了列持久化
-      tableEmitter.on('table-pro:column-covered', () => {
-        handleNotPersistentColumnActionWidth()
-      })
+    // 测试性能
+    // // 统计 action 渲染数据，动态设置宽度
+    // const setCacheActionWidths = ({ key = '', value = 0 }) => {
+    //   if (key) {
+    //     cacheActionWidths.value[key] = value
+    //   }
+    // }
+    // function handleNotPersistentColumnActionWidth() {
+    //   const tableData = unref(tableRef)?.getTableData().tableData
+    //   const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+    //   if (tableData && maxWidth > unref(maxWidthForAction)) {
+    //     // const currentColumns = unref(getColumns).columns
+    //     const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
+    //     const columns = currentColumns!.map((column) => {
+    //       if (column.field && ACTION_COLUMNS.includes(column.field)) {
+    //         column.width = Math.ceil(maxWidth)
+    //         column.minWidth = Math.ceil(maxWidth)
+    //         return column
+    //       }
+    //       return column
+    //     })
+    //     // columnsForAction.value = columns
+    //     unref(tableRef)?.loadColumn(columns)
+    //     maxWidthForAction.value = maxWidth
+    //   }
+    // }
+    // if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
+    //   // 开启了列持久化
+    //   tableEmitter.on('table-pro:column-covered', () => {
+    //     handleNotPersistentColumnActionWidth()
+    //   })
 
-      // 开启了列持久化但是无持久化数据
-      tableEmitter.on('table-pro:column-covered-no-data', () => {
-        handleNotPersistentColumnActionWidth()
-      })
-    } else {
-      // 未开启列持久化
-      watch(
-        () => cacheActionWidths,
-        () => {
-          const tableData = unref(tableRef)?.getTableData().tableData
-          const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-          if (tableData && maxWidth > unref(maxWidthForAction)) {
-            // const currentColumns = unref(getColumns).columns
-            const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
-            const columns = currentColumns!.map((column) => {
-              if (column.field && ACTION_COLUMNS.includes(column.field)) {
-                column.width = Math.ceil(maxWidth)
-                column.minWidth = Math.ceil(maxWidth)
-                return column
-              }
-              return column
-            })
-            // columnsForAction.value = columns
-            unref(tableRef)?.loadColumn(columns)
-            maxWidthForAction.value = maxWidth
-          }
-        },
-        {
-          deep: true,
-        }
-      )
-    }
+    //   // 开启了列持久化但是无持久化数据
+    //   tableEmitter.on('table-pro:column-covered-no-data', () => {
+    //     handleNotPersistentColumnActionWidth()
+    //   })
+    // } else {
+    //   // 未开启列持久化
+    //   watch(
+    //     () => cacheActionWidths,
+    //     () => {
+    //       handleNotPersistentColumnActionWidth()
+    //     },
+    //     {
+    //       deep: true,
+    //     }
+    //   )
+    // }
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
@@ -220,7 +208,8 @@ export default defineComponent({
       tableEmitter,
       tablePropsRef: getBindValues,
       columnApiOptions,
-      setCacheActionWidths,
+      // 测试性能
+      // setCacheActionWidths,
     })
 
     // 抛出实例
