@@ -4,13 +4,12 @@ import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import TaCollapseTransition from '@tav-ui/components/transition'
 import { onUnmountedOrOnDeactivated } from '@tav-ui/hooks/core/onUnmountedOrOnDeactivated'
-// import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
+import { onMountedOrActivated } from '@tav-ui/hooks/core/onMountedOrActivated'
 import ComponentCustomAction from './components/custom-action'
 import ComponentEmpty from './components/empty'
 import ComponentFilterForm from './components/filter-form'
 import {
-  // // 测试性能
-  // ACTION_COLUMNS,
+  ACTION_COLUMNS,
   CamelCaseToCls,
   ComponentName,
   ComponentOperationsName,
@@ -29,6 +28,7 @@ import { createTableContext } from './hooks/useTableContext'
 import { useWatchDom } from './hooks/useWatchDom'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
+import { useCanvasCalcContent } from './hooks/useColumnAutoWidth'
 import type { ComputedRef } from 'vue'
 import type { TableProColumn, TableProEvent, TableProInstance, TableProProps } from './types'
 import type { CustomActionRef } from './typings'
@@ -49,7 +49,7 @@ export default defineComponent({
     const filterRef = ref<ComputedRef | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
     const cacheActionWidths = ref<Record<string, any>>({})
-    const columnsForAction = ref<TableProColumn[]>([])
+    // const columnsForAction = ref<TableProColumn[]>([])
     const maxWidthForAction = ref<number>(0)
 
     // 注册 tablepro emitter
@@ -149,58 +149,83 @@ export default defineComponent({
     // 执行dom监听的处理
     useWatchDom(tableRef, customActionRef, tableEmitter)
 
-    // 测试性能
-    // // 统计 action 渲染数据，动态设置宽度
-    // const setCacheActionWidths = ({ key = '', value = 0 }) => {
-    //   if (key) {
-    //     cacheActionWidths.value[key] = value
-    //   }
-    // }
-    // function handleNotPersistentColumnActionWidth() {
-    //   const tableData = unref(tableRef)?.getTableData().tableData
-    //   const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-    //   if (tableData && maxWidth > unref(maxWidthForAction)) {
-    //     // const currentColumns = unref(getColumns).columns
-    //     const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
-    //     const columns = currentColumns!.map((column) => {
-    //       if (column.field && ACTION_COLUMNS.includes(column.field)) {
-    //         column.width = Math.ceil(maxWidth)
-    //         column.minWidth = Math.ceil(maxWidth)
-    //         return column
-    //       }
-    //       return column
-    //     })
-    //     // columnsForAction.value = columns
-    //     unref(tableRef)?.loadColumn(columns)
-    //     maxWidthForAction.value = maxWidth
-    //   }
-    // }
-    // if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
-    //   // 开启了列持久化
-    //   tableEmitter.on('table-pro:column-covered', () => {
-    //     handleNotPersistentColumnActionWidth()
-    //   })
+    const { calcContent, clearCalcContentCanvas } = useCanvasCalcContent()
+    // 统计 action 渲染数据，动态设置宽度
+    const setCacheActionWidths = ({ key = '', value = 0 }) => {
+      if (key) {
+        cacheActionWidths.value[key] = value
+      }
+    }
+    function handleNotPersistentColumnActionWidth() {
+      const tableData = unref(tableRef)?.getTableData().tableData
+      const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
+      if (tableData && maxWidth > unref(maxWidthForAction)) {
+        // const currentColumns = unref(getColumns).columns
+        const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
+        // const columns = currentColumns!.map((column) => {
+        //   if (column.field && ACTION_COLUMNS.includes(column.field)) {
+        //     column.width = Math.ceil(maxWidth)
+        //     column.minWidth = Math.ceil(maxWidth)
+        //     // if (column.width) {
+        //     //   //@ts-ignore
+        //     //   column.width = undefined
+        //     // }
+        //     // if (column.maxWidth) {
+        //     //   //@ts-ignore
+        //     //   column.maxWidth = undefined
+        //     // }
+        //     return column
+        //   }
+        //   return column
+        // })
+        const columns = [] as any[]
+        let actionPrevColumnHandled = false
+        for (let i = currentColumns!.length - 1; i >= 0; i--) {
+          const _column = currentColumns![i]
+          if (_column.field) {
+            if (ACTION_COLUMNS.includes(_column.field)) {
+              _column.width = Math.ceil(maxWidth)
+              _column.minWidth = Math.ceil(maxWidth)
+            } else if (_column.visible && !_column.fixed && !actionPrevColumnHandled) {
+              if (_column.width) {
+                _column.minWidth = _column.width
+              }
+              //@ts-ignore
+              _column.width = undefined
+              //@ts-ignore
+              _column.maxWidth = undefined
+              actionPrevColumnHandled = true
+            }
+          }
+          columns.unshift(_column)
+        }
+        // columnsForAction.value = columns
+        unref(tableRef)?.loadColumn(columns)
+        unref(tableRef)?.recalculate()
+        maxWidthForAction.value = maxWidth
+      }
+    }
+    if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
+      // 开启了列持久化
+      tableEmitter.on('table-pro:column-covered', () => {
+        handleNotPersistentColumnActionWidth()
+      })
 
-    //   // 开启了列持久化但是无持久化数据
-    //   tableEmitter.on('table-pro:column-covered-no-data', () => {
-    //     handleNotPersistentColumnActionWidth()
-    //   })
-    // } else {
-    //   // 未开启列持久化
-    //   watch(
-    //     () => cacheActionWidths,
-    //     () => {
-    //       handleNotPersistentColumnActionWidth()
-    //     },
-    //     {
-    //       deep: true,
-    //     }
-    //   )
-    // }
+      // 开启了列持久化但是无持久化数据
+      tableEmitter.on('table-pro:column-covered-no-data', () => {
+        handleNotPersistentColumnActionWidth()
+      })
+    }
+    watch(
+      () => JSON.stringify(cacheActionWidths.value),
+      () => {
+        handleNotPersistentColumnActionWidth()
+      }
+    )
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
     const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
-    useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter)
+    useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter, getProps)
 
     // 注入数据
     createTableContext({
@@ -208,8 +233,8 @@ export default defineComponent({
       tableEmitter,
       tablePropsRef: getBindValues,
       columnApiOptions,
-      // 测试性能
-      // setCacheActionWidths,
+      setCacheActionWidths,
+      calcContent,
     })
 
     // 抛出实例
@@ -294,30 +319,45 @@ export default defineComponent({
       ) : null
     }
 
-    onUnmountedOrOnDeactivated(() => {
+    onMountedOrActivated(() => {
+      handleNotPersistentColumnActionWidth()
+    })
+
+    function clearCellTooltip() {
       // 鼠标不移出单元格直接单击跳转时要移出正在显示的提示
       onCellMouseleave()
+      instances.clear()
+    }
 
+    function clearColumnAutoWidth() {
+      // columnsForAction.value = []
       cacheActionWidths.value = {}
-      columnsForAction.value = []
       maxWidthForAction.value = 0
+      clearCalcContentCanvas()
+    }
+
+    onUnmountedOrOnDeactivated(() => {
+      clearCellTooltip()
+      clearColumnAutoWidth()
     })
 
     return () => {
       return (
         <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
           {createOperation()}
-          <div class={ComponentPrefixCls} style={{ height: unref(getHeight) }}>
+          <div class={ComponentPrefixCls} style={{ height: unref(getHeight), overflow: 'hidden' }}>
             <Grid
               ref={tableRef}
               {...unref(getBindValues)}
               onPageChange={(...args) => {
                 unref(getBindValues).onPageChange?.(...args)
-                instances.clear()
+                clearCellTooltip()
+                // clearColumnAutoWidth()
               }}
               onSortChange={() => {
                 // unref(getBindValues).onSortChange?.(...args)
-                instances.clear()
+                clearCellTooltip()
+                // clearColumnAutoWidth()
               }}
             >
               {{

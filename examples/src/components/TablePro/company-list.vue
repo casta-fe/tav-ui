@@ -393,14 +393,14 @@ export default defineComponent({
           label: '编辑',
           enabled: true,
         },
-        // {
-        //   label: '删除',
-        //   enabled: true,
-        // },
-        // {
-        //   label: '商务审批',
-        //   enabled: true,
-        // },
+        {
+          label: '删除',
+          enabled: true,
+        },
+        {
+          label: '商务审批',
+          enabled: true,
+        },
       ]
     }
 

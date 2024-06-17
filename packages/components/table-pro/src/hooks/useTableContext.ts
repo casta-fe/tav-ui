@@ -16,6 +16,7 @@ export interface BasicTableProContext {
 export interface TableProContext extends BasicTableProContext {
   columnApiOptions: TableProColumnApiOptions
   setCacheActionWidths?: (...args: any) => void
+  calcContent?: (...args: any) => number
 }
 
 export function createTableContext(context: TableProContext) {
