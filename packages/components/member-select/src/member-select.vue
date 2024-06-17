@@ -280,16 +280,16 @@ export default defineComponent({
     // 检查用户在当前的用户列表中是否存在，不存在就去全部用户列表中匹配，匹配到后塞到现有用户列表中去
     const checkUserIsExist = () => {
       if (props.multiple) {
-        state.selectedData[0].forEach((userId: number) => {
+        state.selectedData[0].forEach((userId: string) => {
           getUserItem(userId)
         })
       } else {
         getUserItem(state.selectedData[0])
       }
-      function getUserItem(userId: number) {
+      function getUserItem(userId: string) {
         // 如果当前用户列表中查不到该用户就在所用用户中去匹配，匹配到后插入当当前用户列表中
-        if (!state.userList.some((v) => v.id === userId)) {
-          const item = allUserList.find((v) => v.id === userId)
+        if (!state.userList.some((v) => v.id == userId)) {
+          const item = allUserList.find((v: UserItem) => v.id === userId)
           if (item) {
             state.userList.push(item)
           }
