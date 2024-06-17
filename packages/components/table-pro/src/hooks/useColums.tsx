@@ -7,7 +7,7 @@ import {
   MIN_WIDTH_SMALL,
   SELECT_COMPONENTS,
 } from '../const'
-import type { ComputedRef, Ref } from 'vue'
+import type { /*ComputedRef,*/ Ref } from 'vue'
 import type { TableProColumn, TableProGridEmit, TableProInstance, TableProProps } from '../types'
 
 /**
@@ -90,10 +90,9 @@ function setColumnMinWidth(columns: TableProColumn[]) {
         if (column.type && SELECT_COMPONENTS.includes(column.type)) {
           if (!column.width) column.width = MIN_WIDTH_SMALL
         } else if (column.field && ACTION_COLUMNS.includes(column.field)) {
-          // column.showOverflow = false
-          if (!column.minWidth) column.minWidth = MIN_WIDTH + 10
+          if (!column.minWidth) column.minWidth = MIN_WIDTH + 15
         } else {
-          if (!column.minWidth) column.minWidth = MIN_WIDTH
+          column.minWidth = MIN_WIDTH
         }
         return column
       })

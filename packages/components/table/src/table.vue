@@ -64,6 +64,7 @@
       <template #bodyCell="data">
         <slot name="bodyCell" v-bind="data || {}" />
       </template>
+      <template #footer="data"><slot name="footer" v-bind="data || {}" /></template>
     </Table>
 
     <!-- <div v-show="getBindValues.masking" class="ta-basic-table-mask"></div> -->

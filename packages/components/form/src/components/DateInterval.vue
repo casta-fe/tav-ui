@@ -28,7 +28,7 @@ import { Dropdown, Menu, MenuItem, RangePicker } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { formatToDateTime } from '@tav-ui/utils/dateUtil'
 import { getDateRangeRecord } from './types'
-
+import type { Dayjs } from 'dayjs'
 type DateRangeKeyType =
   | 'day'
   | 'year'
@@ -91,20 +91,14 @@ export default defineComponent({
         .find((x) => x.key === unref(currentRange))
         ?.dateRange?.map((x) => formatToDateTime(x)) || []
     )
-    console.log(currentDate, currentRange)
-
     // 选中自定义时间触发
-    const handleDateChange = (momentList) => {
+    const handleDateChange = (val: [string, string] | [Dayjs, Dayjs]) => {
       currentRange.value = ''
-      if (props.allowClear && momentList.length === 0) {
+      const relVal = val || []
+      if (val === null) {
         currentDate.value = []
-      } else if (props.autoChoose === 'none') {
-        currentDate.value = momentList
       } else {
-        currentDate.value = [
-          dayjs(momentList[0]).startOf(props.autoChoose as OpUnitType),
-          dayjs(momentList[1]).endOf(props.autoChoose as OpUnitType),
-        ].map((x) => formatToDateTime(x))
+        currentDate.value = relVal.map((v) => dayjs(v).format(props.valueFormat))
       }
       handleEmitEvent()
     }
@@ -117,19 +111,20 @@ export default defineComponent({
     }
 
     const handleEmitEvent = () => {
-      const data = unref(currentDate) || []
+      const data = (unref(currentDate) || []).map((v: Dayjs) => dayjs(v).format(props.valueFormat))
+      console.log(data)
       emit('change', data)
       emit('search', data)
     }
 
     onMounted(() => {
       // 抛出当前默认时间
-      const data = unref(currentDate) || []
+      const data = (unref(currentDate) || []).map((v) => dayjs(v).format(props.valueFormat))
       emit('getCurDate', data)
     })
     watch(
       () => props.value,
-      (v) => {
+      (v: any) => {
         currentDate.value = [...props.value]
       }
     )

@@ -1,4 +1,5 @@
 import { promiseTimeout } from '@vueuse/shared'
+import { __post } from '@tav-ui/components/table-pro/src/data'
 import type { ProvideDataType } from '@tav-ui/components/upload/src/types'
 
 const uploadArr: any[] = [
@@ -35,6 +36,7 @@ const uploadArr: any[] = [
 export const taUploadProvideData: Partial<
   ProvideDataType & { queryFileHistory: any; removeFileById: any }
 > = {
+  actionLimit: 4,
   typeCodeRecord: {
     tg_invest: [
       {
@@ -56,46 +58,91 @@ export const taUploadProvideData: Partial<
     ],
   },
   queryFileType: async (params: any) => {
-    await promiseTimeout(1000)
-
     console.log('params', params)
 
+    const { data } = await __post('/api/TIANTA-FILE/api/file/queryFileType', params)
+
     return Promise.resolve({
-      data: {
-        tg_invest: [
-          {
-            name: '其他资料',
-            code: 'COMPANY_OTHER',
-          },
-          {
-            name: '类型二',
-            code: 'type2',
-          },
-        ],
-        other_module: [
-          {
-            name: '测试其他类型',
-            code: 'otherType',
-          },
-        ],
-      }['tg_invest']!,
+      data: data
+        ? data
+        : {
+            tg_invest: [
+              {
+                name: '其他资料',
+                code: 'COMPANY_OTHER',
+              },
+              {
+                name: '类型二',
+                code: 'type2',
+              },
+            ],
+            other_module: [
+              {
+                name: '测试其他类型',
+                code: 'otherType',
+              },
+            ],
+          }['tg_invest']!,
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  queryFile: (params: any): Promise<any> => {
+  queryFile: async (params: any): Promise<any> => {
     // console.log(params, 'queryFile')
-
-    fetch('/queryFile', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    })
 
     return new Promise((r) =>
       setTimeout(
         r.bind(null, {
+          success: true,
+          code: '0000',
           data: {
-            result: uploadArr,
+            result: [
+              {
+                id: 73086,
+                appId: 10001,
+                actualId: '5d8e721a997348c19c46041178348834',
+                moduleId: 9,
+                businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+                businessId: 'TG-20240607000003-0',
+                type: 9,
+                deleted: 0,
+                version: 1,
+                name: '10',
+                suffix: 'png',
+                fullName: '10.png',
+                size: 45113,
+                address: '/20240607/17177485273641322.png',
+                runtime: null,
+                hyperlink: 0,
+                sourceFileDownload: 1,
+                watermarkFileDownload: 2,
+                fileSize: '44KB',
+                createBy: '1',
+                createByName: '系统管理员',
+                expand: null,
+                dataType: null,
+                toPdf: 0,
+                errorMsg: null,
+                moduleCode: 'tg_invest_evaluation',
+                moduleName: '评估立项',
+                typeCode: 'INVEST_FOUND_BFJY',
+                typeName: '拜访纪要',
+                createTime: '2024-06-07 16:22:07',
+              },
+            ],
+            total: 1,
+            pageSize: 999,
+            pageCount: 1,
+            currentPage: 1,
+            isFirstPage: true,
+            isLastPage: true,
+            hasPreviousPage: false,
+            hasNextPage: false,
+            navigatePages: 10,
+            navigatePageNumbers: [1],
+            expand: null,
           },
+          msg: null,
+          expand: null,
         }),
         900
       )
@@ -114,20 +161,24 @@ export const taUploadProvideData: Partial<
       )
     )
   },
-  uploadFile: (payload: FormData): Promise<any> => {
+  uploadFile: async (payload: FormData): Promise<any> => {
     console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
+
+    const { data } = await __post('/api/TIANTA-FILE/api/file/upload', payload, true)
 
     return new Promise((r) =>
       setTimeout(
         r.bind(null, {
-          data: [...(payload.getAll('files') as File[])].map((el) => ({
-            fullName: el.name,
-            typeCode: payload.get('typeCode'),
-            moduleCode: payload.get('moduleCode'),
-            fileSize: `${(el.size / 1024).toFixed(2)}kb`,
-            createByName: 'mxs',
-            createTime: +new Date() + 1000 * 60 * 24 * 3,
-          })),
+          data: data
+            ? data
+            : [...(payload.getAll('files') as File[])].map((el) => ({
+                fullName: el.name,
+                typeCode: payload.get('typeCode'),
+                moduleCode: payload.get('moduleCode'),
+                fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+                createByName: 'mxs',
+                createTime: +new Date() + 1000 * 60 * 24 * 3,
+              })),
         }),
         900
       )
@@ -184,4 +235,16 @@ export const taUploadProvideData: Partial<
   removeFileById(id: number) {
     console.error('removeFileById id', id)
   },
+}
+
+export const previewFile = async (id: string, appId?: string) => {
+  const response = await __post(`/api/TIANTA-FILE/api/file/online/${id}`)
+
+  return response
+}
+
+export const previewWPSFile = async (id: string, appId?: string) => {
+  const response = await __post(`/api/TIANTA-FILE/api/file/webOnline/${id}`)
+
+  return response
 }

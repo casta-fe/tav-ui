@@ -1,5 +1,46 @@
 import { JSEncrypt } from 'jsencrypt'
 
+const __CurrentMainDomain__ = (function () {
+  const hostnameArray = location.hostname.split('.')
+  return `.${hostnameArray.slice(-2).join('.')}`
+})()
+
+function setCookie(name: string, val: any, expires: string | number, domain?: string) {
+  let text = String(encodeURIComponent(val))
+  const date = new Date()
+  date.setTime(date.getTime() + Number(expires) * 1000)
+  text += `; expires=${date.toUTCString()}`
+  // domain
+  text += '; path=/'
+  if (typeof domain != 'undefined' && domain != '') {
+    text += `; domain=${__CurrentMainDomain__}`
+  }
+  document.cookie = `${name}=${text}`
+}
+function getCookie(objName: string) {
+  const arrStr = document.cookie.split('; ')
+  for (let i = 0; i < arrStr.length; i++) {
+    const temp = arrStr[i].split('=')
+    if (temp[0] == objName) return unescape(temp[1])
+  }
+}
+// function isCookie(objName: string, objValue: any, expires: string | number) {
+//   const cookie = getCookie(objName)
+//   if (cookie) {
+//     return cookie
+//   } else {
+//     setCookie(objName, objValue, expires)
+//     return getCookie(objName)
+//   }
+// }
+// function delCookie(objName: string) {
+//   //删除cookie
+//   const exp = new Date()
+//   exp.setTime(exp.getTime() - 1)
+//   const cval = getCookie(objName)
+//   if (cval != null) document.cookie = `${name}=${cval};expires=${exp.toUTCString()}`
+// }
+
 // data: [
 //   {
 //     id: 10001,
@@ -84,26 +125,30 @@ export async function toLogin() {
   // const phone = '13629273499'
   const password = '123456'
 
-  await fetch('/api/TIANTA-SYSTEM/test.html', {
-    method: 'GET',
-    mode: 'cors',
-    cache: 'no-store',
-    credentials: 'include',
-  })
+  // await fetch('/api/TIANTA-SYSTEM/test.html', {
+  //   method: 'GET',
+  //   mode: 'cors',
+  //   cache: 'no-store',
+  //   credentials: 'include',
+  // })
 
   const {
     data: { keyId = '1', publicKey },
-  } = await fetch('/api/TIANTA-SYSTEM/login/getKey', {
+  } = await fetch(`/api/TIANTA-SYSTEM/login/getKey?t=${new Date().getTime()}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ai,
     },
-  }).then((r) => r.json())
+  }).then((r) => {
+    console.log(r)
+    // console.log(getCookie('___gu_'))
+    return r.json()
+  })
 
   Encryptor.setPublicKey(publicKey)
 
-  await fetch('/api/TIANTA-SYSTEM/login/enter', {
+  await fetch(`/api/TIANTA-SYSTEM/login/enter?t=${new Date().getTime()}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -168,8 +213,8 @@ export function MockData() {
   return data
 }
 
-export async function __post(url = '', data = {}) {
-  const response = await fetch(url, {
+export async function __post(url = '', data: any = {}, isFormData = false) {
+  const options: any = {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -184,7 +229,14 @@ export async function __post(url = '', data = {}) {
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data), // body data type must match "Content-Type" header
-  })
+  }
+
+  if (isFormData) {
+    Reflect.deleteProperty(options.headers, 'Content-Type')
+    options.body = data
+  }
+
+  const response = await fetch(url, options)
   return response.json() // parses JSON response into native JavaScript objects
 }
 
@@ -258,6 +310,24 @@ export async function API__CENTER_INDUSTRY_TAG(
 export async function API__POE_MENU_ALL(data, url = '/api/TIANTA-SYSTEM//sys/acl/mgtTree') {
   // 复制 ai at rd cookie：guid
   await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+// 关键字搜索企业列表查询（最少2个字）
+export async function API__CENTER_COMPANY_LIST(
+  data,
+  url = '/api/STARLIGHT-CENTRE-WEB/third/serv/search/company'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+// 企业库
+export async function API__INVEST_COMPANY_LIST(
+  data,
+  url = '/api/STARLIGHT-INVEST-WEB/company/information/listPager'
+) {
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }

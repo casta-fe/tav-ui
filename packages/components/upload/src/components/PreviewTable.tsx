@@ -3,6 +3,7 @@ import { Spin } from 'ant-design-vue'
 // import { promiseTimeout } from '@vueuse/shared'
 import { TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { tavI18n } from '@tav-ui/locales'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { Cell } from '../../../table-pro/src/components/cell'
 import { getActionColumnMaxWidth } from '../hooks'
 import { UpdateTypeForm } from '../components/UpdateTypeForm'
@@ -70,6 +71,8 @@ export const PreviewTable = defineComponent({
   },
   emits: ['delete'],
   setup(props, { emit }) {
+    const globalConfig = useGlobalConfig('components') as Ref<Record<string, any>>
+    const actionLimit = globalConfig.value?.TaUpload?.actionLimit
     const hasBranch = computed(() => typeof props.handler?.apis.updateFile === 'function')
     const taTableProInstanceRef = ref<ITableProInstance>()
     const clearEdit = () => taTableProInstanceRef.value?.instance.clearEdit()
@@ -111,109 +114,6 @@ export const PreviewTable = defineComponent({
 
       // #endregion
       const columns: TableProColumn[] = [
-        {
-          title: props.coverColumnTitle?.fullName ?? tavI18n('Tav.file.columns.1'),
-          field: 'fullName',
-          fixed: 'left',
-          visible: !props?.hideColumnFields!.includes('fullName'),
-          width: props.nameColumnWidth,
-          ...(props.updateFileNameAndAddress ? { editRender: {} } : {}),
-          slots: {
-            edit: ({ row, rowIndex, columnIndex }) => {
-              currentEditCell = { rowIndex, columnIndex }
-              // currentEditColumnField.value = column.field
-
-              return [
-                <UpdateNameForm
-                  row={row as FileItemType}
-                  onEnter={() => {
-                    clearEdit()
-                  }}
-                  onChange={(payload) => {
-                    if (
-                      (row.hyperlink &&
-                        payload.name === row.name &&
-                        payload.address === row.address) ||
-                      (!row.hyperlink && payload.name === row.name)
-                    ) {
-                      return
-                    }
-
-                    if (!props.updateFileNameAndAddress) {
-                      console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
-                      return
-                    }
-
-                    if (!props.parentProps?.immediate) {
-                      row.name = payload.name
-                      row.hyperlink
-                        ? (row.address = payload.address)
-                        : (row.fullName = `${payload.name}.${row.suffix}`)
-
-                      props.handler.updateItem(row as FileItemType, row.actualId)
-
-                      return
-                    }
-
-                    currentEditCellIsLoading.value = true
-                    props
-                      .updateFileNameAndAddress(payload)
-                      .then(() => {
-                        row.name = payload.name
-                        row.hyperlink
-                          ? (row.address = payload.address)
-                          : (row.fullName = `${payload.name}.${row.suffix}`)
-                      })
-                      .finally(() => (currentEditCellIsLoading.value = false))
-                  }}
-                />,
-              ]
-            },
-            default: ({ row, rowIndex, columnIndex }) => {
-              const res =
-                row.hyperlink != 1
-                  ? [
-                      // 普通文件
-                      <Cell column={{ field: 'fullName' }} type="body">
-                        <span>{row.fullName}</span>
-                      </Cell>,
-                    ]
-                  : [
-                      <Cell column={{ field: 'fullName' }} type="body">
-                        {/* // 超链接 */}
-                        {/* eslint-disable-next-line no-irregular-whitespace */}
-                        <span>{row.name}</span>　
-                        <br />
-                        <a
-                          onClick={() => {
-                            window
-                              .open(row.address.includes('//') ? row.address : `//${row.address}`)
-                              ?.focus()
-                            setTimeout(() => {
-                              clearEdit()
-                            }, 0)
-                          }}
-                        >
-                          {row.address}
-                        </a>
-                      </Cell>,
-                    ]
-
-              if (currentEditCellIsLoading.value) {
-                if (currentEditCell) {
-                  if (
-                    rowIndex === currentEditCell.rowIndex &&
-                    columnIndex === currentEditCell.columnIndex
-                  ) {
-                    res.unshift(<Spin size="small" />)
-                  }
-                }
-              }
-
-              return res
-            },
-          },
-        },
         {
           title: props.coverColumnTitle?.typeName ?? tavI18n('Tav.file.columns.2'),
           field: 'typeName',
@@ -338,12 +238,118 @@ export const PreviewTable = defineComponent({
           visible: !props?.hideColumnFields!.includes('createTime'),
           // customRender: ({ row: { createTime } }) => formatToDate(createTime),
         },
-        {
+      ]
+      // fixed列不受visible控制，所以用插入来实现
+      if (!props?.hideColumnFields!.includes('fullName')) {
+        columns.unshift({
+          title: props.coverColumnTitle?.fullName ?? tavI18n('Tav.file.columns.1'),
+          field: 'fullName',
+          fixed: 'left',
+          width: props.nameColumnWidth,
+          ...(props.updateFileNameAndAddress ? { editRender: {} } : {}),
+          slots: {
+            edit: ({ row, rowIndex, columnIndex }) => {
+              currentEditCell = { rowIndex, columnIndex }
+              // currentEditColumnField.value = column.field
+
+              return [
+                <UpdateNameForm
+                  row={row as FileItemType}
+                  onEnter={() => {
+                    clearEdit()
+                  }}
+                  onChange={(payload) => {
+                    if (
+                      (row.hyperlink &&
+                        payload.name === row.name &&
+                        payload.address === row.address) ||
+                      (!row.hyperlink && payload.name === row.name)
+                    ) {
+                      return
+                    }
+
+                    if (!props.updateFileNameAndAddress) {
+                      console.warn('未传入 修改文件名的api: updateFileNameAndAddress')
+                      return
+                    }
+
+                    if (!props.parentProps?.immediate) {
+                      row.name = payload.name
+                      row.hyperlink
+                        ? (row.address = payload.address)
+                        : (row.fullName = `${payload.name}.${row.suffix}`)
+
+                      props.handler.updateItem(row as FileItemType, row.actualId)
+
+                      return
+                    }
+
+                    currentEditCellIsLoading.value = true
+                    props
+                      .updateFileNameAndAddress(payload)
+                      .then(() => {
+                        row.name = payload.name
+                        row.hyperlink
+                          ? (row.address = payload.address)
+                          : (row.fullName = `${payload.name}.${row.suffix}`)
+                      })
+                      .finally(() => (currentEditCellIsLoading.value = false))
+                  }}
+                />,
+              ]
+            },
+            default: ({ row, rowIndex, columnIndex }) => {
+              const res =
+                row.hyperlink != 1
+                  ? [
+                      // 普通文件
+                      <Cell column={{ field: 'fullName' }} type="body">
+                        <span>{row.fullName}</span>
+                      </Cell>,
+                    ]
+                  : [
+                      <Cell column={{ field: 'fullName' }} type="body">
+                        {/* // 超链接 */}
+                        {/* eslint-disable-next-line no-irregular-whitespace */}
+                        <span>{row.name}</span>　
+                        <br />
+                        <a
+                          onClick={() => {
+                            window
+                              .open(row.address.includes('//') ? row.address : `//${row.address}`)
+                              ?.focus()
+                            setTimeout(() => {
+                              clearEdit()
+                            }, 0)
+                          }}
+                        >
+                          {row.address}
+                        </a>
+                      </Cell>,
+                    ]
+
+              if (currentEditCellIsLoading.value) {
+                if (currentEditCell) {
+                  if (
+                    rowIndex === currentEditCell.rowIndex &&
+                    columnIndex === currentEditCell.columnIndex
+                  ) {
+                    res.unshift(<Spin size="small" />)
+                  }
+                }
+              }
+
+              return res
+            },
+          },
+        })
+      }
+      if (!props?.hideColumnFields!.includes('action')) {
+        columns.push({
           width: getActionColumnMaxWidth(labels),
           fixed: 'right',
           title: props.coverColumnTitle?.action ?? tavI18n('Tav.common.actions'),
           field: 'action',
-          visible: !props?.hideColumnFields!.includes('action'),
           align: 'center',
           customRender: ({ row }) => {
             return (
@@ -352,9 +358,8 @@ export const PreviewTable = defineComponent({
               </>
             )
           },
-        },
-      ]
-
+        })
+      }
       if (props.insertColumns?.length) {
         for (const columnItem of props.insertColumns) {
           if (!columnItem.column) continue
@@ -444,6 +449,9 @@ export const PreviewTable = defineComponent({
           },
         }
       )
+      actions.forEach((v) => {
+        v.limit = actionLimit
+      })
       return actions
     }
 

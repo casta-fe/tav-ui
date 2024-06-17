@@ -1,5 +1,4 @@
 <template>
-  <!--  :dropdownMatchSelectWidth="false" -->
   <Select
     v-model:value="state"
     :disabled="disabled"
@@ -29,6 +28,7 @@
 import { defineComponent, nextTick, reactive, ref, unref, watch } from 'vue'
 import { Select } from 'ant-design-vue'
 import { LoadingOutlined } from '@ant-design/icons-vue'
+import { useRuleFormItem } from '@tav-ui/hooks/component/useFormItem'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import { isFunction } from '@tav-ui/utils/is'
 import { propTypes } from '@tav-ui/utils/propTypes'
@@ -105,7 +105,7 @@ export default defineComponent({
     const attrs = useAttrs()
     // Embedded in the form, just use the hook binding to perform form verification
     // const [state] = useRuleFormItem(props, 'value', 'change', emitData)
-    const state = ref<string | number | undefined | null>(undefined)
+    const [state] = useRuleFormItem(props, 'value', 'change', emitData)
     watch(
       () => props.params,
       () => {

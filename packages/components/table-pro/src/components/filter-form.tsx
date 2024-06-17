@@ -9,6 +9,7 @@ import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useWindowSizeFn } from '@tav-ui/hooks/event/useWindowSizeFn'
 import { tavI18n } from '@tav-ui/locales'
+import { isNullOrUnDef } from '@tav-ui/utils'
 import { CamelCaseToCls, ComponentFilterFormName } from '../const'
 import { useTableContext } from '../hooks/useTableContext'
 import type { PropType, Ref, Slots } from 'vue'
@@ -153,6 +154,7 @@ export default defineComponent({
     ] = useForm({
       labelWidth: 120,
       schemas: inputFormSchema,
+      getPopupContainer: props.config?.getPopupContainer,
       showActionButtonGroup: false,
     })
 
@@ -224,14 +226,13 @@ export default defineComponent({
       state.pannelForm = res
       state.choosedNum = Object.keys(res).reduce((result, cur) => {
         if (
-          res[cur] !== undefined &&
-          res[cur] !== null &&
+          !isNullOrUnDef(res[cur]) &&
           JSON.stringify(res[cur]) !== '[]' &&
           JSON.stringify(res[cur]) !== '["",""]' &&
           JSON.stringify(res[cur]) !== '[null,""]' &&
           JSON.stringify(res[cur]) !== '["",null]' &&
           JSON.stringify(res[cur]) !== '{}' &&
-          res[cur] &&
+          res[cur] !== '' &&
           JSON.stringify(res[cur])
         ) {
           result++

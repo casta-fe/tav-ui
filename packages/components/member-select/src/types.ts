@@ -1,4 +1,5 @@
 import { tavI18n } from '@tav-ui/locales'
+import { getPopupContainer } from '@tav-ui/utils/basic'
 import type { ExtractPropTypes, PropType } from 'vue'
 export interface UserOrgs {
   organizationId: number
@@ -23,7 +24,7 @@ export interface Options extends UserItem {
 }
 
 export type TypeItems = 'user' | 'org'
-export interface LetterItemList {
+export interface LetterItemList extends UserItem {
   id: string
   name: string
   checked: boolean
@@ -136,7 +137,7 @@ export const memberSelectProps = {
   },
   getPopupContainer: {
     type: Function,
-    default: () => document.body,
+    getPopupContainer,
   },
   useDisabledUser: {
     type: Boolean,
@@ -156,6 +157,10 @@ export const memberSelectProps = {
   },
   modalSubmit: {
     type: Function,
+  },
+  treeCheckStrictly: {
+    type: Boolean,
+    default: false,
   },
 }
 

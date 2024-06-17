@@ -342,6 +342,7 @@ type BasicPropsType = {
    */
   checkboxConfig: VxeTablePropTypes.CheckboxConfig & { enabled: boolean }
   permissionControl?: number
+  getPopupContainer?: () => HTMLElement
 } & ProvideDataType
 
 /**
@@ -350,6 +351,7 @@ type BasicPropsType = {
 type ProvideDataType = {
   // 删除文件接口
   removeFile?: PromiseFn
+  actionLimit?: number
   // 查询文件接口
   queryFile?: (parame: {
     filter: QueryFileParamsType

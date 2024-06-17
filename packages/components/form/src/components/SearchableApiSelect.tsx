@@ -65,10 +65,14 @@ export default defineComponent({
     },
     panelMaxHeight: {
       type: String,
-      default: '500px',
+      default: '250px',
     },
     onSelect: Function as PropType<SearchableApiSelectBasicProps['onSelect']>,
     onChange: Function as PropType<SearchableApiSelectBasicProps['onChange']>,
+    autoComplete: {
+      type: String,
+      default: 'off',
+    },
   },
   emits: ['change'],
   setup(props, { emit, attrs }) {
@@ -252,6 +256,7 @@ export default defineComponent({
         <Search
           ref={selfRef}
           {...attrs}
+          autoComplete={props.autoComplete}
           loading={state.loading}
           onFocus={() => {
             if (state.options.length) {
@@ -309,7 +314,10 @@ export default defineComponent({
           {{
             default: () => <div></div>,
             overlay: () => (
-              <Menu style="margin: 0 3px">
+              <div
+                class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light"
+                style="margin: 0 3px"
+              >
                 {state.loading ? (
                   <div style="text-align: center">
                     <Spin />
@@ -329,7 +337,8 @@ export default defineComponent({
                     onMouseenter={onMouseEnter}
                   >
                     {state.options.map((option, i) => (
-                      <MenuItem
+                      <div
+                        class="ant-dropdown-menu-item ant-dropdown-menu-item-only-child"
                         key={i}
                         title={option.label}
                         onClick={() => {
@@ -338,6 +347,7 @@ export default defineComponent({
                           props.onSelect?.(option.value, option as LabelValueOption<string, string>)
                           state.visible = false
                         }}
+                        //@ts-ignore
                         style={{
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -351,18 +361,21 @@ export default defineComponent({
                         }}
                       >
                         {option.label}
-                      </MenuItem>
+                      </div>
                     ))}
                     {state.options.length ? (
                       state.showLoadMore ? (
-                        <MenuItem key={2147483647}>
+                        <div
+                          class="ant-dropdown-menu-item ant-dropdown-menu-item-only-child"
+                          key={2147483647}
+                        >
                           {state.loadMoreLoading ? (
-                            <div style="text-align: center">
+                            <div style="width: 100%; text-align: center">
                               <Spin />
                             </div>
                           ) : (
                             <div
-                              style="text-align: center"
+                              style="width: 100%; text-align: center"
                               onClick={() => {
                                 state.loadMoreLoading = true
                                 props
@@ -399,14 +412,14 @@ export default defineComponent({
                               <a> {tavI18n('Tav.common.loadMoreText')}</a>
                             </div>
                           )}
-                        </MenuItem>
+                        </div>
                       ) : null
                     ) : (
                       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     )}
                   </div>
                 )}
-              </Menu>
+              </div>
             ),
           }}
         </Dropdown>

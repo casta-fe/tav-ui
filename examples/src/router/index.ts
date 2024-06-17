@@ -19,17 +19,32 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table-pro-single-header',
     name: 'TableProSingleHeader',
-    component: TableProSingleHeader,
+    component: () => import('../components/TablePro/single-header'),
   },
   {
     path: '/table-pro-multi-header',
     name: 'TableProMultiHeader',
-    component: TableProMultiHeader,
+    component: () => import('../components/TablePro/multi-header'),
+  },
+  {
+    path: '/table-pro-company-list',
+    name: 'TableProCompanyList',
+    component: () => import('../components/TablePro/company-list.vue'),
   },
   {
     path: '/test-demo',
     name: 'TestDemo',
-    component: TestDemo,
+    component: () => import('../components/TablePro/test-demo.vue'),
+  },
+  {
+    path: '/upload',
+    name: 'Upload',
+    component: () => import('../components/TaUpload/index.vue'),
+  },
+  {
+    path: '/form',
+    name: 'Form',
+    component: () => import('../components/Form/index.vue'),
   },
   {
     path: '/multi-select',

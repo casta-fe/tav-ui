@@ -432,7 +432,14 @@ class Handler {
    * @param file 一个文件
    */
   antBeforeUpload = (file: File) => {
-    this._refFileList.push(file)
+    const regexpStr = `[\\\\/:*?"<>|]`
+    const fileRegexp = new RegExp(regexpStr, 'g')
+    if (fileRegexp.test(file.name)) {
+      createMessage.warn(`${file.name} ${tavI18n('Tav.file.upload.5')}${regexpStr}`)
+      return false
+    } else {
+      this._refFileList.push(file)
+    }
   }
 
   /**

@@ -15,8 +15,8 @@ export const UpdateFile = defineComponent({
     },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
-      default:
-        '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.zip,.7z,.tar,.tar.gz,.tgz,.rar,.txt',
+      // .tar,.tar.gz,.tgz,.rar,zip,.7z,去掉压缩包 // .bpm,.txt
+      default: '.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.gif,.jpeg,.jpg,.png,',
     },
     onUpdateFail: Function,
     onUpdateSuccess: Function,
@@ -65,6 +65,12 @@ export const UpdateFile = defineComponent({
             )}1GB`
           )
         }
+        // const regexpStr = `[\\\\/:*?"<>|]`
+        // const fileRegexp = new RegExp(regexpStr, 'g')
+        // if (fileRegexp.test(file.name)) {
+        //   createMessage.warn(`${file.name} ${tavI18n('Tav.file.upload.5')}${regexpStr}`)
+        //   return false
+        // }
         if (!updateFlag) {
           return
         }

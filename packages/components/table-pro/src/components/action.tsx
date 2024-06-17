@@ -50,10 +50,9 @@ const props = {
  * @param labelMaxLength
  * @returns
  */
-export function limitActionLabel(actions: TableProActionItem[], labelMaxLength?: number) {
-  const TaTableProConfig = unref(useGlobalConfig('components'))?.TaTablePro
+export function limitActionLabel(actions: TableProActionItem[], labelMaxLength: number) {
   return actions.map((action) => {
-    const max = action.limit || labelMaxLength || TaTableProConfig?.actionLabelLimit || 3
+    const max = action.limit || labelMaxLength
     const { label, blankLabel } = action
     // 备份下，防止修改了label后 重新渲染时候将tooltips显示不全的问题
     if (!blankLabel) {
@@ -71,13 +70,14 @@ export default defineComponent({
   name: ComponentActionName,
   props,
   setup(props, { slots }) {
-    let { tableRef, setCacheActionWidths /*, tableEmitter*/ } = useTableContext()
-    if (!props.outside) tableRef = ref(null)
+    const { /*tableRef,*/ setCacheActionWidths /*, tableEmitter*/, calcContent } = useTableContext()
+    // if (!props.outside) tableRef = ref(null)
     const actionEl = ref(null)
     const id = buildTableActionId()
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+    const ActionLabelLimit = unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit || 3
 
     // 根据 enabled 控制显隐
     function isEnabled(action: TableProActionItem): boolean {
@@ -93,7 +93,7 @@ export default defineComponent({
     }
 
     // 根据 permissions 控制显隐
-    function handlePermissions(Permissions) {
+    function handlePermissions(Permissions: any) {
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
@@ -118,29 +118,53 @@ export default defineComponent({
         const actions = unref(permissonFilterActions)
         if (actions.length <= MAX_ACTION_NUMBER) {
           restActions = []
-          const isOverMax = isOverMaxWidth(actions)
+          const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(actions)
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            const handleActions = limitActionLabel(actions, ActionLabelLimit)
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
+                ActionLabelLimit,
+                calcContent
+              )
+              setCacheActionWidths({ key: id, value: total })
+            }
             return handleActions
           } else {
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(
+                unref(permissonFilterActions),
+                ActionLabelLimit,
+                calcContent
+              )
+              setCacheActionWidths({ key: id, value: total })
+            }
             return actions
           }
         } else {
           const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
           restActions = actions.slice(MAX_ACTION_NUMBER - 1)
-          const isOverMax = isOverMaxWidth(actions)
+          const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(_actions)
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions))
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            const handleActions = limitActionLabel(_actions, ActionLabelLimit)
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
+                ActionLabelLimit,
+                calcContent
+              )
+              setCacheActionWidths({ key: id, value: total })
+            }
             return handleActions
           } else {
-            const total = useColumnActionAutoWidth(unref(permissonFilterActions), false)
-            setCacheActionWidths && setCacheActionWidths!({ key: id, value: total })
+            if (setCacheActionWidths) {
+              const total = useColumnActionAutoWidth(
+                unref(permissonFilterActions),
+                ActionLabelLimit,
+                calcContent
+              )
+              setCacheActionWidths({ key: id, value: total })
+            }
             return _actions
           }
         }

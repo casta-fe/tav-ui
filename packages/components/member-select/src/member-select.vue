@@ -67,6 +67,7 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
+          show-checked-strategy="SHOW_ALL"
           @change="emitHandle"
         >
           <!-- :treeDefaultExpandedKeys="orgExpandedKey" -->

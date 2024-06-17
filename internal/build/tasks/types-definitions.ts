@@ -21,20 +21,28 @@ const outDir = path.resolve(buildOutput, 'types')
 export const generateTypesDefinitions = async () => {
   const project = new Project({
     compilerOptions: {
+      // emitDeclarationOnly: true,
+      // outDir,
+      // baseUrl: projRoot,
+      // paths: {
+      //   [`@${PKG_NAME}/*`]: ['packages/*'],
+      // },
       emitDeclarationOnly: true,
       outDir,
       baseUrl: projRoot,
-      paths: {
-        [`@${PKG_NAME}/*`]: ['packages/*'],
-      },
       preserveSymlinks: true,
-      types: [path.resolve(projRoot, 'typings/env'), 'unplugin-vue-define-options'],
+      skipLibCheck: true,
+      noImplicitAny: false,
+      noUnusedLocals: false,
+      noUnusedParameters: false,
+      // preserveSymlinks: true,
+      // types: [path.resolve(projRoot, 'typings/env'), 'unplugin-vue-define-options'],
     },
     tsConfigFilePath: TSCONFIG_PATH,
     skipAddingFilesFromTsConfig: true,
   })
 
-  const globAnyFile = '**/*.{js?(x),ts?(x),vue}'
+  const globAnyFile = '**/*.{ts?(x),vue}'
   const filePaths = excludeFiles(
     await glob([globAnyFile, `!${PKG_NAME}/**/*`], {
       cwd: pkgRoot,

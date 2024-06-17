@@ -12,6 +12,7 @@ export interface PagerConfig extends VxeGridPropTypes.PagerConfig {
 export interface TableProFilterForm {
   inputForm?: Omit<FormSchema, 'label' | 'component'> | FormSchema
   pannelForm?: FormSchema[]
+  getPopupContainer?: () => HTMLElement
 }
 
 export interface TableProFilterFormConfig extends TableProFilterForm {

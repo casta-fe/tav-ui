@@ -82,13 +82,17 @@
   <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
   </TaForm>
+  <TaButton class="mr-2" @click="getFormData()"> 获取数据 </TaButton>
   <!-- </TaContainerCollapse> -->
 </template>
 <script lang="ts">
 import { type Ref, computed, defineComponent, h, ref } from 'vue'
 import { TaButton, TaForm, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { API__CENTER_INDUSTRY_TAG } from '@tav-ui/components/table-pro/src/data'
+import {
+  API__CENTER_COMPANY_LIST,
+  API__CENTER_INDUSTRY_TAG,
+} from '@tav-ui/components/table-pro/src/data'
 import tag from '@tav-ui/components/time-line/src/components/tag'
 import { useGlobalConfig } from '@tav-ui/hooks'
 import type { FormSchema } from '@tav-ui/components/form'
@@ -153,6 +157,23 @@ const schemas = ref([
   //   },
   // },
   {
+    field: 'fieldapiSelect',
+    component: 'ApiSelect',
+    label: 'apiSelect',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      api: () => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ code: '0000', data: allUserList.value })
+          }, 100)
+        })
+      },
+    },
+  },
+  {
     field: 'field0',
     component: 'MemberSelect',
     label: '人员选择',
@@ -168,13 +189,20 @@ const schemas = ref([
   {
     field: 'field1',
     component: 'DateInterval',
-    label: '普通InputNumber',
+    label: 'DateInterval',
     colProps: { span: 8 },
-    editSlot: 'testSlot',
     componentProps: {},
   },
   {
-    field: 'field2',
+    field: 'fieldInputNumber',
+    component: 'InputNumber',
+    label: 'InputNumber',
+    colProps: { span: 8 },
+    required: true,
+    componentProps: {},
+  },
+  {
+    field: 'fieldformatter',
     component: 'InputNumber',
     label: 'formatter',
     colProps: { span: 8 },
@@ -326,6 +354,21 @@ const schemas = ref([
   //     },
   //   },
   // },
+  {
+    field: 'companyInfo',
+    component: 'SearchableApiSelect',
+    label: '公司名称',
+    colProps: { span: 12 },
+    componentProps: () => {
+      return {
+        placeholder: '请至少输入两个字搜索公司名称，按回车搜索',
+        panelMaxHeight: '300px',
+        api: (keyWord, pageNum) => {
+          return API__CENTER_COMPANY_LIST({ pageNum, word: keyWord })
+        },
+      }
+    },
+  },
 ])
 export default defineComponent({
   components: { TaButton, TaForm },
@@ -342,7 +385,7 @@ export default defineComponent({
       fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM']],
     })
 
-    API__CENTER_INDUSTRY_TAG({}).then((res) => {
+    API__CENTER_COMPANY_LIST({}).then((res) => {
       const { success, data } = res
       if (success && data) {
         const result = data.map((option) => {
@@ -430,19 +473,24 @@ export default defineComponent({
         },
       ]
       setTimeout(() => {
-        // testForm.value.setFieldsValue({
-        //   field1: 99,
-        //   field2: 66.1256,
-        //   field3: 99,
-        // })
+        testForm.value.setFieldsValue({
+          fieldapiSelect: 1,
+          // fieldInputNumber: null,
+          field3: 99,
+        })
       }, 500)
     }, 2000)
+    const getFormData = async () => {
+      const res = await testForm.value.validate()
+      console.log(res)
+    }
     return {
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
       testForm,
+      getFormData,
       setProps,
       handleLoad,
     }

@@ -160,3 +160,4 @@ export type EditableComponentType =
   | 'CascadeProSelect'
   | 'DateInterval'
   | 'SelectPro'
+  | 'DateInterval'

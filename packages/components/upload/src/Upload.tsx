@@ -46,8 +46,8 @@ export default defineComponent({
     },
     accept: {
       type: String as PropType<BasicPropsType['accept']>,
-      // .tar,.tar.gz,.tgz,.rar,zip,.7z,去掉压缩包
-      default: '.doc,.docx,.pdf,.ppt,.pptx,.xls,.xlsx,.jpg,.png,.gif,.bpm,.jpeg,.txt',
+      // .tar,.tar.gz,.tgz,.rar,zip,.7z,去掉压缩包 // .bpm,.txt
+      default: '.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.gif,.jpeg,.jpg,.png,',
     },
     // maxSize: {
     //   type: Number as PropType<BasicPropsType["maxSize"]>,
@@ -120,11 +120,11 @@ export default defineComponent({
       default: () => ({ enabled: false }),
     },
     permissionControl: Number,
+    getPopupContainer: Function as PropType<() => HTMLElement>,
   },
   emits: ['update:fileActualIds', 'change', 'register'],
   setup(props, { emit, slots, expose }) {
     const { params, customOptions, typeCodeArray } = toRefs(props)
-
     const showTitle = ref(props.showTitle)
     const showSelect = ref(props.showSelect)
     const showUploadBtn = ref(props.showUploadBtn)
@@ -201,6 +201,7 @@ export default defineComponent({
         queryFileType: handler.apis.queryFileType,
         queryFileTypeRecursion: props.queryFileTypeRecursion,
         permissionControl: props.permissionControl,
+        getPopupContainer: props.getPopupContainer,
       }
 
       const ISelect = (_, { slots }: Recordable) => <TypeSelect {...selectProps} v-slots={slots} />
