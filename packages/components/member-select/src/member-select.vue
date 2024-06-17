@@ -2,6 +2,7 @@
   <div class="ta-member-select">
     <div v-if="!noSelect">
       <template v-if="type == 'user'">
+        {{ filterOptions.length }}
         <Select
           ref="userSelectRef"
           v-model:value="selectedData[0]"
@@ -9,7 +10,8 @@
           dropdown-class-name="ta-member-select-option"
           option-filter-prop="label"
           :allow-clear="allowClear"
-          :options="userList"
+          :options="filterOptions"
+          :filter-option="false"
           :max-tag-count="maxTagCount"
           :max-tag-placeholder="maxTagPlaceholder"
           :disabled="disabled"
@@ -18,11 +20,11 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
-          :filter-option="filterOptionHandle"
-          @dropdown-visible-change="userVisibleChange"
+          @search="selectSearchHanle"
           @change="emitHandle"
           @blur="handleBlur"
         >
+          <!-- :filter-option="filterOptionHandle" -->
           <template #option="item">
             <div class="ta-member-select-option-item">
               <span
@@ -130,11 +132,9 @@ export default defineComponent({
     const state = reactive({
       modalIsShow: false,
       searchValue: '',
-      count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
       userList: [] as UserItem[],
-      userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
       orgFileds: { label: 'name', value: 'id' },
@@ -157,7 +157,7 @@ export default defineComponent({
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
     const [registerMemberModal, { openModal: openMemberModal, closeModal: closeMemberModal }] =
       useModal()
-
+    const filterOptions = ref<UserItem[]>([])
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
@@ -208,26 +208,27 @@ export default defineComponent({
     }
     // 获取用户数据
     const getUserList = async () => {
-      state.count++
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
+        filterOptions.value = [...state.userList]
       } else {
-        userListApi(props.userListParams).then((res) => {
+        userListApi(props.userListParams).then((res: any) => {
           state.userList = getTrueUserList(res.data)
+          filterOptions.value = [...state.userList]
         })
       }
       checkUserIsExist()
     }
     // 获取组织数据
     const getOrgList = (): void => {
-      orgApi({}).then((res) => {
+      orgApi({}).then((res: any) => {
         state.orgList = res.data
       })
     }
     // 弹窗里面的数据变化
-    const modalChange = (value) => {
+    const modalChange = (value: any[]) => {
       state.catchData = value
     }
     // 弹窗下面的确定事件
@@ -246,7 +247,7 @@ export default defineComponent({
       }
     }
     const emitHandle = (): void => {
-      const userMap = allUserList.filter((v) => {
+      const userMap = allUserList.filter((v: UserItem) => {
         if (props.multiple) {
           return state.selectedData[0].includes(v.id)
         } else {
@@ -279,13 +280,13 @@ export default defineComponent({
     // 检查用户在当前的用户列表中是否存在，不存在就去全部用户列表中匹配，匹配到后塞到现有用户列表中去
     const checkUserIsExist = () => {
       if (props.multiple) {
-        state.selectedData[0].forEach((userId) => {
+        state.selectedData[0].forEach((userId: number) => {
           getUserItem(userId)
         })
       } else {
         getUserItem(state.selectedData[0])
       }
-      function getUserItem(userId) {
+      function getUserItem(userId: number) {
         // 如果当前用户列表中查不到该用户就在所用用户中去匹配，匹配到后插入当当前用户列表中
         if (!state.userList.some((v) => v.id === userId)) {
           const item = allUserList.find((v) => v.id === userId)
@@ -295,6 +296,19 @@ export default defineComponent({
         }
       }
     }
+    const selectSearchHanle = (keyword: string) => {
+      if (!keyword) {
+        console.log('清空了')
+        setTimeout(() => {
+          filterOptions.value = [...state.userList]
+        }, 200)
+      } else {
+        filterOptions.value = state.userList.filter(
+          (user) => user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
+        )
+      }
+      console.log(keyword, filterOptions.value)
+    }
     const filterOptionHandle = (keyword: string, user: any) => {
       return user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
     }
@@ -303,10 +317,6 @@ export default defineComponent({
       setTimeout(() => {
         showModal()
       }, 200)
-    }
-    const userVisibleChange = () => {
-      // if (v) {
-      // }
     }
     const orgVisibleChange = () => {
       // console.log(v);
@@ -367,12 +377,13 @@ export default defineComponent({
     }
     pageInit()
     return {
-      userSelectRef,
-      tavI18n,
       ...toRefs(state),
+      userSelectRef,
+      filterOptions,
+      tavI18n,
+      selectSearchHanle,
       filterOptionHandle,
       userShowMore,
-      userVisibleChange,
       orgVisibleChange,
       showModal,
       hideModal,

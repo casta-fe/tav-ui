@@ -78,6 +78,7 @@
     </TaButton>
     <!-- <TaButton class="mr-2" @click="handleLoad"> 联动回显 </TaButton> -->
   </div>
+  <TaMemberSelect v-model="test" :multiple="true" :options="allUserList" />
   <!-- <TaContainerCollapse title="useForm示例"> -->
   <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
@@ -87,7 +88,7 @@
 </template>
 <script lang="ts">
 import { type Ref, computed, defineComponent, h, ref } from 'vue'
-import { TaButton, TaForm, useForm } from '@tav-ui/components'
+import { TaButton, TaForm, TaMemberSelect, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import {
   API__CENTER_COMPANY_LIST,
@@ -371,10 +372,10 @@ const schemas = ref([
   },
 ])
 export default defineComponent({
-  components: { TaButton, TaForm },
+  components: { TaButton, TaForm, TaMemberSelect },
   setup() {
     const { createMessage } = useMessage()
-
+    const test = ref(null)
     const [register, { setProps, setFieldsValue, updateSchema }] = useForm({
       labelWidth: 120,
       actionColOptions: {
@@ -489,6 +490,8 @@ export default defineComponent({
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
       },
+      test,
+      allUserList,
       testForm,
       getFormData,
       setProps,
