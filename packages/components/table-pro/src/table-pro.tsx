@@ -319,7 +319,46 @@ export default defineComponent({
       ) : null
     }
 
+    function parentElResizeObserverHandler() {
+      let parentElResizeObserver: ResizeObserver | null = null
+
+      function createParentElResizeObserver() {
+        const el = unref(tableRef)?.$el.parentElement
+        if (el) {
+          // resizeObserver = new window.ResizeObserver(function () { return unref(tableRef)?.recalculate(); });
+          parentElResizeObserver = new window.ResizeObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.contentBoxSize) {
+                const contentBoxSize = Array.isArray(entry.contentBoxSize)
+                  ? entry.contentBoxSize[0]
+                  : entry.contentBoxSize
+
+                // console.log(entry, contentBoxSize)
+                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0) {
+                  unref(tableRef)?.recalculate()
+                }
+              }
+            }
+          })
+          parentElResizeObserver.observe(el)
+        }
+      }
+
+      function clearParentElResizeObserver() {
+        parentElResizeObserver?.disconnect()
+      }
+
+      return {
+        createParentElResizeObserver,
+        clearParentElResizeObserver,
+      }
+    }
+
+    const { createParentElResizeObserver, clearParentElResizeObserver } =
+      parentElResizeObserverHandler()
+
     onMountedOrActivated(() => {
+      createParentElResizeObserver()
       handleNotPersistentColumnActionWidth()
     })
 
@@ -339,6 +378,7 @@ export default defineComponent({
     onUnmountedOrOnDeactivated(() => {
       clearCellTooltip()
       clearColumnAutoWidth()
+      clearParentElResizeObserver()
     })
 
     return () => {
