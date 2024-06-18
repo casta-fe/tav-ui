@@ -2,7 +2,6 @@
   <div class="ta-member-select">
     <div v-if="!noSelect">
       <template v-if="type == 'user'">
-        {{ filterOptions.length }}
         <Select
           ref="userSelectRef"
           v-model:value="selectedData[0]"
@@ -81,7 +80,7 @@
       </template>
     </div>
     <BasicModal
-      :title="title"
+      :title="title || tavI18n('Tav.member.3')"
       :width="850"
       :destroy-on-close="true"
       :get-container="getPopupContainer"

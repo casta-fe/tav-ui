@@ -10,11 +10,11 @@
           </Input>
         </div>
         <Tabs v-model:activeKey="tabActive">
-          <TabPane v-if="!hideOrgTabs" key="0" :tab="tavI18n('Tav.member.1')">
+          <TabPane key="0" :tab="tavI18n('Tav.member.1')">
             <template v-if="propsData.multiple">
               <CheckboxGroup v-model:value="checkboxData">
                 <Tree
-                  :tree-data="orgList"
+                  :tree-data="orgTree"
                   block-node
                   :expanded-keys="orgExpandedKeys"
                   :auto-expand-parent="autoExpandParent"
@@ -25,7 +25,8 @@
                 >
                   <template #title="item">
                     <!-- ant的bug 如果没查到会把他转成isleaf，但是 组织我们有不让选的 -->
-                    <template v-if="item.isLeaf && !item.leaf">
+                    <!-- {{ item.isLeaf }} == {{ item.leaf }} -->
+                    <template v-if="item.isLeaf">
                       <Checkbox :value="item.userId" :disabled="item.disabled">
                         <firstLetter :value="item" />{{ item.name }}
                         <template v-if="item.status === 0">
@@ -41,7 +42,7 @@
             <template v-else>
               <RadioGroup v-model:value="radioData">
                 <Tree
-                  :tree-data="orgList"
+                  :tree-data="orgTree"
                   block-node
                   :expanded-keys="orgExpandedKeys"
                   :auto-expand-parent="autoExpandParent"
@@ -233,6 +234,7 @@ export default defineComponent({
     const propsData = inject('propsData') as any
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
+    const orgTree = ref<any[]>([])
     const state = reactive({
       fieldNames: {
         title: 'name',
@@ -326,10 +328,11 @@ export default defineComponent({
     // 部门树加载用户
     const getOrgUser = (treeNode: any) => {
       return new Promise((resolve) => {
-        const oldData = [...treeNode.dataRef.children]
-        if (oldData.length == 0) {
-          console.log('empty')
-        }
+        const oldData = treeNode.dataRef.children
+        // if (oldData.length == 0) {
+        //   resolve(null)
+        //   return
+        // }
         const children = userList.value
           .filter((v: any) => v.userOrgs?.some((v: any) => v.organizationId == treeNode.id))
           .map((user: any) => {
@@ -339,10 +342,13 @@ export default defineComponent({
             obj.userId = user.id
             obj.id = `name-${user.id}`
             // 忽略列表中的用户需要禁止选中
-            obj.disabled = propsData.value.ignoreUser.includes(user.userId) || user.status === 0
+            obj.disabled = propsData.useDisabledUser
+              ? false
+              : propsData.value.ignoreUser.includes(user.userId) || user.status === 0
             return obj
           })
         treeNode.dataRef.children = deWeightThree([...oldData, ...children])
+        orgTree.value = [...orgTree.value]
         resolve(null)
       })
     }
@@ -358,17 +364,10 @@ export default defineComponent({
     }
     const openFirstOrg = () => {
       // 默认打开第一个节点，并获取他下面的用户
-      const firstOrg = orgList.value[0]
       // 如果当前打开的就是第一个就不执行后面的
-      if (firstOrg && state.orgExpandedKeys.length == 0) {
-        state.orgExpandedKeys = [firstOrg.id]
-        const children = userList.value
-          .filter((v: any) => v.userOrgs?.some((v) => v.organizationId == firstOrg.id))
-          .map((v: any) => {
-            v.isLeaf = true
-            return v
-          })
-        firstOrg.children = [...firstOrg.children, ...children]
+      if (orgTree.value.length === 0) {
+        console.log(orgList)
+        orgTree.value = orgList?.value[0].children || []
       }
     }
     // 监听滚动 设置当前选中的字母
@@ -459,7 +458,7 @@ export default defineComponent({
       hideOrgTabs,
       propsData,
       userList,
-      orgList,
+      orgTree,
       tagList,
       realUserList,
       getOrgUser,
