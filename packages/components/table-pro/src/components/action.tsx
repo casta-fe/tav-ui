@@ -221,7 +221,7 @@ export default defineComponent({
           // type: 'link',
           // size: 'small',
           ...action,
-          text: action.label,
+          text: action.blankLabel || action.label,
           divider: index < list.length - 1 ? props.divider : false,
         }))
       )
