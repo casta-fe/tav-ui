@@ -178,6 +178,7 @@ export default defineComponent({
         //   }
         //   return column
         // })
+        const isSomeColumnSetWidth = currentColumns!.some((column) => !!column.width)
         const columns = [] as any[]
         let actionPrevColumnHandled = false
         for (let i = currentColumns!.length - 1; i >= 0; i--) {
@@ -186,7 +187,12 @@ export default defineComponent({
             if (ACTION_COLUMNS.includes(_column.field)) {
               _column.width = Math.ceil(maxWidth)
               _column.minWidth = Math.ceil(maxWidth)
-            } else if (_column.visible && !_column.fixed && !actionPrevColumnHandled) {
+            } else if (
+              _column.visible &&
+              !_column.fixed &&
+              !actionPrevColumnHandled &&
+              !isSomeColumnSetWidth
+            ) {
               if (_column.width) {
                 _column.minWidth = _column.width
               }
