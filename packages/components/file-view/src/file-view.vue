@@ -110,11 +110,13 @@ export default defineComponent({
               suffix,
               token,
               watermark,
+              wpsAppId,
             } = res.data
 
             const options = {
               officeType,
               fileId,
+              appId: wpsAppId,
               token,
               suffix,
               fileName,
