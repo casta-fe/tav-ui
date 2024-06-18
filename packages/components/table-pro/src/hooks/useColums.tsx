@@ -92,7 +92,7 @@ function setColumnMinWidth(columns: TableProColumn[]) {
         } else if (column.field && ACTION_COLUMNS.includes(column.field)) {
           if (!column.minWidth) column.minWidth = MIN_WIDTH + 15
         } else {
-          column.minWidth = MIN_WIDTH
+          if (!column.minWidth) column.minWidth = MIN_WIDTH
         }
         return column
       })
