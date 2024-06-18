@@ -327,6 +327,7 @@ export default defineComponent({
 
     function parentElResizeObserverHandler() {
       let parentElResizeObserver: ResizeObserver | null = null
+      let isFixed = false
 
       function createParentElResizeObserver() {
         const el = unref(tableRef)?.$el.parentElement
@@ -340,8 +341,12 @@ export default defineComponent({
                   : entry.contentBoxSize
 
                 // console.log(entry, contentBoxSize)
-                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0) {
-                  unref(tableRef)?.recalculate()
+                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0 && !isFixed) {
+                  unref(tableRef)
+                    ?.recalculate()
+                    .then(() => {
+                      isFixed = true
+                    })
                 }
               }
             }
