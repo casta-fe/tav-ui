@@ -185,7 +185,7 @@ export const FileBranch = defineComponent({
 
           if (
             (newestFile = props.getAppendNewestFile?.()) &&
-            !res.data.some((el) => el.id === newestFile?.id)
+            !res.data.some((el: any) => el.id === newestFile?.id)
           ) {
             res.data.push({
               ...newestFile,
@@ -232,7 +232,7 @@ export const FileBranch = defineComponent({
               hidePopover()
             }
           }}
-          getContainer={props.getPopupContainer}
+          getContainer={props.getPopupContainer as any}
         >
           {{
             title: () => (
