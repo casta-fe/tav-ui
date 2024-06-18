@@ -1,7 +1,7 @@
 import { computed, defineComponent, nextTick, ref } from 'vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { Popover } from 'ant-design-vue'
-import { TaButton, TaFileView, TaTablePro, TaTableProAction } from '@tav-ui/components'
+import { TaButton, TaFileView, TaModal, TaTablePro, TaTableProAction } from '@tav-ui/components'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 // import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
@@ -70,7 +70,7 @@ export const FileBranch = defineComponent({
       {
         title: tavI18n('Tav.file.columns.4'),
         field: 'version',
-        minWidth: 50,
+        minWidth: 100,
         customRender: ({ row }) => {
           return <>v{row.version}</>
         },
@@ -99,7 +99,7 @@ export const FileBranch = defineComponent({
         // customRender: ({ row: { createTime } }) => formatToDate(createTime),
       },
       {
-        width: '240px',
+        // width: 240,
         fixed: 'right',
         title: tavI18n('Tav.common.actions'),
         field: 'action',
@@ -114,7 +114,7 @@ export const FileBranch = defineComponent({
       },
     ]
 
-    const getActions = (record) => {
+    const getActions = (record: any) => {
       const actions: TableProActionItem[] = [
         {
           label: tavI18n('Tav.file.actions.1'),
@@ -217,27 +217,38 @@ export const FileBranch = defineComponent({
 
     return () => (
       <>
-        <Popover
-          getPopupContainer={props.getPopupContainer}
-          trigger="click"
-          destroyTooltipOnHide
+        <TaButton style="min-width:0" type="link" onClick={showPopover}>
+          v{props.file.version}
+        </TaButton>
+        <TaModal
           visible={popVisible.value}
+          title={`123`}
+          width={800}
+          wrapClassName={`ta-upload-file-branch-modal`}
+          destroyOnClose={true}
+          maskClosable={false}
+          onVisible-change={(isOpen: boolean) => {
+            if (!isOpen) {
+              hidePopover()
+            }
+          }}
+          getContainer={props.getPopupContainer}
         >
           {{
             title: () => (
               <div class="file-branch-title">
                 <div class="file-branch-name">{props.file.fullName || props.file.name}</div>
-                <div class="file-branch-action" onClick={hidePopover}>
+                {/* <div class="file-branch-action" onClick={hidePopover}>
                   <TaButton type="text">
                     <CloseOutlined />
                   </TaButton>
-                </div>
+                </div> */}
               </div>
             ),
-            content: () => (
+            default: () => (
               <div
                 style={{
-                  width: props.width,
+                  // width: props.width,
                   height: computedTableHeight.value,
                 }}
               >
@@ -254,18 +265,14 @@ export const FileBranch = defineComponent({
                 />
               </div>
             ),
-            default: () => (
-              <TaButton style="min-width:0" type="link" onClick={showPopover}>
-                v{props.file.version}
-              </TaButton>
-            ),
+            footer: () => null,
           }}
-        </Popover>
+        </TaModal>
 
         <TaFileView
           AppId={props.parentProps?.AppId}
           show={showPreview.value}
-          onUpdate:show={(v) => (showPreview.value = v)}
+          onUpdate:show={(v: any) => (showPreview.value = v)}
           list={previewRecord.value as any}
         />
       </>

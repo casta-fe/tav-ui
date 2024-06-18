@@ -346,7 +346,8 @@ export const PreviewTable = defineComponent({
       }
       if (!props?.hideColumnFields!.includes('action')) {
         columns.push({
-          width: getActionColumnMaxWidth(labels),
+          // width: getActionColumnMaxWidth(labels),
+          width: 150,
           fixed: 'right',
           title: props.coverColumnTitle?.action ?? tavI18n('Tav.common.actions'),
           field: 'action',
