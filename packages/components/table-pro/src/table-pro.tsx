@@ -327,7 +327,7 @@ export default defineComponent({
 
     function parentElResizeObserverHandler() {
       let parentElResizeObserver: ResizeObserver | null = null
-      let isFixed = false
+      let lastTimestamp = +new Date()
 
       function createParentElResizeObserver() {
         const el = unref(tableRef)?.$el.parentElement
@@ -340,12 +340,16 @@ export default defineComponent({
                   ? entry.contentBoxSize[0]
                   : entry.contentBoxSize
 
-                // console.log(entry, contentBoxSize)
-                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0 && !isFixed) {
+                const now = +new Date()
+                if (
+                  contentBoxSize.inlineSize > 0 &&
+                  contentBoxSize.blockSize > 0 &&
+                  now - lastTimestamp > 600
+                ) {
                   unref(tableRef)
                     ?.recalculate()
                     .then(() => {
-                      isFixed = true
+                      lastTimestamp = now
                     })
                 }
               }
