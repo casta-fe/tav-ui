@@ -347,7 +347,7 @@ export default defineComponent({
                   now - lastTimestamp > 300
                 ) {
                   unref(tableRef)
-                    ?.refreshColumn()
+                    ?.recalculate(true)
                     .then(() => {
                       lastTimestamp = now
                     })
