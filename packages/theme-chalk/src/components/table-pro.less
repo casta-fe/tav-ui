@@ -41,6 +41,12 @@
   .vxe-table--render-default.size--small {
     font-size: 14px;
   }
+  .vxe-cell--sort-vertical-layout {
+    justify-content: center;
+    [class*='vxe-icon-'] {
+      font-size: 13px;
+    }
+  }
 
   .vxe-table--render-default.size--small .vxe-header--column.col--ellipsis,
   .vxe-table--render-default.size--small .vxe-header--column {
@@ -172,7 +178,8 @@
     }
   }
 
-  .vxe-table--fixed-left-wrapper, .vxe-table--fixed-right-wrapper {
+  .vxe-table--fixed-left-wrapper,
+  .vxe-table--fixed-right-wrapper {
     height: -webkit-fill-available !important;
     height: -moz-available !important;
     height: fill-available !important;

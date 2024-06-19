@@ -32,7 +32,7 @@
                   ({{ tavI18n('Tav.member.4') }})
                 </template></span
               >
-              <span>{{ item.sex == 1 ? tavI18n('Tav.member.8') : tavI18n('Tav.member.9') }}</span>
+              <span>{{ getSex(item) }}</span>
               <span>{{ item.phone }}</span>
             </div>
           </template>
@@ -320,6 +320,27 @@ export default defineComponent({
     const orgVisibleChange = () => {
       // console.log(v);
     }
+    const getSex = (item: UserItem) => {
+      //     { label: "男", value: 1 },
+      // { label: "女", value: 2 },
+      // { label: "其他", value: 3 },
+      // { label: "保密", value: 0 }
+      let res = ''
+      switch (item.sex) {
+        case 1:
+          res = tavI18n('Tav.member.8')
+          break
+        case 2:
+          res = tavI18n('Tav.member.9')
+          break
+        case 3:
+          res = tavI18n('Tav.member.12')
+          break
+        default:
+          res = tavI18n('Tav.member.13')
+      }
+      return res
+    }
 
     watch(
       () => state.orgList,
@@ -380,6 +401,7 @@ export default defineComponent({
       userSelectRef,
       filterOptions,
       tavI18n,
+      getSex,
       selectSearchHanle,
       filterOptionHandle,
       userShowMore,
