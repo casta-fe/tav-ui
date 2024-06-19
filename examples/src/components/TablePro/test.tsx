@@ -2,7 +2,7 @@ import { defineComponent, onMounted, reactive, ref, unref } from 'vue'
 import { useRouter } from 'vue-router'
 import { TaTablePro, TaTableProAction, getTableProId } from '@tav-ui/components/table-pro'
 import { API__POE_CUSTOM_ALL, MockData } from '@tav-ui/components/table-pro/src/data'
-import Button from '@tav-ui/components/button'
+import { TaButton, TaButtonGroup } from '@tav-ui/components'
 import { TaModal, useModal } from '@tav-ui/components/modal'
 import { columns2, filterForm2, footerMethod2 } from './data'
 import type {
@@ -14,6 +14,7 @@ import type {
 } from '@tav-ui/components/table-pro'
 
 export default defineComponent({
+  components: { TaButtonGroup },
   setup() {
     const router = useRouter()
     const id = ref<string>('')
@@ -252,6 +253,7 @@ export default defineComponent({
     //       limit: 50 }
     //   })
     // })
+    const test = ref(0)
     const testCustomHandle = () => {
       tableRef.value?.instance?.showCloumnsModal()
       // console.log(tableRef.value?.instance?.showExportModal())
@@ -301,6 +303,13 @@ export default defineComponent({
             overflow: 'auto',
           }}
         >
+          <TaButtonGroup
+            v-model:active={test.value}
+            buttons={[
+              { label: '测试1', value: 0 },
+              { label: '测试2', value: 1 },
+            ]}
+          />
           <div onClick={testCustomHandle}>测试自定义事件</div>
           <div style={{ width: '90%', height: unref(height), margin: '0 auto' }}>
             {/* <div style={{ height: unref(height), padding: '16px 24px 0' }}> */}
