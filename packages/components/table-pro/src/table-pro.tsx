@@ -344,10 +344,10 @@ export default defineComponent({
                 if (
                   contentBoxSize.inlineSize > 0 &&
                   contentBoxSize.blockSize > 0 &&
-                  now - lastTimestamp > 600
+                  now - lastTimestamp > 300
                 ) {
                   unref(tableRef)
-                    ?.recalculate()
+                    ?.refreshColumn()
                     .then(() => {
                       lastTimestamp = now
                     })
