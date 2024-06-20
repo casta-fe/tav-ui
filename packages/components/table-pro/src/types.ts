@@ -271,6 +271,12 @@ export const tableProProps = {
     type: Boolean as PropType<VxeTablePropTypes.AutoResize>,
     // default: true,
   },
+  resizeConfig: {
+    type: Object as PropType<VxeTablePropTypes.ResizeConfig>,
+    default: () => ({
+      refreshDelay: 500,
+    }),
+  },
   /** 自动跟随某个属性的变化去重新计算表格，和手动调用 recalculate 方法是一样的效果（对于通过某个属性来控制显示/隐藏切换时可能会用到） */
   syncResize: {
     type: [String, Number, Boolean] as PropType<VxeTablePropTypes.SyncResize>,

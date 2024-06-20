@@ -325,55 +325,60 @@ export default defineComponent({
       ) : null
     }
 
-    function parentElResizeObserverHandler() {
-      let parentElResizeObserver: ResizeObserver | null = null
-      let lastTimestamp = +new Date()
+    function elementResizeObserverHandler() {
+      let elementResizeObserver: ResizeObserver | null = null
+      let calcNum = 0
 
-      function createParentElResizeObserver() {
-        const el = unref(tableRef)?.$el.parentElement
-        if (el) {
-          // resizeObserver = new window.ResizeObserver(function () { return unref(tableRef)?.recalculate(); });
-          parentElResizeObserver = new window.ResizeObserver((entries) => {
+      function createElementResizeObserver() {
+        const el = unref(tableRef)?.$el
+        const parentEl = el.parentElement
+        if (el && parentEl) {
+          // TODO: pref record contentBoxSize
+          elementResizeObserver = new window.ResizeObserver((entries) => {
             for (const entry of entries) {
               if (entry.contentBoxSize) {
                 const contentBoxSize = Array.isArray(entry.contentBoxSize)
                   ? entry.contentBoxSize[0]
                   : entry.contentBoxSize
 
-                const now = +new Date()
-                if (
-                  contentBoxSize.inlineSize > 0 &&
-                  contentBoxSize.blockSize > 0 &&
-                  now - lastTimestamp > 600
-                ) {
-                  unref(tableRef)
-                    ?.recalculate()
-                    .then(() => {
-                      lastTimestamp = now
-                    })
+                // console.log('start', el, parentEl.parentElement.id, contentBoxSize)
+                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0 && calcNum <= 3) {
+                  // console.log('end', el, parentEl.parentElement.id, contentBoxSize)
+                  requestAnimationFrame(() => {
+                    unref(tableRef)
+                      ?.recalculate(true)
+                      .then(() => {
+                        calcNum++
+                      })
+                  })
+                }
+                // 不论是否有 keepalive 使用 ResizeObserver 监听时，只要 div 隐藏掉此时宽高均为0
+                if (contentBoxSize.inlineSize === 0 && contentBoxSize.blockSize === 0) {
+                  calcNum = 0
                 }
               }
             }
           })
-          parentElResizeObserver.observe(el)
+          elementResizeObserver.observe(el)
+          elementResizeObserver.observe(parentEl)
         }
       }
 
-      function clearParentElResizeObserver() {
-        parentElResizeObserver?.disconnect()
+      function clearElementResizeObserver() {
+        elementResizeObserver?.disconnect()
       }
 
       return {
-        createParentElResizeObserver,
-        clearParentElResizeObserver,
+        createElementResizeObserver,
+        clearElementResizeObserver,
       }
     }
 
-    const { createParentElResizeObserver, clearParentElResizeObserver } =
-      parentElResizeObserverHandler()
+    const { createElementResizeObserver, clearElementResizeObserver } =
+      elementResizeObserverHandler()
 
     onMountedOrActivated(() => {
-      createParentElResizeObserver()
+      createElementResizeObserver()
       handleNotPersistentColumnActionWidth()
     })
 
@@ -393,7 +398,7 @@ export default defineComponent({
     onUnmountedOrOnDeactivated(() => {
       clearCellTooltip()
       clearColumnAutoWidth()
-      clearParentElResizeObserver()
+      clearElementResizeObserver()
     })
 
     return () => {
