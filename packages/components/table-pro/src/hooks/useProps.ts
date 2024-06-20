@@ -235,6 +235,7 @@ function handleRowLineHeight(tablePropsRef: ComputedRef<TableProProps>) {
     unref(tablePropsRef).showFooterOverflow = 'ellipsis'
     // unref(tablePropsRef).scrollX.enabled = true
     // unref(tablePropsRef).scrollY.enabled = true
+    // 关闭虚拟滚动，提升部分性能
     unref(tablePropsRef).scrollX.enabled = false
     unref(tablePropsRef).scrollY.enabled = false
   } else {

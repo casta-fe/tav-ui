@@ -325,55 +325,62 @@ export default defineComponent({
       ) : null
     }
 
-    // function parentElResizeObserverHandler() {
-    //   let parentElResizeObserver: ResizeObserver | null = null
-    //   let lastTimestamp = +new Date()
+    function elementResizeObserverHandler() {
+      let elementResizeObserver: ResizeObserver | null = null
+      let lastTimestamp = +new Date()
 
-    //   function createParentElResizeObserver() {
-    //     const el = unref(tableRef)?.$el.parentElement
-    //     if (el) {
-    //       // resizeObserver = new window.ResizeObserver(function () { return unref(tableRef)?.recalculate(); });
-    //       parentElResizeObserver = new window.ResizeObserver((entries) => {
-    //         for (const entry of entries) {
-    //           if (entry.contentBoxSize) {
-    //             const contentBoxSize = Array.isArray(entry.contentBoxSize)
-    //               ? entry.contentBoxSize[0]
-    //               : entry.contentBoxSize
+      function createElementResizeObserver() {
+        const el = unref(tableRef)?.$el
+        const parentEl = el.parentElement
+        if (el && parentEl) {
+          // TODO: pref record contentBoxSize
+          elementResizeObserver = new window.ResizeObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.contentBoxSize) {
+                // const contentBoxSize = Array.isArray(entry.contentBoxSize)
+                //   ? entry.contentBoxSize[0]
+                //   : entry.contentBoxSize
 
-    //             const now = +new Date()
-    //             if (
-    //               contentBoxSize.inlineSize > 0 &&
-    //               contentBoxSize.blockSize > 0 &&
-    //               now - lastTimestamp > 300
-    //             ) {
-    //               unref(tableRef)
-    //                 ?.recalculate(true)
-    //                 .then(() => {
-    //                   lastTimestamp = now
-    //                 })
-    //             }
-    //           }
-    //         }
-    //       })
-    //       parentElResizeObserver.observe(el)
-    //     }
-    //   }
+                // console.log('start', el, parentEl, contentBoxSize)
+                const now = +new Date()
+                if (
+                  // contentBoxSize.inlineSize > 0 &&
+                  // contentBoxSize.blockSize > 0 &&
+                  now - lastTimestamp >
+                  300
+                ) {
+                  // console.log('end', el, parentEl, contentBoxSize)
+                  requestAnimationFrame(() => {
+                    unref(tableRef)
+                      ?.recalculate(true)
+                      .then(() => {
+                        lastTimestamp = now
+                      })
+                  })
+                }
+              }
+            }
+          })
+          elementResizeObserver.observe(el)
+          elementResizeObserver.observe(parentEl)
+        }
+      }
 
-    //   function clearParentElResizeObserver() {
-    //     parentElResizeObserver?.disconnect()
-    //   }
+      function clearElementResizeObserver() {
+        elementResizeObserver?.disconnect()
+      }
 
-    //   return {
-    //     createParentElResizeObserver,
-    //     clearParentElResizeObserver,
-    //   }
-    // }
+      return {
+        createElementResizeObserver,
+        clearElementResizeObserver,
+      }
+    }
 
-    // const { createParentElResizeObserver, clearParentElResizeObserver } =
-    //   parentElResizeObserverHandler()
+    const { createElementResizeObserver, clearElementResizeObserver } =
+      elementResizeObserverHandler()
 
     onMountedOrActivated(() => {
-      // createParentElResizeObserver()
+      createElementResizeObserver()
       handleNotPersistentColumnActionWidth()
     })
 
@@ -393,7 +400,7 @@ export default defineComponent({
     onUnmountedOrOnDeactivated(() => {
       clearCellTooltip()
       clearColumnAutoWidth()
-      // clearParentElResizeObserver()
+      clearElementResizeObserver()
     })
 
     return () => {

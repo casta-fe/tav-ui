@@ -269,7 +269,7 @@ export const tableProProps = {
   /** 自动监听父元素的变化去重新计算表格（对于父元素可能存在动态变化、显示隐藏的容器中、列宽异常等场景中的可能会用到） */
   autoResize: {
     type: Boolean as PropType<VxeTablePropTypes.AutoResize>,
-    default: true,
+    // default: true,
   },
   resizeConfig: {
     type: Object as PropType<VxeTablePropTypes.ResizeConfig>,
