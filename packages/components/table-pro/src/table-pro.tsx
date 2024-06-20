@@ -327,7 +327,8 @@ export default defineComponent({
 
     function elementResizeObserverHandler() {
       let elementResizeObserver: ResizeObserver | null = null
-      let lastTimestamp = +new Date()
+      // let lastTimestamp = +new Date()
+      let calcNum = 0
 
       function createElementResizeObserver() {
         const el = unref(tableRef)?.$el
@@ -337,24 +338,26 @@ export default defineComponent({
           elementResizeObserver = new window.ResizeObserver((entries) => {
             for (const entry of entries) {
               if (entry.contentBoxSize) {
-                // const contentBoxSize = Array.isArray(entry.contentBoxSize)
-                //   ? entry.contentBoxSize[0]
-                //   : entry.contentBoxSize
+                const contentBoxSize = Array.isArray(entry.contentBoxSize)
+                  ? entry.contentBoxSize[0]
+                  : entry.contentBoxSize
 
-                // console.log('start', el, parentEl, contentBoxSize)
-                const now = +new Date()
+                console.log('start', el, parentEl.parentElement.id, contentBoxSize)
+                // const now = +new Date()
                 if (
                   // contentBoxSize.inlineSize > 0 &&
                   // contentBoxSize.blockSize > 0 &&
-                  now - lastTimestamp >
-                  300
+                  // now - lastTimestamp >
+                  // 300
+                  calcNum <= 3
                 ) {
-                  // console.log('end', el, parentEl, contentBoxSize)
+                  console.log('end', el, parentEl.parentElement.id, contentBoxSize)
                   requestAnimationFrame(() => {
                     unref(tableRef)
                       ?.recalculate(true)
                       .then(() => {
-                        lastTimestamp = now
+                        // lastTimestamp = now
+                        calcNum++
                       })
                   })
                 }
