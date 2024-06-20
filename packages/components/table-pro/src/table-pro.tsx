@@ -327,7 +327,6 @@ export default defineComponent({
 
     function elementResizeObserverHandler() {
       let elementResizeObserver: ResizeObserver | null = null
-      // let lastTimestamp = +new Date()
       let calcNum = 0
 
       function createElementResizeObserver() {
@@ -342,24 +341,20 @@ export default defineComponent({
                   ? entry.contentBoxSize[0]
                   : entry.contentBoxSize
 
-                console.log('start', el, parentEl.parentElement.id, contentBoxSize)
-                // const now = +new Date()
-                if (
-                  // contentBoxSize.inlineSize > 0 &&
-                  // contentBoxSize.blockSize > 0 &&
-                  // now - lastTimestamp >
-                  // 300
-                  calcNum <= 3
-                ) {
-                  console.log('end', el, parentEl.parentElement.id, contentBoxSize)
+                // console.log('start', el, parentEl.parentElement.id, contentBoxSize)
+                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0 && calcNum <= 3) {
+                  // console.log('end', el, parentEl.parentElement.id, contentBoxSize)
                   requestAnimationFrame(() => {
                     unref(tableRef)
                       ?.recalculate(true)
                       .then(() => {
-                        // lastTimestamp = now
                         calcNum++
                       })
                   })
+                }
+                // 不论是否有 keepalive 使用 ResizeObserver 监听时，只要 div 隐藏掉此时宽高均为0
+                if (contentBoxSize.inlineSize === 0 && contentBoxSize.blockSize === 0) {
+                  calcNum = 0
                 }
               }
             }
