@@ -612,7 +612,6 @@ export default defineComponent({
     }
 
     function renderComponent() {
-      console.log('render')
       const {
         renderComponentContent,
         component,
@@ -635,9 +634,8 @@ export default defineComponent({
             propsData[eventKey](...args)
           }
           const target = e ? e.target : null
-          if (isCheck) {
-            props.setFormModel(field, target.checked)
-          }
+          const value = target ? (isCheck ? target.checked : target.value) : e
+          props.setFormModel(field, value)
 
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
