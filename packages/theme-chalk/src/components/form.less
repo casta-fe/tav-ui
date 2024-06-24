@@ -13,10 +13,21 @@
     &-with-help {
       margin-bottom: 0;
     }
-
+    //优化 controls 为false 时候的 的样式
+    .ant-input-number-group-wrapper {
+      width: 100%;
+    }
+    .ant-input-number-input {
+      padding-right: 10px;
+    }
+    .ant-input-number-handler-wrap + .ant-input-number-input-wrap {
+      .ant-input-number-input {
+        padding-right: 26px;
+      }
+    }
     &:not(.ant-form-item-with-help) {
       margin-bottom: 20px;
-      .ant-form-item{
+      .ant-form-item {
         margin-bottom: 0;
       }
     }

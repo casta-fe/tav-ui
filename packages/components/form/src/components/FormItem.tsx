@@ -128,8 +128,8 @@ export default defineComponent({
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
         if (newVal !== oldVal) {
-          getFormItemPrecision(newVal)
-          // debounce(getFormItemPrecision.bind(null, newVal, false), DebounceDely)()
+          // getFormItemPrecision(newVal)
+          debounce(getFormItemPrecision.bind(null, newVal), 50)()
         }
         if (!unref(hasEditable)) {
           return
@@ -658,7 +658,7 @@ export default defineComponent({
             propsData[blurKey](...args)
           }
           // 针对InputNumber精度问题兼容
-          if (component === 'InputNumber' && itemRef.value) {
+          if (itemRef.value) {
             const inputEle = itemRef.value.querySelector('input')
             if (inputEle) {
               const inputVal = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
