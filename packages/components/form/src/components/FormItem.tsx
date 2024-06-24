@@ -12,7 +12,7 @@ import {
 } from 'vue'
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { Col, Divider, Form } from 'ant-design-vue'
-import { cloneDeep, uniqBy, upperFirst } from 'lodash-es'
+import { cloneDeep, debounce, uniqBy, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
 import clickOutside from '@tav-ui/directives/src/clickOutside'
@@ -128,8 +128,8 @@ export default defineComponent({
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
         if (newVal !== oldVal) {
-          // getFormItemPrecision(newVal)
-          debounce(getFormItemPrecision.bind(null, newVal), 50)()
+          getFormItemPrecision(newVal)
+          // debounce(getFormItemPrecision.bind(null, newVal), 50)()
         }
         if (!unref(hasEditable)) {
           return
