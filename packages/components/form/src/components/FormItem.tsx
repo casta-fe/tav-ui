@@ -862,7 +862,13 @@ export default defineComponent({
             // 处理 inputNumber formatter
             realContent = inputFormatter(realContent)
           }
-          return <>{realContent}</>
+          return (
+            <>
+              {unref(componentProps)?.addonBefore}
+              {realContent}
+              {unref(componentProps)?.addonAfter}
+            </>
+          )
         }
         const getEditableFormItemClass = () => {
           let className = unref(getDisable) ? 'ta-form-item__cell disabled' : 'ta-form-item__cell'
