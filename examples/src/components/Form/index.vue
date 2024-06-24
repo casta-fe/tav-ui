@@ -80,6 +80,7 @@
   </div>
   <TaMemberSelect v-model="test" :multiple="true" :options="allUserList" />
   <!-- <TaContainerCollapse title="useForm示例"> -->
+  <InputNumber v-model:value="test" :max="100" style="width: 100%" :formatter="formatterhandle" />
   <TaForm ref="testForm" :schemas="schemas" :label-width="140" @submit="handleSubmit">
     <template #testSlot="{ field, model }">{{ field }} {{ model }} 可以了</template>
   </TaForm>
@@ -88,6 +89,7 @@
 </template>
 <script lang="ts">
 import { type Ref, computed, defineComponent, h, ref } from 'vue'
+import { InputNumber } from 'ant-design-vue'
 import { TaButton, TaForm, TaMemberSelect, useForm } from '@tav-ui/components'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import {
@@ -157,61 +159,86 @@ const schemas = ref([
   //     // }
   //   },
   // },
-  {
-    field: 'fieldapiSelect',
-    component: 'ApiSelect',
-    label: 'apiSelect',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      api: () => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({ code: '0000', data: allUserList.value })
-          }, 100)
-        })
-      },
-    },
-  },
-  {
-    field: 'field0',
-    component: 'MemberSelect',
-    label: '人员选择',
-    colProps: {
-      span: 8,
-    },
-    componentProps: {
-      multiple: true,
-      options: allUserList,
-      placeholder: '自定义placeholder',
-    },
-  },
-  {
-    field: 'field1',
-    component: 'DateInterval',
-    label: 'DateInterval',
-    colProps: { span: 8 },
-    componentProps: {},
-  },
+  // {
+  //   field: 'fieldapiSelect',
+  //   component: 'ApiSelect',
+  //   label: 'apiSelect',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     api: () => {
+  //       return new Promise((resolve) => {
+  //         setTimeout(() => {
+  //           resolve({ code: '0000', data: allUserList.value })
+  //         }, 100)
+  //       })
+  //     },
+  //   },
+  // },
+  // {
+  //   field: 'field0',
+  //   component: 'MemberSelect',
+  //   label: '人员选择',
+  //   colProps: {
+  //     span: 8,
+  //   },
+  //   componentProps: {
+  //     multiple: true,
+  //     options: allUserList,
+  //     placeholder: '自定义placeholder',
+  //   },
+  // },
+  // {
+  //   field: 'field1',
+  //   component: 'DateInterval',
+  //   label: 'DateInterval',
+  //   colProps: { span: 8 },
+  //   componentProps: {},
+  // },
   {
     field: 'fieldInputNumber',
     component: 'InputNumber',
     label: 'InputNumber',
     colProps: { span: 8 },
     required: true,
-    componentProps: {},
-  },
-  {
-    field: 'fieldformatter',
-    component: 'InputNumber',
-    label: 'formatter',
-    colProps: { span: 8 },
     componentProps: {
-      precision: 8,
-      formatter: (value) => `${value}%`,
+      min: 0,
+      max: 100,
+      addonAfter: '%',
+      controls: false,
+      // formatter: (value: any, info: any) => {
+      //   console.log(value, info)
+      //   if (value > 10e5) {
+      //     return `${10e5}%`
+      //   }
+      //   return value ? `${value}%` : value
+      // },
+      // parser: (value) => value.replace('%', ''),
+      // formatter: (value: any) => {
+      //   // console.log(`${value}%`)
+      //   return
+      // },
     },
   },
+  {
+    field: 'fieldInputNumber1',
+    component: 'InputNumber',
+    label: 'InputNumber1',
+    colProps: { span: 8 },
+    required: true,
+    componentProps: {},
+  },
+  // {
+  //   field: 'fieldformatter',
+  //   component: 'InputNumber',
+  //   label: 'formatter',
+  //   colProps: { span: 8 },
+  //   componentProps: {
+  //     precision: 8,
+  //     formatter: (value) => `${value}%`,
+  //   },
+  // },
   // {
   //   field: 'field22',
   //   component: 'InputNumber',
@@ -355,24 +382,24 @@ const schemas = ref([
   //     },
   //   },
   // },
-  {
-    field: 'companyInfo',
-    component: 'SearchableApiSelect',
-    label: '公司名称',
-    colProps: { span: 12 },
-    componentProps: () => {
-      return {
-        placeholder: '请至少输入两个字搜索公司名称，按回车搜索',
-        panelMaxHeight: '300px',
-        api: (keyWord, pageNum) => {
-          return API__CENTER_COMPANY_LIST({ pageNum, word: keyWord })
-        },
-      }
-    },
-  },
+  // {
+  //   field: 'companyInfo',
+  //   component: 'SearchableApiSelect',
+  //   label: '公司名称',
+  //   colProps: { span: 12 },
+  //   componentProps: () => {
+  //     return {
+  //       placeholder: '请至少输入两个字搜索公司名称，按回车搜索',
+  //       panelMaxHeight: '300px',
+  //       api: (keyWord, pageNum) => {
+  //         return API__CENTER_COMPANY_LIST({ pageNum, word: keyWord })
+  //       },
+  //     }
+  //   },
+  // },
 ])
 export default defineComponent({
-  components: { TaButton, TaForm, TaMemberSelect },
+  components: { TaButton, TaForm, InputNumber, TaMemberSelect },
   setup() {
     const { createMessage } = useMessage()
     const test = ref(null)
@@ -461,26 +488,26 @@ export default defineComponent({
       })
     }
     const testForm = ref()
-    setTimeout(() => {
-      schemas.value = [
-        ...schemas.value,
-        {
-          field: 'field3',
-          component: 'Input',
-          label: '新增的',
-          colProps: {
-            span: 8,
-          },
-        },
-      ]
-      setTimeout(() => {
-        testForm.value.setFieldsValue({
-          fieldapiSelect: 1,
-          // fieldInputNumber: null,
-          field3: 99,
-        })
-      }, 500)
-    }, 2000)
+    // setTimeout(() => {
+    //   schemas.value = [
+    //     ...schemas.value,
+    //     {
+    //       field: 'field3',
+    //       component: 'Input',
+    //       label: '新增的',
+    //       colProps: {
+    //         span: 8,
+    //       },
+    //     },
+    //   ]
+    //   setTimeout(() => {
+    //     testForm.value.setFieldsValue({
+    //       fieldapiSelect: 1,
+    //       // fieldInputNumber: null,
+    //       field3: 99,
+    //     })
+    //   }, 500)
+    // }, 2000)
     const getFormData = async () => {
       const res = await testForm.value.validate()
       console.log(res)
@@ -489,6 +516,10 @@ export default defineComponent({
       schemas,
       handleSubmit: (values) => {
         createMessage.success(`click search,values:${JSON.stringify(values)}`)
+      },
+      formatterhandle: (v, i) => {
+        console.log(v, i)
+        return `${v}$`
       },
       test,
       allUserList,
