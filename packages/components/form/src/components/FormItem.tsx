@@ -862,11 +862,18 @@ export default defineComponent({
             // 处理 inputNumber formatter
             realContent = inputFormatter(realContent)
           }
+          // 这里为了处理空数据时候展示符号很奇怪所以做个判断
           return (
             <>
-              {unref(componentProps)?.addonBefore}
-              {realContent}
-              {unref(componentProps)?.addonAfter}
+              {realContent !== '-' ? (
+                <>
+                  {unref(componentProps)?.addonBefore}
+                  {realContent}
+                  {unref(componentProps)?.addonAfter}
+                </>
+              ) : (
+                realContent
+              )}
             </>
           )
         }
