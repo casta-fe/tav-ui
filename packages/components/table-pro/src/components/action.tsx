@@ -199,7 +199,7 @@ export default defineComponent({
           return (
             <>
               {modalButton()}
-              {props.divider && index < unref(Actions).length - 1 ? (
+              {props.divider && (action as any).ifShow && index < unref(Actions).length - 1 ? (
                 <Divider class={`${ComponentPrefixCls}-divider`} type={'vertical'}></Divider>
               ) : null}
             </>
