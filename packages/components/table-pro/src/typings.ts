@@ -1,5 +1,5 @@
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
-import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
+import type { ButtonProps } from '@tav-ui/components/button/src/types'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties, ComputedRef, Ref } from 'vue'
 import type { VxeGridPropTypes } from 'vxe-table'

@@ -92,6 +92,16 @@ export default defineComponent({
       return isEnabled
     }
 
+    // 根据 ifShow 控制显隐
+    function isIfShow(action: TableProActionItem): boolean {
+      const enabled = action.ifShow
+      let isEnabled = true
+      if (isBoolean(enabled)) {
+        isEnabled = enabled
+      }
+      return isEnabled
+    }
+
     // 根据 permissions 控制显隐
     function handlePermissions(Permissions: any) {
       return computed(() => {
@@ -103,7 +113,7 @@ export default defineComponent({
           const PermisionCodeFlag = isUnDef(action.permissionCode)
             ? true
             : action.permissionCode === 1
-          return PermissionFlag && PermisionCodeFlag && isEnabled(action)
+          return PermissionFlag && PermisionCodeFlag && isEnabled(action) && isIfShow(action)
         })
       })
     }
