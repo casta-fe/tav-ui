@@ -15,8 +15,9 @@ input:-webkit-autofill {
   body {
     width: 100%;
     height: 100%;
-    overflow: visible !important;
-    overflow-x: hidden !important;
+    // 修复360浏览器下，弹窗出现时页面闪烁一下
+    // overflow: visible !important;
+    // overflow-x: hidden !important;
   
     &.color-weak {
       filter: invert(80%);
