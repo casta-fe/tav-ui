@@ -126,42 +126,46 @@
               </div>
             </div>
             <div v-else class="user-wrap">
-              <!-- {{ realUserList }} -->
-              <template v-if="propsData.multiple">
-                <CheckboxGroup v-model:value="checkboxData">
-                  <ul>
-                    <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
-                      <Checkbox :value="user.id" :disabled="user.disabled">
-                        <firstLetter :value="user" />{{ user.name }}
-                        <template v-if="user.status === 0">
-                          ({{ tavI18n('Tav.member.4') }})
-                        </template>
-                        <template v-if="repeatUserNames.includes(user.name)">
-                          <span>（{{ user.phone }}）</span>
-                        </template>
-                      </Checkbox>
-                      <p class="org-name">{{ getOrgName(user) }}</p>
-                    </li>
-                  </ul>
-                </CheckboxGroup>
+              <template v-if="realLength > 0">
+                <template v-if="propsData.multiple">
+                  <CheckboxGroup v-model:value="checkboxData">
+                    <ul>
+                      <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
+                        <Checkbox :value="user.id" :disabled="user.disabled">
+                          <firstLetter :value="user" />{{ user.name }}
+                          <template v-if="user.status === 0">
+                            ({{ tavI18n('Tav.member.4') }})
+                          </template>
+                          <template v-if="repeatUserNames.includes(user.name)">
+                            <span>（{{ user.phone }}）</span>
+                          </template>
+                        </Checkbox>
+                        <p class="org-name">{{ getOrgName(user) }}</p>
+                      </li>
+                    </ul>
+                  </CheckboxGroup>
+                </template>
+                <template v-else>
+                  <RadioGroup v-model:value="radioData">
+                    <ul>
+                      <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
+                        <Radio :value="user.id" :disabled="user.disabled">
+                          <firstLetter :value="user" />{{ user.name }}
+                          <template v-if="user.status === 0">
+                            ({{ tavI18n('Tav.member.4') }})
+                          </template>
+                          <template v-if="repeatUserNames.includes(user.name)">
+                            <span>（{{ user.phone }}）</span>
+                          </template>
+                        </Radio>
+                        <p class="org-name">{{ getOrgName(user) }}</p>
+                      </li>
+                    </ul>
+                  </RadioGroup>
+                </template>
               </template>
               <template v-else>
-                <RadioGroup v-model:value="radioData">
-                  <ul>
-                    <li v-for="user in realUserList" :key="user.id">
-                      <Radio :value="user.id" :disabled="user.disabled">
-                        <firstLetter :value="user" />{{ user.name }}
-                        <template v-if="user.status === 0">
-                          ({{ tavI18n('Tav.member.4') }})
-                        </template>
-                        <template v-if="repeatUserNames.includes(user.name)">
-                          <span>（{{ user.phone }}）</span>
-                        </template>
-                      </Radio>
-                      <p class="org-name">{{ getOrgName(user) }}</p>
-                    </li>
-                  </ul>
-                </RadioGroup>
+                <Empty description="没有找到结果" :image="simpleImage" />
               </template>
             </div>
           </TabPane>
@@ -193,6 +197,7 @@ import { computed, defineComponent, inject, onMounted, reactive, ref, toRefs, wa
 import {
   Checkbox,
   CheckboxGroup,
+  Empty,
   FormItemRest,
   Input,
   Radio,
@@ -222,6 +227,7 @@ export default defineComponent({
     Checkbox,
     RadioGroup,
     Radio,
+    Empty,
     FirstLetter,
     FormItemRest,
     SearchOutlined,
@@ -256,12 +262,14 @@ export default defineComponent({
       activeLetter: '', //当前选中的字母
     })
     const repeatUserNames = ref<string[]>([])
-    const realUserList = computed(() => {
+    const realUserList = computed((): UserItem[] => {
+      // 由于checkbox里面数据少了会清之前选中的数据，导致重复筛选后之前的用户丢失 所以用display控制
       return userList.value.map((v: UserItem) => {
         v.ifShow = v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
         return v
       })
     })
+    const realLength = computed(() => realUserList.value.filter((v) => v.ifShow).length)
     // 多选时候右侧展示的列表
     const tagList = computed((): any[] => {
       const list: UserItem[] = []
@@ -473,11 +481,13 @@ export default defineComponent({
       orgTree,
       tagList,
       realUserList,
+      realLength,
       getOrgUser,
       removeTag,
       clearTag,
       onExpand,
       letterClick,
+      simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
     }
   },
 })
