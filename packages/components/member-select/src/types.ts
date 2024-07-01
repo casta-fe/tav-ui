@@ -16,6 +16,7 @@ export interface UserItem {
   sex: number
   status: number
   disabled: boolean
+  ifShow: boolean
   userOrgs: UserOrgs[]
 }
 export interface Options extends UserItem {

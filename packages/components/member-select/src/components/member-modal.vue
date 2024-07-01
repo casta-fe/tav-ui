@@ -130,15 +130,17 @@
               <template v-if="propsData.multiple">
                 <CheckboxGroup v-model:value="checkboxData">
                   <ul>
-                    <li v-for="v in realUserList" :key="v.id">
-                      <Checkbox :value="v.id" :disabled="v.disabled">
-                        <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
-                        <template v-if="repeatUserNames.includes(v.name)">
-                          <span>（{{ v.phone }}）</span>
+                    <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
+                      <Checkbox :value="user.id" :disabled="user.disabled">
+                        <firstLetter :value="user" />{{ user.name }}
+                        <template v-if="user.status === 0">
+                          ({{ tavI18n('Tav.member.4') }})
+                        </template>
+                        <template v-if="repeatUserNames.includes(user.name)">
+                          <span>（{{ user.phone }}）</span>
                         </template>
                       </Checkbox>
-                      <p class="org-name">{{ getOrgName(v) }}</p>
+                      <p class="org-name">{{ getOrgName(user) }}</p>
                     </li>
                   </ul>
                 </CheckboxGroup>
@@ -146,15 +148,17 @@
               <template v-else>
                 <RadioGroup v-model:value="radioData">
                   <ul>
-                    <li v-for="v in realUserList" :key="v.id">
-                      <Radio :value="v.id" :disabled="v.disabled">
-                        <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
-                        <template v-if="repeatUserNames.includes(v.name)">
-                          <span>（{{ v.phone }}）</span>
+                    <li v-for="user in realUserList" :key="user.id">
+                      <Radio :value="user.id" :disabled="user.disabled">
+                        <firstLetter :value="user" />{{ user.name }}
+                        <template v-if="user.status === 0">
+                          ({{ tavI18n('Tav.member.4') }})
+                        </template>
+                        <template v-if="repeatUserNames.includes(user.name)">
+                          <span>（{{ user.phone }}）</span>
                         </template>
                       </Radio>
-                      <p class="org-name">{{ getOrgName(v) }}</p>
+                      <p class="org-name">{{ getOrgName(user) }}</p>
                     </li>
                   </ul>
                 </RadioGroup>
@@ -253,20 +257,28 @@ export default defineComponent({
     })
     const repeatUserNames = ref<string[]>([])
     const realUserList = computed(() => {
-      return userList.value.filter(
-        (v: UserItem) => v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
-      )
+      return userList.value.map((v: UserItem) => {
+        v.ifShow = v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
+        return v
+      })
     })
     // 多选时候右侧展示的列表
     const tagList = computed((): any[] => {
-      return userList.value.filter((item: any) => state.checkboxData.some((v) => v === item.id))
+      const list: UserItem[] = []
+      state.checkboxData.forEach((userId) => {
+        const item = userList.value.find((user: UserItem) => userId === user.id)
+        if (item) {
+          list.push(item)
+        }
+      })
+      return list
     })
     // 是否显示组织的tab,如果传入了options 就不显示org？这个很奇怪 不过先留着
     const hideOrgTabs = computed(() => {
       return propsData.value.noOrg || !!propsData.value.options
     })
     // 移除已选中的用户
-    const removeTag = (id): void => {
+    const removeTag = (id: number): void => {
       const data = state.checkboxData
       const index = data.findIndex((v) => v == id)
       data.splice(index, 1)
