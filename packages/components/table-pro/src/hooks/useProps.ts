@@ -233,11 +233,8 @@ function handleRowLineHeight(tablePropsRef: ComputedRef<TableProProps>) {
     unref(tablePropsRef).showOverflow = 'ellipsis'
     unref(tablePropsRef).showHeaderOverflow = 'ellipsis'
     unref(tablePropsRef).showFooterOverflow = 'ellipsis'
-    // unref(tablePropsRef).scrollX.enabled = true
-    // unref(tablePropsRef).scrollY.enabled = true
-    // 关闭虚拟滚动，提升部分性能
-    unref(tablePropsRef).scrollX.enabled = false
-    unref(tablePropsRef).scrollY.enabled = false
+    unref(tablePropsRef).scrollX.enabled = true
+    unref(tablePropsRef).scrollY.enabled = true
   } else {
     // 所以当 showTooltip 为 false 时，不设置固定行高度，行高度由内容撑开（虚拟滚动失效）
     unref(tablePropsRef).showOverflow = null
