@@ -652,11 +652,7 @@ export default defineComponent({
           }
         }
         on[blurKey] = (...args: Nullable<Recordable>[]) => {
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          if (propsData[blurKey]) {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            propsData[blurKey](...args)
-          }
+          // fix: 先修正数据再调用回调
           // 针对InputNumber精度问题兼容
           if (itemRef.value) {
             const inputEle = itemRef.value.querySelector('input')
@@ -669,8 +665,23 @@ export default defineComponent({
                 nextTick(() => {
                   props.setFormModel(field, value)
                 })
-              }, 10)
+                nextTick(() => {
+                  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                  if (propsData[blurKey]) {
+                    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                    propsData[blurKey](...args)
+                  }
+                })
+              }, 16)
             }
+          } else {
+            nextTick(() => {
+              // eslint-disable-next-line @typescript-eslint/no-use-before-define
+              if (propsData[blurKey]) {
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                propsData[blurKey](...args)
+              }
+            })
           }
         }
       }
