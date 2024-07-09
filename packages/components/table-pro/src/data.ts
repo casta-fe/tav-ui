@@ -331,3 +331,12 @@ export async function API__INVEST_COMPANY_LIST(
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
 }
+
+// 文件类型
+export async function API__QUERY_FILE_TYPE(
+  data,
+  url = '/api/TIANTA-FILE/sys/api/file/queryFileType'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}

@@ -42,6 +42,11 @@ const routes: RouteRecordRaw[] = [
     name: 'Form',
     component: () => import('../components/Form/index.vue'),
   },
+  {
+    path: '/file',
+    name: 'File',
+    component: () => import('../components/File/index.vue'),
+  },
 ]
 
 export const router = createRouter({
