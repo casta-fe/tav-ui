@@ -222,7 +222,7 @@ export async function __post(url = '', data: any = {}, isFormData = false) {
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
-      ai,
+      ai: data.appId || ai,
       at,
       rd,
     },
@@ -327,15 +327,6 @@ export async function API__CENTER_COMPANY_LIST(
 export async function API__INVEST_COMPANY_LIST(
   data,
   url = '/api/STARLIGHT-INVEST-WEB/company/information/listPager'
-) {
-  // eslint-disable-next-line no-return-await
-  return await __post(url, data)
-}
-
-// 文件类型
-export async function API__QUERY_FILE_TYPE(
-  data,
-  url = '/api/TIANTA-FILE/sys/api/file/queryFileType'
 ) {
   // eslint-disable-next-line no-return-await
   return await __post(url, data)

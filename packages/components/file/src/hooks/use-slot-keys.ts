@@ -1,10 +1,10 @@
 import { type Slots, computed } from 'vue'
 
-export function useSlotKeys(slots: Slots, prefix: string) {
+export function useSlotKeys(slots: Slots, prefix: string, filterPrefix = '') {
   const getSlotKeys = computed(() => {
     const keys = Object.keys(slots)
     return keys
-      .map((item) => (item.startsWith(prefix) ? item : null))
+      .map((item) => (!item.startsWith(filterPrefix) && item.startsWith(prefix) ? item : null))
       .filter((item) => !!item) as string[]
   })
 

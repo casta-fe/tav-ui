@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { createId, createNS } from '../../../../utils'
-
-const ns = createNS('file')
-const cls = ns.b('view')
-const id = createId(cls)
+import { DEFAULT_FILEVIEW_CLASSNAME, DEFAULT_FILEVIEW_ID } from '../../consts'
 
 defineOptions({
   name: 'TaFileView',
@@ -15,5 +11,5 @@ defineOptions({
 </script>
 
 <template>
-  <section :id="id" :class="cls">TaFileView</section>
+  <section :id="DEFAULT_FILEVIEW_ID" :class="DEFAULT_FILEVIEW_CLASSNAME">TaFileView</section>
 </template>

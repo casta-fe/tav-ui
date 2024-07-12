@@ -1,16 +1,15 @@
-import { type ComputedRef, type Ref, inject, provide } from 'vue'
-import { type ApiParams } from '../typings'
+import { inject, provide } from 'vue'
 
-const key = Symbol('file')
+export const FileContextKey = Symbol('file')
 
 export interface FileContext {
-  apiParams: ComputedRef<ApiParams['apiParams']>
+  [key: string]: any
 }
 
 export function createFileContext(context: FileContext) {
-  provide(key, context)
+  provide(FileContextKey, context)
 }
 
 export function useFileContext(): FileContext {
-  return inject(key) as FileContext
+  return inject(FileContextKey) as FileContext
 }

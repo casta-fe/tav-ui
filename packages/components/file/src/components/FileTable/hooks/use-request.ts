@@ -1,18 +1,18 @@
 import { type ComputedRef, computed, ref, unref } from 'vue'
 import { isFunction } from '@tav-ui/utils/is'
 import { tavI18n } from '@tav-ui/locales'
-import { type FileInjectedProps } from '../../../typings'
-import { type FileTypeSelectProps } from '../types'
+import { type FileInjectedProps, type UploadFileListItem } from '../../../typings'
+import { type FileTableProps } from '../types'
 import { type UseDisableReturn, type UseLoadingReturn } from '../../../hooks'
 import { DEFAULT_HTTP_ERROR_TIP } from '../../../consts'
 import { type ArgumentsOf } from '../../../utils'
 
 export function useRequest(options: {
-  mergedProps: ComputedRef<FileInjectedProps & FileTypeSelectProps>
+  mergedProps: ComputedRef<FileInjectedProps & FileTableProps>
   setDisable: UseLoadingReturn['setLoading']
   setLoading: UseDisableReturn['setDisable']
 }) {
-  const resultRef = ref<Record<string, any>[]>([])
+  const resultRef = ref<UploadFileListItem[]>([])
   const errorRef = ref<string>('')
   const { mergedProps, setLoading, setDisable } = options
 
@@ -20,8 +20,8 @@ export function useRequest(options: {
     const apiParams = mergedProps.value.apiParams
     const api = mergedProps.value.api
       ? mergedProps.value.api
-      : mergedProps.value.apiReadFileType
-      ? mergedProps.value.apiReadFileType
+      : mergedProps.value.apiReadFile
+      ? mergedProps.value.apiReadFile
       : undefined
     const beforeApi = mergedProps.value.beforeApi
     const afterApi = mergedProps.value.afterApi
@@ -38,10 +38,12 @@ export function useRequest(options: {
       }
 
       // 因为每个后端接口接受同字段属性的属性名都不一致，前端抹平后按照 swagger 文档进行兼容
-      const params: ArgumentsOf<FileInjectedProps['apiReadFileType']>[0] = {
-        moduleCode: apiParams.moduleCodes,
-        typeCodes: apiParams.typeCodes,
+      const params: ArgumentsOf<FileInjectedProps['apiReadFile']>[0] = {
         appId: apiParams.appId,
+        moduleCode: apiParams.moduleCodes?.at(-1) ?? '',
+        typeCode: apiParams.typeCodes?.at(-1) ?? '',
+        businessId: apiParams.businessIds?.at(-1) ?? '',
+        businessKey: apiParams.businessKeys?.at(-1) ?? '',
       }
 
       const apiResult = await api(params)

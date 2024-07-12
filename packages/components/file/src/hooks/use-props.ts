@@ -1,6 +1,7 @@
-import { type ComputedRef, type Ref, type UnwrapRef, computed, unref } from 'vue'
+import { type ComputedRef, type Ref, computed } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
-import { type FileInjectedProps, FileInjectedPropsKeys } from '../typings'
+import { type FileInjectedProps, fileInjectedPropsKeys } from '../typings'
+import { DEFAULT_API_PARAMS } from '../consts'
 
 /**
  * 取出 file 组件 globalconfig 注入的相关数据
@@ -10,57 +11,39 @@ export function useFileGlobalConfig() {
   const appIdGlobalConfig = (useGlobalConfig('appId') as Ref<string>).value
   const fileGlobalConfig = (useGlobalConfig('components') as Ref<Record<string, any>>).value?.TaFile
 
-  return computed<FileInjectedProps>(() => ({
-    appId: appIdGlobalConfig || '',
-    ...(fileGlobalConfig || {}),
-  }))
+  return computed(
+    () =>
+      ({
+        appId: appIdGlobalConfig || '',
+        ...(fileGlobalConfig || {}),
+      } as unknown as FileInjectedProps)
+  )
 }
 
 /**
  * merge props
- * @param props
+ * @param globalConfigProps 全局注入 props
+ * @param props 组件 props
  * @returns
  */
-export function useMergedProps<T, K>(
-  props: ComputedRef<T> | Ref<T> | T,
-  mergedProps: ComputedRef<K> | Ref<K> | K
+export function useMergedProps<T, K extends Record<string, any>>(
+  globalConfigProps: ComputedRef<T>,
+  props: Readonly<K>
 ) {
   return computed<T & K>(() => {
-    return {
-      ...((props as any).value ? (props as any).value : props),
-      ...((mergedProps as any).value ? (mergedProps as any).value : mergedProps),
+    const apiParams = {
+      // 将 apiparams 默认值合并
+      ...DEFAULT_API_PARAMS,
+      ...(props['apiParams'] ?? {}),
     }
-  })
-}
-
-/**
- * 组装子组件需要的 props，方便子组件单独使用
- * @param fileProps
- * @param filePropApiParams
- * @param props
- * @returns
- */
-export function useComponentProps<T, K, V>(
-  fileProps: ComputedRef<T> | Ref<T> | T,
-  filePropApiParams: ComputedRef<K> | Ref<K> | K,
-  props: ComputedRef<V> | Ref<V> | V
-) {
-  return computed<T & K & V>(() => {
-    const componentProps = {} as Record<string, any>
-
-    // 组装 fileInjectedProps
-    for (const key of FileInjectedPropsKeys) {
-      componentProps[key] = ((fileProps as any).value ? (fileProps as any).value : fileProps)[key]
+    const singleUseProps = {
+      ...globalConfigProps.value,
+      ...props,
     }
 
-    // 组装 apiparams
-    componentProps['apiParams'] = (filePropApiParams as any).value
-      ? (filePropApiParams as any).value
-      : filePropApiParams
-
     return {
-      ...componentProps,
-      ...((props as any).value ? (props as any).value : props),
+      ...singleUseProps,
+      apiParams,
     }
   })
 }

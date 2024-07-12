@@ -1,3 +1,4 @@
+export * from './use-component-props'
 export * from './use-context'
 export * from './use-disable'
 export * from './use-loading'

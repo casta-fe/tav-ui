@@ -1,74 +1,46 @@
 <script setup lang="ts">
-import {
-  type ComputedRef,
-  computed,
-  getCurrentInstance,
-  onMounted,
-  useAttrs,
-  useSlots,
-  watch,
-} from 'vue'
-import { Select as ASelect, type SelectProps as ASelectProps, Empty } from 'ant-design-vue'
-import { LoadingOutlined } from '@ant-design/icons-vue'
+import { computed, onMounted, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import { Select as ASelect, Empty } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
-import { createId, createNS } from '../../utils'
+import { type ArgumentsOf } from '../../utils'
+import { useDisable, useFileGlobalConfig, useLoading, useMergedProps } from '../../hooks'
+import { type FileInjectedProps } from '../../typings'
 import {
-  useDisable,
-  useFileContext,
-  useFileGlobalConfig,
-  useLoading,
-  useMergedProps,
-} from '../../hooks'
-import { type ApiParams, type FileInjectedProps, type LabelValueOptions } from '../../typings'
+  DEFAULT_EMPTY_TIP,
+  DEFAULT_FILETYPESELECT_CLASSNAME,
+  DEFAULT_FILETYPESELECT_ID,
+  DEFAULT_TYPE_SELECT_PLACEHOLDER,
+} from '../../consts'
 import { useOptions, useRequest } from './hooks'
-
-// 注意该文件与 types 文件中的 props 类型需要同步更新
-export interface _FileTypeSelectProps {
-  visible?: boolean
-  defaultValue?: string
-  immediate?: boolean
-
-  api?: FileInjectedProps['apiReadFileType']
-  beforeApi?: (...args: any[]) => Promise<any>
-  afterApi?: (...args: any[]) => Promise<any>
-}
-export type FileTypeSelectProps = _FileTypeSelectProps &
-  FileInjectedProps &
-  ApiParams &
-  ASelectProps
-
-const ns = createNS('file')
-const cls = ns.b('type-select')
-const id = createId(cls)
+import {
+  type FileTypeSelectEmits,
+  type FileTypeSelectInstance,
+  type FileTypeSelectProps,
+  fileTypeSelectEmits,
+  fileTypeSelectProps,
+} from './types'
 
 defineOptions({
   name: 'TaFileTypeSelect',
   inheritAttrs: false,
 })
 
-const props = withDefaults(defineProps<FileTypeSelectProps>(), {
-  visible: true,
-  defaultValue: undefined,
-  immediate: true,
-  params: () => ({
-    permissionControl: false,
-  }),
-})
-// const emits = defineEmits<FileTypeSelectEmits>()
-const slots = useSlots()
-const attrs = useAttrs()
-
-// 0. 将全局注入的值、共用的 api params 放入 context
-// 1. 大组件是否存在
-// 2. 大组件存在需要将其默认值继承下来，并读取 context；不存在已自己组件传入的为准给默认值
-
-// global context data => file comp data => file son comp data
+const elRef = ref<FileTypeSelectInstance['elRef']>()
+const ASelectRef = ref<FileTypeSelectInstance['ASelectRef']>()
+const props = defineProps(fileTypeSelectProps)
+const emits = defineEmits(fileTypeSelectEmits)
+// const slots = useSlots()
+// const attrs = useAttrs()
 
 const EmptyImage = Empty.PRESENTED_IMAGE_SIMPLE
 
 // 将 globalconfig 与 filetypeselect props 结合，同名 props 已 filetypeselect props 为主
 const fileGlobalConfig = useFileGlobalConfig()
-const mergedProps = useMergedProps<FileInjectedProps, typeof props>(fileGlobalConfig, props)
+const mergedProps = useMergedProps<FileInjectedProps, FileTypeSelectProps>(fileGlobalConfig, props)
+
+// // Embedded in the form, just use the hook binding to perform form verification
+// const [state] = useRuleFormItem(props, 'value', 'change', emitData)
+const value = ref<FileTypeSelectProps['value']>(props.value)
 
 const { disable, setDisable } = useDisable()
 const { loading, setLoading } = useLoading()
@@ -77,54 +49,138 @@ const {
   error: apiError,
   handleApi,
 } = useRequest({
-  apiParams: computed((prevApiParams: Required<ApiParams>['apiParams']) =>
-    JSON.stringify(prevApiParams) === JSON.stringify(mergedProps.value.apiParams)
-      ? prevApiParams
-      : mergedProps.value.apiParams
-  ),
-  api: computed(() =>
-    mergedProps.value.api
-      ? mergedProps.value.api
-      : mergedProps.value.apiReadFileType
-      ? mergedProps.value.apiReadFileType
-      : undefined
-  ),
-  beforeApi: computed(() => mergedProps.value.beforeApi),
-  afterApi: computed(() => mergedProps.value.afterApi),
+  mergedProps,
   setDisable,
   setLoading,
 })
+// api 相关参数变化重新发起请求
+watch(
+  () => [
+    JSON.stringify(mergedProps.value.apiParams.moduleCodes),
+    // JSON.stringify(mergedProps.value.apiParams.typeCodes),
+  ],
+  (
+    [curApiParamsModuleCodes /*, curApiParamsTypeCodes*/],
+    [preApiParamsModuleCodes /*, preApiParamsTypeCodes*/]
+  ) => {
+    if (
+      curApiParamsModuleCodes !== preApiParamsModuleCodes
+      // || curApiParamsTypeCodes !== preApiParamsTypeCodes
+    ) {
+      beforeHandleApiAction()
+    }
+  }
+)
 
 const options = useOptions({
+  props: mergedProps,
   apiResult,
-  options: computed(() => mergedProps.value.options),
 })
+// options 变化后触发事件
+watch(
+  () => JSON.stringify(options.value),
+  (curOptions, preOptions) => {
+    if (curOptions && curOptions !== preOptions) {
+      emits('optionsChange', options.value, mergedProps.value.fieldNames)
+
+      // 当 options 只有一项时默认选中
+      if (options.value.length === 1) {
+        value.value = options.value[0] as unknown as FileTypeSelectProps['value']
+        emits(
+          'select',
+          ...([
+            options.value[0][mergedProps.value.fieldNames!['value']!],
+            options.value[0],
+            mergedProps.value.fieldNames,
+          ] as any)
+        )
+      }
+    }
+  }
+)
+
+const disabled = computed(() => {
+  if (typeof mergedProps.value.disabled !== 'undefined') {
+    return mergedProps.value.disabled
+  } else {
+    return options.value.length === 0 || disable.value
+  }
+})
+
+const placeholder = computed(() =>
+  options.value.length === 0
+    ? DEFAULT_EMPTY_TIP(tavI18n)
+    : mergedProps.value.placeholder
+    ? mergedProps.value.placeholder
+    : DEFAULT_TYPE_SELECT_PLACEHOLDER(tavI18n)
+)
+
+function handleChange(...args: ArgumentsOf<FileTypeSelectEmits['change']>) {
+  emits('change', ...args)
+}
+
+function handleSelect(...args: ArgumentsOf<FileTypeSelectEmits['select']>) {
+  emits(
+    'select',
+    ...([...args, mergedProps.value.fieldNames] as unknown as ArgumentsOf<
+      FileTypeSelectEmits['select']
+    >)
+  )
+}
+
+function handleDeselect(...args: ArgumentsOf<FileTypeSelectEmits['deselect']>) {
+  emits('deselect', ...args)
+}
+
+function handleDropdownVisibleChange(
+  ...args: ArgumentsOf<FileTypeSelectEmits['dropdownVisibleChange']>
+) {
+  emits('dropdownVisibleChange', ...args)
+}
+
+function beforeHandleApiAction() {
+  // 已传入的 options 为主
+  if (
+    !mergedProps.value.options ||
+    (mergedProps.value.options && mergedProps.value.options.length === 0)
+  ) {
+    handleApi()
+  }
+}
 
 onMounted(() => {
-  mergedProps.value.immediate && handleApi()
+  beforeHandleApiAction()
 })
 
-// 1. 验证 apiparams 变化是否重新请求
-// 2. 思考如何把逻辑抛出去，让用户直接调用
+defineExpose({
+  /** @description html element */
+  elRef,
+  ASelectRef,
+})
 </script>
 
 <template>
   <template v-if="mergedProps.visible">
-    {{ JSON.stringify($props) }}
-    <section :id="id" :class="cls">
-      <ASelect :disabled="disable" :options="options">
-        <template v-for="slotKey in Object.keys(slots)" #[slotKey]="data">
-          <slot :name="slotKey" v-bind="data || {}" />
-        </template>
-        <template v-if="mergedProps.api && loading" #suffixIcon>
-          <span>
-            <LoadingOutlined spin class="mr-1" />
-            {{ tavI18n('Tav.common.loadingText') }}
-          </span>
-        </template>
+    <section :id="DEFAULT_FILETYPESELECT_ID" ref="elRef" :class="DEFAULT_FILETYPESELECT_CLASSNAME">
+      <ASelect
+        ref="ASelectRef"
+        :value="value"
+        :options="options"
+        :field-names="mergedProps.fieldNames"
+        :placeholder="placeholder"
+        :get-popup-container="mergedProps.getPopupContainer"
+        :allow-clear="options.length !== 0"
+        :disabled="disabled"
+        :loading="mergedProps.api && loading"
+        @change="handleChange"
+        @select="handleSelect"
+        @deselect="handleDeselect"
+        @dropdownVisibleChange="handleDropdownVisibleChange"
+      >
         <template v-if="options.length === 0 || apiError" #notFoundContent>
-          <Empty :image="EmptyImage" />
           <span v-if="apiError">{{ apiError }}</span>
+          <br />
+          <Empty :image="EmptyImage" />
         </template>
       </ASelect>
     </section>

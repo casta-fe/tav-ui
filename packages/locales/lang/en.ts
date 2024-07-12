@@ -43,6 +43,7 @@ export default {
     tips: 'Tips',
     greater: 'Greater',
     less: 'Less',
+    httpError: 'Http has some error, please contact system admin',
   },
   countButton: {
     text1: 'Send verification code',
@@ -197,6 +198,8 @@ export default {
       '7': 'Please enter the correct link',
       '8': 'Update successfully!',
       '9': 'Confirm delete?',
+      '10': 'will not upload!',
+      '11': 'Upload failed!',
     },
   },
 }

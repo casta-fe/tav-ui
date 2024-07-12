@@ -1,21 +1,26 @@
-import { type ComputedRef, computed } from 'vue'
+import { type ComputedRef, computed, toRaw } from 'vue'
 import { type FileTypeSelectProps } from '../types'
 
 export function useOptions(_options: {
+  props: ComputedRef<FileTypeSelectProps>
   apiResult: ComputedRef<Record<string, any>[]>
-  options: ComputedRef<FileTypeSelectProps['options']>
 }) {
-  const { apiResult, options } = _options
+  const { props, apiResult } = _options
 
   return computed(() => {
     let result: Record<string, any>[] = []
+    // if (apiResult.value && apiResult.value.length > 0) {
+    //   result = [...result, ...apiResult.value]
+    // }
+    // if (options && options.length > 0) {
+    //   result = [...result, ...options]
+    // }
 
-    if (apiResult.value && apiResult.value.length > 0) {
-      result = [...result, ...apiResult.value]
-    }
-
-    if (options.value && options.value.length > 0) {
-      result = [...result, ...options.value]
+    // 已传入的 options 为准
+    if (props.value.options && props.value.options.length > 0) {
+      result = [...toRaw(props.value.options)]
+    } else {
+      result = [...apiResult.value]
     }
 
     return result

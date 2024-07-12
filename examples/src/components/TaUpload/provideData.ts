@@ -58,9 +58,10 @@ export const taUploadProvideData: Partial<
     ],
   },
   queryFileType: async (params: any) => {
-    console.log('params', params)
+    // console.log('params', params)
 
-    const { data } = await __post('/api/TIANTA-FILE/api/file/queryFileType', params)
+    const { data } = await __post('/api/TIANTA-FILE/sys/api/file/queryFileType', params) // 走接口
+    // const { data } = await __post('/api/TIANTA-FILE/api/file/queryFileType', params) // 走 mock
 
     return Promise.resolve({
       data: data
@@ -83,6 +84,7 @@ export const taUploadProvideData: Partial<
               },
             ],
           }['tg_invest']!,
+      success: true,
     })
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -164,7 +166,8 @@ export const taUploadProvideData: Partial<
   uploadFile: async (payload: FormData): Promise<any> => {
     console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
 
-    const { data } = await __post('/api/TIANTA-FILE/api/file/upload', payload, true)
+    const { data } = await __post('/api/TIANTA-FILE/api/file/upload', payload, true) // 走接口
+    // const { data } = await __post('/api/TIANTA-FILE/api/file/upload', payload, true) // mock
 
     return new Promise((r) =>
       setTimeout(
