@@ -1,19 +1,78 @@
 <script setup lang="ts">
-import { createId, createNS } from '../../utils'
-
-const ns = createNS('file')
-const cls = ns.b('action-upload-link')
-const id = createId(cls)
+import { ref /*useSlots, useAttrs*/ } from 'vue'
+import { TaButton } from '@tav-ui/components/button'
+import { TaIcon } from '@tav-ui/components/icon'
+import { tavI18n } from '@tav-ui/locales'
+import {
+  DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME,
+  DEFAULT_FILEACTIONUPLOADLINK_ID,
+  DEFAULT_UPLOADLINK_TIP,
+} from '../../consts'
+import { useGlobalConfigProps, useMergedProps } from '../../hooks'
+import { type GlobalConfigFileProps } from '../../typings'
+import {
+  type FileActionUploadLinkInstance,
+  type FileActionUploadLinkProps,
+  fileActionUploadLinkEmits,
+  fileActionUploadLinkProps,
+} from './types'
 
 defineOptions({
   name: 'TaFileActionUploadLink',
   inheritAttrs: false,
 })
 
-// const props = defineProps(buttonProps)
-// const emit = defineEmits(buttonEmits)
+const elRef = ref<FileActionUploadLinkInstance['elRef']>()
+const props = defineProps(fileActionUploadLinkProps)
+const emits = defineEmits(fileActionUploadLinkEmits)
+// const slots = useSlots()
+// const attrs = useAttrs()
+
+// 将 globalconfig 与 fileActionUploadLink props 结合，同名 props 已 fileActionUploadLink props 为主
+const globalConfigProps = useGlobalConfigProps()
+const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadLinkProps>(
+  globalConfigProps,
+  props,
+  ['fileActionUploadLink']
+)
+
+defineExpose({
+  elRef,
+})
 </script>
 
 <template>
-  <section :id="id" :class="cls">TaFileActionUploadLink</section>
+  <section
+    :id="DEFAULT_FILEACTIONUPLOADLINK_ID"
+    ref="elRef"
+    :class="DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME"
+  >
+    <TaButton>
+      <!-- <template v-if="loading"> -->
+      <template v-if="false">
+        <span class="ant-btn-loading-icon" style="">
+          <span role="img" aria-label="loading" class="anticon anticon-loading">
+            <svg
+              focusable="false"
+              class="anticon-spin"
+              data-icon="loading"
+              width="1em"
+              height="1em"
+              fill="currentColor"
+              aria-hidden="true"
+              viewBox="0 0 1024 1024"
+            >
+              <path
+                d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"
+              />
+            </svg>
+          </span>
+        </span>
+      </template>
+      <template v-else>
+        <TaIcon :icon="mergedProps.icon" />
+      </template>
+      {{ DEFAULT_UPLOADLINK_TIP(tavI18n) }}
+    </TaButton>
+  </section>
 </template>

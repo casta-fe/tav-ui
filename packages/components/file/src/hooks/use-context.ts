@@ -1,9 +1,10 @@
 import { inject, provide } from 'vue'
+import { type Emitter } from '@tav-ui/utils/mitt'
 
 export const FileContextKey = Symbol('file')
 
 export interface FileContext {
-  [key: string]: any
+  emitter: Emitter
 }
 
 export function createFileContext(context: FileContext) {

@@ -1,6 +1,6 @@
 import { isArray, isObject } from '@tav-ui/utils/is'
-import { type ApiParams, type FileInjectedProps } from '../typings'
-import { type FileType } from '../components/FileActionUpload/types'
+import { type FileActionUploadApiParams } from '../typings'
+import { type FileActionUploadProps, type FileType } from '../components/FileActionUpload/types'
 
 // 文件名是否通过空白字符校验
 export function validateUploadFileEmptyName(name: string) {
@@ -11,12 +11,24 @@ export function validateUploadFileEmptyName(name: string) {
 }
 
 // 文件名是否通过非法字符校验
-export function validateUploadFileName(name: string, nameRegExp: FileInjectedProps['nameRegExp']) {
+export function validateUploadFileName(
+  name: string,
+  nameRegExp: FileActionUploadProps['nameRegExp']
+) {
   return !nameRegExp.test(name) ? true : false
 }
 
+// 文件是否通过类型校验
+export function validateUploadFileExt(name: string, accpet: FileActionUploadProps['accpet']) {
+  const exts = accpet.split(',')
+  return exts.some((ext) => name.endsWith(ext)) ? true : false
+}
+
 // 文件是否通过大小校验
-export function validateUploadFileSize(file: FileType, sizeRange: FileInjectedProps['sizeRange']) {
+export function validateUploadFileSize(
+  file: FileType,
+  sizeRange: FileActionUploadProps['sizeRange']
+) {
   const [minSize, maxSize] = sizeRange
 
   let minSizeValidateResult = true
@@ -44,14 +56,14 @@ export function validateUploadFileSize(file: FileType, sizeRange: FileInjectedPr
 // 文件是否通过最大数量校验
 export function validateUploadFileMaxCount(
   fileCount: number,
-  maxCount: FileInjectedProps['maxCount']
+  maxCount: FileActionUploadProps['maxCount']
 ) {
   return fileCount <= maxCount ? true : false
 }
 
-// 上传时 typecodes 校验
-export function validateUploadFileTypeCodes(typeCodes: ApiParams['typeCodes']) {
-  return typeCodes && typeCodes.length > 0 ? true : false
+// 上传时 typecode 校验
+export function validateUploadFileTypeCode(typeCode: FileActionUploadApiParams['typeCode']) {
+  return typeCode ? true : false
 }
 
 // 校验参数

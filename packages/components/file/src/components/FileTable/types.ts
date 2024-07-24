@@ -1,17 +1,32 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
 import {
   type ITableProInstance,
+  type TableProActionItem,
   type TableProColumn,
   type TableProProps,
   tableProProps,
 } from '@tav-ui/components/table-pro'
 import {
+  type ApiDeleteFileParams,
+  type ApiDownloadFileParams,
+  type ApiDownloadMultiFileParams,
+  type ApiDownloadWaterMarkerFileParams,
   type ApiParams,
-  type FileInjectedProps,
-  type UploadFileListItem,
-  fileInjectedProps,
+  type ApiQueryFileParams,
+  type ApiUpdateFileNameAndLinkParams,
+  type ApiUpdateFileParams,
+  type ApiUpdateFileTypeParams,
+  type ApiUploadFileParams,
+  type FileActionUploadApiResponseRecord,
+  type FileMode,
+  type FileTableApiParams,
+  type GlobalConfigFileProps,
+  globalConfigFileProps,
 } from '../../typings'
-import { DEFAULT_API_PARAMS } from '../../consts'
+import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
+import { type ArgumentsOf } from '../../utils'
+import { type FileActionUploadEmits } from '../FileActionUpload'
+import { type FileTypeSelectEmits } from '../FileTypeSelect'
 
 /**
  * 默认列field
@@ -26,21 +41,25 @@ type DefaultColumnFields =
   | 'action'
 
 export type FileTableColumn = TableProColumn
+export type FileTableAction = TableProActionItem & { field: string }
+
 export const fileTableProps = {
   //:============================== extend props ==============================://
-  ...fileInjectedProps,
+  ...globalConfigFileProps['fileTable'],
   apiParams: {
-    type: Object as PropType<ApiParams>,
-    default: () => ({ ...DEFAULT_API_PARAMS }),
+    type: Object as PropType<FileTableApiParams>,
+    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
   },
+  mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
-  ...tableProProps,
   dataSource: {
-    type: Array as PropType<UploadFileListItem[]>,
-    default: () => [],
+    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
   },
-  loading: { type: Boolean },
-  readonly: { type: Boolean },
+  loading: { type: Boolean, default: false },
+  checkboxConfig: {
+    type: Object as PropType<TableProProps['checkboxConfig']>,
+    default: () => ({ enabled: false }),
+  },
   pagerConfig: {
     type: Object as PropType<TableProProps['pagerConfig']>,
     default: () => ({ enabled: false }),
@@ -50,24 +69,101 @@ export const fileTableProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
-  // immediate: { type: Boolean, default: true },
-  api: { type: Function as PropType<FileInjectedProps['apiReadFile']> },
-  beforeApi: { type: Function as PropType<(...args: any[]) => Promise<any>> },
-  afterApi: { type: Function as PropType<(...args: any[]) => Promise<any>> },
-  apiDownload: { type: Function as PropType<FileInjectedProps['apiDownload']> },
-  beforeApiDownload: { type: Function as PropType<(...args: any[]) => Promise<any>> },
-  afterApiDownload: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
+  columns: {
+    type: Function as PropType<(...args: [FileTableColumn[]]) => FileTableColumn[]>,
+  },
+  actions: {
+    type: Function as PropType<
+      (...args: [FileTableAction[], { row: Record<string, any> }]) => FileTableAction[]
+    >,
+  },
+  // 控制行编辑，只能编辑 filename 以及 hyperlinkaddress
+  enabledRowEdit: { type: Boolean, default: false },
+  // 控制 version 与操作列更新按钮有无，除了这个标识还需要根据返回数据中的字段 hyperlink 与 auto 来判断
+  enabledVersion: { type: Boolean, default: true },
+  // 控制操作列查看按钮有无
+  enabledView: { type: Boolean, default: true },
+  api: {
+    type: Function as PropType<(apiParams: any) => Promise<any>>,
+  },
+  beforeApi: {
+    type: Function as PropType<(apiParams: any) => Promise<any>>,
+  },
+  afterApi: {
+    type: Function as PropType<(apiParams: any) => Promise<any>>,
+  },
+  /** apiUploadFile 已从 ...globalConfigFileProps['filetable'] 取到 */
+  beforeApiUploadFile: {
+    type: Function as PropType<(apiParams: Partial<ApiUploadFileParams>) => Promise<any>>,
+  },
+  afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  /** apiQueryFile 已从 ...globalConfigFileProps['filetable'] 取到 */
+  beforeApiQueryFile: {
+    type: Function as PropType<(apiParams: Partial<ApiQueryFileParams>) => Promise<any>>,
+  },
+  afterApiQueryFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiQueryFileList: {
+    type: Function as PropType<(apiParams: Partial<ApiQueryFileParams>) => Promise<any>>,
+  },
+  afterApiQueryFileList: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiUpdateFile: {
+    type: Function as PropType<(apiParams: Partial<ApiUpdateFileParams>) => Promise<any>>,
+  },
+  afterApiUpdateFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiUpdateFileType: {
+    type: Function as PropType<(apiParams: Partial<ApiUpdateFileTypeParams>) => Promise<any>>,
+  },
+  afterApiUpdateFileType: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiUpdateFileNameAndLink: {
+    type: Function as PropType<
+      (apiParams: Partial<ApiUpdateFileNameAndLinkParams>) => Promise<any>
+    >,
+  },
+  afterApiUpdateFileNameAndLink: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiDeleteFile: {
+    type: Function as PropType<(apiParams: Partial<ApiDeleteFileParams>) => Promise<any>>,
+  },
+  afterApiDeleteFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiDownloadFile: {
+    type: Function as PropType<(apiParams: Partial<ApiDownloadFileParams>) => Promise<any>>,
+  },
+  afterApiDownloadFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiDownloadWaterMarkerFile: {
+    type: Function as PropType<
+      (apiParams: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
+    >,
+  },
+  afterApiDownloadWaterMarkerFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  beforeApiDownloadMultiFile: {
+    type: Function as PropType<(apiParams: Partial<ApiDownloadMultiFileParams>) => Promise<any>>,
+  },
+  afterApiDownloadMultiFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
 }
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
 
 export const fileTableEmits = {
-  click: (evt: MouseEvent) => evt instanceof MouseEvent,
+  change: (
+    ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
+  ) => args instanceof Object,
+  fileActualIdsChange: (
+    ...args: [
+      (
+        | {
+            actualId: string
+            moduleCode: string | undefined
+            versionList: FileActionUploadApiResponseRecord[]
+          }
+        | string
+      )[]
+    ]
+  ) => args instanceof Object,
 }
 
 export type FileTableEmits = typeof fileTableEmits
 
 export interface FileTableInstance {
   elRef: Ref<HTMLDivElement | undefined>
-  TableProRef: Ref<ITableProInstance | undefined>
+  tableProRef: Ref<ITableProInstance | undefined>
 }

@@ -1,94 +1,188 @@
 <script setup lang="ts">
-import { ref, toRaw, /*useAttrs,*/ useSlots } from 'vue'
+import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
-import { type ArgumentsOf } from './utils'
-import { useComponentProps, useFileGlobalConfig, useMergedProps } from './hooks'
-// import { type FileEmits, type FileProps } from './typings/types'
-import {
-  type FileTypeSelectEmits,
-  type FileTypeSelectProps,
-  TaFileTypeSelect,
-} from './components/FileTypeSelect'
-import {
-  type FileActionUploadEmits,
-  type FileActionUploadProps,
-  TaFileActionUpload,
-} from './components/FileActionUpload'
-import { type FileTableProps, TaFileTable } from './components/FileTable'
-import { type FileInjectedProps, type FileInstance, type FileProps, fileProps } from './typings'
+import { type ITableProInstance } from '@tav-ui/components/table-pro'
+import { type FileTypeSelectEmits, TaFileTypeSelect } from './components/FileTypeSelect'
+import { type FileActionUploadEmits, TaFileActionUpload } from './components/FileActionUpload'
+import { TaFileActionUploadLink } from './components/FileActionUploadLink'
+import { type FileTableEmits, type FileTableProps, TaFileTable } from './components/FileTable'
+import { type FileInstance, type GlobalConfigFileProps, fileEmits, fileProps } from './typings'
 import {
   DEFAULT_FILEACTIONS_CLASSNAME,
   DEFAULT_FILEACTIONS_ID,
   DEFAULT_FILE_CLASSNAME,
   DEFAULT_FILE_ID,
 } from './consts'
+import { type ArgumentsOf } from './utils'
 
 defineOptions({
   name: 'TaFile',
   inheritAttrs: false,
 })
 
-const elRef = ref<FileInstance['elRef']>()
-const FileActionsElRef = ref<FileInstance['FileActionsElRef']>()
+const elRef = ref<UnwrapRef<FileInstance['elRef']>>()
+const fileTableRef = ref<UnwrapRef<FileInstance['fileTableRef']>>()
 const props = defineProps(fileProps)
-// const emits = defineEmits<FileEmits>()
+const emits = defineEmits(fileEmits)
 const slots = useSlots()
 // const attrs = useAttrs()
 
-// 将 globalconfig 与 file props 结合，同名 props 已 file props 为主
-const fileGlobalConfig = useFileGlobalConfig()
-const mergedProps = useMergedProps<FileInjectedProps, FileProps>(fileGlobalConfig, props)
+// 对 file 组件的 apiparams 进行 computed 方便属性下发
+const _fileApiParams = ref(props.apiParams)
+const fileApiParams = computed({
+  get() {
+    return _fileApiParams
+  },
+  set(curFileApiParams) {
+    _fileApiParams.value = { ...curFileApiParams.value }
+  },
+})
 
-// 组装 FileInjectedProps、ApiParams、子组件需要的 props 方便子组件单独使用
-const { componentProps: fileTypeSelectProps, setComponentProps: setFileTypeSelectProps } =
-  useComponentProps<FileTypeSelectProps>('fileTypeSelect', mergedProps)
-const { componentProps: fileActionUploadProps, setComponentProps: setFileActionUploadProps } =
-  useComponentProps<FileActionUploadProps>('fileActionUpload', mergedProps)
-const { componentProps: fileTableProps, setComponentProps: setFileTableProps } =
-  useComponentProps<FileTableProps>('fileTable', mergedProps)
+const fileTypeSelectProps = computed(() => ({
+  ...props.fileTypeSelect,
+  mode: props.mode,
+  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  ...{
+    apiParams: props.fileTypeSelect?.apiParams
+      ? {}
+      : {
+          appId: fileApiParams.value.value.appId,
+          moduleCode: fileApiParams.value.value.moduleCode,
+          typeCodes: fileApiParams.value.value.typeCodes,
+          permissionControl: fileApiParams.value.value.permissionControl,
+        },
+  },
+}))
 
-function fileTypeSelectHandleSelect(...args: ArgumentsOf<FileTypeSelectEmits['select']>) {
-  const [typeCode, _option, _fieldNames] = args
+const fileActionUploadProps = computed(() => ({
+  ...props.fileActionUpload,
+  mode: props.mode,
+  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  ...{
+    apiParams: props.fileActionUpload?.apiParams
+      ? {}
+      : {
+          appId: fileApiParams.value.value.appId,
+          moduleCode: fileApiParams.value.value.moduleCode,
+          typeCode: fileApiParams.value.value.typeCode,
+          businessId: fileApiParams.value.value.businessId,
+          businessKey: fileApiParams.value.value.businessKey,
+          businessParamsJson: fileApiParams.value.value.businessParamsJson,
+          fileActualId: fileApiParams.value.value.fileActualId,
+          instantUpdate: fileApiParams.value.value.instantUpdate,
+        },
+  },
+}))
 
-  // 利用 props 更新 typecode
-  setFileActionUploadProps({
-    ...fileActionUploadProps.value,
-    apiParams: {
-      ...fileActionUploadProps.value.apiParams,
-      typeCodes: [`${typeCode}`],
-    },
-  })
+const fileActionUploadLinkProps = computed(() => ({
+  // ...props.fileActionUploadLink,
+  mode: props.mode,
+  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  ...{
+    apiParams: props.fileActionUpload?.apiParams
+      ? {}
+      : {
+          appId: fileApiParams.value.value.appId,
+          moduleCode: fileApiParams.value.value.moduleCode,
+          typeCode: fileApiParams.value.value.typeCode,
+          businessId: fileApiParams.value.value.businessId,
+          businessKey: fileApiParams.value.value.businessKey,
+          businessParamsJson: fileApiParams.value.value.businessParamsJson,
+          fileActualId: fileApiParams.value.value.fileActualId,
+          instantUpdate: fileApiParams.value.value.instantUpdate,
+        },
+  },
+}))
+
+const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['fileTable']>(
+  props.fileTable ?? ({} as any)
+)
+const _fileTableProps = computed({
+  get() {
+    return __fileTableProps
+  },
+  set(curFileTableProps) {
+    __fileTableProps.value = { ...curFileTableProps.value }
+  },
+})
+const fileTableProps = computed(() => ({
+  ..._fileTableProps.value.value,
+  mode: props.mode,
+  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  ...{
+    apiParams: _fileTableProps.value.value?.apiParams
+      ? {}
+      : {
+          appId: fileApiParams.value.value.appId,
+          moduleCode: fileApiParams.value.value.moduleCode,
+          typeCode: fileApiParams.value.value.typeCode,
+          typeCodes: fileApiParams.value.value.typeCodes,
+          permissionControl: fileApiParams.value.value.permissionControl,
+          businessId: fileApiParams.value.value.businessId,
+          businessIds: fileApiParams.value.value.businessIds,
+          businessKey: fileApiParams.value.value.businessKey,
+          businessCheck: fileApiParams.value.value.businessCheck,
+          fileActualId: fileApiParams.value.value.fileActualId,
+          fileActualIds: fileApiParams.value.value.fileActualIds,
+          id: fileApiParams.value.value.id,
+          ids: fileApiParams.value.value.ids,
+          searchValue: fileApiParams.value.value.searchValue,
+          startTime: fileApiParams.value.value.startTime,
+          endTime: fileApiParams.value.value.endTime,
+        },
+  },
+}))
+
+function handleFileTypeSelectChange(...args: any) {
+  const data = args as unknown as ArgumentsOf<FileTypeSelectEmits['select']>
+  const [typeCode, option] = data
+  fileApiParams.value.value = {
+    ..._fileApiParams.value,
+    typeCode: typeCode === undefined && option === undefined ? '' : `${typeCode}`,
+  }
 }
 
-function fileActionUploadHandleUploadFileListChange(
-  ...args: ArgumentsOf<FileActionUploadEmits['uploadFileListChange']>
-) {
-  const [uploadFileList] = args
-
-  // 利用 props 更新 table data
-  setFileTableProps({
-    ...fileTableProps.value,
-    dataSource: [...toRaw(uploadFileList)],
-  })
+function handleFileActionUploadChange(...args: any) {
+  const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
+  const fileTableTableProInstance = (fileTableRef.value?.tableProRef as any)?.instance
+  const { fullData } = (fileTableTableProInstance as ITableProInstance['instance']).getTableData()
+  _fileTableProps.value.value = {
+    ..._fileTableProps.value.value,
+    dataSource: [...files, ...JSON.parse(JSON.stringify(fullData))],
+  }
 }
+
+function handleFileTableChange(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['change']>
+  emits('change', ..._args)
+}
+
+function handleFileTableFileActualIdsChange(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['fileActualIdsChange']>
+  emits('update:fileActualIds', ..._args)
+}
+
+defineExpose({
+  elRef,
+})
 </script>
 
 <template>
   <section :id="DEFAULT_FILE_ID" ref="elRef" :class="DEFAULT_FILE_CLASSNAME">
-    <section v-if="mergedProps.headerVisible" :class="`${DEFAULT_FILE_CLASSNAME}-header`">
+    <section v-if="props.headerVisible" :class="`${DEFAULT_FILE_CLASSNAME}-header`">
       <section :class="`${DEFAULT_FILE_CLASSNAME}-title-wrapper`">
         <template v-if="slots.FileTitle">
           <slot name="FileTitle" />
         </template>
         <template v-else>
-          <div v-if="mergedProps.titleVisible" :class="`${DEFAULT_FILE_CLASSNAME}-title`">
-            {{ mergedProps.title }}
+          <div v-if="props.titleVisible" :class="`${DEFAULT_FILE_CLASSNAME}-title`">
+            {{ props.title }}
           </div>
         </template>
       </section>
 
       <section
-        v-if="mergedProps.headerActionsVisible"
+        v-if="props.headerActionsVisible && props.mode !== 'read'"
         :class="`${DEFAULT_FILE_CLASSNAME}-header-actions`"
       >
         <section :class="`${DEFAULT_FILE_CLASSNAME}-type-select-wrapper`">
@@ -96,7 +190,7 @@ function fileActionUploadHandleUploadFileListChange(
             <slot name="FileTypeSelect" v-bind="fileTypeSelectProps" />
           </template>
           <template v-else>
-            <TaFileTypeSelect v-bind="fileTypeSelectProps" @select="fileTypeSelectHandleSelect" />
+            <TaFileTypeSelect v-bind="fileTypeSelectProps" @change="handleFileTypeSelectChange" />
           </template>
         </section>
         <section :class="`${DEFAULT_FILE_CLASSNAME}-actions-wrapper`">
@@ -104,12 +198,8 @@ function fileActionUploadHandleUploadFileListChange(
             <slot name="FileActions" />
           </template>
           <template v-else>
-            <template v-if="mergedProps.fileActionsVisible">
-              <section
-                :id="DEFAULT_FILEACTIONS_ID"
-                ref="FileActionsElRef"
-                :class="DEFAULT_FILEACTIONS_CLASSNAME"
-              >
+            <template v-if="props.fileActionsVisible">
+              <section :id="DEFAULT_FILEACTIONS_ID" :class="DEFAULT_FILEACTIONS_CLASSNAME">
                 <AButtonGroup>
                   <template v-if="slots['FileActionPrefix']">
                     <slot name="FileActionPrefix" />
@@ -121,7 +211,7 @@ function fileActionUploadHandleUploadFileListChange(
                   <template v-else>
                     <TaFileActionUpload
                       v-bind="fileActionUploadProps"
-                      @uploadFileListChange="fileActionUploadHandleUploadFileListChange"
+                      @uploaded-change="handleFileActionUploadChange"
                     />
                   </template>
 
@@ -129,13 +219,13 @@ function fileActionUploadHandleUploadFileListChange(
                     <slot name="FileActionMiddle" />
                   </template>
 
-                  <!-- <template v-if="slots['FileActionUploadLink']">
-                    <slot name="FileActionUploadLink"></slot>
+                  <template v-if="slots['FileActionUploadLink']">
+                    <slot name="FileActionUploadLink" v-bind="fileActionUploadLinkProps" />
                   </template>
                   <template v-else>
-                    <TaFileActionUploadLink />
-                    <TaFileActionUploadLinkForm />
-                  </template> -->
+                    <TaFileActionUploadLink v-bind="fileActionUploadLinkProps" />
+                    <!-- <TaFileActionUploadLinkForm /> -->
+                  </template>
 
                   <template v-if="slots['FileActionSuffix']">
                     <slot name="FileActionSuffix" />
@@ -154,7 +244,12 @@ function fileActionUploadHandleUploadFileListChange(
           <slot name="FileTable" v-bind="fileTableProps" />
         </template>
         <template v-else>
-          <TaFileTable v-bind="fileTableProps" />
+          <TaFileTable
+            ref="fileTableRef"
+            v-bind="fileTableProps"
+            @change="handleFileTableChange"
+            @file-actual-ids-change="handleFileTableFileActualIdsChange"
+          />
         </template>
       </section>
     </section>

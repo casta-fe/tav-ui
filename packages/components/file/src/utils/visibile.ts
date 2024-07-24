@@ -1,0 +1,59 @@
+import { type FileMode } from '../typings'
+
+export function isReadMode(mode: FileMode) {
+  return mode === 'read'
+}
+
+export function isHyperlinkRow(rowHyperlink?: number) {
+  return rowHyperlink === 1
+}
+
+export function isAutoRow(rowAuto?: number) {
+  return rowAuto === 1
+}
+
+/** 是否有下载水印权限，后端判断通过该字段体现 */
+export function isWatermarkFileDownloadRow(rowWatermarkFileDownload?: number) {
+  return !!rowWatermarkFileDownload
+}
+
+/** 是否有下载水印权限，后端判断通过该字段体现 */
+export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
+  return !!rowSourceFileDownload
+}
+
+export function isVersionColVisible(
+  enabledVersion: boolean,
+  rowHyperlink?: number,
+  rowAuto?: number
+) {
+  return enabledVersion && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
+}
+
+export function isViewBtnVisible(rowHyperlink: number) {
+  return !isHyperlinkRow(rowHyperlink)
+}
+
+export function isUpdateBtnVisible(
+  mode: FileMode,
+  enabledVersion: boolean,
+  rowHyperlink: number,
+  rowAuto: number
+) {
+  return !isReadMode(mode) && isVersionColVisible(enabledVersion, rowHyperlink, rowAuto)
+}
+
+export function isDownloadWatermarkBtnVisible(
+  rowHyperlink: number,
+  rowWatermarkFileDownload: number
+) {
+  return !isHyperlinkRow(rowHyperlink) && isWatermarkFileDownloadRow(rowWatermarkFileDownload)
+}
+
+export function isDownloadBtnVisible(rowHyperlink: number, rowSourceFileDownload: number) {
+  return !isHyperlinkRow(rowHyperlink) && isSourceFileDownloadRow(rowSourceFileDownload)
+}
+
+export function isDeleteBtnVisible(mode: FileMode) {
+  return !isReadMode(mode)
+}

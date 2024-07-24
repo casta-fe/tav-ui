@@ -1,3 +1,4 @@
+import { type FileMode } from './typings/types'
 import { type ApiParams } from './typings'
 import { createId, createNS } from './utils'
 
@@ -7,6 +8,17 @@ export const DEFAULT_DELY_TIME = 80
 export const DEFAULT_LOADING_TIP = (i18n: any) => i18n('Tav.common.loadingText')
 export const DEFAULT_TYPE_SELECT_PLACEHOLDER = (i18n: any) => i18n('Tav.file.message.5')
 export const DEFAULT_UPLOAD_TIP = (i18n: any) => i18n('Tav.file.upload.1')
+export const DEFAULT_UPLOADLINK_TIP = (i18n: any) => i18n('Tav.file.upload.3')
+
+export const DEFAULT_PROPS_COMPONENT_NAMES = [
+  'fileActionUpload',
+  'fileActionUploadLink',
+  'fileActionUploadLinkForm',
+  'fileTable',
+  'fileTypeSelect',
+  'fileVersion',
+  'fileView',
+]
 
 const ns = createNS('file')
 export const DEFAULT_FILE_CLASSNAME = ns.b()
@@ -29,9 +41,25 @@ export const DEFAULT_FILEVERSION_CLASSNAME = ns.b('version')
 export const DEFAULT_FILEVERSION_ID = createId(DEFAULT_FILEVERSION_CLASSNAME)
 export const DEFAULT_FILEVIEW_CLASSNAME = ns.b('view')
 export const DEFAULT_FILEVIEW_ID = createId(DEFAULT_FILEVIEW_CLASSNAME)
+export const DEFAULT_ROWEDITOR_CLASSNAME = ns.b('table-row-editor')
+export const DEFAULT_ROWEDITOR_ID = createId(DEFAULT_ROWEDITOR_CLASSNAME)
 
-/** 文件类型控制，.tar,.tar.gz,.tgz,.rar,zip,.7z,.bpm,.txt 删除非必要类型，目前只支持 wps 支持的类型与图片类型 */
-export const DEFAULT_FILE_ACCPET = '.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.gif,.jpeg,.jpg,.png,'
+export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
+export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']
+/** 支持的文件类型，目前只支持 wps 支持的类型与图片类型 */
+export const DEFAULT_FILE_ACCPET_TYPES = [
+  ...DEFAULT_FILE_OFFICE_TYPES, // office
+  ...DEFAULT_FILE_IMAGE_TYPES, // image
+]
+/** 不支持的文件类型 */
+export const DEFAULT_FILE_IGNORE_TYPES = [
+  ...['zip', 'tar', '7z'], // previous ignoreList
+  ...['mp3', 'mp3', 'wav', 'rm', 'rpm'], // audio
+  ...['mpeg', 'mpg', 'avi', 'movie'], // video
+  ...['txt'], // text
+]
+/** 文件类型控制 */
+export const DEFAULT_FILE_ACCPET = DEFAULT_FILE_ACCPET_TYPES.map((t) => `.${t}`).join(',')
 
 /** 文件是否支持多选 */
 export const DEFAULT_MULTIPLE = true
@@ -46,10 +74,17 @@ export const DEFAULT_FILE_SIZE_RANGE: (number | null)[] = [null, 1024 * 1024 * 1
 export const DEFAULT_FILE_NAME_REGEXP = new RegExp(`[\\\\/:*?"<>|]`, 'g')
 
 /** apiparams 默认值 */
-export const DEFAULT_API_PARAMS: ApiParams = {
-  moduleCodes: [],
-  typeCodes: [],
-  businessIds: [],
-  businessKeys: [],
+export const DEFAULT_FILE_API_PARAMS: ApiParams = {
+  // moduleCode: '',
+  // typeCodes: [],
+  // businessKey: '',
+  // businessIds: [],
   permissionControl: false,
 }
+
+/** mode 默认值 */
+export const DEFAULT_FILE_MODE: FileMode = 'read'
+
+/** 链接地址校验 */
+export const DEFAULT_FILE_LINK_REGEXP_STRING =
+  /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/

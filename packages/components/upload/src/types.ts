@@ -364,6 +364,7 @@ type ProvideDataType = {
       sort?: string
     }
   }) => Promise<Result<{ result: FileItemType[] }>>
+  queryFileList?: (params: any) => any
   // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
   // 更新文件
@@ -376,6 +377,7 @@ type ProvideDataType = {
   }) => Promise<Result<FileItemType>>
   // 文件下载方法
   download?: (file: FileItemType, ...args: any[]) => void
+  downloadWaterMarker?: (file: FileItemType, ...args: any[]) => void
   updateFileNameAndAddress?: (
     file: Pick<FileItemType, 'id' | 'name' | 'address'>,
     ...args: any[]

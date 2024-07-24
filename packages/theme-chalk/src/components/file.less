@@ -3,22 +3,217 @@
 @component-name: ~'@{namespace}-file';
 
 .@{namespace} {
-  &-file {}
+  &-file {
+    &-header {
+      &-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+    }
+    &-title {
+      &-wrapper {
+        margin-bottom: 8px;
+      }
+    }
+  }
   &-file-type-select {
     .ant-select {
       width: 200px;
     }
   }
-  &-file-actions {}
+  &-file-actions {
+  }
   &-file-action-upload {
     .ant-btn > .ant-btn-loading-icon .anticon svg {
       font-size: 16px;
     }
   }
-  &-file-action-upload-link {}
-  &-file-action-upload-link-form {}
-  &-file-table {}
-  &-file-version {}
-  &-file-view {}
-}
+  &-file-action-upload-link {
+  }
+  &-file-action-upload-link-form {
+  }
+  &-file-table {
+    &-wrapper {
+      .ta-file-action-upload {
+        position: absolute;
+        overflow: hidden;
+        border: 0;
+        width: 0;
+        height: 0;
+      }
+    }
+  }
+  &-file-version {
+  }
+  &-file-view {
+    &-modal {
+      z-index: 100000 !important;
 
+      .ant-modal {
+        top: 0;
+        padding: 0;
+        margin: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+
+        &-content {
+          height: 100vh;
+          border-radius: 0;
+          display: flex;
+          flex-direction: column;
+
+          .ant-modal-close {
+            display: none;
+          }
+
+          .ant-modal-header {
+            padding-left: 8px;
+            padding-right: 8px;
+            border-radius: 0;
+            border-bottom: none;
+
+            .ant-modal-title {
+              height: 44px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              color: #fff;
+              font-size: 14px;
+              font-weight: 400;
+
+              .line {
+                border-right: 1px solid #dee0e3;
+                margin-left: 8px;
+                margin-right: 16px;
+                height: 36px;
+              }
+            }
+          }
+
+          .ant-modal-body {
+            border-top: 1px solid #dee0e3;
+            flex: 1;
+            max-height: 100%;
+            overflow: hidden;
+
+            .scroll-container {
+              padding: 0;
+            }
+
+            .scrollbar__view {
+              width: 100%;
+              height: 100%;
+            }
+
+            .file-view-content {
+              position: relative;
+              background: #fff;
+              box-sizing: border-box;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: calc(100% - 64px);
+
+              img {
+                max-width: 80%;
+                max-height: 80%;
+              }
+
+              .ant-image-preview-mask {
+                display: none;
+              }
+
+              .ant-image-preview-wrap {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+              }
+            }
+
+            .ant-spin-container {
+              width: 100%;
+              height: 100%;
+            }
+
+            iframe {
+              border: none;
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+      }
+
+      &.hide-modal-header {
+        .ant-modal-header {
+          height: 0;
+          padding: 0;
+        }
+        .file-view-close-btn {
+          position: absolute;
+          top: 16px;
+          left: 8px;
+          z-index: 1;
+        }
+        .file-view-content {
+          height: 100vh;
+        }
+      }
+
+      .file-view-close-btn {
+        max-width: 90px;
+        display: flex;
+        align-items: center;
+        color: #525252;
+
+        .anticon-close {
+          font-size: 16px;
+        }
+      }
+
+      .file-view-title {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        max-width: calc(100% - 100px);
+        max-height: 40px;
+
+        svg {
+          font-size: 32px;
+        }
+      }
+
+      .file-view-title-content {
+        flex: 1;
+        margin-left: 12px;
+
+        .main {
+          font-size: 16px !important;
+          color: #525252;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-align: left;
+          white-space: nowrap;
+          margin-right: 8px;
+        }
+
+        .other {
+          font-size: 12px !important;
+          color: #a3a3a3;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-align: left;
+          white-space: nowrap;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}

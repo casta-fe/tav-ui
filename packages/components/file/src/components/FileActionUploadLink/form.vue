@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { createId, createNS } from '../../../../utils'
+// import { createId, createNS } from '../../../../utils'
 
-const ns = createNS('file')
-const cls = ns.b('action-upload-link-form')
-const id = createId(cls)
+// const ns = createNS('file')
+// const cls = ns.b('action-upload-link-form')
+// const id = createId(cls)
 
 defineOptions({
   name: 'TaFileActionUploadLinkForm',
@@ -15,5 +15,5 @@ defineOptions({
 </script>
 
 <template>
-  <section :id="id" :class="cls">TaFileActionUploadLinkForm</section>
+  <section>TaFileActionUploadLinkForm</section>
 </template>

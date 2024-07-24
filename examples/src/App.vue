@@ -42,6 +42,32 @@ export default defineComponent({
       permissions: {},
       components: {
         TaUpload: taUploadProvideData,
+        TaFile: {
+          fileTypeSelect: {
+            apiQueryFileType: taUploadProvideData.queryFileType,
+          },
+          fileActionUpload: {
+            apiUploadFile: taUploadProvideData.uploadFile,
+          },
+          fileTable: {
+            apiQueryFile: taUploadProvideData.queryFile,
+            apiQueryFileList: taUploadProvideData.queryFileList,
+            apiUploadFile: taUploadProvideData.uploadFile,
+            apiUpdateFile: taUploadProvideData.updateFile,
+            apiDeleteFile: taUploadProvideData.removeFile,
+            apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
+            apiDownloadFile: taUploadProvideData.download,
+            apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+          },
+          fileVersion: {
+            apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+            apiDownloadFile: taUploadProvideData.download,
+            apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+          },
+          fileView: {
+            apiViewFile: previewWPSFile,
+          },
+        } as any,
         TaMemberSelect: {
           orgApi,
           allUserList: allUsers.data.map((v) => {
@@ -66,8 +92,12 @@ export default defineComponent({
           apiUrl: 'xxx',
         },
       }
-      console.log(state)
-    }, 1000)
+      // state.components.TaFile.fileActionUpload = {
+      //   ...state.components.TaFile.fileActionUpload,
+      //   accpet: '*',
+      // }
+      // console.log(state)
+    }, 3000)
 
     onMounted(() => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })

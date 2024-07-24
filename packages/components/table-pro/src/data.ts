@@ -115,7 +115,7 @@ function getCookie(objName: string) {
 //     address: 'ShenzhenShenzhenShenzhenShenzhen',
 //   },
 // ]
-const ai = '10002'
+const ai = '10001'
 let at = ''
 let rd = ''
 const Encryptor = new JSEncrypt()
@@ -233,6 +233,7 @@ export async function __post(url = '', data: any = {}, isFormData = false) {
 
   if (isFormData) {
     Reflect.deleteProperty(options.headers, 'Content-Type')
+    // Reflect.set(options.headers, 'Content-Type', 'multipart/form-data;charset=UTF-8')
     options.body = data
   }
 
@@ -327,6 +328,33 @@ export async function API__CENTER_COMPANY_LIST(
 export async function API__INVEST_COMPANY_LIST(
   data,
   url = '/api/STARLIGHT-INVEST-WEB/company/information/listPager'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+// 文件更新
+export async function API__FILE_UPDATE(data: any, url = '/api/TIANTA-FILE/api/file/updateFile') {
+  const { instantUpdate, fileActualId } = data
+  // eslint-disable-next-line no-return-await
+  return await __post(
+    `${url}?fileActualId=${fileActualId}&instantUpdate=${instantUpdate}`,
+    data.formData,
+    true
+  )
+}
+
+// 文件删除
+export async function API__FILE_DELETE(data: any, url = '/api/TIANTA-FILE/api/file/deleteFile') {
+  const { actualId } = data
+  // eslint-disable-next-line no-return-await
+  return await __post(`${url}/${actualId}`)
+}
+
+// 文件更新 name & link
+export async function API__FILE_UPDATENAMEORLINK(
+  data: any,
+  url = '/api/TIANTA-FILE/api/file/updateFileNameAndAddress'
 ) {
   // eslint-disable-next-line no-return-await
   return await __post(url, data)

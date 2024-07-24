@@ -187,6 +187,7 @@ export default {
       '3': 'Upload hyperlink',
       '4': 'Too large',
       '5': 'File name contains illegal char: ',
+      '6': 'Not support file type',
     },
     message: {
       '1': 'The preview of this format is temporarily not supported.',
@@ -200,6 +201,10 @@ export default {
       '9': 'Confirm delete?',
       '10': 'will not upload!',
       '11': 'Upload failed!',
+    },
+    download: {
+      '1': 'Please select file which you want to download',
+      '2': 'Multiple download',
     },
   },
 }

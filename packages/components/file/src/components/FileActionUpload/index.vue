@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import { getCurrentInstance, type UnwrapRef, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -8,19 +8,26 @@ import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import {
   type ArgumentsOf,
   validateUploadFileEmptyName,
+  validateUploadFileExt,
   validateUploadFileMaxCount,
   validateUploadFileName,
   validateUploadFileSize,
-  validateUploadFileTypeCodes,
+  validateUploadFileTypeCode,
 } from '../../utils'
-import { useDisable, useFileGlobalConfig, useLoading, useMergedProps } from '../../hooks'
-import { type FileInjectedProps } from '../../typings'
+import {
+  useDisable,
+  useGlobalConfigProps,
+  useLoading,
+  useMergedProps,
+  useRequest,
+} from '../../hooks'
+import { type GlobalConfigFileProps } from '../../typings'
 import {
   DEFAULT_FILEACTIONUPLOAD_CLASSNAME,
   DEFAULT_FILEACTIONUPLOAD_ID,
   DEFAULT_UPLOAD_TIP,
 } from '../../consts'
-import { useFileList, useRequest } from './hooks'
+import { useFileList, useMode } from './hooks'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
@@ -37,19 +44,26 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<FileActionUploadInstance['elRef']>()
-const AUploadRef = ref<FileActionUploadInstance['AUploadRef']>()
+const elRef = ref<UnwrapRef<FileActionUploadInstance['elRef']>>()
 const props = defineProps(fileActionUploadProps)
 const emits = defineEmits(fileActionUploadEmits)
 // const slots = useSlots()
 // const attrs = useAttrs()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
-const fileGlobalConfig = useFileGlobalConfig()
-const mergedProps = useMergedProps<FileInjectedProps, FileActionUploadProps>(
-  fileGlobalConfig,
-  props
+const globalConfigProps = useGlobalConfigProps()
+const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>(
+  globalConfigProps,
+  props,
+  ['fileActionUpload']
 )
+
+const instance = getCurrentInstance()
+
+// // Embedded in the form, just use the hook binding to perform form verification
+// const [state] = useRuleFormItem(props, 'value', 'change', emitData)
+// const fileList = ref<Exclude<FileActionUploadProps['fileList'], undefined>>(props.fileList || [])
+const { fileList, setFileList } = useFileList()
 
 /** 利用改变量控制 AUpload 行为，将多次上传合并 */
 const canUploadUnifiedFileList = ref(false)
@@ -61,42 +75,35 @@ function resetFileList() {
   canUploadUnifiedFileList.value = false
 }
 
-// // Embedded in the form, just use the hook binding to perform form verification
-// const [state] = useRuleFormItem(props, 'value', 'change', emitData)
-// const fileList = ref<Exclude<FileActionUploadProps['fileList'], undefined>>(props.fileList || [])
-const { fileList, setFileList } = useFileList()
-// fileList 变化后触发事件
-watch(
-  () => JSON.stringify(fileList.value),
-  (curfileList, prefileList) => {
-    if (curfileList && curfileList !== prefileList) {
-      emits('fileListChange', fileList.value)
-    }
-  }
-)
-
 const { disable, setDisable } = useDisable()
 const { loading, setLoading } = useLoading()
 const {
-  result: uploadFileList,
+  result: apiResult,
   // error: apiError,
   handleApi,
 } = useRequest({
-  mergedProps,
   setDisable,
   setLoading,
-  resetFileList,
 })
 
 // upload fileList 变化后触发事件
 watch(
-  () => JSON.stringify(uploadFileList.value),
-  (curuploadfileList, preuploadfileList) => {
-    if (curuploadfileList && curuploadfileList !== preuploadfileList) {
-      emits('uploadFileListChange', uploadFileList.value)
+  () => JSON.stringify(apiResult.value),
+  (curapiResult, preapiResult) => {
+    if (
+      curapiResult &&
+      curapiResult !== preapiResult
+      // && !curapiResult.includes('__id') // manual fixed vxetable bug
+    ) {
+      emits('uploadedChange', JSON.parse(JSON.stringify(apiResult.value)))
     }
   }
 )
+
+const {
+  apiActions: { uploadApiOptions },
+  validateActions: { withValidateTypeCode },
+} = useMode({ mergedProps })
 
 function handleFileValidate(file: ArgumentsOf<AUploadProps['beforeUpload']>[0]) {
   const validateUploadFileEmptyNameResult = validateUploadFileEmptyName(file.name)
@@ -114,7 +121,16 @@ function handleFileValidate(file: ArgumentsOf<AUploadProps['beforeUpload']>[0]) 
     )
   }
 
-  if (validateUploadFileEmptyNameResult && validateUploadFileNameResult) {
+  const validateUploadFileExtResult = validateUploadFileExt(file.name, mergedProps.value.accpet)
+  if (!validateUploadFileExtResult) {
+    createMessage.warn(`${file.name} ${tavI18n('Tav.file.upload.6')}`)
+  }
+
+  if (
+    validateUploadFileEmptyNameResult &&
+    validateUploadFileNameResult &&
+    validateUploadFileExtResult
+  ) {
     return true
   }
 
@@ -137,7 +153,7 @@ function handleFilesValidate(files: FileType[]) {
   }
 
   const validateUploadFileMaxCountResult = validateUploadFileMaxCount(
-    fileList.value.length + uploadFileList.value.length,
+    fileList.value.length + apiResult.value.length,
     mergedProps.value.maxCount
   )
   if (!validateUploadFileMaxCountResult) {
@@ -156,13 +172,15 @@ function handleFilesValidate(files: FileType[]) {
  * @param e
  */
 function beforeHandleApiAction1(e: Event) {
-  const validateUploadFileTypeCodesResult = validateUploadFileTypeCodes(
-    mergedProps.value.apiParams.typeCodes
-  )
-  if (!validateUploadFileTypeCodesResult) {
-    createMessage.warn(tavI18n('Tav.file.message.5'))
-    resetFileList()
-    e.stopPropagation()
+  if (withValidateTypeCode(instance)) {
+    const validateUploadFileTypeCodeResult = validateUploadFileTypeCode(
+      mergedProps.value.apiParams.typeCode
+    )
+    if (!validateUploadFileTypeCodeResult) {
+      createMessage.warn(tavI18n('Tav.file.message.5'))
+      resetFileList()
+      e.stopPropagation()
+    }
   }
 }
 
@@ -188,18 +206,24 @@ function beforeHandleApiAction2(...args: ArgumentsOf<AUploadProps['beforeUpload'
  * 通过校验、判断维护的 fileList（上传列表）数据以及整合文件数据统一请求，调用接口
  * @param _
  */
-function beforeHandleApiAction3(_: ArgumentsOf<AUploadProps['customRequest']>) {
+async function beforeHandleApiAction3() {
   if (
     !(
       handleFilesValidate(fileList.value) &&
       fileList.value.length > 0 &&
       !canUploadUnifiedFileList.value
     )
-  )
+  ) {
+    emits('validateFailureChange', fileList.value)
     return
+  }
+  emits('validateSuccessChange', fileList.value)
 
   canUploadUnifiedFileList.value = true
-  handleApi(fileList)
+
+  const options = uploadApiOptions(mergedProps.value.apiParams, fileList.value)
+  if (!options) return
+  await handleApi(options)
 }
 
 function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {
@@ -208,15 +232,13 @@ function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {
 }
 
 defineExpose({
-  /** @description html element */
   elRef,
-  /** @description AUpload */
-  AUploadRef,
+  handleApi,
 })
 </script>
 
 <template>
-  <template v-if="mergedProps.visible">
+  <template v-if="mergedProps.visible && mergedProps.mode !== 'read'">
     <section
       :id="DEFAULT_FILEACTIONUPLOAD_ID"
       ref="elRef"
@@ -226,7 +248,6 @@ defineExpose({
       <AUpload
         ref="AUploadRef"
         :file-list="[]"
-        :accpet="mergedProps.accpet"
         :multiple="mergedProps.multiple"
         :max-count="mergedProps.maxCount"
         :show-upload-list="false"

@@ -1,4 +1,6 @@
 export * from './dom'
+export * from './download'
 export * from './setup'
 export * from './types'
 export * from './validate'
+export * from './visibile'

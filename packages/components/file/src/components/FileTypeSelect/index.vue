@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, computed, onMounted, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
 import { Select as ASelect, Empty } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type ArgumentsOf } from '../../utils'
-import { useDisable, useFileGlobalConfig, useLoading, useMergedProps } from '../../hooks'
-import { type FileInjectedProps } from '../../typings'
+import {
+  useDisable,
+  useGlobalConfigProps,
+  useLoading,
+  useMergedProps,
+  useRequest,
+} from '../../hooks'
+import { type GlobalConfigFileProps } from '../../typings'
 import {
   DEFAULT_EMPTY_TIP,
   DEFAULT_FILETYPESELECT_CLASSNAME,
   DEFAULT_FILETYPESELECT_ID,
   DEFAULT_TYPE_SELECT_PLACEHOLDER,
 } from '../../consts'
-import { useOptions, useRequest } from './hooks'
+import { useMode } from './hooks'
 import {
   type FileTypeSelectEmits,
   type FileTypeSelectInstance,
@@ -25,8 +31,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<FileTypeSelectInstance['elRef']>()
-const ASelectRef = ref<FileTypeSelectInstance['ASelectRef']>()
+const elRef = ref<UnwrapRef<FileTypeSelectInstance['elRef']>>()
 const props = defineProps(fileTypeSelectProps)
 const emits = defineEmits(fileTypeSelectEmits)
 // const slots = useSlots()
@@ -35,46 +40,59 @@ const emits = defineEmits(fileTypeSelectEmits)
 const EmptyImage = Empty.PRESENTED_IMAGE_SIMPLE
 
 // 将 globalconfig 与 filetypeselect props 结合，同名 props 已 filetypeselect props 为主
-const fileGlobalConfig = useFileGlobalConfig()
-const mergedProps = useMergedProps<FileInjectedProps, FileTypeSelectProps>(fileGlobalConfig, props)
+const globalConfigProps = useGlobalConfigProps()
+const mergedProps = useMergedProps<GlobalConfigFileProps, FileTypeSelectProps>(
+  globalConfigProps,
+  props,
+  ['fileTypeSelect']
+)
 
 // // Embedded in the form, just use the hook binding to perform form verification
 // const [state] = useRuleFormItem(props, 'value', 'change', emitData)
 const value = ref<FileTypeSelectProps['value']>(props.value)
 
+const {
+  apiActions: { typeSelectApiOptions },
+} = useMode({ mergedProps })
+
 const { disable, setDisable } = useDisable()
 const { loading, setLoading } = useLoading()
+// const {
+//   result: apiResult,
+//   error: apiError,
+//   handleApi,
+// } = useRequest({
+//   mergedProps: mergedProps as any,
+//   setDisable,
+//   setLoading,
+// })
 const {
   result: apiResult,
   error: apiError,
   handleApi,
 } = useRequest({
-  mergedProps,
   setDisable,
   setLoading,
 })
 // api 相关参数变化重新发起请求
 watch(
-  () => [
-    JSON.stringify(mergedProps.value.apiParams.moduleCodes),
-    // JSON.stringify(mergedProps.value.apiParams.typeCodes),
-  ],
-  (
-    [curApiParamsModuleCodes /*, curApiParamsTypeCodes*/],
-    [preApiParamsModuleCodes /*, preApiParamsTypeCodes*/]
-  ) => {
-    if (
-      curApiParamsModuleCodes !== preApiParamsModuleCodes
-      // || curApiParamsTypeCodes !== preApiParamsTypeCodes
-    ) {
+  () => JSON.stringify(mergedProps.value.apiParams),
+  (curApiParams, preApiParams) => {
+    if (!curApiParams) {
+      console.warn('please select typeCode')
+    }
+    if (curApiParams !== preApiParams) {
       beforeHandleApiAction()
     }
   }
 )
 
-const options = useOptions({
-  props: mergedProps,
-  apiResult,
+const options = computed(() => {
+  if (mergedProps.value.options && mergedProps.value.options.length > 0) {
+    return [...mergedProps.value.options]
+  } else {
+    return [...apiResult.value]
+  }
 })
 // options 变化后触发事件
 watch(
@@ -85,9 +103,19 @@ watch(
 
       // 当 options 只有一项时默认选中
       if (options.value.length === 1) {
-        value.value = options.value[0] as unknown as FileTypeSelectProps['value']
+        value.value = mergedProps.value.fieldNames
+          ? options.value[0][mergedProps.value.fieldNames['value']!]
+          : options.value[0].value ?? options.value[0]
         emits(
           'select',
+          ...([
+            options.value[0][mergedProps.value.fieldNames!['value']!],
+            options.value[0],
+            mergedProps.value.fieldNames,
+          ] as any)
+        )
+        emits(
+          'change',
           ...([
             options.value[0][mergedProps.value.fieldNames!['value']!],
             options.value[0],
@@ -115,13 +143,19 @@ const placeholder = computed(() =>
     : DEFAULT_TYPE_SELECT_PLACEHOLDER(tavI18n)
 )
 
-function handleChange(...args: ArgumentsOf<FileTypeSelectEmits['change']>) {
-  emits('change', ...args)
-}
+// function handleChange(...args: ArgumentsOf<FileTypeSelectEmits['change']>) {
+//   emits('change', ...args)
+// }
 
 function handleSelect(...args: ArgumentsOf<FileTypeSelectEmits['select']>) {
   emits(
     'select',
+    ...([...args, mergedProps.value.fieldNames] as unknown as ArgumentsOf<
+      FileTypeSelectEmits['select']
+    >)
+  )
+  emits(
+    'change',
     ...([...args, mergedProps.value.fieldNames] as unknown as ArgumentsOf<
       FileTypeSelectEmits['select']
     >)
@@ -138,13 +172,22 @@ function handleDropdownVisibleChange(
   emits('dropdownVisibleChange', ...args)
 }
 
+function handleClear() {
+  value.value = undefined
+
+  emits('clear', ...([undefined, undefined, mergedProps.value.fieldNames] as any))
+  emits('change', ...([undefined, undefined, mergedProps.value.fieldNames] as any))
+}
+
 function beforeHandleApiAction() {
   // 已传入的 options 为主
   if (
     !mergedProps.value.options ||
     (mergedProps.value.options && mergedProps.value.options.length === 0)
   ) {
-    handleApi()
+    const options = typeSelectApiOptions(mergedProps.value.apiParams)
+    if (!options) return
+    handleApi(options)
   }
 }
 
@@ -153,15 +196,14 @@ onMounted(() => {
 })
 
 defineExpose({
-  /** @description html element */
   elRef,
-  ASelectRef,
 })
 </script>
 
 <template>
   <template v-if="mergedProps.visible">
     <section :id="DEFAULT_FILETYPESELECT_ID" ref="elRef" :class="DEFAULT_FILETYPESELECT_CLASSNAME">
+      <!-- @change="handleChange" -->
       <ASelect
         ref="ASelectRef"
         :value="value"
@@ -169,13 +211,13 @@ defineExpose({
         :field-names="mergedProps.fieldNames"
         :placeholder="placeholder"
         :get-popup-container="mergedProps.getPopupContainer"
-        :allow-clear="options.length !== 0"
+        :allow-clear="options.length > 1"
         :disabled="disabled"
-        :loading="mergedProps.api && loading"
-        @change="handleChange"
+        :loading="mergedProps.apiQueryFileType && loading"
         @select="handleSelect"
         @deselect="handleDeselect"
         @dropdownVisibleChange="handleDropdownVisibleChange"
+        @clear="handleClear"
       >
         <template v-if="options.length === 0 || apiError" #notFoundContent>
           <span v-if="apiError">{{ apiError }}</span>
