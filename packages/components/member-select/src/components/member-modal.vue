@@ -10,7 +10,7 @@
           </Input>
         </div>
         <Tabs v-model:activeKey="tabActive">
-          <TabPane key="0" :tab="tavI18n('Tav.member.1')">
+          <TabPane v-if="!hideOrgTabs" key="0" :tab="tavI18n('Tav.member.1')">
             <template v-if="propsData.multiple">
               <CheckboxGroup :value="checkboxData">
                 <!-- loaded-keys 为了解决loaddata会无限递归问题 -->
