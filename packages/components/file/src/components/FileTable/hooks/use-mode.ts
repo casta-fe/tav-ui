@@ -5,7 +5,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
+import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
 import { type FileActionUploadProps } from '../../FileActionUpload'
 import { type ArgumentsOf } from '../../../utils'
 
@@ -42,45 +42,6 @@ export function useMode(options: {
         immediate: true,
       }
     )
-  }
-
-  /**
-   * 根据不同模式组装事件参数
-   * @param dataSource
-   * @param _row
-   * @param type
-   * @param applyVersionCacheToDataSource
-   * @returns
-   */
-  function emitEventOptions(
-    _newRows: FileActionUploadApiResponseRecord[],
-    dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
-    applyVersionCacheToDataSource: (files: FileActionUploadApiResponseRecord[]) => {
-      actualId: string
-      moduleCode: string | undefined
-      versionList: FileActionUploadApiResponseRecord[]
-    }[],
-    type: string,
-    emits: SetupContext<FileTableEmits>['emit']
-  ) {
-    const newRows = JSON.parse(JSON.stringify([...(_newRows ?? [])]))
-    const rows = JSON.parse(JSON.stringify([...(dataSource.value ?? [])]))
-    const getVersionDataSource = applyVersionCacheToDataSource(rows)
-    const getFileActualIds = rows.map((file: FileActionUploadApiResponseRecord) => file.actualId)
-
-    if (mergedProps.value.mode === 'read') {
-      emits('change', newRows, rows, type)
-      emits('fileActualIdsChange', getVersionDataSource)
-    } else if (mergedProps.value.mode === 'create') {
-      emits('change', newRows, rows, type)
-      emits('fileActualIdsChange', getVersionDataSource)
-    } else if (mergedProps.value.mode === 'update') {
-      emits('change', newRows, rows, type)
-      emits('fileActualIdsChange', getVersionDataSource)
-    } else {
-      emits('change', newRows, rows, type)
-      emits('fileActualIdsChange', getFileActualIds)
-    }
   }
   //:========================================: api actions :========================================://
   function apiQueryFileOptions(apiParams: FileTableProps['apiParams']) {
@@ -180,11 +141,47 @@ export function useMode(options: {
     return options
   }
 
+  function historyApiOptions(
+    apiParams: FileTableProps['apiParams'],
+    file: FileActionUploadApiResponseRecord
+  ) {
+    if (!mergedProps.value.apiQueryFileHistory) {
+      console.warn('[tavui TaFileTable] apiQueryFileHistory is undefined')
+      return
+    }
+
+    const options: UseRequestHandleApiDefaultOptions<
+      FileTableProps['apiParams'],
+      FileActionUploadApiResponseRecord[]
+    > = {
+      api: mergedProps.value.apiQueryFileHistory,
+      // beforeApi: mergedProps.value.beforeApiQueryFileHistory,
+      // afterApi: mergedProps.value.afterApiQueryFileHistory,
+      apiParams: {
+        appId: apiParams.appId,
+        fileActualIds: [file.actualId!],
+        permissionControl: apiParams.permissionControl ?? false,
+      },
+      failureMessage: () => {
+        return tavI18n('Tav.common.httpError')
+      },
+    }
+
+    // if (mergedProps.value.mode === 'read') {
+    // } else if (mergedProps.value.mode === 'create') {
+    // } else if (mergedProps.value.mode === 'update') {
+    // } else {
+    // }
+
+    return options
+  }
+
   // table action update api: upload || update
   function updateApiOptions(
     apiParams: FileTableProps['apiParams'],
     files: File[],
-    row: FileActionUploadApiResponseRecord | undefined
+    row: FileActionUploadApiResponseRecord | undefined,
+    callback: () => void
   ) {
     if (!mergedProps.value.apiUploadFile) {
       console.warn('[tavui TaFileTable] apiUploadFile is undefined')
@@ -215,6 +212,7 @@ export function useMode(options: {
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
       },
+      callback,
     }
     // 是否为手动上传的文件数据，而非从 api 返回的数据
     const isManualUploadRow = row?.version === 1 && !(row.businessId || row.businessKey)
@@ -309,31 +307,6 @@ export function useMode(options: {
   //   return options
   // }
 
-  // function downloadMultiApiOptions(
-  //   apiParams: ComputedRef<FileTableProps['apiParams']>,
-  //   files: FileActionUploadApiResponseRecord[]
-  // ) {
-  //   const options: FileActionUploadHandleApiOptions = {
-  //     api: mergedProps.value.apiDownloadMultiFile,
-  //     beforeApi: mergedProps.value.beforeApiDownloadMultiFile,
-  //     afterApi: mergedProps.value.afterApiDownloadMultiFile,
-  //     apiParams: {
-  //       appId: apiParams.value.appId,
-  //       ids: files.map((file) => file.id!),
-  //     },
-  //     mode: mergedProps.value.mode,
-  //     isFormData: false,
-  //   }
-
-  //   // if (mergedProps.value.mode === 'read') {
-  //   // } else if (mergedProps.value.mode === 'create') {
-  //   // } else if (mergedProps.value.mode === 'update') {
-  //   // } else {
-  //   // }
-
-  //   return options
-  // }
-
   function deleteApiOptions(
     apiParams: FileTableProps['apiParams'],
     row: FileActionUploadApiResponseRecord | undefined
@@ -379,140 +352,139 @@ export function useMode(options: {
   //:========================================: dataSource actions :========================================://
   async function editRow(
     dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
-    _row: FileActionUploadApiResponseRecord,
+    row: FileActionUploadApiResponseRecord,
     changeEventPayload: { id?: string; name?: string; address?: string },
-    updateVersionCache: (file: FileActionUploadApiResponseRecord) => void,
-    editDataSourceRow: (...args: any[]) => Promise<any>
+    editDataSourceRow: (...args: any[]) => Promise<any>,
+    emits: SetupContext<FileTableEmits>['emit'],
+    VersionCachesController: VersionCaches
   ) {
     const mode = mergedProps.value.mode
 
+    function action() {
+      const rows = [...(dataSource.value ?? [])]
+      const idx = rows.findIndex((r) => r.actualId === row.actualId)
+
+      if (changeEventPayload.name) row.name = changeEventPayload.name
+      if (row.hyperlink) {
+        if (changeEventPayload.address) row.address = changeEventPayload.address
+      } else {
+        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
+      }
+
+      rows.splice(idx, 1, row)
+      return rows
+    }
+
     if (mode === 'read') {
-      const rows = [...(dataSource.value ?? [])]
-      const row = { ..._row }
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-
-      if (changeEventPayload.name) row.name = changeEventPayload.name
-      if (row.hyperlink) {
-        if (changeEventPayload.address) row.address = changeEventPayload.address
-      } else {
-        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
-      }
-
-      const oldRow = rows.splice(idx, 1, row)[0]
-      // TODO:
-      // this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
-      updateVersionCache(row)
-      dataSource.value = [...rows]
+      dataSource.value = [...action()]
+      VersionCachesController.updateFileCaches(row)
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits(
+        'actualidsChange',
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+      )
     } else if (mode === 'create') {
-      const rows = [...(dataSource.value ?? [])]
-      const row = { ..._row }
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-
-      if (changeEventPayload.name) row.name = changeEventPayload.name
-      if (row.hyperlink) {
-        if (changeEventPayload.address) row.address = changeEventPayload.address
-      } else {
-        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
-      }
-
-      const oldRow = rows.splice(idx, 1, row)[0]
-      // TODO:
-      // this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
-      updateVersionCache(row)
-      dataSource.value = [...rows]
+      dataSource.value = [...action()]
+      VersionCachesController.updateFileCaches(row)
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits(
+        'actualidsChange',
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+      )
     } else if (mode === 'update') {
-      const rows = [...(dataSource.value ?? [])]
-      const row = { ..._row }
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-
-      if (changeEventPayload.name) row.name = changeEventPayload.name
-      if (row.hyperlink) {
-        if (changeEventPayload.address) row.address = changeEventPayload.address
-      } else {
-        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
-      }
-
-      const oldRow = rows.splice(idx, 1, row)[0]
-      // TODO:
-      // this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
-      updateVersionCache(row)
-      dataSource.value = [...rows]
+      dataSource.value = [...action()]
+      VersionCachesController.updateFileCaches(row)
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      const rows = [...(dataSource.value ?? [])]
-      const row = { ..._row }
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
+      dataSource.value = [...action()]
+      VersionCachesController.updateFileCaches(row)
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits('actualidsChange', VersionCachesController.getCaches())
 
       await editDataSourceRow(changeEventPayload)
-      if (changeEventPayload.name) row.name = changeEventPayload.name
-      if (row.hyperlink) {
-        if (changeEventPayload.address) row.address = changeEventPayload.address
-      } else {
-        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
-      }
-
-      const oldRow = rows.splice(idx, 1, row)[0]
-      // TODO:
-      // this.throwResponse([{ ...record, version: oldRecord.version + 1 }], 'update')
-      updateVersionCache(row)
-      dataSource.value = [...rows]
     }
   }
 
   async function updateRow(
     dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
     row: FileActionUploadApiResponseRecord,
-    rowActualId: string,
-    updateVersionCache: (file: FileActionUploadApiResponseRecord) => void,
     refreshDataSource: (...args: any[]) => Promise<any>,
-    applyVersionCacheToDataSource: (files: FileActionUploadApiResponseRecord[]) => {
-      actualId: string
-      moduleCode: string | undefined
-      versionList: FileActionUploadApiResponseRecord[]
-    }[],
-    emits: SetupContext<FileTableEmits>['emit']
+    emits: SetupContext<FileTableEmits>['emit'],
+    VersionCachesController: VersionCaches
   ) {
     const mode = mergedProps.value.mode
 
+    function action(_row?: FileActionUploadApiResponseRecord) {
+      const rows = [...(dataSource.value ?? [])]
+      const idx = rows.findIndex((r) => r.actualId === row.actualId)
+      rows.splice(idx, 1, _row ?? row)
+      return rows
+    }
+
     if (mode === 'read') {
-      return [] as FileActionUploadApiResponseRecord[]
+      //
     } else if (mode === 'create') {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === rowActualId)
-      const oldRow = rows.splice(idx, 1, row)[0]
-      emitEventOptions(
-        [{ ...row, version: oldRow.version + 1 }],
-        dataSource,
-        applyVersionCacheToDataSource,
-        'update',
-        emits
+      dataSource.value = [...action()]
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
       )
-      updateVersionCache(row)
-      dataSource.value = [...rows]
+      emits(
+        'actualidsChange',
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+      )
     } else if (mode === 'update') {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === rowActualId)
-      const oldRow = rows.splice(idx, 1, row)[0]
-      emitEventOptions(
-        [{ ...row, version: oldRow.version + 1 }],
-        dataSource,
-        applyVersionCacheToDataSource,
-        'update',
-        emits
+      VersionCachesController.createFileCache(row)
+      const latestVersionFileCache = VersionCachesController.readFileCacheLatestVersion(
+        row.actualId!
       )
-      updateVersionCache(row)
-      dataSource.value = [...rows]
+
+      dataSource.value = [...action(latestVersionFileCache)]
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === rowActualId)
-      const oldRow = rows.splice(idx, 1, row)[0]
-      emitEventOptions(
-        [{ ...row, version: oldRow.version + 1 }],
-        dataSource,
-        applyVersionCacheToDataSource,
-        'update',
-        emits
+      VersionCachesController.createFileCache(row, mode)
+
+      action()
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
       )
-      updateVersionCache(row)
+      emits('actualidsChange', VersionCachesController.getCaches())
+
       await refreshDataSource()
     }
   }
@@ -522,37 +494,57 @@ export function useMode(options: {
     row: FileActionUploadApiResponseRecord,
     deleteDataSourceRow: (...args: any[]) => Promise<any>,
     refreshDataSource: (...args: any[]) => Promise<any>,
-    applyVersionCacheToDataSource: (files: FileActionUploadApiResponseRecord[]) => {
-      actualId: string
-      moduleCode: string | undefined
-      versionList: FileActionUploadApiResponseRecord[]
-    }[],
-    emits: SetupContext<FileTableEmits>['emit']
+    emits: SetupContext<FileTableEmits>['emit'],
+    VersionCachesController: VersionCaches
   ) {
     const mode = mergedProps.value.mode
 
+    function action() {
+      const rows = [...(dataSource.value ?? [])]
+      const idx = rows.findIndex((r) => r.actualId === row.actualId)
+      // const newRow = rows[idx]
+      rows.splice(idx, 1)
+      return rows
+    }
+
     if (mode === 'read') {
-      return [] as FileActionUploadApiResponseRecord[]
+      //
     } else if (mode === 'create') {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-      const newRow = rows[idx]
-      rows.splice(idx, 1)
-      emitEventOptions([{ ...newRow }], dataSource, applyVersionCacheToDataSource, 'delete', emits)
-      dataSource.value = [...rows]
+      dataSource.value = [...action()]
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits(
+        'actualidsChange',
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+      )
     } else if (mode === 'update') {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-      const newRow = rows[idx]
-      rows.splice(idx, 1)
-      emitEventOptions([{ ...newRow }], dataSource, applyVersionCacheToDataSource, 'delete', emits)
-      dataSource.value = [...rows]
+      VersionCachesController.deleteFileCaches(row.actualId!)
+      dataSource.value = [...action()]
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-      const newRow = rows[idx]
-      rows.splice(idx, 1)
-      emitEventOptions([{ ...newRow }], dataSource, applyVersionCacheToDataSource, 'delete', emits)
+      VersionCachesController.deleteFileCaches(row.actualId!)
+      action()
+
+      emits(
+        'change',
+        [{ ...row }],
+        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+        'update'
+      )
+      emits('actualidsChange', VersionCachesController.getCaches())
+
       await deleteDataSourceRow()
       await refreshDataSource()
     }
@@ -561,14 +553,13 @@ export function useMode(options: {
 
   return {
     useModeFetchDataSource,
-    emitEventOptions,
     apiActions: {
       apiQueryFileOptions,
       rowEditorApiOptions,
+      historyApiOptions,
       updateApiOptions,
       // downloadApiOptions,
       // downloadWaterMarkerApiOptions,
-      // downloadMultiApiOptions,
       deleteApiOptions,
     },
     dataSourceActions: {

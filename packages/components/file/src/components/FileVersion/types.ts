@@ -44,7 +44,7 @@ export const fileVersionProps = {
   // modal props
   width: {
     type: [String, Number] as PropType<ModalProps['width']>,
-    default: 800,
+    default: 1000,
   },
   wrapClassName: {
     type: String as PropType<ModalProps['wrapClassName']>,
@@ -63,6 +63,7 @@ export const fileVersionProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  immediate: { type: Boolean, default: false },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   columns: {
     type: Function as PropType<(...args: [FileVersionTableColumn[]]) => FileVersionTableColumn[]>,
@@ -76,10 +77,8 @@ export const fileVersionProps = {
   },
   file: {
     type: Object as PropType<FileActionUploadApiResponseRecord>,
+    default: () => ({} as FileActionUploadApiResponseRecord),
     required: true,
-  },
-  versionFile: {
-    type: Object as PropType<FileActionUploadApiResponseRecord>,
   },
   api: {
     type: Function as PropType<(apiParams: any) => Promise<any>>,
@@ -109,4 +108,6 @@ export type FileVersionEmits = typeof fileVersionEmits
 
 export interface FileVersionInstance {
   elRef: Ref<HTMLDivElement | undefined>
+  open: () => any
+  close: () => any
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, ref /*useSlots, useAttrs*/ } from 'vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
 import { tavI18n } from '@tav-ui/locales'
@@ -22,7 +22,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<FileActionUploadLinkInstance['elRef']>()
+const elRef = ref<UnwrapRef<FileActionUploadLinkInstance['elRef']>>()
 const props = defineProps(fileActionUploadLinkProps)
 const emits = defineEmits(fileActionUploadLinkEmits)
 // const slots = useSlots()

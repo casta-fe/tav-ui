@@ -47,25 +47,18 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileTypeSelectProps>(
   ['fileTypeSelect']
 )
 
-// // Embedded in the form, just use the hook binding to perform form verification
-// const [state] = useRuleFormItem(props, 'value', 'change', emitData)
-const value = ref<FileTypeSelectProps['value']>(props.value)
-
+// 针对业务抽象不同模式进行数据处理
 const {
   apiActions: { typeSelectApiOptions },
 } = useMode({ mergedProps })
 
+// // Embedded in the form, just use the hook binding to perform form verification
+// const [state] = useRuleFormItem(props, 'value', 'change', emitData)
+const value = ref<FileTypeSelectProps['value']>(props.value)
+
+// 使用 api 处理数据
 const { disable, setDisable } = useDisable()
 const { loading, setLoading } = useLoading()
-// const {
-//   result: apiResult,
-//   error: apiError,
-//   handleApi,
-// } = useRequest({
-//   mergedProps: mergedProps as any,
-//   setDisable,
-//   setLoading,
-// })
 const {
   result: apiResult,
   error: apiError,
@@ -216,7 +209,7 @@ defineExpose({
         :loading="mergedProps.apiQueryFileType && loading"
         @select="handleSelect"
         @deselect="handleDeselect"
-        @dropdownVisibleChange="handleDropdownVisibleChange"
+        @dropdown-visible-change="handleDropdownVisibleChange"
         @clear="handleClear"
       >
         <template v-if="options.length === 0 || apiError" #notFoundContent>

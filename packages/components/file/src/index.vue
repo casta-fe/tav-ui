@@ -2,10 +2,23 @@
 import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
 import { type ITableProInstance } from '@tav-ui/components/table-pro'
-import { type FileTypeSelectEmits, TaFileTypeSelect } from './components/FileTypeSelect'
-import { type FileActionUploadEmits, TaFileActionUpload } from './components/FileActionUpload'
-import { TaFileActionUploadLink } from './components/FileActionUploadLink'
-import { type FileTableEmits, type FileTableProps, TaFileTable } from './components/FileTable'
+import {
+  type FileTypeSelectEmits,
+  type FileTypeSelectInstance,
+  TaFileTypeSelect,
+} from './components/FileTypeSelect'
+import {
+  type FileActionUploadEmits,
+  type FileActionUploadInstance,
+  TaFileActionUpload,
+} from './components/FileActionUpload'
+// import { TaFileActionUploadLink } from './components/FileActionUploadLink'
+import {
+  type FileTableEmits,
+  type FileTableInstance,
+  type FileTableProps,
+  TaFileTable,
+} from './components/FileTable'
 import { type FileInstance, type GlobalConfigFileProps, fileEmits, fileProps } from './typings'
 import {
   DEFAULT_FILEACTIONS_CLASSNAME,
@@ -21,7 +34,6 @@ defineOptions({
 })
 
 const elRef = ref<UnwrapRef<FileInstance['elRef']>>()
-const fileTableRef = ref<UnwrapRef<FileInstance['fileTableRef']>>()
 const props = defineProps(fileProps)
 const emits = defineEmits(fileEmits)
 const slots = useSlots()
@@ -33,11 +45,12 @@ const fileApiParams = computed({
   get() {
     return _fileApiParams
   },
-  set(curFileApiParams) {
+  set(curFileApiParams: any) {
     _fileApiParams.value = { ...curFileApiParams.value }
   },
 })
 
+const fileTypeSelectRef = ref<FileTypeSelectInstance>()
 const fileTypeSelectProps = computed(() => ({
   ...props.fileTypeSelect,
   mode: props.mode,
@@ -54,6 +67,7 @@ const fileTypeSelectProps = computed(() => ({
   },
 }))
 
+const fileActionUploadRef = ref<FileActionUploadInstance>()
 const fileActionUploadProps = computed(() => ({
   ...props.fileActionUpload,
   mode: props.mode,
@@ -74,25 +88,25 @@ const fileActionUploadProps = computed(() => ({
   },
 }))
 
-const fileActionUploadLinkProps = computed(() => ({
-  // ...props.fileActionUploadLink,
-  mode: props.mode,
-  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  ...{
-    apiParams: props.fileActionUpload?.apiParams
-      ? {}
-      : {
-          appId: fileApiParams.value.value.appId,
-          moduleCode: fileApiParams.value.value.moduleCode,
-          typeCode: fileApiParams.value.value.typeCode,
-          businessId: fileApiParams.value.value.businessId,
-          businessKey: fileApiParams.value.value.businessKey,
-          businessParamsJson: fileApiParams.value.value.businessParamsJson,
-          fileActualId: fileApiParams.value.value.fileActualId,
-          instantUpdate: fileApiParams.value.value.instantUpdate,
-        },
-  },
-}))
+// const fileActionUploadLinkProps = computed(() => ({
+//   // ...props.fileActionUploadLink,
+//   mode: props.mode,
+//   /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+//   ...{
+//     apiParams: props.fileActionUpload?.apiParams
+//       ? {}
+//       : {
+//           appId: fileApiParams.value.value.appId,
+//           moduleCode: fileApiParams.value.value.moduleCode,
+//           typeCode: fileApiParams.value.value.typeCode,
+//           businessId: fileApiParams.value.value.businessId,
+//           businessKey: fileApiParams.value.value.businessKey,
+//           businessParamsJson: fileApiParams.value.value.businessParamsJson,
+//           fileActualId: fileApiParams.value.value.fileActualId,
+//           instantUpdate: fileApiParams.value.value.instantUpdate,
+//         },
+//   },
+// }))
 
 const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['fileTable']>(
   props.fileTable ?? ({} as any)
@@ -101,10 +115,11 @@ const _fileTableProps = computed({
   get() {
     return __fileTableProps
   },
-  set(curFileTableProps) {
+  set(curFileTableProps: any) {
     __fileTableProps.value = { ...curFileTableProps.value }
   },
 })
+const fileTableRef = ref<FileTableInstance>()
 const fileTableProps = computed(() => ({
   ..._fileTableProps.value.value,
   mode: props.mode,
@@ -140,6 +155,29 @@ function handleFileTypeSelectChange(...args: any) {
     ..._fileApiParams.value,
     typeCode: typeCode === undefined && option === undefined ? '' : `${typeCode}`,
   }
+
+  emits('fileTypeSelect:change', ...(args as unknown as ArgumentsOf<FileTypeSelectEmits['change']>))
+}
+
+function handleFileTypeSelectOptionsChange(...args: any) {
+  emits(
+    'fileTypeSelect:optionsChange',
+    ...(args as unknown as ArgumentsOf<FileTypeSelectEmits['optionsChange']>)
+  )
+}
+
+function handleFileActionUploadChangeValidateSuccessChange(...args: any) {
+  emits(
+    'fileActionUpload:validateSuccessChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadEmits['validateSuccessChange']>)
+  )
+}
+
+function handleFileActionUploadChangeValidateFailureChange(...args: any) {
+  emits(
+    'fileActionUpload:validateFailureChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadEmits['validateFailureChange']>)
+  )
 }
 
 function handleFileActionUploadChange(...args: any) {
@@ -150,6 +188,11 @@ function handleFileActionUploadChange(...args: any) {
     ..._fileTableProps.value.value,
     dataSource: [...files, ...JSON.parse(JSON.stringify(fullData))],
   }
+
+  emits(
+    'fileActionUpload:uploadedChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>)
+  )
 }
 
 function handleFileTableChange(...args: any) {
@@ -157,13 +200,16 @@ function handleFileTableChange(...args: any) {
   emits('change', ..._args)
 }
 
-function handleFileTableFileActualIdsChange(...args: any) {
-  const _args = args as unknown as ArgumentsOf<FileTableEmits['fileActualIdsChange']>
+function handleFileTableActualidsChange(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['actualidsChange']>
   emits('update:fileActualIds', ..._args)
 }
 
 defineExpose({
   elRef,
+  fileTypeSelectRef,
+  fileActionUploadRef,
+  fileTableRef,
 })
 </script>
 
@@ -190,7 +236,12 @@ defineExpose({
             <slot name="FileTypeSelect" v-bind="fileTypeSelectProps" />
           </template>
           <template v-else>
-            <TaFileTypeSelect v-bind="fileTypeSelectProps" @change="handleFileTypeSelectChange" />
+            <TaFileTypeSelect
+              ref="fileTypeSelectRef"
+              v-bind="fileTypeSelectProps"
+              @change="handleFileTypeSelectChange"
+              @options-change="handleFileTypeSelectOptionsChange"
+            />
           </template>
         </section>
         <section :class="`${DEFAULT_FILE_CLASSNAME}-actions-wrapper`">
@@ -210,7 +261,10 @@ defineExpose({
                   </template>
                   <template v-else>
                     <TaFileActionUpload
+                      ref="fileActionUploadRef"
                       v-bind="fileActionUploadProps"
+                      @validate-success-change="handleFileActionUploadChangeValidateSuccessChange"
+                      @validate-failure-change="handleFileActionUploadChangeValidateFailureChange"
                       @uploaded-change="handleFileActionUploadChange"
                     />
                   </template>
@@ -219,13 +273,13 @@ defineExpose({
                     <slot name="FileActionMiddle" />
                   </template>
 
-                  <template v-if="slots['FileActionUploadLink']">
+                  <!-- <template v-if="slots['FileActionUploadLink']">
                     <slot name="FileActionUploadLink" v-bind="fileActionUploadLinkProps" />
                   </template>
                   <template v-else>
                     <TaFileActionUploadLink v-bind="fileActionUploadLinkProps" />
-                    <!-- <TaFileActionUploadLinkForm /> -->
-                  </template>
+                    <TaFileActionUploadLinkForm />
+                  </template> -->
 
                   <template v-if="slots['FileActionSuffix']">
                     <slot name="FileActionSuffix" />
@@ -248,7 +302,7 @@ defineExpose({
             ref="fileTableRef"
             v-bind="fileTableProps"
             @change="handleFileTableChange"
-            @file-actual-ids-change="handleFileTableFileActualIdsChange"
+            @actualids-change="handleFileTableActualidsChange"
           />
         </template>
       </section>

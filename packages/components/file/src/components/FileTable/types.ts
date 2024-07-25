@@ -4,41 +4,34 @@ import {
   type TableProActionItem,
   type TableProColumn,
   type TableProProps,
-  tableProProps,
 } from '@tav-ui/components/table-pro'
 import {
   type ApiDeleteFileParams,
   type ApiDownloadFileParams,
-  type ApiDownloadMultiFileParams,
   type ApiDownloadWaterMarkerFileParams,
-  type ApiParams,
   type ApiQueryFileParams,
   type ApiUpdateFileNameAndLinkParams,
   type ApiUpdateFileParams,
-  type ApiUpdateFileTypeParams,
   type ApiUploadFileParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
   type FileTableApiParams,
-  type GlobalConfigFileProps,
   globalConfigFileProps,
 } from '../../typings'
 import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
-import { type ArgumentsOf } from '../../utils'
-import { type FileActionUploadEmits } from '../FileActionUpload'
-import { type FileTypeSelectEmits } from '../FileTypeSelect'
+import { type FileVersionCache } from '../../hooks'
 
-/**
- * 默认列field
- */
-type DefaultColumnFields =
-  | 'fullName'
-  | 'typeName'
-  | 'fileSize'
-  | 'createByName'
-  | 'createTime'
-  | 'version'
-  | 'action'
+// /**
+//  * 默认列field
+//  */
+// type DefaultColumnFields =
+//   | 'fullName'
+//   | 'typeName'
+//   | 'fileSize'
+//   | 'createByName'
+//   | 'createTime'
+//   | 'version'
+//   | 'action'
 
 export type FileTableColumn = TableProColumn
 export type FileTableAction = TableProActionItem & { field: string }
@@ -69,6 +62,7 @@ export const fileTableProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
+  immediate: { type: Boolean, default: true },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   columns: {
     type: Function as PropType<(...args: [FileTableColumn[]]) => FileTableColumn[]>,
@@ -83,7 +77,7 @@ export const fileTableProps = {
   // 控制 version 与操作列更新按钮有无，除了这个标识还需要根据返回数据中的字段 hyperlink 与 auto 来判断
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
-  enabledView: { type: Boolean, default: true },
+  enabledPreview: { type: Boolean, default: true },
   api: {
     type: Function as PropType<(apiParams: any) => Promise<any>>,
   },
@@ -111,10 +105,6 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: Partial<ApiUpdateFileParams>) => Promise<any>>,
   },
   afterApiUpdateFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
-  beforeApiUpdateFileType: {
-    type: Function as PropType<(apiParams: Partial<ApiUpdateFileTypeParams>) => Promise<any>>,
-  },
-  afterApiUpdateFileType: { type: Function as PropType<(...args: any[]) => Promise<any>> },
   beforeApiUpdateFileNameAndLink: {
     type: Function as PropType<
       (apiParams: Partial<ApiUpdateFileNameAndLinkParams>) => Promise<any>
@@ -135,10 +125,6 @@ export const fileTableProps = {
     >,
   },
   afterApiDownloadWaterMarkerFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
-  beforeApiDownloadMultiFile: {
-    type: Function as PropType<(apiParams: Partial<ApiDownloadMultiFileParams>) => Promise<any>>,
-  },
-  afterApiDownloadMultiFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
 }
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
@@ -147,13 +133,13 @@ export const fileTableEmits = {
   change: (
     ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
   ) => args instanceof Object,
-  fileActualIdsChange: (
+  actualidsChange: (
     ...args: [
       (
         | {
             actualId: string
             moduleCode: string | undefined
-            versionList: FileActionUploadApiResponseRecord[]
+            versionList: FileVersionCache[]
           }
         | string
       )[]

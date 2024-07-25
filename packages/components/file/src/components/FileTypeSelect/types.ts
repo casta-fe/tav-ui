@@ -5,7 +5,6 @@ import {
   type FileMode,
   type FileTypeSelectApiParams,
   type FileTypeSelectApiResponseRecord,
-  type GlobalConfigFileProps,
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'

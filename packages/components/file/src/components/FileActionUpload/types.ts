@@ -1,17 +1,14 @@
-import { type ComputedRef, type PropType, type Ref } from 'vue'
+import { type PropType, type Ref } from 'vue'
 import { type UploadProps as AUploadProps } from 'ant-design-vue'
 import {
-  type ApiUpdateFileParams,
   type ApiUploadFileParams,
   type FileActionUploadApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
-  type GlobalConfigFileProps,
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'
 import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
-import { type FileTypeSelectEmits } from '../FileTypeSelect'
 import type { ExtractPropTypes } from 'vue'
 
 export type FileType = ArgumentsOf<AUploadProps['beforeUpload']>[0]
@@ -61,5 +58,5 @@ export type FileActionUploadEmits = typeof fileActionUploadEmits
 
 export interface FileActionUploadInstance {
   elRef: Ref<HTMLDivElement | undefined>
-  handleApi: (...args: any[]) => Promise<any>
+  resetFileList: () => void
 }

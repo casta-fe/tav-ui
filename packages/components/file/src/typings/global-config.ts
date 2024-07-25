@@ -22,13 +22,6 @@ export interface ApiQueryFileTypeParams {
 }
 
 /** 真实的接口参数，来自 swagger */
-export interface ApiUpdateFileTypeParams {
-  appId: number
-  id: string
-  typeCode: string
-}
-
-/** 真实的接口参数，来自 swagger */
 export interface ApiUploadFileParams {
   appId: FileActionUploadApiParams['appId']
   moduleCode: FileActionUploadApiParams['moduleCode']
@@ -101,15 +94,7 @@ export interface ApiDownloadWaterMarkerFileParams {
 }
 
 /** 真实的接口参数，来自 swagger */
-export interface ApiDownloadMultiFileParams {
-  appId: FileTableApiParams['appId']
-  /** file ids */
-  ids: FileTableApiParams['ids']
-  fileName: string
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiViewFileParams {
+export interface ApiPreviewFileParams {
   appId: FileTableApiParams['appId']
   /** file id */
   id: FileTableApiParams['id']
@@ -126,9 +111,6 @@ export const globalConfigFileProps = {
     },
     // filetype 查询接口，传入 queryfiletype，apiReadFileType
     // filetype 更新接口，传入 updateFileType
-    apiUpdateFileType: {
-      type: Function as PropType<(params: Partial<ApiUpdateFileTypeParams>) => Promise<any>>,
-    },
     // filetype 上传接口，传入 removefiletype，apiDeleteFileType
     //:============================== CRUD API ==============================://
   },
@@ -178,10 +160,6 @@ export const globalConfigFileProps = {
     apiUpdateFile: {
       type: Function as PropType<(params: Partial<ApiUpdateFileParams>) => Promise<any>>,
     },
-    // filetype 更新接口，传入 updateFileType
-    apiUpdateFileType: {
-      type: Function as PropType<(params: Partial<ApiUpdateFileTypeParams>) => Promise<any>>,
-    },
     // 更新文件部分信息，传入 updateFileNameAndAddress
     apiUpdateFileNameAndLink: {
       type: Function as PropType<(params: Partial<ApiUpdateFileNameAndLinkParams>) => Promise<any>>,
@@ -200,9 +178,9 @@ export const globalConfigFileProps = {
         (params: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
       >,
     },
-    /** 下载水印文件接口，传入 fileMultiDownload */
-    apiDownloadMultiFile: {
-      type: Function as PropType<(params: Partial<ApiDownloadMultiFileParams>) => Promise<any>>,
+    /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
+    apiQueryFileHistory: {
+      type: Function as PropType<(params: Partial<ApiQueryFileHistoryParams>) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },
@@ -210,6 +188,9 @@ export const globalConfigFileProps = {
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {
       type: Function as PropType<(params: Partial<ApiQueryFileHistoryParams>) => Promise<any>>,
+    },
+    apiPreviewFile: {
+      type: Function as PropType<(params: Partial<ApiPreviewFileParams>) => Promise<any>>,
     },
     /** 下载接口，传入 fileDownload */
     apiDownloadFile: {
@@ -221,14 +202,10 @@ export const globalConfigFileProps = {
         (params: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
       >,
     },
-    /** 下载水印文件接口，传入 fileMultiDownload */
-    apiDownloadMultiFile: {
-      type: Function as PropType<(params: Partial<ApiDownloadMultiFileParams>) => Promise<any>>,
-    },
   },
-  fileView: {
-    apiViewFile: {
-      type: Function as PropType<(params: Partial<ApiViewFileParams>) => Promise<any>>,
+  filePreview: {
+    apiPreviewFile: {
+      type: Function as PropType<(params: Partial<ApiPreviewFileParams>) => Promise<any>>,
     },
   },
 }

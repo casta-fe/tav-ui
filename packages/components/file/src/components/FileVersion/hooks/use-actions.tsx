@@ -16,8 +16,8 @@ export function defaultActionsBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileVersionProps>,
   row: FileActionUploadApiResponseRecord,
   handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => any
+  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const DEFAULT_ACTIONS: FileVersionTableAction[] = [
     {
@@ -26,12 +26,6 @@ export function defaultActionsBuilder(
       enabled: isViewBtnVisible(row.hyperlink!),
       onClick() {
         handleViewBtnClick(row)
-        // if (row.hyperlink === 1) {
-        //   window.open(row.address)?.focus()
-        //   return
-        // }
-        // previewRecord.value = [record]
-        // showPreview.value = true
       },
     },
     {
@@ -39,18 +33,16 @@ export function defaultActionsBuilder(
       label: tavI18n('Tav.file.actions.4'),
       // permission: props.tableActionPermission.download,
       enabled: isDownloadWatermarkBtnVisible(row.hyperlink!, row.watermarkFileDownload!),
-      onClick() {
-        handleDownloadWatermarkBtnClick(row)
-        // props.download?.(record, undefined, true)
+      onClick: async () => {
+        await handleDownloadWatermarkBtnClick(row)
       },
     },
     {
       field: 'download',
       label: tavI18n('Tav.file.actions.3'),
       enabled: isDownloadBtnVisible(row.hyperlink!, row.sourceFileDownload!),
-      onClick() {
-        handleDownloadBtnClick(row)
-        // props.download?.(record)
+      onClick: async () => {
+        await handleDownloadBtnClick(row)
       },
     },
   ]
@@ -61,8 +53,8 @@ export function defaultActionsBuilder(
 export function useActions(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileVersionProps>
   handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => any
+  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 }) {
   const {
     mergedProps,

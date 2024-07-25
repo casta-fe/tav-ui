@@ -1,9 +1,9 @@
 import { type ComputedRef, type Ref, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
-import { Cell } from '@tav-ui/components/table-pro/src/components/cell'
+import { TaButton } from '@tav-ui/components/button'
 import { TaTableProAction } from '@tav-ui/components/table-pro'
-import { TaFileVersion } from '../../FileVersion'
+import { Cell } from '../../../../../table-pro/src/components/cell'
 import {
   type FileTableAction,
   type FileTableColumn,
@@ -21,7 +21,6 @@ export function defaultColumnsBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
-  latestVersionFile: (rowActualId: any) => FileActionUploadApiResponseRecord | undefined,
   handleCellEditClick: (
     changeEventPayload: {
       id?: string
@@ -29,7 +28,8 @@ export function defaultColumnsBuilder(
       address?: string
     },
     row: FileActionUploadApiResponseRecord
-  ) => Promise<void>
+  ) => Promise<void>,
+  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const clearEdit = tableProRef.value?.instance?.clearEdit
   const enabledVersion = mergedProps.value.enabledVersion
@@ -120,17 +120,19 @@ export function defaultColumnsBuilder(
             customRender: ({ row: _row }: Record<string, any>) => {
               const row = _row as FileActionUploadApiResponseRecord
               const renderVersion = isVersionColVisible(enabledVersion, row.hyperlink, row.auto)
-              const versionFile = latestVersionFile(row.actualId!)
 
               return (
                 <>
                   {renderVersion ? (
-                    <TaFileVersion
-                      mode={mergedProps.value.mode}
-                      apiParams={mergedProps.value.apiParams}
-                      file={row as FileActionUploadApiResponseRecord}
-                      versionFile={versionFile}
-                    />
+                    <>
+                      <TaButton
+                        style={{ minWidth: 0, padding: 0 }}
+                        type={'link'}
+                        onClick={async () => hanldeVersionClick(row)}
+                      >
+                        v{row.version}
+                      </TaButton>
+                    </>
                   ) : (
                     ''
                   )}
@@ -169,7 +171,6 @@ export function useColumns(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>
-  latestVersionFile: (rowActualId: any) => FileActionUploadApiResponseRecord | undefined
   handleCellEditClick: (
     changeEventPayload: {
       id?: string
@@ -178,8 +179,9 @@ export function useColumns(options: {
     },
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>
+  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 }) {
-  const { mergedProps, tableProRef, actions, latestVersionFile, handleCellEditClick } = options
+  const { mergedProps, tableProRef, actions, handleCellEditClick, hanldeVersionClick } = options
 
   return computed(() => {
     const columns = mergedProps.value.columns
@@ -188,8 +190,8 @@ export function useColumns(options: {
       mergedProps,
       tableProRef,
       actions,
-      latestVersionFile,
-      handleCellEditClick
+      handleCellEditClick,
+      hanldeVersionClick
     )
 
     if (columns && isFunction(columns)) {

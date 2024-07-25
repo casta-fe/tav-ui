@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref /*useSlots, useAttrs*/, watch, unref } from 'vue'
+import { type UnwrapRef, computed, ref, unref /*useSlots, useAttrs*/, watch } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
+  VersionCachesController,
   useDisable,
   useGlobalConfigProps,
   useLoading,
   useMergedProps,
   useRequest,
-  useVersion,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
 import { type ArgumentsOf, fileSingleDownload } from '../../utils'
@@ -18,7 +18,8 @@ import {
   type FileActionUploadProps,
   TaFileActionUpload as TaFileActionUploadForActionUpdateBtn,
 } from '../FileActionUpload'
-import { TaFileView } from '../FileView'
+import { TaFileVersion } from '../FileVersion'
+import { TaFilePreview } from '../FilePreview'
 import {
   type FileTableInstance,
   type FileTableProps,
@@ -40,7 +41,6 @@ const emits = defineEmits(fileTableEmits)
 // const attrs = useAttrs()
 
 const FileActionUploadForActionUpdateBtnRef = ref<FileActionUploadInstance>()
-const actionUpdateClickRow = ref<FileActionUploadApiResponseRecord>()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
 const globalConfigProps = useGlobalConfigProps()
@@ -50,36 +50,35 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileTableProps>(
   ['fileTable']
 )
 
+// 针对业务抽象不同模式进行数据处理
 const {
   useModeFetchDataSource,
-  emitEventOptions,
   apiActions: {
     apiQueryFileOptions,
     rowEditorApiOptions,
+    historyApiOptions,
     updateApiOptions,
     // downloadApiOptions,
     // downloadWaterMarkerApiOptions,
-    // downloadMultiApiOptions,
     deleteApiOptions,
   },
   dataSourceActions: { editRow, updateRow, deleteRow },
 } = useMode({ mergedProps })
 
-const {
-  updateVersionCache,
-  cleanVersionCache,
-  applyVersionCacheToDataSource,
-  getVersionFileByActualId,
-  getLatestVersionFileByActualId,
-} = useVersion()
-
+// datasource 处理针对于 upload 成功以及外部传入 datasource（不用 api）
 const dataSource = ref(mergedProps.value.dataSource)
 watch(
   () => mergedProps.value.dataSource,
   (curdatasource) => {
     if (curdatasource) {
-      emitEventOptions(curdatasource, dataSource, applyVersionCacheToDataSource, 'upload', emits)
-      curdatasource.forEach((file) => updateVersionCache(file))
+      // TODO: 使用 vxetable 自身处理数据方法把这里新增的数据标识出来
+      const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
+      emits('change', rows, rows, 'upload')
+      emits(
+        'actualidsChange',
+        rows.map((file: any) => file.actualId)
+      )
+
       dataSource.value = [...curdatasource]
     }
   }
@@ -134,15 +133,18 @@ const dataSourceOrApiConfig = computed<{
   }
 })
 
+// 统一内部 loading 状态
 const _loading = ref(mergedProps.value.loading)
 const loading = computed({
   get() {
     return _loading
   },
-  set(newLoading) {
+  set(newLoading: any) {
     _loading.value = newLoading.value
   },
 })
+
+// 使用 api 处理数据
 const { setDisable } = useDisable()
 const { setLoading } = useLoading()
 const {
@@ -159,14 +161,50 @@ watch(
   (curdatasource) => {
     // if (curdatasource && JSON.stringify(curdatasource) !== JSON.stringify(predatasource)) {
     if (curdatasource) {
-      const _dataSource = [...JSON.parse(JSON.stringify(curdatasource))]
-      emitEventOptions(curdatasource, dataSource, applyVersionCacheToDataSource, 'init', emits)
-      applyVersionCacheToDataSource(_dataSource)
-      dataSource.value = _dataSource
+      const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
+      emits('change', rows, rows, 'init')
+      emits(
+        'actualidsChange',
+        rows.map((file: any) => file.actualId)
+      )
+
+      dataSource.value = [...rows]
+
+      VersionCachesController.createAllFileCaches(rows)
     }
   }
 )
-useModeFetchDataSource(handleApi)
+// 针对各种模式使用传入的 api 自动请求数据
+mergedProps.value.immediate && useModeFetchDataSource(handleApi)
+
+// 处理 file cache，主要针对编辑/立即更新模式
+async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
+  loading.value.value = true
+
+  if (
+    !VersionCachesController.isCachesEmpty() &&
+    VersionCachesController.readFileCaches(row.actualId!)
+  ) {
+    loading.value.value = false
+    if (row.version === VersionCachesController.readFileCaches(row.actualId!)!.length)
+      return VersionCachesController.readFileCaches(row.actualId!)
+  }
+
+  const options = historyApiOptions(mergedProps.value.apiParams, row)
+  if (!options) {
+    loading.value.value = false
+    return []
+  }
+
+  const { success, data } = await mergedProps.value.apiQueryFileHistory!(options.apiParams)
+  if (success === true && data) {
+    loading.value.value = false
+    return [...(VersionCachesController.createFileCaches(row, data) ?? [])]
+  }
+
+  loading.value.value = false
+  return []
+}
 
 // 立即更新模式操作后（更新、删除）刷新数据
 async function refreshDataSource() {
@@ -175,6 +213,7 @@ async function refreshDataSource() {
   await handleApi(options)
 }
 
+// 行编辑处理
 async function handleCellEditClick(
   changeEventPayload: { id?: string; name?: string; address?: string },
   row: FileActionUploadApiResponseRecord
@@ -203,27 +242,75 @@ async function handleCellEditClick(
 
   loading.value.value = true
   // 更新表格数据
-  await editRow(dataSource, row, changeEventPayload, updateVersionCache, editDataSourceRow)
+  await editRow(
+    dataSource,
+    row,
+    changeEventPayload,
+    editDataSourceRow,
+    emits,
+    VersionCachesController
+  )
   loading.value.value = false
 }
 
-const fileViewModalVisible = ref(false)
-const fileViewFile = ref<FileActionUploadApiResponseRecord>()
-function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
-  fileViewModalVisible.value = true
-  fileViewFile.value = row
+// version 弹窗处理
+const fileVersionModalVisible = ref(false)
+const fileVersionFile = ref<FileActionUploadApiResponseRecord>()
+const fileVersionDataSource = ref<FileActionUploadApiResponseRecord[]>([])
+async function hanldeVersionClick(row: FileActionUploadApiResponseRecord) {
+  fileVersionFile.value = row
+  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+    const fileCaches = await beforeReadFileCaches(row)
+    fileVersionDataSource.value = fileCaches!
+  }
+  fileVersionModalVisible.value = true
 }
-function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
-  // console.log('update')
+
+// 预览处理
+const filePreviewModalVisible = ref(false)
+const filePreviewFile = ref<FileActionUploadApiResponseRecord>()
+function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
+  filePreviewModalVisible.value = true
+  filePreviewFile.value = row
+}
+
+// 更新处理
+const actionUpdateClickRow = ref<FileActionUploadApiResponseRecord>()
+async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
+  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+    await beforeReadFileCaches(row)
+  }
+
   actionUpdateClickRow.value = row
 
   const uploadInnerButtonEl = unref(
     FileActionUploadForActionUpdateBtnRef.value?.elRef
   )?.querySelector('[type="button"]') as HTMLButtonElement | undefined
   uploadInnerButtonEl?.click()
+}
+// 点击更新时 upload 回调
+function handleFileActionUploadForActionUpdateBtnBeforeApiUploadFile(...args: any) {
+  loading.value.value = true
+  const [apiParams] = args as unknown as ArgumentsOf<FileActionUploadProps['beforeApiUploadFile']>
+  return updateApiOptions(
+    mergedProps.value.apiParams,
+    apiParams.files!,
+    actionUpdateClickRow.value,
+    FileActionUploadForActionUpdateBtnRef.value?.resetFileList!
+  )
+}
+async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
+  const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
 
   loading.value.value = true
+  // 更新表格数据
+  await updateRow(dataSource, files[0], refreshDataSource, emits, VersionCachesController)
+  loading.value.value = false
+
+  actionUpdateClickRow.value = undefined
 }
+
+// 水印下载处理
 async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseRecord) {
   if (!mergedProps.value.apiDownloadWaterMarkerFile) {
     console.warn('[tavui TaFileTable] apiDownloadWaterMarkerFile is undefined')
@@ -236,6 +323,8 @@ async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseR
   })
   loading.value.value = false
 }
+
+// 下载处理
 async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
   if (!mergedProps.value.apiDownloadFile) {
     console.warn('[tavui TaFileTable] apiDownloadFile is undefined')
@@ -248,6 +337,8 @@ async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
   })
   loading.value.value = false
 }
+
+// 删除处理
 async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
   // 立即更新模式调接口删除
   async function deleteDataSourceRow() {
@@ -263,12 +354,13 @@ async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
     row,
     deleteDataSourceRow,
     refreshDataSource,
-    applyVersionCacheToDataSource,
-    emits
+    emits,
+    VersionCachesController
   )
   loading.value.value = false
 }
 
+// 处理操作列
 const actions = useActions({
   mergedProps,
   handleViewBtnClick,
@@ -278,15 +370,17 @@ const actions = useActions({
   handleDeleteBtnClick,
 })
 
+// 处理表格列
 const columns = useColumns({
   mergedProps,
   tableProRef,
   actions,
-  latestVersionFile: (rowActualId) =>
-    getVersionFileByActualId(rowActualId) ?? getLatestVersionFileByActualId(rowActualId),
   handleCellEditClick,
+  hanldeVersionClick,
+  // beforeReadFileCaches,
 })
 
+// 行编辑配置
 const editConfig = computed<any>(() =>
   mergedProps.value.enabledRowEdit
     ? {
@@ -298,33 +392,12 @@ const editConfig = computed<any>(() =>
     : undefined
 )
 
-function handleFileActionUploadForActionUpdateBtnBeforeApiUploadFile(...args: any) {
-  const [apiParams] = args as unknown as ArgumentsOf<FileActionUploadProps['beforeApiUploadFile']>
-  return updateApiOptions(mergedProps.value.apiParams, apiParams.files!, actionUpdateClickRow.value)
-}
-
-async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
-  const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
-
-  loading.value.value = true
-  // 更新表格数据
-  await updateRow(
-    dataSource,
-    files[0],
-    actionUpdateClickRow.value?.actualId!,
-    updateVersionCache,
-    refreshDataSource,
-    applyVersionCacheToDataSource,
-    emits
-  )
-  loading.value.value = false
-
-  actionUpdateClickRow.value = undefined
-}
-
+// 清空表格状态
 function cleanup() {
   actionUpdateClickRow.value = undefined
-  cleanVersionCache()
+  filePreviewModalVisible.value = false
+  filePreviewFile.value = undefined
+  VersionCachesController.deleteAllFileCaches()
 }
 
 defineExpose({
@@ -356,13 +429,20 @@ defineExpose({
         :multiple="false"
         :api-params="apiParams"
         :before-api-upload-file="handleFileActionUploadForActionUpdateBtnBeforeApiUploadFile"
-        @uploadedChange="handleFileActionUploadForActionUpdateBtnChange"
+        @uploaded-change="handleFileActionUploadForActionUpdateBtnChange"
       />
-      <TaFileView
-        v-model:visible="fileViewModalVisible"
+      <TaFileVersion
+        v-model:visible="fileVersionModalVisible"
         :mode="mergedProps.mode"
         :api-params="mergedProps.apiParams"
-        :file="fileViewFile"
+        :file="fileVersionFile"
+        :data-source="fileVersionDataSource"
+      />
+      <TaFilePreview
+        v-model:visible="filePreviewModalVisible"
+        :mode="mergedProps.mode"
+        :api-params="mergedProps.apiParams"
+        :file="filePreviewFile"
       />
     </section>
   </template>

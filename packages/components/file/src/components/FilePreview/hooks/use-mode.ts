@@ -1,35 +1,35 @@
 import { type ComputedRef } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import { type FileViewProps } from '../types'
+import { type FilePreviewProps } from '../types'
 import {
   type FileActionUploadApiResponseRecord,
-  type FileViewApiResponse,
+  type FilePreviewApiResponse,
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
 
 export function useMode(options: {
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileViewProps>
+  mergedProps: ComputedRef<GlobalConfigFileProps & FilePreviewProps>
 }) {
   const { mergedProps } = options
 
   //:========================================: api actions :========================================://
   function viewApiOptions(
-    apiParams: FileViewProps['apiParams'],
+    apiParams: FilePreviewProps['apiParams'],
     file: FileActionUploadApiResponseRecord
   ) {
-    if (!mergedProps.value.apiViewFile) {
-      console.warn('[tavui TaFileTable] apiViewFile is undefined')
+    if (!mergedProps.value.apiPreviewFile) {
+      console.warn('[tavui TaFileTable] apiPreviewFile is undefined')
       return
     }
 
     const options: UseRequestHandleApiDefaultOptions<
-      FileViewProps['apiParams'],
-      FileViewApiResponse
+      FilePreviewProps['apiParams'],
+      FilePreviewApiResponse
     > = {
-      api: mergedProps.value.apiViewFile,
-      beforeApi: mergedProps.value.beforeApiViewFile,
-      afterApi: mergedProps.value.afterApiViewFile,
+      api: mergedProps.value.apiPreviewFile,
+      beforeApi: mergedProps.value.beforeApiPreviewFile,
+      afterApi: mergedProps.value.afterApiPreviewFile,
       apiParams: {
         appId: apiParams.appId,
         id: file.id!,

@@ -1,13 +1,9 @@
-import { type ComputedRef, type Ref, computed, reactive, unref } from 'vue'
-import { Spin } from 'ant-design-vue'
+import { type ComputedRef, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
-import { Cell } from '@tav-ui/components/table-pro/src/components/cell'
-import { TaFileVersion } from '../../FileVersion'
-import { type FileTableAction, type FileTableInstance, type FileTableProps } from '../types'
+import { type FileTableAction, type FileTableProps } from '../types'
 import {
   type FileActionUploadApiResponseRecord,
-  type FileMode,
   type GlobalConfigFileProps,
 } from '../../../typings'
 import {
@@ -21,40 +17,38 @@ import {
 export function defaultActionsBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
   row: FileActionUploadApiResponseRecord,
-  handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => any,
-  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => any
+  handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => void,
+  handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const mode = mergedProps.value.mode
   const enabledVersion = mergedProps.value.enabledVersion
 
   const DEFAULT_ACTIONS: FileTableAction[] = [
-    {
-      field: 'view',
-      label: tavI18n('Tav.file.actions.1'),
-      // 抛出去通过 field 控制
-      // permission: props.tableActionPermission.preview,
-      enabled: isViewBtnVisible(row.hyperlink!),
-      onClick() {
-        handleViewBtnClick(row)
-        // if (row.hyperlink === 1) {
-        //   window.open(row.address)?.focus()
-        //   return
-        // }
-        // previewRecord.value = [record]
-        // showPreview.value = true
-      },
-    },
+    ...(mergedProps.value.enabledPreview
+      ? [
+          {
+            field: 'view',
+            label: tavI18n('Tav.file.actions.1'),
+            // 抛出去通过 field 控制
+            // permission: props.tableActionPermission.preview,
+            enabled: isViewBtnVisible(row.hyperlink!),
+            onClick: () => {
+              handleViewBtnClick(row)
+            },
+          },
+        ]
+      : []),
     ...(isUpdateBtnVisible(mode, enabledVersion, row.hyperlink!, row.auto!)
       ? [
           {
             field: 'update',
             label: tavI18n('Tav.file.actions.5'),
             enabled: isUpdateBtnVisible(mode, enabledVersion, row.hyperlink!, row.auto!),
-            onClick() {
-              handleUpdateBtnClick(row)
+            onClick: async () => {
+              await handleUpdateBtnClick(row)
             },
           },
         ]
@@ -64,18 +58,16 @@ export function defaultActionsBuilder(
       label: tavI18n('Tav.file.actions.4'),
       // permission: props.tableActionPermission.download,
       enabled: isDownloadWatermarkBtnVisible(row.hyperlink!, row.watermarkFileDownload!),
-      onClick() {
-        handleDownloadWatermarkBtnClick(row)
-        // props.download?.(record, undefined, true)
+      onClick: async () => {
+        await handleDownloadWatermarkBtnClick(row)
       },
     },
     {
       field: 'download',
       label: tavI18n('Tav.file.actions.3'),
       enabled: isDownloadBtnVisible(row.hyperlink!, row.sourceFileDownload!),
-      onClick() {
-        handleDownloadBtnClick(row)
-        // props.download?.(record)
+      onClick: async () => {
+        await handleDownloadBtnClick(row)
       },
     },
     {
@@ -84,9 +76,8 @@ export function defaultActionsBuilder(
       enabled: isDeleteBtnVisible(mode),
       popConfirm: {
         title: tavI18n('Tav.file.message.9'),
-        confirm: () => {
-          handleDeleteBtnClick(row)
-          // emit('delete', record)
+        confirm: async () => {
+          await handleDeleteBtnClick(row)
         },
       },
     },
@@ -97,11 +88,11 @@ export function defaultActionsBuilder(
 
 export function useActions(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
-  handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => any
-  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => any
+  handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => void
+  handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 }) {
   const {
     mergedProps,

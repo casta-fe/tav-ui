@@ -125,7 +125,7 @@ export interface FileApiParamBusinessParamsJson {
   [key: string]: any
 }
 
-export interface FileViewApiResponse {
+export interface FilePreviewApiResponse {
   createTime?: string
   createByName?: string
   fileId?: number

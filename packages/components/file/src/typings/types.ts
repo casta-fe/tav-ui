@@ -1,15 +1,23 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
-import { type FileTypeSelectProps } from '../components/FileTypeSelect'
-import { type FileActionUploadProps } from '../components/FileActionUpload'
+import {
+  type FileTypeSelectEmits,
+  type FileTypeSelectInstance,
+  type FileTypeSelectProps,
+} from '../components/FileTypeSelect'
+import {
+  type FileActionUploadEmits,
+  type FileActionUploadInstance,
+  type FileActionUploadProps,
+} from '../components/FileActionUpload'
 import {
   type FileTableEmits,
   type FileTableInstance,
   type FileTableProps,
 } from '../components/FileTable'
 // import { type FileVersionProps } from '../components/FileVersion'
-// import { type FileViewProps } from '../components/FileView'
+// import { type FilePreviewProps } from '../components/FilePreview'
 import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../consts'
-import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
+// import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
 import { type ArgumentsOf } from '../utils'
 import { type GlobalConfigFileProps } from './global-config'
 import { type FileApiParamBusinessParamsJson } from './api'
@@ -127,12 +135,12 @@ export const fileVersionApiParams = {
 }
 export type FileVersionApiParams = ExtractPropTypes<typeof fileVersionApiParams>
 
-/** fileView 组件下所有 api 参数 */
-export const fileViewApiParams = {
+/** filePreview 组件下所有 api 参数 */
+export const filePreviewApiParams = {
   appId: { type: Object as PropType<ApiParams['appId']> },
   id: { type: Object as PropType<ApiParams['id']> },
 }
-export type FileViewApiParams = ExtractPropTypes<typeof fileViewApiParams>
+export type FilePreviewApiParams = ExtractPropTypes<typeof filePreviewApiParams>
 
 /** 只读/新增/编辑（更新）/立即更新，默认只读 */
 export type FileMode = 'read' | 'create' | 'update' | 'updateInstantly'
@@ -178,9 +186,9 @@ export const fileProps = {
   // fileVersion: {
   //   type: Object as PropType<FileVersionProps & GlobalConfigFileProps['fileVersion']>,
   // },
-  // /** FileView Props */
-  // fileView: {
-  //   type: Object as PropType<FileViewProps & GlobalConfigFileProps['fileView']>,
+  // /** FilePreview Props */
+  // filePreview: {
+  //   type: Object as PropType<FilePreviewProps & GlobalConfigFileProps['filePreview']>,
   // },
 }
 
@@ -188,13 +196,30 @@ export type FileProps = ExtractPropTypes<typeof fileProps>
 
 export const fileEmits = {
   change: (...args: ArgumentsOf<FileTableEmits['change']>) => args instanceof Object,
-  'update:fileActualIds': (...args: ArgumentsOf<FileTableEmits['fileActualIdsChange']>) =>
+  'update:fileActualIds': (...args: ArgumentsOf<FileTableEmits['actualidsChange']>) =>
     args instanceof Object,
+
+  'fileTypeSelect:change': (...args: ArgumentsOf<FileTypeSelectEmits['change']>) =>
+    args instanceof Object,
+  'fileTypeSelect:optionsChange': (...args: ArgumentsOf<FileTypeSelectEmits['optionsChange']>) =>
+    args instanceof Object,
+
+  'fileActionUpload:validateSuccessChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['validateSuccessChange']>
+  ) => args instanceof Object,
+  'fileActionUpload:validateFailureChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['validateFailureChange']>
+  ) => args instanceof Object,
+  'fileActionUpload:uploadedChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['uploadedChange']>
+  ) => args instanceof Object,
 }
 
 export type FileEmits = typeof fileEmits
 
 export interface FileInstance {
   elRef: Ref<HTMLDivElement | undefined>
+  fileTypeSelectRef: Ref<FileTypeSelectInstance | undefined>
+  fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
   fileTableRef: Ref<FileTableInstance | undefined>
 }

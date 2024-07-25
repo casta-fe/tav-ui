@@ -17,7 +17,7 @@ export const DEFAULT_PROPS_COMPONENT_NAMES = [
   'fileTable',
   'fileTypeSelect',
   'fileVersion',
-  'fileView',
+  'filePreview',
 ]
 
 const ns = createNS('file')
@@ -39,8 +39,8 @@ export const DEFAULT_FILETABLE_CLASSNAME = ns.b('table')
 export const DEFAULT_FILETABLE_ID = createId(DEFAULT_FILETABLE_CLASSNAME)
 export const DEFAULT_FILEVERSION_CLASSNAME = ns.b('version')
 export const DEFAULT_FILEVERSION_ID = createId(DEFAULT_FILEVERSION_CLASSNAME)
-export const DEFAULT_FILEVIEW_CLASSNAME = ns.b('view')
-export const DEFAULT_FILEVIEW_ID = createId(DEFAULT_FILEVIEW_CLASSNAME)
+export const DEFAULT_FILEPREVIEW_CLASSNAME = ns.b('preview')
+export const DEFAULT_FILEPREVIEW_ID = createId(DEFAULT_FILEPREVIEW_CLASSNAME)
 export const DEFAULT_ROWEDITOR_CLASSNAME = ns.b('table-row-editor')
 export const DEFAULT_ROWEDITOR_ID = createId(DEFAULT_ROWEDITOR_CLASSNAME)
 

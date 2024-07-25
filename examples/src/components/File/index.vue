@@ -155,6 +155,7 @@ const unifiedTaFileData = reactive({
       businessKey: 'GSWU19972MMNPWLF7',
       businessId: 'GSWU19972MMNPWLF7',
     },
+    fileActualIds: [],
   },
   update: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
@@ -164,6 +165,10 @@ const unifiedTaFileData = reactive({
       appId: 10001,
       businessKey: 'GSWU19972MMNPWLF7',
       businessId: 'GSWU19972MMNPWLF7',
+    },
+    fileActualIds: [],
+    fileTable: {
+      enabledRowEdit: true,
     },
   },
   updateInstantly: {
@@ -198,13 +203,17 @@ const unifiedTaFileData = reactive({
 
 watch(
   () => unifiedTaFileData.updateInstantly.fileActualIds,
-  (cur, pre) => {
-    console.log(cur, pre)
+  (cur) => {
+    console.log(cur)
   },
   {
     deep: true,
   }
 )
+
+function handlefilechange(...args: any) {
+  console.log(args)
+}
 </script>
 
 <template>
@@ -227,8 +236,9 @@ watch(
 
     <h3>TaFile 集合测试</h3>
     <TaFile
-      v-bind="unifiedTaFileData.update"
+      v-bind="unifiedTaFileData.updateInstantly"
       v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      @change="handlefilechange"
     />
   </section>
 </template>

@@ -40,11 +40,11 @@ import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
 import { TaFileView } from '@tav-ui/components/file-view'
 import {
   TaFile,
+  TaFileActionUpload,
+  TaFilePreview,
   TaFileTable,
   TaFileTypeSelect,
-  TaFileUploadAction,
   TaFileVersion,
-  // TaFileView,
 } from '@tav-ui/components/file'
 
 import type { Plugin } from 'vue'
@@ -99,7 +99,7 @@ export default [
   TaFile,
   TaFileTable,
   TaFileTypeSelect,
-  TaFileUploadAction,
+  TaFileActionUpload,
+  TaFilePreview,
   TaFileVersion,
-  // TaFileView,
 ] as Plugin[]

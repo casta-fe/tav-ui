@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, reactive, ref /*useSlots, useAttrs*/ } from 'vue'
 // import { useGlobalConfigProps, useMergedProps } from '../../../../hooks'
 // import { type GlobalConfigFileProps } from '../../../../typings'
 import { Input as VxeInput } from 'vxe-table'
@@ -13,7 +13,7 @@ import {
 import { type FileActionUploadApiResponseRecord } from '../../../../typings'
 import {
   type FileTableRowEditorInstance,
-  fileTableRowEditorEmits,
+  // fileTableRowEditorEmits,
   fileTableRowEditorProps,
   // type FileTableRowEditorProps,
 } from './types'
@@ -23,9 +23,9 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<FileTableRowEditorInstance['elRef']>()
+const elRef = ref<UnwrapRef<FileTableRowEditorInstance['elRef']>>()
 const props = defineProps(fileTableRowEditorProps)
-const emits = defineEmits(fileTableRowEditorEmits)
+// const emits = defineEmits(fileTableRowEditorEmits)
 // const slots = useSlots()
 // const attrs = useAttrs()
 

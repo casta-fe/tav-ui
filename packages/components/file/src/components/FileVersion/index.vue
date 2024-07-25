@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, watch, ref /*useSlots, useAttrs*/ } from 'vue'
-import { TaButton, TaModal, TaTablePro } from '@tav-ui/components'
+import { type UnwrapRef, computed, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { TaModal, TaTablePro } from '@tav-ui/components'
 import { DEFAULT_FILEVERSION_CLASSNAME, DEFAULT_FILEVERSION_ID } from '../../consts'
 import {
+  VersionCachesController,
   useDisable,
   useGlobalConfigProps,
   useLoading,
@@ -10,6 +11,8 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
+import { fileSingleDownload } from '../../utils'
+import { TaFilePreview } from '../FilePreview'
 import {
   type FileVersionInstance,
   type FileVersionProps,
@@ -23,7 +26,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<FileVersionInstance['elRef']>()
+const elRef = ref<UnwrapRef<FileVersionInstance['elRef']>>()
 const props = defineProps(fileVersionProps)
 const emits = defineEmits(fileVersionEmits)
 // const slots = useSlots()
@@ -37,6 +40,12 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileVersionProps>(
   ['fileVersion']
 )
 
+// 针对业务抽象不同模式进行数据处理
+const {
+  apiActions: { historyApiOptions },
+} = useMode({ mergedProps })
+
+// datasource 处理针对于 upload 成功以及外部传入 datasource（不用 api）
 const dataSource = ref(mergedProps.value.dataSource)
 watch(
   () => mergedProps.value.dataSource,
@@ -79,17 +88,19 @@ const dataSourceOrApiConfig = computed<{
   }
 })
 
+// 统一内部 loading 状态
 const _loading = ref(mergedProps.value.loading)
 const loading = computed({
   get() {
     return _loading
   },
-  set(newLoading) {
+  set(newLoading: any) {
     _loading.value = newLoading.value
   },
 })
 
-const { disable, setDisable } = useDisable()
+// 使用 api 处理数据
+const { setDisable } = useDisable()
 const { setLoading } = useLoading()
 const {
   result: ApiResult,
@@ -105,35 +116,57 @@ watch(
   (curdatasource) => {
     // if (curdatasource && JSON.stringify(curdatasource) !== JSON.stringify(predatasource)) {
     if (curdatasource) {
-      const versionFile = mergedProps.value.versionFile
-      const _dataSource = [...JSON.parse(JSON.stringify(curdatasource))]
-      if (
-        !_dataSource.some((row: FileActionUploadApiResponseRecord) => row.id === versionFile?.id)
-      ) {
-        _dataSource.push({
-          ...((versionFile ?? {}) as FileActionUploadApiResponseRecord),
-          version: _dataSource[0] ? _dataSource[0].version + _dataSource.length : 1,
-        })
-      }
-      dataSource.value = _dataSource
+      const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
+      dataSource.value = [...rows]
+
+      VersionCachesController.createAllFileCaches(rows)
     }
   }
 )
-
-const {
-  apiActions: { historyApiOptions },
-} = useMode({ mergedProps })
-
-function handleViewBtnClick(/*row: FileActionUploadApiResponseRecord*/) {
-  console.log('view')
-}
-function handleDownloadWatermarkBtnClick(/*row: FileActionUploadApiResponseRecord*/) {
-  console.log('downloadWatermark')
-}
-function handleDownloadBtnClick(/*row: FileActionUploadApiResponseRecord*/) {
-  console.log('download')
+// 针对各种模式使用传入的 api 自动请求数据
+async function useModeFetchDataSource() {
+  const options = historyApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
+  if (!options) return
+  await handleApi(options)
 }
 
+// 预览处理
+const filePreviewModalVisible = ref(false)
+const filePreviewFile = ref<FileActionUploadApiResponseRecord>()
+function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
+  filePreviewModalVisible.value = true
+  filePreviewFile.value = row
+}
+
+// 水印下载处理
+async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseRecord) {
+  if (!mergedProps.value.apiDownloadWaterMarkerFile) {
+    console.warn('[tavui TaFileTable] apiDownloadWaterMarkerFile is undefined')
+    return
+  }
+  loading.value.value = true
+  await fileSingleDownload({
+    file: row,
+    api: mergedProps.value.apiDownloadWaterMarkerFile!,
+  })
+  loading.value.value = false
+}
+
+// 下载处理
+async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
+  if (!mergedProps.value.apiDownloadFile) {
+    console.warn('[tavui TaFileTable] apiDownloadFile is undefined')
+    return
+  }
+  loading.value.value = true
+  await fileSingleDownload({
+    file: row,
+    api: mergedProps.value.apiDownloadFile!,
+  })
+  loading.value.value = false
+}
+
+// 处理操作列
 const actions = useActions({
   mergedProps,
   handleViewBtnClick,
@@ -141,6 +174,7 @@ const actions = useActions({
   handleDownloadBtnClick,
 })
 
+// 处理表格列
 const columns = useColumns({
   mergedProps,
   actions,
@@ -160,13 +194,13 @@ watch(
 )
 
 async function open() {
+  if (mergedProps.value.immediate) {
+    await useModeFetchDataSource()
+  }
+
   modalVisible.value = true
   emits('open')
   emits('update:visible', modalVisible.value)
-
-  const options = historyApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
-  if (!options) return
-  await handleApi(options)
 }
 
 function close() {
@@ -183,14 +217,13 @@ function handleOnVisibleChange(isOpen: boolean) {
 
 defineExpose({
   elRef,
+  open,
+  close,
 })
 </script>
 
 <template>
   <section :id="DEFAULT_FILEVERSION_ID" ref="elRef" :class="DEFAULT_FILEVERSION_CLASSNAME">
-    <TaButton style="min-width: 0; padding: 0" type="link" :disabled="disable" @click="open">
-      v{{ mergedProps.file?.version }}
-    </TaButton>
     <TaModal
       :visible="modalVisible"
       title="TaFileVersion"
@@ -221,5 +254,11 @@ defineExpose({
         </div>
       </template>
     </TaModal>
+    <TaFilePreview
+      v-model:visible="filePreviewModalVisible"
+      :mode="mergedProps.mode"
+      :api-params="mergedProps.apiParams"
+      :file="filePreviewFile"
+    />
   </section>
 </template>

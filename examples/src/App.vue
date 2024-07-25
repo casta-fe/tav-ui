@@ -58,14 +58,15 @@ export default defineComponent({
             apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
             apiDownloadFile: taUploadProvideData.download,
             apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+            apiQueryFileHistory: taUploadProvideData.queryFileHistory,
           },
           fileVersion: {
             apiQueryFileHistory: taUploadProvideData.queryFileHistory,
             apiDownloadFile: taUploadProvideData.download,
             apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
           },
-          fileView: {
-            apiViewFile: previewWPSFile,
+          filePreview: {
+            apiPreviewFile: previewWPSFile,
           },
         } as any,
         TaMemberSelect: {

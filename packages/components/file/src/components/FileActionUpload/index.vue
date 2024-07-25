@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, type UnwrapRef, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, getCurrentInstance, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -58,6 +58,11 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>
   ['fileActionUpload']
 )
 
+const {
+  apiActions: { uploadApiOptions },
+  validateActions: { withValidateTypeCode },
+} = useMode({ mergedProps })
+
 const instance = getCurrentInstance()
 
 // // Embedded in the form, just use the hook binding to perform form verification
@@ -99,11 +104,6 @@ watch(
     }
   }
 )
-
-const {
-  apiActions: { uploadApiOptions },
-  validateActions: { withValidateTypeCode },
-} = useMode({ mergedProps })
 
 function handleFileValidate(file: ArgumentsOf<AUploadProps['beforeUpload']>[0]) {
   const validateUploadFileEmptyNameResult = validateUploadFileEmptyName(file.name)
@@ -221,7 +221,7 @@ async function beforeHandleApiAction3() {
 
   canUploadUnifiedFileList.value = true
 
-  const options = uploadApiOptions(mergedProps.value.apiParams, fileList.value)
+  const options = uploadApiOptions(mergedProps.value.apiParams, fileList.value, resetFileList)
   if (!options) return
   await handleApi(options)
 }
@@ -233,7 +233,7 @@ function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {
 
 defineExpose({
   elRef,
-  handleApi,
+  resetFileList,
 })
 </script>
 

@@ -14,7 +14,11 @@ export function useMode(options: {
   const { mergedProps } = options
 
   //:========================================: api actions :========================================://
-  function uploadApiOptions(apiParams: FileActionUploadProps['apiParams'], files: File[]) {
+  function uploadApiOptions(
+    apiParams: FileActionUploadProps['apiParams'],
+    files: File[],
+    callback: () => void
+  ) {
     if (!mergedProps.value.apiUploadFile) {
       console.warn('[tavui TaFileTable] apiUploadFile is undefined')
       return
@@ -48,6 +52,7 @@ export function useMode(options: {
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
       },
+      callback,
     }
 
     if (mergedProps.value.mode === 'read') {

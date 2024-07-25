@@ -24,6 +24,7 @@ export interface UseRequestHandleApiDefaultOptions<T, K> {
   failureMessage?: (...args: any[]) => string
   /** 只用 success 判断接口成功，默认使用 success + data */
   useSuccessPassRes?: boolean
+  callback?: () => void
 }
 
 export function useRequest(options: {
@@ -79,9 +80,7 @@ export function useRequest(options: {
     try {
       if (beforeApi && isFunction(beforeApi)) {
         const beforeApiResult = await beforeApi(apiParams)
-        if (isBoolean(beforeApiResult) && beforeApiResult) {
-          // 返回 true 继续执行
-        } else if (isObject(beforeApiResult)) {
+        if (isObject(beforeApiResult)) {
           apiParams = beforeApiResult.apiParams
           api = beforeApiResult.api
           beforeApi = beforeApiResult.beforeApi
@@ -91,7 +90,8 @@ export function useRequest(options: {
           failureMessage = beforeApiResult.failureMessage
           callback = beforeApiResult.callback
           useSuccessPassRes = beforeApiResult.useSuccessPassRes
-        } else {
+        }
+        if (isBoolean(beforeApiResult) && beforeApiResult === false) {
           callback && callback()
           return
         }

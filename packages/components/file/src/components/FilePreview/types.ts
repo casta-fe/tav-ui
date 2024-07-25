@@ -3,18 +3,18 @@ import { type ModalProps } from '@tav-ui/components/modal'
 import { isBoolean } from '@tav-ui/utils'
 import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_IGNORE_TYPES, DEFAULT_FILE_MODE } from '../../consts'
 import {
-  type ApiViewFileParams,
+  type ApiPreviewFileParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
-  type FileViewApiParams,
+  type FilePreviewApiParams,
   globalConfigFileProps,
 } from '../../typings'
 
-export const fileViewProps = {
+export const filePreviewProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['fileView'],
+  ...globalConfigFileProps['filePreview'],
   apiParams: {
-    type: Object as PropType<FileViewApiParams>,
+    type: Object as PropType<FilePreviewApiParams>,
     default: () => DEFAULT_FILE_API_PARAMS,
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
@@ -40,6 +40,7 @@ export const fileViewProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  immediate: { type: Boolean, default: true },
   /** 预览文件 */
   file: {
     type: Object as PropType<FileActionUploadApiResponseRecord>,
@@ -49,23 +50,25 @@ export const fileViewProps = {
       return !DEFAULT_FILE_IGNORE_TYPES.includes(value.suffix)
     },
   },
-  /** apiViewFile 已从 ...globalConfigFileProps['fileVersion'] 取到 */
-  beforeApiViewFile: {
-    type: Function as PropType<(apiParams: Partial<ApiViewFileParams>) => Promise<any>>,
+  /** apiPreviewFile 已从 ...globalConfigFileProps['filePreview'] 取到 */
+  beforeApiPreviewFile: {
+    type: Function as PropType<(apiParams: Partial<ApiPreviewFileParams>) => Promise<any>>,
   },
-  afterApiViewFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  afterApiPreviewFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
-export type FileViewProps = ExtractPropTypes<typeof fileViewProps>
+export type FilePreviewProps = ExtractPropTypes<typeof filePreviewProps>
 
-export const fileViewEmits = {
+export const filePreviewEmits = {
   open: () => true,
   close: () => true,
   'update:visible': (visible: boolean) => isBoolean(visible),
 }
 
-export type FileViewEmits = typeof fileViewEmits
+export type FilePreviewEmits = typeof filePreviewEmits
 
-export interface FileViewInstance {
+export interface FilePreviewInstance {
   elRef: Ref<HTMLDivElement | undefined>
+  open: () => any
+  close: () => any
 }

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { computed, ref, watch /*useSlots, useAttrs*/ } from 'vue'
-import { Button as AButton, Image as AImage } from 'ant-design-vue'
+import {
+  type UnwrapRef,
+  computed,
+  defineAsyncComponent,
+  ref,
+  watch,
+  /*useSlots, useAttrs*/
+} from 'vue'
+import { Button as AButton, Spin as ASpin } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
-import { TaModal } from '@tav-ui/components/modal'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
+import { TaModal } from '@tav-ui/components/modal'
 import { tavI18n } from '@tav-ui/locales'
 import {
-  DEFAULT_FILEVIEW_CLASSNAME,
-  DEFAULT_FILEVIEW_ID,
+  DEFAULT_FILEPREVIEW_CLASSNAME,
+  DEFAULT_FILEPREVIEW_ID,
   DEFAULT_FILE_IGNORE_TYPES,
   DEFAULT_FILE_IMAGE_TYPES,
   DEFAULT_FILE_OFFICE_TYPES,
@@ -20,30 +27,38 @@ import {
   useRequest,
 } from '../../hooks'
 import { type GlobalConfigFileProps } from '../../typings'
+import { sleep } from '../../utils'
 import { useMode } from './hooks'
-import { type FileViewInstance, type FileViewProps, fileViewEmits, fileViewProps } from './types'
+import {
+  type FilePreviewInstance,
+  type FilePreviewProps,
+  filePreviewEmits,
+  filePreviewProps,
+} from './types'
 
 defineOptions({
-  name: 'TaFileView',
+  name: 'TaFilePreview',
   inheritAttrs: false,
 })
 
-const elRef = ref<FileViewInstance['elRef']>()
-const props = defineProps(fileViewProps)
-const emits = defineEmits(fileViewEmits)
+const elRef = ref<UnwrapRef<FilePreviewInstance['elRef']>>()
+const props = defineProps(filePreviewProps)
+const emits = defineEmits(filePreviewEmits)
 // const slots = useSlots()
 // const attrs = useAttrs()
 
-// 将 globalconfig 与 fileView props 结合，同名 props 已 fileView props 为主
+// 将 globalconfig 与 filePreview props 结合，同名 props 已 filePreview props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileViewProps>(globalConfigProps, props, [
-  'fileView',
-])
+const mergedProps = useMergedProps<GlobalConfigFileProps, FilePreviewProps>(
+  globalConfigProps,
+  props,
+  ['filePreview']
+)
 
 const { createMessage } = useMessage()
 const supportWPS = ref(false)
 const currentFilePath = ref('')
-const fileViewModalBodyContent = ref<HTMLElement>()
+const filePreviewModalBodyContent = ref<HTMLElement>()
 
 const { setDisable } = useDisable()
 const { loading, setLoading } = useLoading()
@@ -99,6 +114,12 @@ watch(
     }
   }
 )
+// 针对各种模式使用传入的 api 自动请求数据
+async function useModeFetchDataSource() {
+  const options = viewApiOptions(mergedProps.value.apiParams, currentFile.value)
+  if (!options) return
+  await handleApi(options)
+}
 
 const {
   apiActions: { viewApiOptions },
@@ -139,9 +160,9 @@ async function open() {
   emits('open')
   emits('update:visible', modalVisible.value)
 
-  const options = viewApiOptions(mergedProps.value.apiParams, currentFile.value)
-  if (!options) return
-  await handleApi(options)
+  if (mergedProps.value.immediate) {
+    await useModeFetchDataSource()
+  }
 }
 
 function close() {
@@ -164,26 +185,41 @@ function validateFileType() {
   return true
 }
 
+const PreviewImage = defineAsyncComponent(() => {
+  return new Promise((resolve, reject) => {
+    ;(async function () {
+      try {
+        await sleep(100)
+        // @ts-ignore
+        const comp = await (import('./image.vue') as any)
+        resolve(comp)
+      } catch (error) {
+        reject(error)
+      }
+    })()
+  })
+})
+
 defineExpose({
   elRef,
+  open,
+  close,
 })
 </script>
 
 <template>
-  <section :id="DEFAULT_FILEVIEW_ID" ref="elRef" :class="DEFAULT_FILEVIEW_CLASSNAME">
+  <section :id="DEFAULT_FILEPREVIEW_ID" ref="elRef" :class="DEFAULT_FILEPREVIEW_CLASSNAME">
     <TaModal
       :visible="modalVisible"
-      title="TaFileView"
+      title="TaFilePreview"
       :width="mergedProps.width"
-      :wrap-class-name="`${DEFAULT_FILEVIEW_CLASSNAME}-modal ${
+      :wrap-class-name="`${DEFAULT_FILEPREVIEW_CLASSNAME}-modal ${
         supportWPS ? 'hide-modal-header' : ''
       } ${mergedProps.wrapClassName ?? ''}`"
       :destroy-on-close="mergedProps.destroyOnClose"
       :mask-closable="mergedProps.maskClosable"
       :get-popup-container="mergedProps.getPopupContainer"
       :footer="null"
-      :loading="loading"
-      :loading-tip="tavI18n('Tav.common.loadingText')"
       @visible-change="handleOnVisibleChange"
     >
       <template #title>
@@ -234,23 +270,30 @@ defineExpose({
           </div>
         </div>
       </template>
-      <div ref="fileViewModalBodyContent" class="file-view-content">
-        <template v-if="supportWPS">
-          <iframe id="wps-file-view" :src="currentFilePath" frameborder="0" />
-        </template>
-        <template v-else>
-          <template v-if="currentFileType === 'image'">
-            <AImage
-              :style="{ display: 'none' }"
-              :src="currentFilePath"
-              :preview="{ visible: true, getContainer: fileViewModalBodyContent }"
-            />
+      <template #default>
+        <ASpin
+          v-show="loading"
+          :spinning="loading"
+          size="default"
+          :tip="tavI18n('Tav.common.loadingText')"
+        />
+        <div v-show="!loading" ref="filePreviewModalBodyContent" class="file-view-content">
+          <template v-if="supportWPS">
+            <iframe id="wps-file-view" :src="currentFilePath" frameborder="0" />
           </template>
-          <template v-if="currentFileType === ''">
-            <div class="empty">{{ tavI18n('Tav.file.message.1') }} {{ currentFileType }}</div>
+          <template v-else>
+            <template v-if="currentFileType === 'image'">
+              <PreviewImage
+                :src="currentFilePath"
+                :preview="{ visible: true, getContainer: filePreviewModalBodyContent }"
+              />
+            </template>
+            <template v-if="currentFileType === ''">
+              <div class="empty">{{ tavI18n('Tav.file.message.1') }} {{ currentFileType }}</div>
+            </template>
           </template>
-        </template>
-      </div>
+        </div>
+      </template>
     </TaModal>
   </section>
 </template>
