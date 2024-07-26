@@ -15,8 +15,8 @@ export interface UseRequestHandleApiDefaultOptions<T, K> {
   afterApi?: (params: K) => Promise<any>
   /** 是否将参数全部转换为 formdata */
   transformApiParamsToFormData?: {
-    ennabled: boolean
-    fileFiledName: string
+    fileFiledName?: string
+    filterNames?: string[]
   }
   /** 成功提示 */
   successMessage?: (...args: any[]) => string
@@ -101,17 +101,45 @@ export function useRequest(options: {
 
       if (transformApiParamsToFormData) {
         // 组装数据
-        const formData = new FormData()
-        for (const [k, v] of Object.entries(apiParams as any)) {
-          if (k === transformApiParamsToFormData['fileFiledName']) {
-            ;(v as File[]).forEach((file) => {
-              formData.append(transformApiParamsToFormData!['fileFiledName'], file)
-            })
-          } else {
-            formData.append(k, v as any)
+        if (!transformApiParamsToFormData.filterNames) {
+          const formData = new FormData()
+          // 全部组装为 formdata
+          for (const [k, v] of Object.entries(apiParams as any)) {
+            if (
+              transformApiParamsToFormData['fileFiledName'] &&
+              k === transformApiParamsToFormData['fileFiledName']!
+            ) {
+              ;(v as File[]).forEach((file) => {
+                formData.append(transformApiParamsToFormData!['fileFiledName']!, file)
+              })
+            } else {
+              formData.append(k, v as any)
+            }
           }
+          apiResult = await (api as unknown as (params: FormData) => Promise<any>)(formData)
+        } else {
+          const formData = new FormData()
+          const __apiParams = {} as any
+          // 部分组装为 formdata
+          for (const [k, v] of Object.entries(apiParams as any)) {
+            if (transformApiParamsToFormData.filterNames.includes(k)) {
+              __apiParams[k] = v
+            } else {
+              if (
+                transformApiParamsToFormData['fileFiledName'] &&
+                k === transformApiParamsToFormData['fileFiledName']!
+              ) {
+                ;(v as File[]).forEach((file) => {
+                  formData.append(transformApiParamsToFormData!['fileFiledName']!, file)
+                })
+              } else {
+                formData.append(k, v as any)
+              }
+            }
+          }
+          __apiParams['formData'] = formData
+          apiResult = await api!(__apiParams)
         }
-        apiResult = await (api as unknown as (params: FormData) => Promise<any>)(formData)
       } else {
         apiResult = await api!(apiParams)
       }
@@ -134,7 +162,7 @@ export function useRequest(options: {
     } catch (error: any) {
       resultRef.value = []
       errorRef.value = failureMessage ? failureMessage() : DEFAULT_HTTP_ERROR_TIP(tavI18n)
-      createMessage.error(failureMessage ? failureMessage() : DEFAULT_HTTP_ERROR_TIP(tavI18n))
+      // createMessage.error(failureMessage ? failureMessage() : DEFAULT_HTTP_ERROR_TIP(tavI18n))
     } finally {
       if (loading) {
         loading.value.value = false

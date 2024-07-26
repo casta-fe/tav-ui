@@ -22,7 +22,7 @@ export const fileActionUploadProps = {
     default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
-  // AUpload props, multiple/accpet/maxCount 已从 globalConfigFileProps['fileActionUpload'] 解构
+  // AUpload props, multiple/accept/maxCount 已从 globalConfigFileProps['fileActionUpload'] 解构
   // /** 暂时不考虑接收外部已上传的 file，因为当前组件不展示 previewlist 只负责上传 */
   // fileList: { type: Array as PropType<AUploadProps['fileList']> },
   icon: { type: String, default: 'ant-design:upload-outlined' },

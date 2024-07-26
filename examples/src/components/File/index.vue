@@ -143,6 +143,7 @@ const unifiedTaFileData = reactive({
       businessKey: 'GSWU19972MMNPWLF7',
       businessId: 'GSWU19972MMNPWLF7',
     },
+    fileActualIds: [],
   },
   create: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
@@ -172,6 +173,8 @@ const unifiedTaFileData = reactive({
     },
   },
   updateInstantly: {
+    title: '立即更新测试',
+    titleVisible: true,
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
     mode: 'updateInstantly',
     apiParams: {
@@ -185,15 +188,15 @@ const unifiedTaFileData = reactive({
       }),
     },
     fileActualIds: [],
+    fileTypeSelect: {
+      // apiParams: {
+      //   moduleCode: 'kf_pitch',
+      //   appId: 10002,
+      //   permissionControl: true
+      // },
+    },
     fileTable: {
       enabledRowEdit: true,
-      pagerConfig: {
-        size: 'mini',
-        layouts: ['PrevPage', 'Number', 'NextPage', 'Sizes', 'Total'],
-        pageSize: 1,
-        pageSizes: [1, 2, 3],
-        controller: 'backend',
-      },
     },
   },
 })
@@ -202,7 +205,7 @@ const unifiedTaFileData = reactive({
 // }, 20000)
 
 watch(
-  () => unifiedTaFileData.updateInstantly.fileActualIds,
+  () => unifiedTaFileData.read.fileActualIds,
   (cur) => {
     console.log(cur)
   },
@@ -217,8 +220,8 @@ function handlefilechange(...args: any) {
 </script>
 
 <template>
-  <section class="ta-file-test">
-    <h2>TaFile 测试</h2>
+  <section class="ta-file-test" style="width: 70%; height: 60%; margin: 0 auto 0">
+    <!-- <h2>TaFile 测试</h2> -->
 
     <!-- <h3>TaFile TaFileTypeSelect 测试</h3>
     <TaFileTypeSelect
@@ -234,10 +237,10 @@ function handlefilechange(...args: any) {
       @fileListChange="fileListChange"
     /> -->
 
-    <h3>TaFile 集合测试</h3>
+    <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
-      v-bind="unifiedTaFileData.updateInstantly"
-      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      v-bind="unifiedTaFileData.read"
+      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
       @change="handlefilechange"
     />
   </section>

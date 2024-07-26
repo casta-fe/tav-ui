@@ -158,9 +158,9 @@ export function useMode(options: {
       // beforeApi: mergedProps.value.beforeApiQueryFileHistory,
       // afterApi: mergedProps.value.afterApiQueryFileHistory,
       apiParams: {
-        appId: apiParams.appId,
-        fileActualIds: [file.actualId!],
-        permissionControl: apiParams.permissionControl ?? false,
+        // appId: apiParams.appId,
+        actualIds: [file.actualId!],
+        // permissionControl: apiParams.permissionControl ?? false,
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
@@ -203,8 +203,8 @@ export function useMode(options: {
         businessParamsJson: apiParams.businessParamsJson ?? {},
       },
       transformApiParamsToFormData: {
-        ennabled: true,
         fileFiledName: 'files',
+        filterNames: ['appId', 'fileActualId', 'instantUpdate'],
       },
       successMessage: () => {
         return tavI18n('Tav.file.message.8')
@@ -341,7 +341,7 @@ export function useMode(options: {
     } else {
       options['apiParams'] = {
         ...options['apiParams'],
-        actualId: row?.actualId,
+        actualIds: [row?.actualId!],
       }
     }
 

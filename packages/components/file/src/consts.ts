@@ -47,7 +47,7 @@ export const DEFAULT_ROWEDITOR_ID = createId(DEFAULT_ROWEDITOR_CLASSNAME)
 export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
 export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']
 /** 支持的文件类型，目前只支持 wps 支持的类型与图片类型 */
-export const DEFAULT_FILE_ACCPET_TYPES = [
+export const DEFAULT_FILE_ACCEPT_TYPES = [
   ...DEFAULT_FILE_OFFICE_TYPES, // office
   ...DEFAULT_FILE_IMAGE_TYPES, // image
 ]
@@ -59,7 +59,7 @@ export const DEFAULT_FILE_IGNORE_TYPES = [
   ...['txt'], // text
 ]
 /** 文件类型控制 */
-export const DEFAULT_FILE_ACCPET = DEFAULT_FILE_ACCPET_TYPES.map((t) => `.${t}`).join(',')
+export const DEFAULT_FILE_ACCEPT = DEFAULT_FILE_ACCEPT_TYPES.map((t) => `.${t}`).join(',')
 
 /** 文件是否支持多选 */
 export const DEFAULT_MULTIPLE = true

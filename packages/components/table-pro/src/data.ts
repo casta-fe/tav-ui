@@ -335,20 +335,23 @@ export async function API__INVEST_COMPANY_LIST(
 
 // 文件更新
 export async function API__FILE_UPDATE(data: any, url = '/api/TIANTA-FILE/api/file/updateFile') {
-  const { instantUpdate, fileActualId } = data
+  const { appId, formData, instantUpdate, fileActualId } = data
   // eslint-disable-next-line no-return-await
   return await __post(
-    `${url}?fileActualId=${fileActualId}&instantUpdate=${instantUpdate}`,
-    data.formData,
+    `${url}/${appId}?fileActualId=${fileActualId}&instantUpdate=${instantUpdate}`,
+    formData,
     true
   )
 }
 
 // 文件删除
-export async function API__FILE_DELETE(data: any, url = '/api/TIANTA-FILE/api/file/deleteFile') {
-  const { actualId } = data
+export async function API__FILE_DELETE(
+  data: any,
+  url = '/api/TIANTA-FILE/api/file/deleteFileByActualIds'
+) {
+  const { appId, actualIds } = data
   // eslint-disable-next-line no-return-await
-  return await __post(`${url}/${actualId}`)
+  return await __post(`${url}/${appId}`, actualIds)
 }
 
 // 文件更新 name & link
@@ -356,6 +359,7 @@ export async function API__FILE_UPDATENAMEORLINK(
   data: any,
   url = '/api/TIANTA-FILE/api/file/updateFileNameAndAddress'
 ) {
+  const { appId } = data
   // eslint-disable-next-line no-return-await
-  return await __post(url, data)
+  return await __post(`${url}/${appId}`, data)
 }

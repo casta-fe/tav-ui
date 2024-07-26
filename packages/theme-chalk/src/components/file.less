@@ -68,6 +68,41 @@
     &-modal {
       z-index: 100000 !important;
 
+      &-body {
+        width: 100%;
+        height: 100%;
+
+        .ant-image-preview-mask {
+          display: none;
+        }
+
+        .ant-image-preview-wrap {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+        }
+
+        .ant-image-preview-operations {
+          top: unset;
+          right: unset;
+          width: auto;
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%);
+          border-radius: 6px;
+
+          &-operation:first-child {
+            display: none;
+          }
+        }
+
+        .ant-image-preview-img-wrapper {
+          height: calc(100% - 60px);
+        }
+      }
+
       .ant-modal {
         top: 0 !important;
         padding: 0;
@@ -153,38 +188,7 @@
               top: 0;
               left: 0;
               width: 100%;
-              height: 100%;
-
-              img {
-                max-width: 80%;
-                max-height: 80%;
-              }
-
-              .ant-image-preview-mask {
-                display: none;
-              }
-
-              .ant-image-preview-wrap {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                top: 0;
-                left: 0;
-              }
-
-              .ant-image-preview-operations {
-                top: unset;
-                right: unset;
-                width: auto;
-                bottom: 0;
-                left: 50%;
-                transform: translate(-50%);
-                border-radius: 6px;
-
-                &-operation:first-child {
-                  display: none;
-                }
-              }
+              height: calc(100% - 60px);
             }
 
             .ant-spin-container {

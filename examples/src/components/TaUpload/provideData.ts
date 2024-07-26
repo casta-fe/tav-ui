@@ -64,9 +64,10 @@ export const taUploadProvideData: Partial<
   },
   queryFileType: async (params: any) => {
     // console.log('params', params)
+    if (!params.appId) console.error('queryFileType appId required')
     let result
     try {
-      const { data } = await __post('/api/TIANTA-FILE/api/file/queryFileType', params) // 走接口
+      const { data } = await __post(`/api/TIANTA-FILE/api/file/queryFileType`, params) // 走接口
       result = {
         data: data
           ? data
@@ -121,6 +122,7 @@ export const taUploadProvideData: Partial<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   queryFile: async (params: any): Promise<any> => {
     // console.log('params', params)
+    if (!params.appId) console.error('queryFile appId required')
     let result
     try {
       const { data } = await __post('/api/TIANTA-FILE/api/file/queryFile', params) // 走接口
@@ -235,6 +237,7 @@ export const taUploadProvideData: Partial<
   },
   queryFileList: async (params: any): Promise<any> => {
     // console.log('params', params)
+    if (!params.appId) console.error('queryFileList appId required')
     let result
     try {
       const { data } = await __post('/api/TIANTA-FILE/api/file/queryFileList', params) // 走接口
@@ -354,7 +357,7 @@ export const taUploadProvideData: Partial<
     try {
       const { data } = await __post(
         '/api/TIANTA-FILE/api/file/queryHistoryFileByFileActualIds',
-        params
+        params.actualIds
       ) // 走接口
       result = {
         data: data ? data : [Math.random() > 0.5 ? uploadArr.slice(0, 2) : uploadArr],
@@ -378,11 +381,17 @@ export const taUploadProvideData: Partial<
     //   )
     // )
   },
-  uploadFile: async (payload: FormData): Promise<any> => {
+  uploadFile: async (payload: any): Promise<any> => {
     // console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
+    if (!payload.appId) console.error('uploadFile appId required')
+    const formData = payload.formData
     let result
     try {
-      const { data } = await __post('/api/TIANTA-FILE/api/file/upload', payload, true) // 走接口
+      const { data } = await __post(
+        `/api/TIANTA-FILE/api/file/upload/${payload.appId}`,
+        formData,
+        true
+      ) // 走接口
       result = {
         data: data
           ? data
@@ -434,13 +443,14 @@ export const taUploadProvideData: Partial<
   },
   removeFile: async (payload: any) => {
     // console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
-    // console.log('params', params)
+    if (!payload.appId) console.error('removeFile appId required')
     const result = await API__FILE_DELETE(payload)
     // return Promise.resolve()
     return result
   },
-  updateFile: async (payload: FormData): Promise<any> => {
+  updateFile: async (payload: any): Promise<any> => {
     // console.log('params', params)
+    if (!payload.appId) console.error('updateFile appId required')
     const result = await API__FILE_UPDATE(payload)
     // try {
     //   const { data } = await __post('/api/TIANTA-FILE/api/file/updateFile', payload) // 走接口
@@ -501,6 +511,7 @@ export const taUploadProvideData: Partial<
   },
   updateFileNameAndAddress: async (payload: any) => {
     // console.log('params', params)
+    if (!payload.appId) console.error('updateFileNameAndAddress appId required')
     const result = await API__FILE_UPDATENAMEORLINK(payload)
     return result
   },
@@ -516,7 +527,7 @@ export const taUploadProvideData: Partial<
     // console.log('params', params)
     let result
     try {
-      const { data } = await __post(`/api/TIANTA-FILE/api/file/fileDownload/${params}`) // 走接口
+      const { data } = await __post(`/api/TIANTA-FILE/api/file/fileDownload/${params.id}`) // 走接口
       result = {
         data: data ? data : '',
         success: true,
@@ -534,7 +545,7 @@ export const taUploadProvideData: Partial<
     // console.log('params', params)
     let result
     try {
-      const { data } = await __post(`/api/TIANTA-FILE/api/file/downloadToWatermark/${params}`) // 走接口
+      const { data } = await __post(`/api/TIANTA-FILE/api/file/downloadToWatermark/${params.id}`) // 走接口
       result = {
         data: data ? data : '',
         success: true,

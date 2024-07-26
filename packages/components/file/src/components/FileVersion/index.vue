@@ -116,8 +116,8 @@ watch(
   (curdatasource) => {
     // if (curdatasource && JSON.stringify(curdatasource) !== JSON.stringify(predatasource)) {
     if (curdatasource) {
-      const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
-      dataSource.value = [...rows]
+      const rows = JSON.parse(JSON.stringify(curdatasource ?? []))
+      dataSource.value = rows
 
       VersionCachesController.createAllFileCaches(rows)
     }

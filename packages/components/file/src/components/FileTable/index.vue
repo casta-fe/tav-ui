@@ -80,6 +80,7 @@ watch(
       )
 
       dataSource.value = [...curdatasource]
+      refreshDataSource()
     }
   }
 )
@@ -177,7 +178,10 @@ watch(
 // 针对各种模式使用传入的 api 自动请求数据
 mergedProps.value.immediate && useModeFetchDataSource(handleApi)
 
-// 处理 file cache，主要针对编辑/立即更新模式
+/**
+ * 1. 编辑与立即更新模式将 fileversion 的 immediate 设为 false，在该函数中处理 fileversion 需要的数据
+ * 2. 在只读与新增模式将 fileversion 的 immediate 设为 true，组件内自动发请求获取 fileversion 需要的数据
+ */
 async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   loading.value.value = true
 
@@ -256,7 +260,7 @@ async function handleCellEditClick(
 // version 弹窗处理
 const fileVersionModalVisible = ref(false)
 const fileVersionFile = ref<FileActionUploadApiResponseRecord>()
-const fileVersionDataSource = ref<FileActionUploadApiResponseRecord[]>([])
+const fileVersionDataSource = ref<FileActionUploadApiResponseRecord[]>()
 async function hanldeVersionClick(row: FileActionUploadApiResponseRecord) {
   fileVersionFile.value = row
   if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
@@ -377,7 +381,6 @@ const columns = useColumns({
   actions,
   handleCellEditClick,
   hanldeVersionClick,
-  // beforeReadFileCaches,
 })
 
 // 行编辑配置
@@ -437,12 +440,16 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :file="fileVersionFile"
         :data-source="fileVersionDataSource"
+        :immediate="
+          mergedProps.mode === 'update' || mergedProps.mode === 'updateInstantly' ? false : true
+        "
       />
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"
         :mode="mergedProps.mode"
         :api-params="mergedProps.apiParams"
         :file="filePreviewFile"
+        :immediate="true"
       />
     </section>
   </template>

@@ -121,7 +121,7 @@ function handleFileValidate(file: ArgumentsOf<AUploadProps['beforeUpload']>[0]) 
     )
   }
 
-  const validateUploadFileExtResult = validateUploadFileExt(file.name, mergedProps.value.accpet)
+  const validateUploadFileExtResult = validateUploadFileExt(file.name, mergedProps.value.accept)
   if (!validateUploadFileExtResult) {
     createMessage.warn(`${file.name} ${tavI18n('Tav.file.upload.6')}`)
   }

@@ -39,8 +39,8 @@ export function useMode(options: {
         files: unref(files),
       },
       transformApiParamsToFormData: {
-        ennabled: true,
         fileFiledName: mergedProps.value.name!,
+        filterNames: ['appId'],
       },
       successMessage: () => {
         if (mergedProps.value.mode === 'read' || mergedProps.value.mode === 'create') {

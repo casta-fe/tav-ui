@@ -8,16 +8,15 @@ export async function fileSingleDownload(options: {
   file: FileActionUploadApiResponseRecord
   api: (...args: any[]) => Promise<any>
   fileName?: string
-  headerAppId?: string
 }) {
-  const { file, api, fileName, headerAppId } = options
+  const { file, api, fileName } = options
 
   if (!file || !file.id) {
     createMessage.warning(tavI18n('Tav.file.download.1'))
     return
   }
 
-  const { data, success } = await api(...(headerAppId ? [file.id, headerAppId] : [file.id]))
+  const { data, success } = await api({ id: file.id })
   if (success === true && data) {
     const aEl = window.document.createElement('a') as HTMLAnchorElement
     aEl.setAttribute(
@@ -38,9 +37,8 @@ export async function fileMultipleDownload(options: {
   files: FileActionUploadApiResponseRecord[]
   api: (...args: any[]) => Promise<any>
   fileName?: string
-  headerAppId?: string
 }) {
-  const { files, api, fileName, headerAppId } = options
+  const { files, api, fileName } = options
 
   if (Array.isArray(files) && files.length === 0) {
     createMessage.warning(tavI18n('Tav.file.download.1'))
@@ -48,11 +46,7 @@ export async function fileMultipleDownload(options: {
   }
 
   const ids = files.map((file) => file.id)
-  const { success, data } = await api(
-    ...(headerAppId
-      ? [{ fileName: fileName || tavI18n('Tav.file.download.2'), ids }, headerAppId]
-      : [{ fileName: fileName || tavI18n('Tav.file.download.2'), ids }])
-  )
+  const { success, data } = await api({ fileName: fileName || tavI18n('Tav.file.download.2'), ids })
   if (success === true && data) {
     window.open(data)
   }

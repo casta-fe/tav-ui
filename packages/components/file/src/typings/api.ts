@@ -1,5 +1,5 @@
 export interface FileActionUploadApiResponseRecord {
-  /** @description 文件的实际id，根据此id和版本定位最新文件，非必传，同一条文件数据不论更新多少次 actualId 都一样 */
+  /** @description 文件的实际id，根据此id和版本定位最新文件，非必传 */
   actualId?: string
   /** @description 文件地址，根据业务实际情况指定，必传不能为空 */
   address: string
@@ -7,19 +7,22 @@ export interface FileActionUploadApiResponseRecord {
    * Format: int32
    * @description 应用id，非必传
    */
-  /** 现生成的文件 1：是，0否，默认为0 */
   appId?: number
+  /**
+   * Format: int32
+   * @description 现生成的文件 1：是，0否，默认为0
+   */
   auto?: number
   /** @description 业务表实际id，非必传 */
   businessId?: string
-  /** @description 业务key，由业务端拼接而成，如果不为空的话businessId一定也不能为空，非必传 */
+  /** @description 业务key，由业务端拼接而成，如果不为空的话businessId一定也不饿能为空，非必传 */
   businessKey?: string
   createBy?: string
   /** @description 上传人 */
   createByName?: string
   /**
    * Format: date-time
-   * @description 创建时间
+   * @description 上传日期
    */
   createTime?: string
   /**
@@ -27,23 +30,28 @@ export interface FileActionUploadApiResponseRecord {
    * @description 0:未删除，1:已删除，必传不能为空
    */
   deleted: number
-  /** pdf转换失败原因 */
+  /** @description pdf转换失败原因 */
   errorMsg?: string
-  /** 扩展字段 */
+  /** @description 扩展字段 */
   expand?: string
   /** @description 文件大小 */
   fileSize?: string
   /** @description 文件全称，包含后缀，必传不能为空 */
   fullName: string
-  /** Format: int32 */
+  /**
+   * Format: int32
+   * @description 是否超链接
+   */
   hyperlink?: number
   /**
    * Format: int64
    * @description 主键主键，编辑时不能为空
    */
   id?: number
-  /** @description 关联的模块code */
+  /** @description 模块code */
   moduleCode?: string
+  /** @description 模块文件节点结构全称 */
+  moduleFullName?: string
   /**
    * Format: int64
    * @description 关联的模块id，必传不能为空
@@ -58,21 +66,27 @@ export interface FileActionUploadApiResponseRecord {
   size: number
   /**
    * Format: int32
-   * @description 源文件下载标识 value = 1
+   * @description 源文件下载标识
    */
   sourceFileDownload?: number
-  /** 是否暂存文件 1是 0否 */
+  /**
+   * Format: int32
+   * @description 是否暂存文件 1是 0否
+   */
   staging?: number
   /** @description 文件后缀，必传不能为空 */
   suffix: string
-  /** 是否转了pdf 1:已转 0:未转 2:失败 默认为0 */
+  /**
+   * Format: int32
+   * @description 是否转了pdf 1:已转 0:未转  2:失败 默认为0
+   */
   toPdf?: number
   /**
    * Format: int64
    * @description 文件类型，关联f_type-id，必传不能为空
    */
   type: number
-  /** @description 文件类型code */
+  /** @description 类型code */
   typeCode?: string
   /** @description 关联的文件类型名称 */
   typeName?: string
@@ -83,23 +97,52 @@ export interface FileActionUploadApiResponseRecord {
   version: number
   /**
    * Format: int32
-   * @description 水印文件下载标识 value = 2
+   * @description 水印文件下载标识
    */
   watermarkFileDownload?: number
-  /** 流程复制的文件 1：是，0否，默认为0 */
+  /**
+   * Format: int32
+   * @description 流程复制的文件 1：是，0否，默认为0
+   */
   workflowCopy?: number
 }
 
 export interface FileTypeSelectApiResponseRecord {
+  /**
+   * Format: int32
+   * @description appId
+   */
   appId?: number
-  code?: string
+  /** @description 文件类型编码，必传不能为空 */
+  code: string
+  /**
+   * Format: int64
+   * @description 主键主键，编辑时不能为空
+   */
   id?: number
+  /** @description 模块code */
+  moduleCode?: string
+  /**
+   * Format: int64
+   * @description 模块id
+   */
   moduleId?: number
-  name?: string
-  parentId?: number
+  /**
+   * Format: int64
+   * @description 改类型所属模块的上级模块id
+   */
+  moduleParentId?: number
+  /** @description 文件类型名称，必传不能为空 */
+  name: string
+  /** @description 备注，非必传 */
   remark?: string
-  seq?: number
-  sid?: number
+  /**
+   * Format: double
+   * @description 排序号，必传不能为空
+   */
+  seq: number
+  /** @description 字符串拼接id */
+  sid?: string
 }
 
 export interface FileApiParamBusinessParamsJson {
@@ -126,17 +169,39 @@ export interface FileApiParamBusinessParamsJson {
 }
 
 export interface FilePreviewApiResponse {
-  createTime?: string
+  /** @description 创建人 */
   createByName?: string
+  /**
+   * Format: date-time
+   * @description 创建时间
+   */
+  createTime?: string
+  /**
+   * Format: int64
+   * @description 文件id
+   */
   fileId?: number
+  /** @description 文件名称 */
   fileName?: string
+  /** @description 文件大小 */
   fileSize?: string
+  /** @description wps官方文档枚举值 */
   officeType?: string
+  /** @description 非wps类 预览地址 */
   onlineUrl?: string
+  /** @description 前端自己用的字段 pageUrl */
   pageUrl?: string
+  /** @description 文件后缀 */
   suffix?: string
+  /** @description wps所需token */
   token?: string
+  /** @description 水印内容 */
   watermark?: string
+  /**
+   * Format: int32
+   * @description 是否走wps预览 0-否 1-是
+   */
   wps?: number
+  /** @description wpsAppId */
   wpsAppId?: string
 }

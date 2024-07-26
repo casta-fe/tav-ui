@@ -2,15 +2,16 @@
 import {
   type UnwrapRef,
   computed,
-  defineAsyncComponent,
+  // defineAsyncComponent,
   ref,
+  nextTick,
   watch,
   /*useSlots, useAttrs*/
 } from 'vue'
-import { Button as AButton, Spin as ASpin } from 'ant-design-vue'
+import { Button as AButton, Image as AImage, Spin as ASpin } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
-import { TaModal } from '@tav-ui/components/modal'
+import { type ReturnInnerMethods, TaModal } from '@tav-ui/components/modal'
 import { tavI18n } from '@tav-ui/locales'
 import {
   DEFAULT_FILEPREVIEW_CLASSNAME,
@@ -42,6 +43,7 @@ defineOptions({
 })
 
 const elRef = ref<UnwrapRef<FilePreviewInstance['elRef']>>()
+const modalRef = ref<ReturnInnerMethods>()
 const props = defineProps(filePreviewProps)
 const emits = defineEmits(filePreviewEmits)
 // const slots = useSlots()
@@ -60,8 +62,19 @@ const supportWPS = ref(false)
 const currentFilePath = ref('')
 const filePreviewModalBodyContent = ref<HTMLElement>()
 
+// 统一内部 loading 状态
+const _loading = ref(false)
+const loading = computed({
+  get() {
+    return _loading
+  },
+  set(newLoading: any) {
+    _loading.value = newLoading.value
+  },
+})
+
 const { setDisable } = useDisable()
-const { loading, setLoading } = useLoading()
+const { setLoading } = useLoading()
 const {
   result: ApiResult,
   // error: apiError,
@@ -69,6 +82,7 @@ const {
 } = useRequest({
   setDisable,
   setLoading,
+  loading,
   responseDataType: 'object',
 })
 watch(
@@ -161,9 +175,13 @@ async function open() {
   emits('update:visible', modalVisible.value)
 
   if (mergedProps.value.immediate) {
+    loading.value.value = true
     await useModeFetchDataSource()
+    loading.value.value = false
   }
 }
+
+modalRef.value?.getVisible
 
 function close() {
   modalVisible.value = false
@@ -185,20 +203,20 @@ function validateFileType() {
   return true
 }
 
-const PreviewImage = defineAsyncComponent(() => {
-  return new Promise((resolve, reject) => {
-    ;(async function () {
-      try {
-        await sleep(100)
-        // @ts-ignore
-        const comp = await (import('./image.vue') as any)
-        resolve(comp)
-      } catch (error) {
-        reject(error)
-      }
-    })()
-  })
-})
+// const PreviewImage = defineAsyncComponent(() => {
+//   return new Promise((resolve, reject) => {
+//     ;(async function () {
+//       try {
+//         await sleep(100)
+//         // @ts-ignore
+//         const comp = await (import('./image.vue') as any)
+//         resolve(comp)
+//       } catch (error) {
+//         reject(error)
+//       }
+//     })()
+//   })
+// })
 
 defineExpose({
   elRef,
@@ -210,6 +228,7 @@ defineExpose({
 <template>
   <section :id="DEFAULT_FILEPREVIEW_ID" ref="elRef" :class="DEFAULT_FILEPREVIEW_CLASSNAME">
     <TaModal
+      ref="modalRef"
       :visible="modalVisible"
       title="TaFilePreview"
       :width="mergedProps.width"
@@ -271,27 +290,32 @@ defineExpose({
         </div>
       </template>
       <template #default>
-        <ASpin
-          v-show="loading"
-          :spinning="loading"
-          size="default"
-          :tip="tavI18n('Tav.common.loadingText')"
-        />
-        <div v-show="!loading" ref="filePreviewModalBodyContent" class="file-view-content">
-          <template v-if="supportWPS">
-            <iframe id="wps-file-view" :src="currentFilePath" frameborder="0" />
-          </template>
-          <template v-else>
-            <template v-if="currentFileType === 'image'">
-              <PreviewImage
-                :src="currentFilePath"
-                :preview="{ visible: true, getContainer: filePreviewModalBodyContent }"
-              />
+        <div
+          ref="filePreviewModalBodyContent"
+          :class="`${DEFAULT_FILEPREVIEW_CLASSNAME}-modal-body`"
+        >
+          <ASpin
+            v-show="loading.value"
+            :spinning="loading.value"
+            size="default"
+            :tip="tavI18n('Tav.common.loadingText')"
+          />
+          <div v-show="!loading" class="file-view-content">
+            <template v-if="supportWPS">
+              <iframe id="wps-file-view" :src="currentFilePath" frameborder="0" />
             </template>
-            <template v-if="currentFileType === ''">
-              <div class="empty">{{ tavI18n('Tav.file.message.1') }} {{ currentFileType }}</div>
+            <template v-else>
+              <template v-if="currentFileType === 'image'">
+                <AImage
+                  :src="currentFilePath"
+                  :preview="{ visible: true, getContainer: () => filePreviewModalBodyContent }"
+                />
+              </template>
+              <template v-if="currentFileType === ''">
+                <div class="empty">{{ tavI18n('Tav.file.message.1') }} {{ currentFileType }}</div>
+              </template>
             </template>
-          </template>
+          </div>
         </div>
       </template>
     </TaModal>

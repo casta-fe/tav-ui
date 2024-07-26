@@ -1,6 +1,6 @@
 import { type ExtractPropTypes, type PropType } from 'vue'
 import {
-  DEFAULT_FILE_ACCPET,
+  DEFAULT_FILE_ACCEPT,
   DEFAULT_FILE_MAX_COUNT,
   DEFAULT_FILE_NAME_REGEXP,
   DEFAULT_FILE_SIZE_RANGE,
@@ -35,30 +35,33 @@ export interface ApiUploadFileParams {
 /** 真实的接口参数，来自 swagger */
 export interface ApiQueryFileParams {
   appId: FileTableApiParams['appId']
-  moduleCode: FileTableApiParams['moduleCode']
-  typeCodes: FileTableApiParams['typeCodes']
-  permissionControl: FileTableApiParams['permissionControl']
+  businessCheck: FileTableApiParams['businessCheck']
   businessIds: FileTableApiParams['businessIds']
   businessKey: FileTableApiParams['businessKey']
-  businessCheck: FileTableApiParams['businessCheck']
-  searchValue: string
-  startTime: string
-  endTime: string
+  endTime: FileTableApiParams['endTime']
+  finalTypeCodes: FileTableApiParams['finalTypeCodes']
+  id: FileTableApiParams['id']
+  moduleCode: FileTableApiParams['moduleCode']
+  permissionControl: FileTableApiParams['permissionControl']
+  searchValue: FileTableApiParams['searchValue']
+  startTime: FileTableApiParams['startTime']
+  suffix: FileTableApiParams['suffix']
+  typeCodes: FileTableApiParams['typeCodes']
 }
 
 /** 真实的接口参数，来自 swagger */
 export interface ApiUpdateFileParams {
-  appId: FileActionUploadApiParams['appId']
-  fileActualId: FileActionUploadApiParams['fileActualId']
+  appId: FileTableApiParams['appId']
+  fileActualId: FileTableApiParams['fileActualId']
   instantUpdate: FileActionUploadApiParams['instantUpdate']
   files: FileActionUploadApiParams['files']
 }
 
 /** 真实的接口参数，来自 swagger */
 export interface ApiUpdateFileNameAndLinkParams {
-  appId: FileActionUploadApiParams['appId']
+  appId: FileTableApiParams['appId']
   /** 文件id */
-  id: string
+  id: FileTableApiParams['id']
   /** 修改后的文件名称 */
   name: string
   /** 超链接修改后的链接地址 */
@@ -69,14 +72,13 @@ export interface ApiUpdateFileNameAndLinkParams {
 export interface ApiQueryFileHistoryParams {
   appId: FileVersionApiParams['appId']
   /** 文件真实id列表 */
-  fileActualIds: FileVersionApiParams['fileActualIds']
-  permissionControl: FileVersionApiParams['permissionControl']
+  actualIds: FileTableApiParams['fileActualIds']
 }
 
 /** 真实的接口参数，来自 swagger */
 export interface ApiDeleteFileParams {
   appId: FileTableApiParams['appId']
-  actualId: FileTableApiParams['fileActualId']
+  actualIds: FileTableApiParams['fileActualIds']
 }
 
 /** 真实的接口参数，来自 swagger */
@@ -116,7 +118,7 @@ export const globalConfigFileProps = {
   },
   fileActionUpload: {
     /** 文件类型控制 */
-    accpet: { type: String, default: DEFAULT_FILE_ACCPET },
+    accept: { type: String, default: DEFAULT_FILE_ACCEPT },
     /** 文件是否支持多选 */
     multiple: { type: Boolean, default: DEFAULT_MULTIPLE },
     /** 文件最大上传个数 */

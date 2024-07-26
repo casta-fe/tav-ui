@@ -54,38 +54,56 @@ const fileTypeSelectRef = ref<FileTypeSelectInstance>()
 const fileTypeSelectProps = computed(() => ({
   ...props.fileTypeSelect,
   mode: props.mode,
-  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  ...{
-    apiParams: props.fileTypeSelect?.apiParams
-      ? {}
-      : {
-          appId: fileApiParams.value.value.appId,
-          moduleCode: fileApiParams.value.value.moduleCode,
-          typeCodes: fileApiParams.value.value.typeCodes,
-          permissionControl: fileApiParams.value.value.permissionControl,
-        },
+  apiParams: {
+    appId: fileApiParams.value.value.appId,
+    moduleCode: fileApiParams.value.value.moduleCode,
+    typeCodes: fileApiParams.value.value.typeCodes,
+    permissionControl: fileApiParams.value.value.permissionControl,
+    ...(props.fileTypeSelect?.apiParams ?? {}),
   },
+  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  // ...{
+  //   apiParams: props.fileTypeSelect?.apiParams
+  //     ? {}
+  //     : {
+  //         appId: fileApiParams.value.value.appId,
+  //         moduleCode: fileApiParams.value.value.moduleCode,
+  //         typeCodes: fileApiParams.value.value.typeCodes,
+  //         permissionControl: fileApiParams.value.value.permissionControl,
+  //       },
+  // },
 }))
 
 const fileActionUploadRef = ref<FileActionUploadInstance>()
 const fileActionUploadProps = computed(() => ({
   ...props.fileActionUpload,
   mode: props.mode,
-  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  ...{
-    apiParams: props.fileActionUpload?.apiParams
-      ? {}
-      : {
-          appId: fileApiParams.value.value.appId,
-          moduleCode: fileApiParams.value.value.moduleCode,
-          typeCode: fileApiParams.value.value.typeCode,
-          businessId: fileApiParams.value.value.businessId,
-          businessKey: fileApiParams.value.value.businessKey,
-          businessParamsJson: fileApiParams.value.value.businessParamsJson,
-          fileActualId: fileApiParams.value.value.fileActualId,
-          instantUpdate: fileApiParams.value.value.instantUpdate,
-        },
+  apiParams: {
+    appId: fileApiParams.value.value.appId,
+    moduleCode: fileApiParams.value.value.moduleCode,
+    typeCode: fileApiParams.value.value.typeCode,
+    businessId: fileApiParams.value.value.businessId,
+    businessKey: fileApiParams.value.value.businessKey,
+    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    fileActualId: fileApiParams.value.value.fileActualId,
+    instantUpdate: fileApiParams.value.value.instantUpdate,
+    ...(props.fileActionUpload?.apiParams ?? {}),
   },
+  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  // ...{
+  //   apiParams: props.fileActionUpload?.apiParams
+  //     ? {}
+  //     : {
+  //         appId: fileApiParams.value.value.appId,
+  //         moduleCode: fileApiParams.value.value.moduleCode,
+  //         typeCode: fileApiParams.value.value.typeCode,
+  //         businessId: fileApiParams.value.value.businessId,
+  //         businessKey: fileApiParams.value.value.businessKey,
+  //         businessParamsJson: fileApiParams.value.value.businessParamsJson,
+  //         fileActualId: fileApiParams.value.value.fileActualId,
+  //         instantUpdate: fileApiParams.value.value.instantUpdate,
+  //       },
+  // },
 }))
 
 // const fileActionUploadLinkProps = computed(() => ({
@@ -123,29 +141,55 @@ const fileTableRef = ref<FileTableInstance>()
 const fileTableProps = computed(() => ({
   ..._fileTableProps.value.value,
   mode: props.mode,
-  /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  ...{
-    apiParams: _fileTableProps.value.value?.apiParams
-      ? {}
-      : {
-          appId: fileApiParams.value.value.appId,
-          moduleCode: fileApiParams.value.value.moduleCode,
-          typeCode: fileApiParams.value.value.typeCode,
-          typeCodes: fileApiParams.value.value.typeCodes,
-          permissionControl: fileApiParams.value.value.permissionControl,
-          businessId: fileApiParams.value.value.businessId,
-          businessIds: fileApiParams.value.value.businessIds,
-          businessKey: fileApiParams.value.value.businessKey,
-          businessCheck: fileApiParams.value.value.businessCheck,
-          fileActualId: fileApiParams.value.value.fileActualId,
-          fileActualIds: fileApiParams.value.value.fileActualIds,
-          id: fileApiParams.value.value.id,
-          ids: fileApiParams.value.value.ids,
-          searchValue: fileApiParams.value.value.searchValue,
-          startTime: fileApiParams.value.value.startTime,
-          endTime: fileApiParams.value.value.endTime,
-        },
+  apiParams: {
+    appId: fileApiParams.value.value.appId,
+    businessCheck: fileApiParams.value.value.businessCheck,
+    businessId: fileApiParams.value.value.businessId,
+    businessIds: fileApiParams.value.value.businessIds,
+    businessKey: fileApiParams.value.value.businessKey,
+    endTime: fileApiParams.value.value.endTime,
+    finalTypeCodes: fileApiParams.value.value.finalTypeCodes,
+    id: fileApiParams.value.value.id,
+    ids: fileApiParams.value.value.ids,
+    moduleCode: fileApiParams.value.value.moduleCode,
+    permissionControl: fileApiParams.value.value.permissionControl,
+    searchValue: fileApiParams.value.value.searchValue,
+    startTime: fileApiParams.value.value.startTime,
+    suffix: fileApiParams.value.value.suffix,
+    typeCode: fileApiParams.value.value.typeCode,
+    typeCodes: fileApiParams.value.value.typeCodes,
+    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    fileActualId: fileApiParams.value.value.fileActualId,
+    fileActualIds: fileApiParams.value.value.fileActualIds,
+    actualIds: fileApiParams.value.value.actualIds,
+    ...(_fileTableProps.value.value?.apiParams ?? {}),
   },
+  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
+  // ...{
+  //   apiParams: _fileTableProps.value.value?.apiParams
+  //     ? {}
+  //     : {
+  //         appId: fileApiParams.value.value.appId,
+  //         businessCheck: fileApiParams.value.value.businessCheck,
+  //         businessId: fileApiParams.value.value.businessId,
+  //         businessIds: fileApiParams.value.value.businessIds,
+  //         businessKey: fileApiParams.value.value.businessKey,
+  //         endTime: fileApiParams.value.value.endTime,
+  //         finalTypeCodes: fileApiParams.value.value.finalTypeCodes,
+  //         id: fileApiParams.value.value.id,
+  //         ids: fileApiParams.value.value.ids,
+  //         moduleCode: fileApiParams.value.value.moduleCode,
+  //         permissionControl: fileApiParams.value.value.permissionControl,
+  //         searchValue: fileApiParams.value.value.searchValue,
+  //         startTime: fileApiParams.value.value.startTime,
+  //         suffix: fileApiParams.value.value.suffix,
+  //         typeCode: fileApiParams.value.value.typeCode,
+  //         typeCodes: fileApiParams.value.value.typeCodes,
+  //         businessParamsJson: fileApiParams.value.value.businessParamsJson,
+  //         fileActualId: fileApiParams.value.value.fileActualId,
+  //         fileActualIds: fileApiParams.value.value.fileActualIds,
+  //       },
+  // },
 }))
 
 function handleFileTypeSelectChange(...args: any) {

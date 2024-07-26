@@ -25,7 +25,7 @@ import { type FileApiParamBusinessParamsJson } from './api'
 /** 单纯定义参数类型，方便统一管理、使用 */
 export interface ApiParams {
   /** 控制查询哪个系统 */
-  appId?: string
+  appId?: number | string
   /** 模块code */
   moduleCode?: string
   /** 类型 code */
@@ -48,6 +48,7 @@ export interface ApiParams {
   fileActualId?: string
   /** 文件真实 id 数组 */
   fileActualIds?: string[]
+  actualIds?: string[]
   /** 是否及时更新 */
   instantUpdate?: boolean
 
@@ -63,6 +64,8 @@ export interface ApiParams {
   endTime?: string
   /** 文件列表  */
   files?: File[]
+  finalTypeCodes?: string[]
+  suffix?: string
 }
 
 /** fileTypeSelect 组件下所有 api 需要的参数 */
@@ -108,20 +111,26 @@ export type FileActionUploadLinkApiParams = ExtractPropTypes<typeof fileActionUp
 /** fileTable 组件下所有 api 需要的参数 */
 export const fileTableApiParams = {
   appId: { type: Object as PropType<ApiParams['appId']> },
-  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
-  typeCode: { type: Object as PropType<ApiParams['typeCode']> },
-  typeCodes: { type: Object as PropType<ApiParams['typeCodes']> },
-  permissionControl: { type: Object as PropType<ApiParams['permissionControl']> },
+  businessCheck: { type: Object as PropType<ApiParams['businessCheck']> },
   businessId: { type: Object as PropType<ApiParams['businessId']> },
   businessIds: { type: Object as PropType<ApiParams['businessIds']> },
   businessKey: { type: Object as PropType<ApiParams['businessKey']> },
+  endTime: { type: Object as PropType<ApiParams['endTime']> },
+  finalTypeCodes: { type: Object as PropType<ApiParams['finalTypeCodes']> },
+  id: { type: Object as PropType<ApiParams['id']> },
+  ids: { type: Object as PropType<ApiParams['ids']> },
+  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
+  permissionControl: { type: Object as PropType<ApiParams['permissionControl']> },
+  searchValue: { type: Object as PropType<ApiParams['searchValue']> },
+  startTime: { type: Object as PropType<ApiParams['startTime']> },
+  suffix: { type: Object as PropType<ApiParams['suffix']> },
+  typeCode: { type: Object as PropType<ApiParams['typeCode']> },
+  typeCodes: { type: Object as PropType<ApiParams['typeCodes']> },
   businessParamsJson: { type: Object as PropType<FileApiParamBusinessParamsJson> },
-  businessCheck: { type: Object as PropType<ApiParams['businessCheck']> },
   fileActualId: { type: String as PropType<ApiParams['fileActualId']> },
   fileActualIds: { type: Object as PropType<ApiParams['fileActualIds']> },
+  actualIds: { type: Object as PropType<ApiParams['actualIds']> },
   files: { type: Object as PropType<ApiParams['files']>, required: true },
-  id: { type: Number as PropType<ApiParams['id']> },
-  ids: { type: Object as PropType<Exclude<ApiParams['id'], undefined>[]> },
 }
 export type FileTableApiParams = ExtractPropTypes<typeof fileTableApiParams>
 

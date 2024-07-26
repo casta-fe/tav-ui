@@ -19,8 +19,8 @@ export function validateUploadFileName(
 }
 
 // 文件是否通过类型校验
-export function validateUploadFileExt(name: string, accpet: FileActionUploadProps['accpet']) {
-  const exts = accpet.split(',')
+export function validateUploadFileExt(name: string, accept: FileActionUploadProps['accept']) {
+  const exts = accept.split(',')
   return exts.some((ext) => name.endsWith(ext)) ? true : false
 }
 

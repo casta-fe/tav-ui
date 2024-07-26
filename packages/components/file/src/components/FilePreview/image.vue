@@ -17,5 +17,5 @@ const props = defineProps({
 </script>
 
 <template>
-  <AImage :style="{ display: 'none' }" :src="props.src" :preview="props.src" />
+  <AImage :style="{ display: 'none' }" :src="props.src" :preview="props.preview" />
 </template>
