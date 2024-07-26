@@ -2,9 +2,7 @@
 import {
   type UnwrapRef,
   computed,
-  // defineAsyncComponent,
   ref,
-  nextTick,
   watch,
   /*useSlots, useAttrs*/
 } from 'vue'
@@ -28,7 +26,6 @@ import {
   useRequest,
 } from '../../hooks'
 import { type GlobalConfigFileProps } from '../../typings'
-import { sleep } from '../../utils'
 import { useMode } from './hooks'
 import {
   type FilePreviewInstance,
@@ -202,21 +199,6 @@ function validateFileType() {
   }
   return true
 }
-
-// const PreviewImage = defineAsyncComponent(() => {
-//   return new Promise((resolve, reject) => {
-//     ;(async function () {
-//       try {
-//         await sleep(100)
-//         // @ts-ignore
-//         const comp = await (import('./image.vue') as any)
-//         resolve(comp)
-//       } catch (error) {
-//         reject(error)
-//       }
-//     })()
-//   })
-// })
 
 defineExpose({
   elRef,

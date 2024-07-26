@@ -63,7 +63,7 @@ export const fileVersionProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
-  immediate: { type: Boolean, default: false },
+  immediate: { type: Boolean, default: true },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   columns: {
     type: Function as PropType<(...args: [FileVersionTableColumn[]]) => FileVersionTableColumn[]>,

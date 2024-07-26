@@ -194,13 +194,15 @@ watch(
 )
 
 async function open() {
-  if (mergedProps.value.immediate) {
-    await useModeFetchDataSource()
-  }
-
   modalVisible.value = true
   emits('open')
   emits('update:visible', modalVisible.value)
+
+  if (mergedProps.value.immediate) {
+    loading.value.value = true
+    await useModeFetchDataSource()
+    loading.value.value = false
+  }
 }
 
 function close() {
