@@ -1,6 +1,4 @@
-import { isArray, isObject } from '@tav-ui/utils/is'
-import { type FileActionUploadApiParams } from '../typings'
-import { type FileActionUploadProps, type FileType } from '../components/FileActionUpload/types'
+import { type FileActionUploadProps } from '../components/FileActionUpload/types'
 
 // 文件名是否通过空白字符校验
 export function validateUploadFileEmptyName(name: string) {
@@ -25,10 +23,7 @@ export function validateUploadFileExt(name: string, accept: FileActionUploadProp
 }
 
 // 文件是否通过大小校验
-export function validateUploadFileSize(
-  file: FileType,
-  sizeRange: FileActionUploadProps['sizeRange']
-) {
+export function validateUploadFileSize(file: any, sizeRange: FileActionUploadProps['sizeRange']) {
   const [minSize, maxSize] = sizeRange
 
   let minSizeValidateResult = true
@@ -62,31 +57,8 @@ export function validateUploadFileMaxCount(
 }
 
 // 上传时 typecode 校验
-export function validateUploadFileTypeCode(typeCode: FileActionUploadApiParams['typeCode']) {
+export function validateUploadFileTypeCode(
+  typeCode: FileActionUploadProps['apiParams']['typeCode']
+) {
   return typeCode ? true : false
-}
-
-// 校验参数
-export function validateApiParams(options: {
-  apiName: string
-  params: Record<string, any>
-  validateEmptyArray?: boolean
-  validateEmptyObject?: boolean
-}) {
-  const { apiName, params, validateEmptyArray, validateEmptyObject } = options
-  const errors: string[] = []
-
-  for (const [k, v] of Object.entries(params)) {
-    if (!v) {
-      if (validateEmptyArray && isArray(v) && v.length === 0) {
-        errors.push(`${k} ([])`)
-      }
-      if (validateEmptyObject && isObject(v) && Object.keys(v).length === 0) {
-        errors.push(`${k} ({})`)
-      }
-      errors.push(k)
-    }
-  }
-
-  return errors.length === 0 ? null : `${apiName} params: ${errors.join('、')} not pass validate.`
 }

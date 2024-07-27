@@ -5,6 +5,7 @@ import { TaButton } from '@tav-ui/components/button'
 import { TaTableProAction } from '@tav-ui/components/table-pro'
 import { Cell } from '../../../../../table-pro/src/components/cell'
 import {
+  type ApiUpdateFileNameAndLinkParams,
   type FileTableAction,
   type FileTableColumn,
   type FileTableInstance,
@@ -22,11 +23,7 @@ export function defaultColumnsBuilder(
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
   handleCellEditClick: (
-    changeEventPayload: {
-      id?: string
-      name?: string
-      address?: string
-    },
+    changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>,
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
@@ -53,7 +50,7 @@ export function defaultColumnsBuilder(
               onEnter={() => {
                 clearEdit?.()
               }}
-              onChange={async (payload: { id?: string; name?: string; address?: string }) => {
+              onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
                 await handleCellEditClick(payload, row)
               }}
             />,
@@ -172,11 +169,7 @@ export function useColumns(options: {
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>
   handleCellEditClick: (
-    changeEventPayload: {
-      id?: string
-      name?: string
-      address?: string
-    },
+    changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>

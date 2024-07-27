@@ -6,117 +6,35 @@ import {
   DEFAULT_FILE_SIZE_RANGE,
   DEFAULT_MULTIPLE,
 } from '../consts'
+import { type ApiQueryFileTypeParams } from '../components/FileTypeSelect/types'
+import { type ApiUploadFileParams } from '../components/FileActionUpload/types'
+import { type ApiPreviewFileParams } from '../components/FilePreview/types'
+import { type ApiQueryFileHistoryParams } from '../components/FileVersion/types'
 import {
-  type FileActionUploadApiParams,
-  type FileTableApiParams,
-  type FileTypeSelectApiParams,
-  type FileVersionApiParams,
-} from './types'
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiQueryFileTypeParams {
-  appId: FileTypeSelectApiParams['appId']
-  moduleCode: FileTypeSelectApiParams['moduleCode']
-  typeCodes: FileTypeSelectApiParams['typeCodes']
-  permissionControl: FileTypeSelectApiParams['permissionControl']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiUploadFileParams {
-  appId: FileActionUploadApiParams['appId']
-  moduleCode: FileActionUploadApiParams['moduleCode']
-  typeCode: FileActionUploadApiParams['typeCode']
-  businessId?: FileActionUploadApiParams['businessId']
-  businessKey?: FileActionUploadApiParams['businessKey']
-  businessParamsJson: FileActionUploadApiParams['businessParamsJson']
-  files: FileActionUploadApiParams['files']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiQueryFileParams {
-  appId: FileTableApiParams['appId']
-  businessCheck: FileTableApiParams['businessCheck']
-  businessIds: FileTableApiParams['businessIds']
-  businessKey: FileTableApiParams['businessKey']
-  endTime: FileTableApiParams['endTime']
-  finalTypeCodes: FileTableApiParams['finalTypeCodes']
-  id: FileTableApiParams['id']
-  moduleCode: FileTableApiParams['moduleCode']
-  permissionControl: FileTableApiParams['permissionControl']
-  searchValue: FileTableApiParams['searchValue']
-  startTime: FileTableApiParams['startTime']
-  suffix: FileTableApiParams['suffix']
-  typeCodes: FileTableApiParams['typeCodes']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiUpdateFileParams {
-  appId: FileTableApiParams['appId']
-  fileActualId: FileTableApiParams['fileActualId']
-  instantUpdate: FileActionUploadApiParams['instantUpdate']
-  files: FileActionUploadApiParams['files']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiUpdateFileNameAndLinkParams {
-  appId: FileTableApiParams['appId']
-  /** 文件id */
-  id: FileTableApiParams['id']
-  /** 修改后的文件名称 */
-  name: string
-  /** 超链接修改后的链接地址 */
-  address: string
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiQueryFileHistoryParams {
-  appId: FileVersionApiParams['appId']
-  /** 文件真实id列表 */
-  actualIds: FileTableApiParams['fileActualIds']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiDeleteFileParams {
-  appId: FileTableApiParams['appId']
-  actualIds: FileTableApiParams['fileActualIds']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiDownloadFileParams {
-  appId: FileTableApiParams['appId']
-  /** file id */
-  id: FileTableApiParams['id']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiDownloadWaterMarkerFileParams {
-  appId: FileTableApiParams['appId']
-  /** file id */
-  id: FileTableApiParams['id']
-}
-
-/** 真实的接口参数，来自 swagger */
-export interface ApiPreviewFileParams {
-  appId: FileTableApiParams['appId']
-  /** file id */
-  id: FileTableApiParams['id']
-}
+  type ApiDeleteFileParams,
+  type ApiDownloadFileParams,
+  type ApiDownloadWaterMarkerFileParams,
+  type ApiQueryFileListParams,
+  type ApiQueryFileParams,
+  type ApiUpdateFileNameAndLinkParams,
+  type ApiUpdateFileParams,
+} from '../components/FileTable/types'
 
 export const globalConfigFileProps = {
   /**根据子组件名来划分注入数据 */
-  fileTypeSelect: {
+  TaFileTypeSelect: {
     //:============================== CRUD API ==============================://
     // filetype 上传接口，传入 uploadFiletype，apiCreateFileType
     /** filetype 查询接口 */
     apiQueryFileType: {
-      type: Function as PropType<(params: Partial<ApiQueryFileTypeParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiQueryFileTypeParams) => Promise<any>>,
     },
     // filetype 查询接口，传入 queryfiletype，apiReadFileType
     // filetype 更新接口，传入 updateFileType
     // filetype 上传接口，传入 removefiletype，apiDeleteFileType
     //:============================== CRUD API ==============================://
   },
-  fileActionUpload: {
+  TaFileActionUpload: {
     /** 文件类型控制 */
     accept: { type: String, default: DEFAULT_FILE_ACCEPT },
     /** 文件是否支持多选 */
@@ -131,83 +49,90 @@ export const globalConfigFileProps = {
     //  文件上传接口，apiCreateFile
     /** 文件上传接口，传入 uploadFile， */
     apiUploadFile: {
-      type: Function as PropType<(params: Partial<ApiUploadFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiUploadFileParams) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },
-  fileActionUploadLink: {
+  TaFileActionUploadLink: {
     //:============================== CRUD API ==============================://
     // 超链接上传接口，传入 uploadHyperlink，apiCreateLink
     // TODO: RUD API?
     //:============================== CRUD API ==============================://
   },
-  fileTable: {
+  TaFileTable: {
     //:============================== FILE CRUD API ==============================://
     /** 文件上传接口，传入 uploadFile， */
     apiUploadFile: {
-      type: Function as PropType<(params: Partial<ApiUploadFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiUploadFileParams) => Promise<any>>,
     },
     // 查询文件接口，apiReadFile
     /** 查询文件接口，传入 queryfile 分页 */
     apiQueryFile: {
       type: Function as PropType<
-        (params: { filter: ApiQueryFileParams; model: Record<string, any> }) => Promise<any>
+        (params: {
+          filter: ApiQueryFileParams
+          model: {
+            dir?: string
+            limit?: number
+            page?: number
+            sort?: string
+          }
+        }) => Promise<any>
       >,
     },
     /** 查询文件接口，传入 queryfilelist 不分页 */
     apiQueryFileList: {
-      type: Function as PropType<(params: ApiQueryFileParams) => Promise<any>>,
+      type: Function as PropType<(params: ApiQueryFileListParams) => Promise<any>>,
+    },
+    /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
+    apiQueryFileHistory: {
+      type: Function as PropType<(params: ApiQueryFileHistoryParams) => Promise<any>>,
     },
     // 更新文件接口，传入 updateFile
     apiUpdateFile: {
-      type: Function as PropType<(params: Partial<ApiUpdateFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiUpdateFileParams) => Promise<any>>,
     },
     // 更新文件部分信息，传入 updateFileNameAndAddress
     apiUpdateFileNameAndLink: {
-      type: Function as PropType<(params: Partial<ApiUpdateFileNameAndLinkParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiUpdateFileNameAndLinkParams) => Promise<any>>,
     },
     // 删除文件接口，传入 removeFile
     apiDeleteFile: {
-      type: Function as PropType<(params: Partial<ApiDeleteFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiDeleteFileParams) => Promise<any>>,
+    },
+    apiPreviewFile: {
+      type: Function as PropType<(params: ApiPreviewFileParams) => Promise<any>>,
     },
     /** 下载接口，传入 fileDownload */
     apiDownloadFile: {
-      type: Function as PropType<(params: Partial<ApiDownloadFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiDownloadFileParams) => Promise<any>>,
     },
     /** 下载水印文件接口，传入 downloadToWatermark */
     apiDownloadWaterMarkerFile: {
-      type: Function as PropType<
-        (params: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
-      >,
-    },
-    /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
-    apiQueryFileHistory: {
-      type: Function as PropType<(params: Partial<ApiQueryFileHistoryParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },
-  fileVersion: {
+  TaFileVersion: {
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {
-      type: Function as PropType<(params: Partial<ApiQueryFileHistoryParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiQueryFileHistoryParams) => Promise<any>>,
     },
     apiPreviewFile: {
-      type: Function as PropType<(params: Partial<ApiPreviewFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiPreviewFileParams) => Promise<any>>,
     },
     /** 下载接口，传入 fileDownload */
     apiDownloadFile: {
-      type: Function as PropType<(params: Partial<ApiDownloadFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiDownloadFileParams) => Promise<any>>,
     },
     /** 下载水印文件接口，传入 downloadToWatermark */
     apiDownloadWaterMarkerFile: {
-      type: Function as PropType<
-        (params: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
-      >,
+      type: Function as PropType<(params: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
     },
   },
-  filePreview: {
+  TaFilePreview: {
     apiPreviewFile: {
-      type: Function as PropType<(params: Partial<ApiPreviewFileParams>) => Promise<any>>,
+      type: Function as PropType<(params: ApiPreviewFileParams) => Promise<any>>,
     },
   },
 }

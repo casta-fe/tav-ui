@@ -1,21 +1,32 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
 import { type SelectProps as ASelectProps } from 'ant-design-vue'
 import {
-  type ApiQueryFileTypeParams,
+  type ApiParams,
   type FileMode,
-  type FileTypeSelectApiParams,
   type FileTypeSelectApiResponseRecord,
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_FILE_MODE } from '../../consts'
+
+// 按照 swagger 编写
+export interface ApiQueryFileTypeParams {
+  appId?: ApiParams['appId']
+  moduleCode: ApiParams['moduleCode']
+  typeCodes?: ApiParams['typeCodes']
+  permissionControl?: ApiParams['permissionControl']
+}
+
+// 组件所需的所有 api 参数
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FileTypeSelectApiParams extends ApiQueryFileTypeParams {}
 
 export const fileTypeSelectProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['fileTypeSelect'],
+  ...globalConfigFileProps['TaFileTypeSelect'],
   apiParams: {
     type: Object as PropType<FileTypeSelectApiParams>,
-    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
+    default: () => ({ permissionControl: false }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // ASelect props
@@ -39,7 +50,7 @@ export const fileTypeSelectProps = {
   visible: { type: Boolean, default: true },
   /** apiQueryFileType 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiQueryFileType: {
-    type: Function as PropType<(apiParams: Partial<ApiQueryFileTypeParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiQueryFileTypeParams) => Promise<any>>,
   },
   /** afterapi 接收参数为 apiresult 数据，可以对接口返回数据做处理，返回 false 会取原始的 apiresult */
   afterApiQueryFileType: {

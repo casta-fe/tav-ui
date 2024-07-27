@@ -14,142 +14,149 @@ import {
   type FileTableInstance,
   type FileTableProps,
 } from '../components/FileTable'
-// import { type FileVersionProps } from '../components/FileVersion'
-// import { type FilePreviewProps } from '../components/FilePreview'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../consts'
+import { DEFAULT_FILE_MODE } from '../consts'
 // import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
 import { type ArgumentsOf } from '../utils'
 import { type GlobalConfigFileProps } from './global-config'
-import { type FileApiParamBusinessParamsJson } from './api'
 
 /** 单纯定义参数类型，方便统一管理、使用 */
 export interface ApiParams {
-  /** 控制查询哪个系统 */
-  appId?: number | string
-  /** 模块code */
-  moduleCode?: string
-  /** 类型 code */
-  typeCode?: string
-  /** 类型 code */
-  typeCodes?: string[]
-  /** 业务 businessKey */
-  businessKey?: string
-  /** 业务 businessId */
-  businessId?: string
-  /** 业务 businessId */
-  businessIds?: string[]
-  /** 业务 businessKey & 业务 businessId 互斥检查 */
-  businessCheck?: boolean
-  /** 业务自定义数据 */
-  businessParamsJson?: string
-  /** 是否控权限 */
-  permissionControl?: boolean
-  /** 文件真实 id */
-  fileActualId?: string
-  /** 文件真实 id 数组 */
-  fileActualIds?: string[]
-  actualIds?: string[]
-  /** 是否及时更新 */
-  instantUpdate?: boolean
+  /**
+   * 查询系统的 id，用于：
+   * 1. api/file/queryFileType（非必传）
+   * 2. api/file/upload
+   * 3. api/file/queryFile（非必传）
+   * 4. api/file/queryFileList（非必传）
+   * 5. api/file/updateFile
+   * 6. api/file/deleteFileByActualIds
+   */
+  appId: number | string
+  /**
+   * 模块 code，用于：
+   * 1. api/file/queryFileType
+   * 2. api/file/upload
+   * 3. api/file/queryFile（非必传）
+   * 4. api/file/queryFileList（非必传）
+   */
+  moduleCode: string
+  /**
+   * 类型 code，用于：
+   * 1. api/file/upload
+   */
+  typeCode: string
+  /**
+   * 类型 codes，用于：
+   * 1. api/file/queryFileType（非必传）
+   * 2. api/file/queryFile（非必传）
+   * 3. api/file/queryFileList（非必传）
+   */
+  typeCodes: string[]
+  /**
+   * 业务 businessKey，用于：
+   * 1. api/file/upload（非必传）
+   * 2. api/file/queryFile（非必传）
+   * 3. api/file/queryFileList（非必传）
+   */
+  businessKey: string
+  /**
+   * 业务 businessId，用于：
+   * 1. api/file/upload（非必传）
+   */
+  businessId: string
+  /**
+   * 业务 businessIds，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  businessIds: string[]
+  /**
+   * 业务 businessKey & 业务 businessId 互斥检查，用于：
+   * 1. api/file/queryFile（非必传，默认 true）
+   * 2. api/file/queryFileList（非必传，默认 true）
+   */
+  businessCheck: boolean
+  /**
+   * 业务自定义数据，用于：
+   * 1. api/file/upload（非必传）
+   */
+  businessParamsJson: Record<string, any>
+  /**
+   * 是否控权限，默认 false，用于：
+   * 1. api/file/queryFileType（非必传）
+   * 2. api/file/queryFile（非必传）
+   * 3. api/file/queryFileList（非必传）
+   */
+  permissionControl: boolean
+  /**
+   * 文件真实 id，用于：
+   * 1. api/file/updateFile
+   */
+  fileActualId: string
+  /**
+   * 文件真实 ids，用于：
+   * 1. api/file/queryHistoryFileByFileActualIds
+   * 2. api/file/deleteFileByActualIds
+   */
+  actualIds: string[]
+  /**
+   * 是否立即更新，用于：
+   * 1. api/file/updateFile（非必传）
+   * */
+  instantUpdate: boolean
+  /**
+   * 文件 id，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   * 3. api/file/webOnline
+   * 4. api/file/fileDownload
+   * 5. api/file/downloadToWatermark
+   */
+  id: number
+  /**
+   * 文件列表，用于：
+   * 1. api/file/upload
+   */
+  files: File[]
+  /**
+   * 文件，用于：
+   * 1. api/file/updateFile
+   */
+  file: File
+  /**
+   * 文件数据字段，用于：
+   * 1. api/file/upload
+   */
+  fileName: string
+  /**
+   * 聚合查询框，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  searchValue: string
+  /**
+   * 开始时间  Format: date-time，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  startTime: string
 
-  /** 文件id Format: int64 */
-  id?: number
-  /** 文件ids */
-  ids?: number[]
-  /** 聚合查询框, 非必填 */
-  searchValue?: string
-  /**开始时间 Format: date-time */
-  startTime?: string
-  /** 结束时间  Format: date-time */
-  endTime?: string
-  /** 文件列表  */
-  files?: File[]
-  finalTypeCodes?: string[]
-  suffix?: string
+  /**
+   * 结束时间  Format: date-time，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  endTime: string
+  /**
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  finalTypeCodes: string[]
+  /**
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  suffix: string
 }
-
-/** fileTypeSelect 组件下所有 api 需要的参数 */
-export const fileTypeSelectApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
-  typeCodes: { type: Object as PropType<ApiParams['typeCodes']> },
-  permissionControl: { type: Object as PropType<ApiParams['permissionControl']> },
-  // businessParamsJson: { type: Object as PropType<FileApiParamBusinessParamsJson> },
-}
-export type FileTypeSelectApiParams = ExtractPropTypes<typeof fileTypeSelectApiParams>
-
-/** fileActionUpload 组件下所有 api 需要的参数 */
-export const fileActionUploadApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
-  typeCode: { type: Object as PropType<ApiParams['typeCode']> },
-  // permissionControl: { type: Object as PropType<ApiParams['permissionControl']> }, // 文件上传不控权
-  businessId: { type: Object as PropType<ApiParams['businessId']> },
-  businessKey: { type: Object as PropType<ApiParams['businessKey']> },
-  businessParamsJson: { type: Object as PropType<FileApiParamBusinessParamsJson> },
-  files: { type: Object as PropType<ApiParams['files']>, required: true },
-  fileActualId: { type: Object as PropType<ApiParams['fileActualId']> },
-  instantUpdate: { type: Object as PropType<ApiParams['instantUpdate']> },
-}
-export type FileActionUploadApiParams = ExtractPropTypes<typeof fileActionUploadApiParams>
-
-/** fileActionUploadLink 组件下所有 api 需要的参数 */
-export const fileActionUploadLinkApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
-  typeCode: { type: Object as PropType<ApiParams['typeCode']> },
-  // permissionControl: { type: Object as PropType<ApiParams['permissionControl']> }, // 文件上传不控权
-  businessId: { type: Object as PropType<ApiParams['businessId']> },
-  businessKey: { type: Object as PropType<ApiParams['businessKey']> },
-  businessParamsJson: { type: Object as PropType<FileApiParamBusinessParamsJson> },
-  files: { type: Object as PropType<ApiParams['files']>, required: true },
-  fileActualId: { type: Object as PropType<ApiParams['fileActualId']> },
-  instantUpdate: { type: Object as PropType<ApiParams['instantUpdate']> },
-}
-export type FileActionUploadLinkApiParams = ExtractPropTypes<typeof fileActionUploadLinkApiParams>
-
-/** fileTable 组件下所有 api 需要的参数 */
-export const fileTableApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  businessCheck: { type: Object as PropType<ApiParams['businessCheck']> },
-  businessId: { type: Object as PropType<ApiParams['businessId']> },
-  businessIds: { type: Object as PropType<ApiParams['businessIds']> },
-  businessKey: { type: Object as PropType<ApiParams['businessKey']> },
-  endTime: { type: Object as PropType<ApiParams['endTime']> },
-  finalTypeCodes: { type: Object as PropType<ApiParams['finalTypeCodes']> },
-  id: { type: Object as PropType<ApiParams['id']> },
-  ids: { type: Object as PropType<ApiParams['ids']> },
-  moduleCode: { type: Object as PropType<ApiParams['moduleCode']> },
-  permissionControl: { type: Object as PropType<ApiParams['permissionControl']> },
-  searchValue: { type: Object as PropType<ApiParams['searchValue']> },
-  startTime: { type: Object as PropType<ApiParams['startTime']> },
-  suffix: { type: Object as PropType<ApiParams['suffix']> },
-  typeCode: { type: Object as PropType<ApiParams['typeCode']> },
-  typeCodes: { type: Object as PropType<ApiParams['typeCodes']> },
-  businessParamsJson: { type: Object as PropType<FileApiParamBusinessParamsJson> },
-  fileActualId: { type: String as PropType<ApiParams['fileActualId']> },
-  fileActualIds: { type: Object as PropType<ApiParams['fileActualIds']> },
-  actualIds: { type: Object as PropType<ApiParams['actualIds']> },
-  files: { type: Object as PropType<ApiParams['files']>, required: true },
-}
-export type FileTableApiParams = ExtractPropTypes<typeof fileTableApiParams>
-
-/** fileVersion 组件下所有 api 参数 */
-export const fileVersionApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  fileActualIds: { type: Object as PropType<ApiParams['fileActualIds']> },
-  permissionControl: { type: Object as PropType<ApiParams['permissionControl']> },
-  id: { type: Number as PropType<ApiParams['id']> },
-  ids: { type: Object as PropType<Exclude<ApiParams['id'], undefined>[]> },
-}
-export type FileVersionApiParams = ExtractPropTypes<typeof fileVersionApiParams>
-
-/** filePreview 组件下所有 api 参数 */
-export const filePreviewApiParams = {
-  appId: { type: Object as PropType<ApiParams['appId']> },
-  id: { type: Object as PropType<ApiParams['id']> },
-}
-export type FilePreviewApiParams = ExtractPropTypes<typeof filePreviewApiParams>
 
 /** 只读/新增/编辑（更新）/立即更新，默认只读 */
 export type FileMode = 'read' | 'create' | 'update' | 'updateInstantly'
@@ -157,7 +164,7 @@ export type FileMode = 'read' | 'create' | 'update' | 'updateInstantly'
 export const fileProps = {
   apiParams: {
     type: Object as PropType<ApiParams>,
-    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
+    default: () => ({}),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE, required: true },
 
@@ -175,11 +182,11 @@ export const fileProps = {
   // GlobalConfigFileProps[子组件] 只放子组件用到的 api，各 api 都有 before/after 劫持函数，在子组件中单独定义、使用
   /** FileTypeSelect Props */
   fileTypeSelect: {
-    type: Object as PropType<FileTypeSelectProps & GlobalConfigFileProps['fileTypeSelect']>,
+    type: Object as PropType<FileTypeSelectProps & GlobalConfigFileProps['TaFileTypeSelect']>,
   },
   /** FileActionUpload Props */
   fileActionUpload: {
-    type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['fileActionUpload']>,
+    type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,
   },
   // /** FileActionUploadLink Props */
   // fileActionUploadLink: {
@@ -190,7 +197,7 @@ export const fileProps = {
   // /** FileActionUploadLinkForm Props */
   // fileActionUploadLinkForm: { type: Object as PropType<FileActionsProps & GlobalConfigFileProps['fileActionUploadLink']> },
   /** FileTable Props */
-  fileTable: { type: Object as PropType<FileTableProps & GlobalConfigFileProps['fileTable']> },
+  fileTable: { type: Object as PropType<FileTableProps & GlobalConfigFileProps['TaFileTable']> },
   // /** FileVersion Props */
   // fileVersion: {
   //   type: Object as PropType<FileVersionProps & GlobalConfigFileProps['fileVersion']>,

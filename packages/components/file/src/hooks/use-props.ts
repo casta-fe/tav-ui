@@ -1,11 +1,10 @@
 import { type ComputedRef, type Ref, computed } from 'vue'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { type GlobalConfigFileProps } from '../typings'
-import { DEFAULT_PROPS_COMPONENT_NAMES } from '../consts'
 
 export function useGlobalConfigProps() {
   const globalConfigAppId = (useGlobalConfig('appId') as Ref<string>).value
-  const globalConfigFile = (useGlobalConfig('components') as Ref<Record<string, any>>).value?.TaFile
+  const globalConfigFile = (useGlobalConfig('components') as Ref<Record<string, any>>).value
 
   return computed(
     () =>
@@ -26,7 +25,7 @@ export function useGlobalConfigProps() {
 export function useMergedProps<T extends Record<string, any>, K extends Record<string, any>>(
   globalConfigProps: ComputedRef<T>,
   props: K,
-  componentNames: string[] = DEFAULT_PROPS_COMPONENT_NAMES
+  componentNames: string[]
 ) {
   const result: Record<string, any> = {}
   const isSignleComponent = componentNames.length === 1

@@ -1,25 +1,37 @@
 import { type PropType, type Ref } from 'vue'
 import { type UploadProps as AUploadProps } from 'ant-design-vue'
 import {
-  type ApiUploadFileParams,
-  type FileActionUploadApiParams,
+  type ApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_FILE_MODE } from '../../consts'
 import type { ExtractPropTypes } from 'vue'
 
-export type FileType = ArgumentsOf<AUploadProps['beforeUpload']>[0]
-export type UploadFileType = ArgumentsOf<AUploadProps['onPreview']>[0]
+// 按照 swagger 编写
+export interface ApiUploadFileParams {
+  appId: ApiParams['appId']
+  files: ApiParams['files']
+  moduleCode: ApiParams['moduleCode']
+  typeCode: ApiParams['typeCode']
+  businessId?: ApiParams['businessId']
+  businessKey?: ApiParams['businessKey']
+  businessParamsJson?: ApiParams['businessParamsJson']
+  fileName?: ApiParams['fileName']
+}
+
+// 组件所需的所有 api 参数
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FileActionUploadApiParams extends ApiUploadFileParams {}
 
 export const fileActionUploadProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['fileActionUpload'],
+  ...globalConfigFileProps['TaFileActionUpload'],
   apiParams: {
     type: Object as PropType<FileActionUploadApiParams>,
-    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
+    default: () => ({ businessParamsJson: {} }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // AUpload props, multiple/accept/maxCount 已从 globalConfigFileProps['fileActionUpload'] 解构
@@ -37,7 +49,7 @@ export const fileActionUploadProps = {
   visible: { type: Boolean, default: true },
   /** apiUploadFile 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiUploadFile: {
-    type: Function as PropType<(apiParams: Partial<ApiUploadFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
@@ -47,9 +59,11 @@ export type FileActionUploadProps = ExtractPropTypes<typeof fileActionUploadProp
 export const fileActionUploadEmits = {
   change: (...args: ArgumentsOf<AUploadProps['onChange']>) => args instanceof Object,
   /** 上传成功前校验成功的列表 */
-  validateSuccessChange: (...args: [FileType[]]) => args instanceof Object,
+  validateSuccessChange: (...args: [ArgumentsOf<AUploadProps['beforeUpload']>[0][]]) =>
+    args instanceof Object,
   /** 上传成功前校验失败的列表 */
-  validateFailureChange: (...args: [FileType[]]) => args instanceof Object,
+  validateFailureChange: (...args: [ArgumentsOf<AUploadProps['beforeUpload']>[0][]]) =>
+    args instanceof Object,
   /** 上传成功后的列表 */
   uploadedChange: (...args: [FileActionUploadApiResponseRecord[]]) => args instanceof Object,
 }

@@ -30,9 +30,7 @@ export function useMode(options: {
       beforeApi: mergedProps.value.beforeApiQueryFileHistory,
       afterApi: mergedProps.value.afterApiQueryFileHistory,
       apiParams: {
-        appId: apiParams.appId,
         actualIds: [file.actualId!],
-        permissionControl: apiParams.permissionControl ?? false,
       } as any,
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')

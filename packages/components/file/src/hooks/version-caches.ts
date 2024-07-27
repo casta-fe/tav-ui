@@ -30,6 +30,12 @@ export interface FileVersionCaches {
  * 其中当组件进入编辑/立即更新模式后，数据初始化完成先组建数据结构：
  * [{ actualId: '' }]
  * 编辑模式下，当用户进入行编辑前/打开version弹窗前/点击更新按钮前，请求 filehistorylist 将数据维护至 versionlist 中此时打开 version 弹窗直接从缓存取数据即可
+ *
+ * 3. 缓存载入的时机是在编辑/立即更新模式下 queryfile/queryfilelist，后端返回的数据中每条数据为 verions:1 接口返回后调用 createAllFileCaches
+ *
+ * 4. 文件版本列表数据载入的时机是在编辑/立即更新模式下第一次点击该行中版本/更新按钮会请求 querfilehstory 将其载入缓存，详情查看 filetable.vue 中的 beforeReadFileCaches
+ *
+ * 5. 删除该行文件数据缓存的时机是在编辑/立即更新模式下点击删除按钮后触发，调用 deleteFileCaches
  */
 export class VersionCaches {
   static controller: VersionCaches
@@ -49,19 +55,15 @@ export class VersionCaches {
     public actualidCaches: Set<string> = new Set<string>()
   ) {}
 
-  createAllFileCaches(files: FileActionUploadApiResponseRecord[]) {
-    files.forEach((_file) => {
-      const file = this.serialize(_file)
-      this.caches[file.actualId!] = [file]
-    })
+  createAllFileCaches(files: FileActionUploadApiResponseRecord[], mode?: FileMode) {
+    if (mode === 'update' || mode === 'updateInstantly') {
+      files.forEach((_file) => {
+        const file = this.serialize(_file)
+        this.caches[file.actualId!] = [file]
+      })
+    }
   }
 
-  /**
-   * 表格行编辑前、version 列弹窗出现前、update 按钮点击前
-   * 需要将该行（file）数据的 history 数据存入缓存，并返回
-   * @param _row
-   * @param _histories
-   */
   createFileCaches(
     _file: FileActionUploadApiResponseRecord,
     _histories: FileActionUploadApiResponseRecord[]
@@ -77,7 +79,8 @@ export class VersionCaches {
   }
 
   /**
-   * 行编辑成功后、update 按钮请求成功后将返回的数据进行缓存
+   * 这里需要注意的是编辑模式下更新文件（接口返回的数据）版本只加一次
+   * 立即更新模式下不论是本地上传还是接口返回的文件数据每次更新版本都会加一次
    * @param updatedFile
    * @returns
    */

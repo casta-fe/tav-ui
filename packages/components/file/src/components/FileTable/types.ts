@@ -6,20 +6,16 @@ import {
   type TableProProps,
 } from '@tav-ui/components/table-pro'
 import {
-  type ApiDeleteFileParams,
-  type ApiDownloadFileParams,
-  type ApiDownloadWaterMarkerFileParams,
-  type ApiQueryFileParams,
-  type ApiUpdateFileNameAndLinkParams,
-  type ApiUpdateFileParams,
-  type ApiUploadFileParams,
+  type ApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
-  type FileTableApiParams,
   globalConfigFileProps,
 } from '../../typings'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_FILE_MODE } from '../../consts'
 import { type FileVersionCache } from '../../hooks'
+import { type ApiUploadFileParams } from './../FileActionUpload/types'
+import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
+import { type ApiPreviewFileParams } from './../FilePreview/types'
 
 // /**
 //  * 默认列field
@@ -36,12 +32,90 @@ import { type FileVersionCache } from '../../hooks'
 export type FileTableColumn = TableProColumn
 export type FileTableAction = TableProActionItem & { field: string }
 
+// 按照 swagger 编写
+export interface ApiQueryFileParams {
+  appId?: ApiParams['appId']
+  businessCheck: ApiParams['businessCheck']
+  businessIds?: ApiParams['businessIds']
+  businessKey?: ApiParams['businessKey']
+  endTime?: ApiParams['endTime']
+  finalTypeCodes?: ApiParams['finalTypeCodes']
+  id?: ApiParams['id']
+  moduleCode?: ApiParams['moduleCode']
+  permissionControl?: ApiParams['permissionControl']
+  searchValue?: ApiParams['searchValue']
+  startTime?: ApiParams['startTime']
+  suffix?: ApiParams['suffix']
+  typeCodes?: ApiParams['typeCodes']
+}
+
+// 按照 swagger 编写
+export interface ApiQueryFileListParams {
+  appId?: ApiParams['appId']
+  businessCheck: ApiParams['businessCheck']
+  businessIds?: ApiParams['businessIds']
+  businessKey?: ApiParams['businessKey']
+  endTime?: ApiParams['endTime']
+  finalTypeCodes?: ApiParams['finalTypeCodes']
+  id?: ApiParams['id']
+  moduleCode?: ApiParams['moduleCode']
+  permissionControl?: ApiParams['permissionControl']
+  searchValue?: ApiParams['searchValue']
+  startTime?: ApiParams['startTime']
+  suffix?: ApiParams['suffix']
+  typeCodes?: ApiParams['typeCodes']
+}
+
+// 按照 swagger 编写
+export interface ApiUpdateFileParams {
+  appId: ApiParams['appId']
+  file: ApiParams['file']
+  fileActualId: ApiParams['fileActualId']
+  instantUpdate: ApiParams['instantUpdate']
+}
+
+// 按照 swagger 编写
+export interface ApiUpdateFileNameAndLinkParams {
+  appId: ApiParams['appId']
+  id?: ApiParams['id']
+  name?: string
+  address?: string
+}
+
+// 按照 swagger 编写
+export interface ApiDeleteFileParams {
+  appId: ApiParams['appId']
+  actualIds: ApiParams['actualIds']
+}
+
+// 按照 swagger 编写
+export interface ApiDownloadFileParams {
+  id: ApiParams['id']
+}
+
+// 按照 swagger 编写
+export interface ApiDownloadWaterMarkerFileParams {
+  id: ApiParams['id']
+}
+
+// 组件所需的所有 api 参数
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FileTableApiParams
+  extends Omit<ApiUploadFileParams, 'moduleCode'>,
+    ApiUpdateFileParams,
+    Omit<ApiQueryFileParams, 'appId'>,
+    Omit<ApiQueryFileListParams, 'appId'>,
+    ApiQueryFileHistoryParams,
+    ApiUpdateFileNameAndLinkParams,
+    ApiDeleteFileParams,
+    Partial<ApiDownloadFileParams> {}
+
 export const fileTableProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['fileTable'],
+  ...globalConfigFileProps['TaFileTable'],
   apiParams: {
     type: Object as PropType<FileTableApiParams>,
-    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
+    default: () => ({ permissionControl: false, businessCheck: true }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
@@ -62,6 +136,7 @@ export const fileTableProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
+  /** 是否自动请求 */
   immediate: { type: Boolean, default: true },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   columns: {
@@ -72,59 +147,59 @@ export const fileTableProps = {
       (...args: [FileTableAction[], { row: Record<string, any> }]) => FileTableAction[]
     >,
   },
+  filterFormConfig: {
+    type: Object as PropType<TableProProps['filterFormConfig']>,
+  },
+  /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
+  modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
   // 控制行编辑，只能编辑 filename 以及 hyperlinkaddress
   enabledRowEdit: { type: Boolean, default: false },
   // 控制 version 与操作列更新按钮有无，除了这个标识还需要根据返回数据中的字段 hyperlink 与 auto 来判断
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
   enabledPreview: { type: Boolean, default: true },
-  api: {
-    type: Function as PropType<(apiParams: any) => Promise<any>>,
-  },
-  beforeApi: {
-    type: Function as PropType<(apiParams: any) => Promise<any>>,
-  },
-  afterApi: {
-    type: Function as PropType<(apiParams: any) => Promise<any>>,
-  },
   /** apiUploadFile 已从 ...globalConfigFileProps['filetable'] 取到 */
   beforeApiUploadFile: {
-    type: Function as PropType<(apiParams: Partial<ApiUploadFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   /** apiQueryFile 已从 ...globalConfigFileProps['filetable'] 取到 */
   beforeApiQueryFile: {
-    type: Function as PropType<(apiParams: Partial<ApiQueryFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   afterApiQueryFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiQueryFileList: {
-    type: Function as PropType<(apiParams: Partial<ApiQueryFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
-  afterApiQueryFileList: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  // afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 afterApiQueryFile 合并为一个函数
+  beforeApiQueryFileHistory: {
+    type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
+  },
+  afterApiQueryFileHistory: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiUpdateFile: {
-    type: Function as PropType<(apiParams: Partial<ApiUpdateFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiUpdateFileParams) => Promise<any>>,
   },
-  afterApiUpdateFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  afterApiUpdateFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiUpdateFileNameAndLink: {
-    type: Function as PropType<
-      (apiParams: Partial<ApiUpdateFileNameAndLinkParams>) => Promise<any>
-    >,
+    type: Function as PropType<(apiParams: ApiUpdateFileNameAndLinkParams) => Promise<any>>,
   },
-  afterApiUpdateFileNameAndLink: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  afterApiUpdateFileNameAndLink: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiDeleteFile: {
-    type: Function as PropType<(apiParams: Partial<ApiDeleteFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiDeleteFileParams) => Promise<any>>,
   },
-  afterApiDeleteFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  afterApiDeleteFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiPreviewFile: {
+    type: Function as PropType<(apiParams: ApiPreviewFileParams) => Promise<any>>,
+  },
+  afterApiPreviewFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiDownloadFile: {
-    type: Function as PropType<(apiParams: Partial<ApiDownloadFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiDownloadFileParams) => Promise<any>>,
   },
-  afterApiDownloadFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  afterApiDownloadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiDownloadWaterMarkerFile: {
-    type: Function as PropType<
-      (apiParams: Partial<ApiDownloadWaterMarkerFileParams>) => Promise<any>
-    >,
+    type: Function as PropType<(apiParams: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
   },
-  afterApiDownloadWaterMarkerFile: { type: Function as PropType<(...args: any[]) => Promise<any>> },
+  afterApiDownloadWaterMarkerFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
@@ -152,4 +227,5 @@ export type FileTableEmits = typeof fileTableEmits
 export interface FileTableInstance {
   elRef: Ref<HTMLDivElement | undefined>
   tableProRef: Ref<ITableProInstance | undefined>
+  cleanup: () => Promise<void>
 }

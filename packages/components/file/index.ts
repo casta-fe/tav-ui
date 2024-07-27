@@ -8,5 +8,7 @@ export * from './src/components/FileTable'
 export * from './src/components/FileVersion'
 export * from './src/components/FilePreview'
 export * from './src/typings/types'
+export { DEFAULT_FILE_ACCEPT_TYPES, DEFAULT_FILE_IGNORE_TYPES } from './src/consts'
+
 export const TaFile = withInstall(File)
 export default TaFile

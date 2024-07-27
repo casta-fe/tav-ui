@@ -144,6 +144,34 @@ const unifiedTaFileData = reactive({
       businessId: 'GSWU19972MMNPWLF7',
     },
     fileActualIds: [],
+    fileTable: {
+      modeQueryApiType: 'pager',
+      showOperations: true,
+      filterFormConfig: {
+        inputForm: {
+          field: 'searchValue',
+          componentProps: {
+            'enter-button': true,
+            placeholder: '请输入企业、院所、高校名称',
+          },
+        },
+        pannelForm: [
+          {
+            field: 'filterSearchValue',
+            label: '企业、院所、高校名称',
+            labelWidth: 150,
+            component: 'Input',
+            // componentProps: {
+            //   // "enter-button": true,
+            //   placeholder: "请输入企业、院所、高校名称"
+            // }
+          },
+        ],
+      },
+      pagerConfig: {
+        enabled: true,
+      },
+    },
   },
   create: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
@@ -157,6 +185,34 @@ const unifiedTaFileData = reactive({
       businessId: 'GSWU19972MMNPWLF7',
     },
     fileActualIds: [],
+    fileTable: {
+      modeQueryApiType: 'pager',
+      // showOperations: true,
+      // filterFormConfig: {
+      //   inputForm: {
+      //     field: 'searchValue',
+      //     componentProps: {
+      //       'enter-button': true,
+      //       placeholder: '请输入企业、院所、高校名称',
+      //     },
+      //   },
+      //   pannelForm: [
+      //     {
+      //       field: 'filterSearchValue',
+      //       label: '企业、院所、高校名称',
+      //       labelWidth: 150,
+      //       component: 'Input',
+      //       // componentProps: {
+      //       //   // "enter-button": true,
+      //       //   placeholder: "请输入企业、院所、高校名称"
+      //       // }
+      //     },
+      //   ],
+      // },
+      pagerConfig: {
+        enabled: true,
+      },
+    },
   },
   update: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
@@ -170,6 +226,32 @@ const unifiedTaFileData = reactive({
     fileActualIds: [],
     fileTable: {
       enabledRowEdit: true,
+      // modeQueryApiType: 'pager',
+      // showOperations: true,
+      // filterFormConfig: {
+      //   inputForm: {
+      //     field: 'searchValue',
+      //     componentProps: {
+      //       'enter-button': true,
+      //       placeholder: '请输入企业、院所、高校名称',
+      //     },
+      //   },
+      //   pannelForm: [
+      //     {
+      //       field: 'filterSearchValue',
+      //       label: '企业、院所、高校名称',
+      //       labelWidth: 150,
+      //       component: 'Input',
+      //       // componentProps: {
+      //       //   // "enter-button": true,
+      //       //   placeholder: "请输入企业、院所、高校名称"
+      //       // }
+      //     },
+      //   ],
+      // },
+      pagerConfig: {
+        enabled: false,
+      },
     },
   },
   updateInstantly: {
@@ -197,6 +279,33 @@ const unifiedTaFileData = reactive({
     },
     fileTable: {
       enabledRowEdit: true,
+      modeQueryApiType: 'pager',
+      // modeQueryApiType: 'list',
+      // showOperations: true,
+      // filterFormConfig: {
+      //   inputForm: {
+      //     field: 'searchValue',
+      //     componentProps: {
+      //       'enter-button': true,
+      //       placeholder: '请输入企业、院所、高校名称',
+      //     },
+      //   },
+      //   pannelForm: [
+      //     {
+      //       field: 'filterSearchValue',
+      //       label: '企业、院所、高校名称',
+      //       labelWidth: 150,
+      //       component: 'Input',
+      //       // componentProps: {
+      //       //   // "enter-button": true,
+      //       //   placeholder: "请输入企业、院所、高校名称"
+      //       // }
+      //     },
+      //   ],
+      // },
+      pagerConfig: {
+        enabled: true,
+      },
     },
   },
 })
@@ -205,7 +314,7 @@ const unifiedTaFileData = reactive({
 // }, 20000)
 
 watch(
-  () => unifiedTaFileData.read.fileActualIds,
+  () => unifiedTaFileData.updateInstantly.fileActualIds,
   (cur) => {
     console.log(cur)
   },
@@ -239,8 +348,8 @@ function handlefilechange(...args: any) {
 
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
-      v-bind="unifiedTaFileData.read"
-      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
+      v-bind="unifiedTaFileData.updateInstantly"
+      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
       @change="handlefilechange"
     />
   </section>

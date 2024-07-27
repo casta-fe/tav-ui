@@ -25,9 +25,9 @@ export function useMode(options: {
       afterApi: mergedProps.value.afterApiQueryFileType,
       apiParams: {
         appId: apiParams.appId,
-        moduleCode: apiParams.moduleCode ?? '',
-        typeCodes: apiParams.typeCodes ?? [],
-        permissionControl: apiParams.permissionControl ?? false,
+        moduleCode: apiParams.moduleCode,
+        typeCodes: apiParams.typeCodes,
+        permissionControl: apiParams.permissionControl,
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')

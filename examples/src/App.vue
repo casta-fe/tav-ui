@@ -42,35 +42,62 @@ export default defineComponent({
       permissions: {},
       components: {
         TaUpload: taUploadProvideData,
-        TaFile: {
-          fileTypeSelect: {
-            apiQueryFileType: taUploadProvideData.queryFileType,
-          },
-          fileActionUpload: {
-            apiUploadFile: taUploadProvideData.uploadFile,
-          },
-          fileTable: {
-            apiUploadFile: taUploadProvideData.uploadFile,
-            apiQueryFile: taUploadProvideData.queryFile,
-            apiQueryFileList: taUploadProvideData.queryFileList,
-            apiQueryFileHistory: taUploadProvideData.queryFileHistory,
-            apiUpdateFile: taUploadProvideData.updateFile,
-            apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
-            apiDeleteFile: taUploadProvideData.removeFile,
-            apiPreviewFile: previewWPSFile,
-            apiDownloadFile: taUploadProvideData.download,
-            apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
-          },
-          fileVersion: {
-            apiQueryFileHistory: taUploadProvideData.queryFileHistory,
-            apiPreviewFile: previewWPSFile,
-            apiDownloadFile: taUploadProvideData.download,
-            apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
-          },
-          filePreview: {
-            apiPreviewFile: previewWPSFile,
-          },
-        } as any,
+        // TaFile: {
+        //   fileTypeSelect: {
+        //     apiQueryFileType: taUploadProvideData.queryFileType,
+        //   },
+        //   fileActionUpload: {
+        //     apiUploadFile: taUploadProvideData.uploadFile,
+        //   },
+        //   fileTable: {
+        //     apiUploadFile: taUploadProvideData.uploadFile,
+        //     apiQueryFile: taUploadProvideData.queryFile,
+        //     apiQueryFileList: taUploadProvideData.queryFileList,
+        //     apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+        //     apiUpdateFile: taUploadProvideData.updateFile,
+        //     apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
+        //     apiDeleteFile: taUploadProvideData.removeFile,
+        //     apiPreviewFile: previewWPSFile,
+        //     apiDownloadFile: taUploadProvideData.download,
+        //     apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+        //   },
+        //   fileVersion: {
+        //     apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+        //     apiPreviewFile: previewWPSFile,
+        //     apiDownloadFile: taUploadProvideData.download,
+        //     apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+        //   },
+        //   filePreview: {
+        //     apiPreviewFile: previewWPSFile,
+        //   },
+        // } as any,
+        TaFileTypeSelect: {
+          apiQueryFileType: taUploadProvideData.queryFileType,
+        },
+        TaFileActionUpload: {
+          apiUploadFile: taUploadProvideData.uploadFile,
+        },
+        TaFileTable: {
+          apiUploadFile: taUploadProvideData.uploadFile,
+          apiQueryFile: taUploadProvideData.queryFile,
+          apiQueryFileList: taUploadProvideData.queryFileList,
+          apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+          apiUpdateFile: taUploadProvideData.updateFile,
+          apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
+          apiDeleteFile: taUploadProvideData.removeFile,
+          apiPreviewFile: previewWPSFile,
+          apiDownloadFile: taUploadProvideData.download,
+          apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+        },
+        TaFileVersion: {
+          apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+          apiPreviewFile: previewWPSFile,
+          apiDownloadFile: taUploadProvideData.download,
+          apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+        },
+        TaFilePreview: {
+          apiPreviewFile: previewWPSFile,
+        },
         TaMemberSelect: {
           orgApi,
           allUserList: allUsers.data.map((v) => {

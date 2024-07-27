@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { type UnwrapRef, reactive, ref /*useSlots, useAttrs*/ } from 'vue'
-// import { useGlobalConfigProps, useMergedProps } from '../../../../hooks'
 // import { type GlobalConfigFileProps } from '../../../../typings'
 import { Input as VxeInput } from 'vxe-table'
 import { TaForm, useForm } from '@tav-ui/components/form'
@@ -28,14 +27,6 @@ const props = defineProps(fileTableRowEditorProps)
 // const emits = defineEmits(fileTableRowEditorEmits)
 // const slots = useSlots()
 // const attrs = useAttrs()
-
-// // 将 globalconfig 与 ROWEDITOR props 结合，同名 props 已 ROWEDITOR props 为主
-// const globalConfigProps = useGlobalConfigProps()
-// const mergedProps = useMergedProps<GlobalConfigFileProps, FileTableRowEditorProps>(
-//   globalConfigProps,
-//   props,
-//   ['fileTableRowEditor']
-// )
 
 const state = reactive({
   name: props.row?.name,

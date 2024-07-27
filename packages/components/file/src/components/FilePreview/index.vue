@@ -51,7 +51,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FilePreviewProps>(
   globalConfigProps,
   props,
-  ['filePreview']
+  ['TaFilePreview']
 )
 
 const { createMessage } = useMessage()

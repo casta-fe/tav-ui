@@ -33,7 +33,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadLinkProps>(
   globalConfigProps,
   props,
-  ['fileActionUploadLink']
+  ['TaFileActionUploadLink']
 )
 
 defineExpose({

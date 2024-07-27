@@ -122,7 +122,7 @@ export const taUploadProvideData: Partial<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   queryFile: async (params: any): Promise<any> => {
     // console.log('params', params)
-    if (!params.appId) console.error('queryFile appId required')
+    if (!params.filter?.appId) console.error('queryFile appId required')
     let result
     try {
       const { data } = await __post('/api/TIANTA-FILE/api/file/queryFile', params) // 走接口

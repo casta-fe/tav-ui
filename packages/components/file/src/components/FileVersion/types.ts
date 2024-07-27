@@ -6,24 +6,37 @@ import {
 } from '@tav-ui/components/table-pro'
 import { type ModalProps } from '@tav-ui/components/modal'
 import { isBoolean } from '@tav-ui/utils'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_FILE_MODE } from '../../consts'
 import {
-  type ApiQueryFileHistoryParams,
+  type ApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
-  type FileVersionApiParams,
   globalConfigFileProps,
 } from '../../typings'
+import { type ApiPreviewFileParams } from '../FilePreview/types'
+import {
+  type ApiDownloadFileParams,
+  type ApiDownloadWaterMarkerFileParams,
+} from '../FileTable/types'
 
 export type FileVersionTableColumn = TableProColumn
 export type FileVersionTableAction = TableProActionItem & { field: string }
 
+// 按照 swagger 编写
+export interface ApiQueryFileHistoryParams {
+  actualIds: ApiParams['actualIds']
+}
+
+// 组件所需的所有 api 参数
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FileVersionApiParams extends ApiQueryFileHistoryParams {}
+
 export const fileVersionProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['fileVersion'],
+  ...globalConfigFileProps['TaFileVersion'],
   apiParams: {
     type: Object as PropType<FileVersionApiParams>,
-    default: () => ({ ...DEFAULT_FILE_API_PARAMS }),
+    default: () => ({}),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
@@ -63,6 +76,7 @@ export const fileVersionProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  /** 是否自动请求 */
   immediate: { type: Boolean, default: true },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   columns: {
@@ -91,9 +105,21 @@ export const fileVersionProps = {
   },
   /** apiQueryFileHistory 已从 ...globalConfigFileProps['fileVersion'] 取到 */
   beforeApiQueryFileHistory: {
-    type: Function as PropType<(apiParams: Partial<ApiQueryFileHistoryParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
   },
   afterApiQueryFileHistory: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiPreviewFile: {
+    type: Function as PropType<(apiParams: ApiPreviewFileParams) => Promise<any>>,
+  },
+  afterApiPreviewFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiDownloadFile: {
+    type: Function as PropType<(apiParams: ApiDownloadFileParams) => Promise<any>>,
+  },
+  afterApiDownloadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiDownloadWaterMarkerFile: {
+    type: Function as PropType<(apiParams: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
+  },
+  afterApiDownloadWaterMarkerFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileVersionProps = ExtractPropTypes<typeof fileVersionProps>

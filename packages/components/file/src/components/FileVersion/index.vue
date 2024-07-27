@@ -3,7 +3,6 @@ import { type UnwrapRef, computed, ref, watch /*useSlots, useAttrs*/ } from 'vue
 import { TaModal, TaTablePro } from '@tav-ui/components'
 import { DEFAULT_FILEVERSION_CLASSNAME, DEFAULT_FILEVERSION_ID } from '../../consts'
 import {
-  VersionCachesController,
   useDisable,
   useGlobalConfigProps,
   useLoading,
@@ -21,6 +20,9 @@ import {
 } from './types'
 import { useActions, useColumns, useMode } from './hooks'
 
+/**
+ * fileversion 只用 datasource 来展示数据
+ */
 defineOptions({
   name: 'TaFileVersion',
   inheritAttrs: false,
@@ -37,7 +39,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileVersionProps>(
   globalConfigProps,
   props,
-  ['fileVersion']
+  ['TaFileVersion']
 )
 
 // 针对业务抽象不同模式进行数据处理
@@ -45,7 +47,6 @@ const {
   apiActions: { historyApiOptions },
 } = useMode({ mergedProps })
 
-// datasource 处理针对于 upload 成功以及外部传入 datasource（不用 api）
 const dataSource = ref(mergedProps.value.dataSource)
 watch(
   () => mergedProps.value.dataSource,
@@ -114,12 +115,13 @@ const {
 watch(
   () => ApiResult.value,
   (curdatasource) => {
-    // if (curdatasource && JSON.stringify(curdatasource) !== JSON.stringify(predatasource)) {
     if (curdatasource) {
       const rows = JSON.parse(JSON.stringify(curdatasource ?? []))
-      dataSource.value = rows
 
-      VersionCachesController.createAllFileCaches(rows)
+      // 只读/新增模式会默认把当前行数据传进来，这俩种模式下使用 upload 上传后文件无历史版本文件，所以不能直接覆盖在这里做判断
+      if (rows && rows.length > 0) {
+        dataSource.value = rows
+      }
     }
   }
 )
@@ -254,13 +256,13 @@ defineExpose({
             v-bind="dataSourceOrApiConfig"
           />
         </div>
+        <TaFilePreview
+          v-model:visible="filePreviewModalVisible"
+          :mode="mergedProps.mode"
+          :api-params="mergedProps.apiParams"
+          :file="filePreviewFile"
+        />
       </template>
     </TaModal>
-    <TaFilePreview
-      v-model:visible="filePreviewModalVisible"
-      :mode="mergedProps.mode"
-      :api-params="mergedProps.apiParams"
-      :file="filePreviewFile"
-    />
   </section>
 </template>

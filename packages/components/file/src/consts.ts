@@ -1,5 +1,4 @@
 import { type FileMode } from './typings/types'
-import { type ApiParams } from './typings'
 import { createId, createNS } from './utils'
 
 export const DEFAULT_HTTP_ERROR_TIP = (i18n: any) => i18n('Tav.common.httpError')
@@ -9,16 +8,6 @@ export const DEFAULT_LOADING_TIP = (i18n: any) => i18n('Tav.common.loadingText')
 export const DEFAULT_TYPE_SELECT_PLACEHOLDER = (i18n: any) => i18n('Tav.file.message.5')
 export const DEFAULT_UPLOAD_TIP = (i18n: any) => i18n('Tav.file.upload.1')
 export const DEFAULT_UPLOADLINK_TIP = (i18n: any) => i18n('Tav.file.upload.3')
-
-export const DEFAULT_PROPS_COMPONENT_NAMES = [
-  'fileActionUpload',
-  'fileActionUploadLink',
-  'fileActionUploadLinkForm',
-  'fileTable',
-  'fileTypeSelect',
-  'fileVersion',
-  'filePreview',
-]
 
 const ns = createNS('file')
 export const DEFAULT_FILE_CLASSNAME = ns.b()
@@ -72,15 +61,6 @@ export const DEFAULT_FILE_SIZE_RANGE: (number | null)[] = [null, 1024 * 1024 * 1
 
 /** 文件名非法字符校验正则 */
 export const DEFAULT_FILE_NAME_REGEXP = new RegExp(`[\\\\/:*?"<>|]`, 'g')
-
-/** apiparams 默认值 */
-export const DEFAULT_FILE_API_PARAMS: ApiParams = {
-  // moduleCode: '',
-  // typeCodes: [],
-  // businessKey: '',
-  // businessIds: [],
-  permissionControl: false,
-}
 
 /** mode 默认值 */
 export const DEFAULT_FILE_MODE: FileMode = 'read'

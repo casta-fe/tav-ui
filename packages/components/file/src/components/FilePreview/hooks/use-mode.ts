@@ -31,7 +31,6 @@ export function useMode(options: {
       beforeApi: mergedProps.value.beforeApiPreviewFile,
       afterApi: mergedProps.value.afterApiPreviewFile,
       apiParams: {
-        appId: apiParams.appId,
         id: file.id!,
       },
       failureMessage: () => {

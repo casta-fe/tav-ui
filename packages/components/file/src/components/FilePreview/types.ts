@@ -1,21 +1,29 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
 import { type ModalProps } from '@tav-ui/components/modal'
 import { isBoolean } from '@tav-ui/utils'
-import { DEFAULT_FILE_API_PARAMS, DEFAULT_FILE_IGNORE_TYPES, DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_FILE_IGNORE_TYPES, DEFAULT_FILE_MODE } from '../../consts'
 import {
-  type ApiPreviewFileParams,
+  type ApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
-  type FilePreviewApiParams,
   globalConfigFileProps,
 } from '../../typings'
 
+// 按照 swagger 编写
+export interface ApiPreviewFileParams {
+  id: ApiParams['id']
+}
+
+// 组件所需的所有 api 参数
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FilePreviewApiParams extends ApiPreviewFileParams {}
+
 export const filePreviewProps = {
   //:============================== extend props ==============================://
-  ...globalConfigFileProps['filePreview'],
+  ...globalConfigFileProps['TaFilePreview'],
   apiParams: {
     type: Object as PropType<FilePreviewApiParams>,
-    default: () => DEFAULT_FILE_API_PARAMS,
+    default: () => ({}),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // modal props
@@ -40,6 +48,7 @@ export const filePreviewProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  /** 是否自动请求 */
   immediate: { type: Boolean, default: true },
   /** 预览文件 */
   file: {
@@ -52,7 +61,7 @@ export const filePreviewProps = {
   },
   /** apiPreviewFile 已从 ...globalConfigFileProps['filePreview'] 取到 */
   beforeApiPreviewFile: {
-    type: Function as PropType<(apiParams: Partial<ApiPreviewFileParams>) => Promise<any>>,
+    type: Function as PropType<(apiParams: ApiPreviewFileParams) => Promise<any>>,
   },
   afterApiPreviewFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }

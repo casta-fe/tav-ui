@@ -1,6 +1,12 @@
-import { type ComputedRef, type Ref, type SetupContext, unref, watch } from 'vue'
+import { type ComputedRef, type Ref, type SetupContext, computed, unref } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import { type FileTableEmits, type FileTableProps } from '../types'
+import componentSetting from '@tav-ui/settings/src/componentSetting'
+import {
+  type ApiDeleteFileParams,
+  type ApiUpdateFileNameAndLinkParams,
+  type FileTableEmits,
+  type FileTableProps,
+} from '../types'
 import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
@@ -9,54 +15,220 @@ import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../.
 import { type FileActionUploadProps } from '../../FileActionUpload'
 import { type ArgumentsOf } from '../../../utils'
 
+const {
+  table: {
+    pageSizeOptions,
+    defaultPageSize,
+    fetchSetting: { listField, totalField },
+  },
+} = componentSetting
+
+/**
+ * 根据 api 名字来构造分页参数
+ * @param name
+ * @param filter
+ * @param model
+ * @param apiParams
+ * @returns
+ */
+function createQueryApiOptionsWithPagerConfig(
+  name: string,
+  filter: any,
+  model: any,
+  apiParams: any
+) {
+  if (name.endsWith('List')) {
+    return {
+      // ...filter,
+      // ...model,
+      // ...(apiParams?.filter ?? {}),
+      // ...(apiParams?.model ?? {}),
+      ...filter,
+      ...(apiParams ?? {}),
+    }
+  } else {
+    return {
+      filter: { ...filter, ...(apiParams?.filter ?? {}) },
+      model: { ...model, ...(apiParams?.model ?? {}) },
+    }
+  }
+}
+
 export function useMode(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
+  emits: SetupContext<FileTableEmits>['emit']
+  VersionCachesController: VersionCaches
 }) {
-  const { mergedProps } = options
+  const { mergedProps, emits, VersionCachesController } = options
 
   /**
-   * 根据不同模式判断是否获取数据
-   * @param handleApi
+   * 根据 props 来设置 tablepro 的参数，包括：data、api、beforeapi、afterapi、pagerconfig、immediate
+   * @returns
    */
-  async function useModeFetchDataSource(handleApi: (...args: any[]) => Promise<any>) {
-    watch(
-      () => mergedProps.value.mode,
-      async (mode) => {
-        if (mode === 'read') {
-          const options = apiQueryFileOptions(mergedProps.value.apiParams)
-          if (!options) return
-          await handleApi(options)
-        } else if (mode === 'create') {
-          //
-        } else if (mode === 'update') {
-          const options = apiQueryFileOptions(mergedProps.value.apiParams)
-          if (!options) return
-          await handleApi(options)
-        } else {
-          const options = apiQueryFileOptions(mergedProps.value.apiParams)
-          if (!options) return
-          await handleApi(options)
+  function useModeConfigTable() {
+    return computed(() => {
+      const hasPager = mergedProps.value.pagerConfig && !!mergedProps.value.pagerConfig.enabled
+      const apiOptions = apiQueryFileOptions(mergedProps.value.apiParams)
+
+      let dataOrApiConfig: {
+        data: FileTableProps['dataSource']
+        api?: (...args: any[]) => Promise<any>
+        beforeApi?: (...args: any[]) => Promise<any>
+        afterApi?: (...args: any[]) => Promise<any>
+        pagerConfig: FileTableProps['pagerConfig']
+        immediate: FileTableProps['immediate']
+      } = {} as any
+
+      if (hasPager) {
+        dataOrApiConfig = {
+          data: undefined,
+          api: !apiOptions!.api
+            ? undefined
+            : ({ filter, model }: Record<string, any>) =>
+                apiOptions!.api!(
+                  createQueryApiOptionsWithPagerConfig(
+                    apiOptions!.api!.name,
+                    filter,
+                    model,
+                    apiOptions!.apiParams
+                  ) as any
+                ),
+          beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
+          afterApi: (apiOptions!.afterApi ?? undefined) as any,
+          pagerConfig: {
+            size: 'mini',
+            layouts: ['PrevPage', 'Number', 'NextPage', 'Sizes', 'Total'],
+            pageSize: defaultPageSize,
+            pageSizes: pageSizeOptions.map((size) => Number(size)),
+            controller: 'backend',
+          },
+          immediate: mergedProps.value.immediate,
+          ...(mergedProps.value.filterFormConfig
+            ? { filterFormConfig: mergedProps.value.filterFormConfig }
+            : {}),
         }
-      },
-      {
-        immediate: true,
+      } else {
+        dataOrApiConfig = {
+          data: undefined,
+          api: !apiOptions!.api
+            ? undefined
+            : ({ filter, model }: Record<string, any>) =>
+                apiOptions!.api!(
+                  createQueryApiOptionsWithPagerConfig(
+                    apiOptions!.api!.name,
+                    filter,
+                    model,
+                    apiOptions!.apiParams
+                  ) as any
+                ),
+          beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
+          afterApi: (apiOptions!.afterApi ?? undefined) as any,
+          pagerConfig: { enabled: false },
+          immediate: mergedProps.value.immediate,
+          ...(mergedProps.value.filterFormConfig
+            ? { filterFormConfig: mergedProps.value.filterFormConfig }
+            : {}),
+        }
       }
-    )
+
+      if (['create'].includes(mergedProps.value.mode)) {
+        // 新增模式必须是空数据，不接收、使用任何 dataSource 与 api
+        console.warn(
+          '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
+        )
+
+        dataOrApiConfig = {
+          data: undefined,
+          api: undefined,
+          beforeApi: undefined,
+          afterApi: undefined,
+          pagerConfig: { enabled: false },
+          immediate: mergedProps.value.immediate,
+        }
+      }
+
+      return dataOrApiConfig
+    })
   }
+
   //:========================================: api actions :========================================://
   function apiQueryFileOptions(apiParams: FileTableProps['apiParams']) {
+    if (!mergedProps.value.apiQueryFile) {
+      console.warn('[tavui TaFileTable] apiQueryFile is undefined')
+      return
+    }
+
     if (!mergedProps.value.apiQueryFileList) {
       console.warn('[tavui TaFileTable] apiQueryFileList is undefined')
       return
     }
 
-    const options: UseRequestHandleApiDefaultOptions<
-      FileTableProps['apiParams'],
-      FileActionUploadApiResponseRecord[]
-    > = {
-      api: mergedProps.value.apiQueryFileList as any,
+    const modeQueryApiTypePagerConfig: any = {
+      api: mergedProps.value.apiQueryFile,
+      beforeApi: mergedProps.value.beforeApiQueryFile,
+      afterApi: async (apiResult: any) => {
+        const _apiResult = (await mergedProps.value.afterApiQueryFile?.(apiResult)) || apiResult
+
+        // 在初始化时机抛出事件
+        setTimeout(() => {
+          const rows = JSON.parse(JSON.stringify([...(_apiResult.data[listField] ?? [])]))
+          emits('change', rows, rows, 'init')
+          emits(
+            'actualidsChange',
+            rows.map((file: any) => file.actualId)
+          )
+
+          VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+        }, 150)
+
+        return _apiResult
+      },
+      apiParams: {
+        filter: {
+          appId: apiParams.appId,
+          moduleCode: apiParams.moduleCode,
+          businessKey: apiParams.businessKey,
+          ...(apiParams.businessId
+            ? {
+                businessIds: [apiParams.businessId],
+              }
+            : {}),
+          businessCheck: false,
+          permissionControl: apiParams.permissionControl ?? false,
+        },
+        model: { page: 1, limit: 50 },
+      },
+    }
+
+    // 表格内部数据源用 queryfile/querfilelist 传递给 tablepro 获取数据，外部传入的 datasource 会拼在数据最前方
+
+    const modeQueryApiTypeListConfig: any = {
+      api: mergedProps.value.apiQueryFileList,
       beforeApi: mergedProps.value.beforeApiQueryFileList,
-      afterApi: mergedProps.value.afterApiQueryFileList,
+      afterApi: async (apiResult: any) => {
+        // const _apiResult = (await mergedProps.value.afterApiQueryFileList?.(apiResult)) || apiResult // 与上面 afterApiQueryFile 合并为一个函数
+        const _apiResult = (await mergedProps.value.afterApiQueryFile?.(apiResult)) || apiResult
+
+        // 在初始化时机抛出事件
+        setTimeout(() => {
+          const rows = JSON.parse(JSON.stringify([...(_apiResult.data ?? [])]))
+          emits('change', rows, rows, 'init')
+          emits(
+            'actualidsChange',
+            rows.map((file: any) => file.actualId)
+          )
+
+          VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+        }, 150)
+
+        // 不分页接口需要劫持 afterapi 组装分页数据将分页器显示出来，这样避免想使用分页器必须传入分页接口的情况
+        return {
+          data: {
+            [listField]: _apiResult.data,
+            [totalField]: _apiResult.data.length,
+          },
+        }
+      },
       apiParams: {
         appId: apiParams.appId,
         moduleCode: apiParams.moduleCode,
@@ -66,37 +238,43 @@ export function useMode(options: {
               businessIds: [apiParams.businessId],
             }
           : {}),
-        /** 新增模式为 false，其余为 true */
         businessCheck: true,
         permissionControl: apiParams.permissionControl ?? false,
       },
+    }
+
+    let apiConfig: any = {}
+    if (mergedProps.value.modeQueryApiType === 'pager') {
+      apiConfig = modeQueryApiTypePagerConfig
+    } else {
+      apiConfig = modeQueryApiTypeListConfig
+    }
+
+    if (
+      ['update'].includes(mergedProps.value.mode) &&
+      mergedProps.value.modeQueryApiType === 'pager'
+    ) {
+      // 编辑模式只能使用不分页接口
+      console.warn(
+        '[tavui TaFileTable] apiQueryFile is only used in "read" or "updateInstantly" mode, force to use apiQueryFileList'
+      )
+      apiConfig = modeQueryApiTypeListConfig
+    }
+
+    const options: UseRequestHandleApiDefaultOptions<
+      FileTableProps['apiParams'],
+      FileActionUploadApiResponseRecord[]
+    > = {
+      ...apiConfig,
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
       },
     }
 
     if (mergedProps.value.mode === 'read') {
-      // options['api'] = mergedProps.value.apiQueryFile as any
-      // options['beforeApi'] = mergedProps.value.beforeApiQueryFile
-      // options['afterApi'] = mergedProps.value.afterApiQueryFile
-      // options['apiParams'] = {
-      //   filter: {
-      //     appId: apiParams.appId,
-      //     moduleCode: apiParams.moduleCode,
-      //     businessKey: apiParams.businessKey,
-      //     ...(apiParams.businessId
-      //       ? {
-      //           businessIds: [apiParams.businessId],
-      //         }
-      //       : {}),
-      //   },
-      //   model: { page: 1, limit: 50 },
-      // } as any
+      //
     } else if (mergedProps.value.mode === 'create') {
-      options['apiParams'] = {
-        ...options['apiParams'],
-        businessCheck: false,
-      }
+      // 必须为空数据状态
     } else if (mergedProps.value.mode === 'update') {
       //
     } else {
@@ -106,21 +284,25 @@ export function useMode(options: {
     return options
   }
 
-  function rowEditorApiOptions(apiParams: FileTableProps['apiParams']) {
+  function rowEditorApiOptions(
+    apiParams: FileTableProps['apiParams'],
+    changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>
+  ) {
     if (!mergedProps.value.apiUpdateFileNameAndLink) {
       console.warn('[tavui TaFileTable] apiUpdateFileNameAndLink is undefined')
       return
     }
 
     const options: UseRequestHandleApiDefaultOptions<
-      FileTableProps['apiParams'],
+      ApiUpdateFileNameAndLinkParams,
       FileActionUploadApiResponseRecord[]
     > = {
-      api: mergedProps.value.apiUpdateFileNameAndLink as any,
-      beforeApi: mergedProps.value.beforeApiUpdateFileNameAndLink as any,
+      api: mergedProps.value.apiUpdateFileNameAndLink,
+      beforeApi: mergedProps.value.beforeApiUpdateFileNameAndLink,
       afterApi: mergedProps.value.afterApiUpdateFileNameAndLink,
       apiParams: {
         appId: apiParams.appId,
+        ...changeEventPayload,
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
@@ -151,7 +333,7 @@ export function useMode(options: {
     }
 
     const options: UseRequestHandleApiDefaultOptions<
-      FileTableProps['apiParams'],
+      ArgumentsOf<FileTableProps['apiQueryFileHistory']>[0],
       FileActionUploadApiResponseRecord[]
     > = {
       api: mergedProps.value.apiQueryFileHistory,
@@ -188,6 +370,13 @@ export function useMode(options: {
       return
     }
 
+    if (!apiParams.moduleCode || !apiParams.typeCode) {
+      console.warn(
+        '[tavui TaFileTable] update button invoke TaFileActionUpload in inner, moduleCode & typeCode required!'
+      )
+      return
+    }
+
     const options: UseRequestHandleApiDefaultOptions<
       FileActionUploadProps['apiParams'],
       FileActionUploadApiResponseRecord[]
@@ -198,8 +387,8 @@ export function useMode(options: {
       apiParams: {
         appId: apiParams.appId,
         files: unref(files),
-        moduleCode: apiParams.moduleCode ?? '',
-        typeCode: apiParams.typeCode ?? '',
+        moduleCode: apiParams.moduleCode,
+        typeCode: apiParams.typeCode,
         businessParamsJson: apiParams.businessParamsJson ?? {},
       },
       transformApiParamsToFormData: {
@@ -224,8 +413,8 @@ export function useMode(options: {
     } else if (mergedProps.value.mode === 'update') {
       if (!isManualUploadRow) {
         options['transformApiParamsToFormData'] = undefined
-        options['api'] = mergedProps.value.apiUpdateFile
-        options['beforeApi'] = mergedProps.value.beforeApiUpdateFile
+        options['api'] = mergedProps.value.apiUpdateFile as any
+        options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
         options['afterApi'] = mergedProps.value.afterApiUpdateFile
         const formData = new FormData()
         files.forEach((file) => formData.append('file', file))
@@ -240,8 +429,8 @@ export function useMode(options: {
       }
     } else {
       options['transformApiParamsToFormData'] = undefined
-      options['api'] = mergedProps.value.apiUpdateFile
-      options['beforeApi'] = mergedProps.value.beforeApiUpdateFile
+      options['api'] = mergedProps.value.apiUpdateFile as any
+      options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
       options['afterApi'] = mergedProps.value.afterApiUpdateFile
       const formData = new FormData()
       files.forEach((file) => formData.append('file', file))
@@ -257,59 +446,9 @@ export function useMode(options: {
     return options
   }
 
-  // function downloadApiOptions(
-  //   apiParams: ComputedRef<FileTableProps['apiParams']>,
-  //   file: FileActionUploadApiResponseRecord
-  // ) {
-  //   const options: FileActionUploadHandleApiOptions = {
-  //     api: mergedProps.value.apiDownloadFile,
-  //     beforeApi: mergedProps.value.beforeApiDownloadFile,
-  //     afterApi: mergedProps.value.afterApiDownloadFile,
-  //     apiParams: {
-  //       appId: apiParams.value.appId,
-  //       id: file.id,
-  //     },
-  //     mode: mergedProps.value.mode,
-  //     isFormData: false,
-  //   }
-
-  //   // if (mergedProps.value.mode === 'read') {
-  //   // } else if (mergedProps.value.mode === 'create') {
-  //   // } else if (mergedProps.value.mode === 'update') {
-  //   // } else {
-  //   // }
-
-  //   return options
-  // }
-
-  // function downloadWaterMarkerApiOptions(
-  //   apiParams: ComputedRef<FileTableProps['apiParams']>,
-  //   file: FileActionUploadApiResponseRecord
-  // ) {
-  //   const options: FileActionUploadHandleApiOptions = {
-  //     api: mergedProps.value.apiDownloadWaterMarkerFile,
-  //     beforeApi: mergedProps.value.beforeApiDownloadWaterMarkerFile,
-  //     afterApi: mergedProps.value.afterApiDownloadWaterMarkerFile,
-  //     apiParams: {
-  //       appId: apiParams.value.appId,
-  //       id: file.id,
-  //     },
-  //     mode: mergedProps.value.mode,
-  //     isFormData: false,
-  //   }
-
-  //   // if (mergedProps.value.mode === 'read') {
-  //   // } else if (mergedProps.value.mode === 'create') {
-  //   // } else if (mergedProps.value.mode === 'update') {
-  //   // } else {
-  //   // }
-
-  //   return options
-  // }
-
   function deleteApiOptions(
     apiParams: FileTableProps['apiParams'],
-    row: FileActionUploadApiResponseRecord | undefined
+    row: FileActionUploadApiResponseRecord
   ) {
     if (!mergedProps.value.apiDeleteFile) {
       console.warn('[tavui TaFileTable] apiDeleteFile is undefined')
@@ -317,11 +456,13 @@ export function useMode(options: {
     }
 
     const options: UseRequestHandleApiDefaultOptions<
-      ArgumentsOf<FileTableProps['apiDeleteFile']>[0],
+      Omit<ApiDeleteFileParams, 'actualIds'> & {
+        actualIds?: ApiDeleteFileParams['actualIds']
+      },
       FileActionUploadApiResponseRecord[]
     > = {
-      api: mergedProps.value.apiDeleteFile,
-      beforeApi: mergedProps.value.beforeApiDeleteFile,
+      api: mergedProps.value.apiDeleteFile as any,
+      beforeApi: mergedProps.value.beforeApiDeleteFile as any,
       afterApi: mergedProps.value.afterApiDeleteFile,
       apiParams: {
         appId: apiParams.appId,
@@ -341,7 +482,7 @@ export function useMode(options: {
     } else {
       options['apiParams'] = {
         ...options['apiParams'],
-        actualIds: [row?.actualId!],
+        actualIds: [row.actualId!],
       }
     }
 
@@ -353,10 +494,8 @@ export function useMode(options: {
   async function editRow(
     dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
     row: FileActionUploadApiResponseRecord,
-    changeEventPayload: { id?: string; name?: string; address?: string },
-    editDataSourceRow: (...args: any[]) => Promise<any>,
-    emits: SetupContext<FileTableEmits>['emit'],
-    VersionCachesController: VersionCaches
+    changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
+    editDataSourceRow: (...args: any[]) => Promise<any>
   ) {
     const mode = mergedProps.value.mode
 
@@ -427,139 +566,117 @@ export function useMode(options: {
   }
 
   async function updateRow(
-    dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
-    row: FileActionUploadApiResponseRecord,
-    refreshDataSource: (...args: any[]) => Promise<any>,
-    emits: SetupContext<FileTableEmits>['emit'],
-    VersionCachesController: VersionCaches
+    _row: FileActionUploadApiResponseRecord,
+    _clickedRow: FileActionUploadApiResponseRecord,
+    tableProRef: any,
+    tableReadRows: (tableProRef: any) => Promise<FileActionUploadApiResponseRecord[]>,
+    tableUpdateRows: (
+      tableProRef: any,
+      rows: FileActionUploadApiResponseRecord[],
+      deleteRows: FileActionUploadApiResponseRecord[],
+      pos: FileActionUploadApiResponseRecord | null | -1
+    ) => Promise<void>,
+    refreshTableData: (...args: any[]) => Promise<any>
   ) {
     const mode = mergedProps.value.mode
+    const row = JSON.parse(JSON.stringify(_row))
+    const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
-    function action(_row?: FileActionUploadApiResponseRecord) {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-      rows.splice(idx, 1, _row ?? row)
-      return rows
+    async function action(updatedVersionRow?: FileActionUploadApiResponseRecord) {
+      await tableUpdateRows(tableProRef, [updatedVersionRow ?? row], [clickedRow], clickedRow)
+    }
+
+    async function getDataSource() {
+      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows(tableProRef)))
+      return _dataSource.length > 0 ? _dataSource : [row]
     }
 
     if (mode === 'read') {
       //
     } else if (mode === 'create') {
-      dataSource.value = [...action()]
-
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      await action()
+      const dataSource = await getDataSource()
+      emits('change', [row], dataSource, 'update')
       emits(
         'actualidsChange',
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+        dataSource.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      VersionCachesController.createFileCache(row)
+      VersionCachesController.createFileCache(row, mode)
       const latestVersionFileCache = VersionCachesController.readFileCacheLatestVersion(
         row.actualId!
       )
-
-      dataSource.value = [...action(latestVersionFileCache)]
-
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      await action(latestVersionFileCache)
+      const dataSource = await getDataSource()
+      emits('change', [row], dataSource, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.createFileCache(row, mode)
-
-      action()
-
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      await action()
+      const dataSource = await getDataSource()
+      emits('change', [row], dataSource, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
-
-      await refreshDataSource()
+      await refreshTableData()
     }
   }
 
   async function deleteRow(
-    dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
-    row: FileActionUploadApiResponseRecord,
-    deleteDataSourceRow: (...args: any[]) => Promise<any>,
-    refreshDataSource: (...args: any[]) => Promise<any>,
-    emits: SetupContext<FileTableEmits>['emit'],
-    VersionCachesController: VersionCaches
+    _clickedRow: FileActionUploadApiResponseRecord,
+    tableProRef: any,
+    tableReadRows: (tableProRef: any) => Promise<FileActionUploadApiResponseRecord[]>,
+    tableDeleteRows: (tableProRef: any, rows: FileActionUploadApiResponseRecord[]) => Promise<void>,
+    deleteDataSourceRow: () => Promise<void>,
+    refreshTableData: (...args: any[]) => Promise<any>
   ) {
     const mode = mergedProps.value.mode
+    const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
-    function action() {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-      // const newRow = rows[idx]
-      rows.splice(idx, 1)
-      return rows
+    async function action() {
+      await tableDeleteRows(tableProRef, [clickedRow])
+    }
+
+    async function getDataSource() {
+      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows(tableProRef)))
+      return _dataSource.length > 0 ? _dataSource : [clickedRow]
     }
 
     if (mode === 'read') {
       //
     } else if (mode === 'create') {
-      dataSource.value = [...action()]
-
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      await action()
+      const dataSource = await getDataSource()
+      emits('change', [clickedRow], dataSource, 'delete')
       emits(
         'actualidsChange',
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
+        dataSource.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      VersionCachesController.deleteFileCaches(row.actualId!)
-      dataSource.value = [...action()]
+      VersionCachesController.deleteFileCaches(clickedRow.actualId!)
+      await action()
+      const dataSource = await getDataSource()
 
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      emits('change', [clickedRow], dataSource, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      VersionCachesController.deleteFileCaches(row.actualId!)
-      action()
-
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      VersionCachesController.deleteFileCaches(clickedRow.actualId!)
+      await action()
+      const dataSource = await getDataSource()
+      emits('change', [clickedRow], dataSource, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       await deleteDataSourceRow()
-      await refreshDataSource()
+      await refreshTableData()
     }
   }
   //:========================================: dataSource actions :========================================://
 
   return {
-    useModeFetchDataSource,
+    useModeConfigTable,
     apiActions: {
       apiQueryFileOptions,
       rowEditorApiOptions,
       historyApiOptions,
       updateApiOptions,
-      // downloadApiOptions,
-      // downloadWaterMarkerApiOptions,
       deleteApiOptions,
     },
     dataSourceActions: {

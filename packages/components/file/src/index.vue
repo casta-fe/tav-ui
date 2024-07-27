@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
-import { type ITableProInstance } from '@tav-ui/components/table-pro'
 import {
   type FileTypeSelectEmits,
   type FileTypeSelectInstance,
@@ -13,13 +12,8 @@ import {
   TaFileActionUpload,
 } from './components/FileActionUpload'
 // import { TaFileActionUploadLink } from './components/FileActionUploadLink'
-import {
-  type FileTableEmits,
-  type FileTableInstance,
-  type FileTableProps,
-  TaFileTable,
-} from './components/FileTable'
-import { type FileInstance, type GlobalConfigFileProps, fileEmits, fileProps } from './typings'
+import { type FileTableEmits, type FileTableInstance, TaFileTable } from './components/FileTable'
+import { type FileInstance, fileEmits, fileProps } from './typings'
 import {
   DEFAULT_FILEACTIONS_CLASSNAME,
   DEFAULT_FILEACTIONS_ID,
@@ -59,19 +53,8 @@ const fileTypeSelectProps = computed(() => ({
     moduleCode: fileApiParams.value.value.moduleCode,
     typeCodes: fileApiParams.value.value.typeCodes,
     permissionControl: fileApiParams.value.value.permissionControl,
-    ...(props.fileTypeSelect?.apiParams ?? {}),
+    ...(props.fileTypeSelect?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
-  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  // ...{
-  //   apiParams: props.fileTypeSelect?.apiParams
-  //     ? {}
-  //     : {
-  //         appId: fileApiParams.value.value.appId,
-  //         moduleCode: fileApiParams.value.value.moduleCode,
-  //         typeCodes: fileApiParams.value.value.typeCodes,
-  //         permissionControl: fileApiParams.value.value.permissionControl,
-  //       },
-  // },
 }))
 
 const fileActionUploadRef = ref<FileActionUploadInstance>()
@@ -80,30 +63,15 @@ const fileActionUploadProps = computed(() => ({
   mode: props.mode,
   apiParams: {
     appId: fileApiParams.value.value.appId,
+    // files: fileApiParams.value.value.files,
     moduleCode: fileApiParams.value.value.moduleCode,
     typeCode: fileApiParams.value.value.typeCode,
     businessId: fileApiParams.value.value.businessId,
     businessKey: fileApiParams.value.value.businessKey,
     businessParamsJson: fileApiParams.value.value.businessParamsJson,
-    fileActualId: fileApiParams.value.value.fileActualId,
-    instantUpdate: fileApiParams.value.value.instantUpdate,
-    ...(props.fileActionUpload?.apiParams ?? {}),
+    fileName: fileApiParams.value.value.fileName,
+    ...(props.fileActionUpload?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
-  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  // ...{
-  //   apiParams: props.fileActionUpload?.apiParams
-  //     ? {}
-  //     : {
-  //         appId: fileApiParams.value.value.appId,
-  //         moduleCode: fileApiParams.value.value.moduleCode,
-  //         typeCode: fileApiParams.value.value.typeCode,
-  //         businessId: fileApiParams.value.value.businessId,
-  //         businessKey: fileApiParams.value.value.businessKey,
-  //         businessParamsJson: fileApiParams.value.value.businessParamsJson,
-  //         fileActualId: fileApiParams.value.value.fileActualId,
-  //         instantUpdate: fileApiParams.value.value.instantUpdate,
-  //       },
-  // },
 }))
 
 // const fileActionUploadLinkProps = computed(() => ({
@@ -126,9 +94,8 @@ const fileActionUploadProps = computed(() => ({
 //   },
 // }))
 
-const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['fileTable']>(
-  props.fileTable ?? ({} as any)
-)
+// const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['TaFileTable']>( // 类型太深，ts解析器打包报错，先给 any
+const __fileTableProps = ref<any>(props.fileTable ?? ({} as any))
 const _fileTableProps = computed({
   get() {
     return __fileTableProps
@@ -142,54 +109,32 @@ const fileTableProps = computed(() => ({
   ..._fileTableProps.value.value,
   mode: props.mode,
   apiParams: {
+    typeCode: fileApiParams.value.value.typeCode,
+    businessId: fileApiParams.value.value.businessId,
+    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+
     appId: fileApiParams.value.value.appId,
     businessCheck: fileApiParams.value.value.businessCheck,
-    businessId: fileApiParams.value.value.businessId,
     businessIds: fileApiParams.value.value.businessIds,
     businessKey: fileApiParams.value.value.businessKey,
     endTime: fileApiParams.value.value.endTime,
     finalTypeCodes: fileApiParams.value.value.finalTypeCodes,
     id: fileApiParams.value.value.id,
-    ids: fileApiParams.value.value.ids,
     moduleCode: fileApiParams.value.value.moduleCode,
     permissionControl: fileApiParams.value.value.permissionControl,
     searchValue: fileApiParams.value.value.searchValue,
     startTime: fileApiParams.value.value.startTime,
     suffix: fileApiParams.value.value.suffix,
-    typeCode: fileApiParams.value.value.typeCode,
     typeCodes: fileApiParams.value.value.typeCodes,
-    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+
+    file: fileApiParams.value.value.file,
     fileActualId: fileApiParams.value.value.fileActualId,
-    fileActualIds: fileApiParams.value.value.fileActualIds,
+    instantUpdate: fileApiParams.value.value.instantUpdate,
+
     actualIds: fileApiParams.value.value.actualIds,
-    ...(_fileTableProps.value.value?.apiParams ?? {}),
+
+    ...(_fileTableProps.value.value?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
-  // /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-  // ...{
-  //   apiParams: _fileTableProps.value.value?.apiParams
-  //     ? {}
-  //     : {
-  //         appId: fileApiParams.value.value.appId,
-  //         businessCheck: fileApiParams.value.value.businessCheck,
-  //         businessId: fileApiParams.value.value.businessId,
-  //         businessIds: fileApiParams.value.value.businessIds,
-  //         businessKey: fileApiParams.value.value.businessKey,
-  //         endTime: fileApiParams.value.value.endTime,
-  //         finalTypeCodes: fileApiParams.value.value.finalTypeCodes,
-  //         id: fileApiParams.value.value.id,
-  //         ids: fileApiParams.value.value.ids,
-  //         moduleCode: fileApiParams.value.value.moduleCode,
-  //         permissionControl: fileApiParams.value.value.permissionControl,
-  //         searchValue: fileApiParams.value.value.searchValue,
-  //         startTime: fileApiParams.value.value.startTime,
-  //         suffix: fileApiParams.value.value.suffix,
-  //         typeCode: fileApiParams.value.value.typeCode,
-  //         typeCodes: fileApiParams.value.value.typeCodes,
-  //         businessParamsJson: fileApiParams.value.value.businessParamsJson,
-  //         fileActualId: fileApiParams.value.value.fileActualId,
-  //         fileActualIds: fileApiParams.value.value.fileActualIds,
-  //       },
-  // },
 }))
 
 function handleFileTypeSelectChange(...args: any) {
@@ -225,18 +170,17 @@ function handleFileActionUploadChangeValidateFailureChange(...args: any) {
 }
 
 function handleFileActionUploadChange(...args: any) {
-  const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
-  const fileTableTableProInstance = (fileTableRef.value?.tableProRef as any)?.instance
-  const { fullData } = (fileTableTableProInstance as ITableProInstance['instance']).getTableData()
-  _fileTableProps.value.value = {
-    ..._fileTableProps.value.value,
-    dataSource: [...files, ...JSON.parse(JSON.stringify(fullData))],
-  }
-
   emits(
     'fileActionUpload:uploadedChange',
     ...(args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>)
   )
+
+  const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
+  // 上传成功后将文件数据当作外部准备好的表格数据通过 datasource 传入
+  _fileTableProps.value.value = {
+    ..._fileTableProps.value.value,
+    dataSource: [...files],
+  }
 }
 
 function handleFileTableChange(...args: any) {
@@ -272,7 +216,7 @@ defineExpose({
       </section>
 
       <section
-        v-if="props.headerActionsVisible && props.mode !== 'read'"
+        v-if="props.headerActionsVisible"
         :class="`${DEFAULT_FILE_CLASSNAME}-header-actions`"
       >
         <section :class="`${DEFAULT_FILE_CLASSNAME}-type-select-wrapper`">

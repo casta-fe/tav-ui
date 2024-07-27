@@ -33,10 +33,15 @@ export function useMode(options: {
       afterApi: mergedProps.value.afterApiUploadFile,
       apiParams: {
         appId: apiParams.appId,
-        moduleCode: apiParams.moduleCode ?? '',
-        typeCode: apiParams.typeCode ?? '',
-        businessParamsJson: apiParams.businessParamsJson ?? {},
         files: unref(files),
+        moduleCode: apiParams.moduleCode,
+        typeCode: apiParams.typeCode,
+        businessParamsJson: apiParams.businessParamsJson,
+        ...(apiParams.fileName
+          ? {
+              fileName: apiParams.fileName,
+            }
+          : {}),
       },
       transformApiParamsToFormData: {
         fileFiledName: mergedProps.value.name!,

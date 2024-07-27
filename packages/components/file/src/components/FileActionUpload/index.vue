@@ -32,7 +32,6 @@ import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
   type FileActionUploadProps,
-  type FileType,
   fileActionUploadEmits,
   fileActionUploadProps,
 } from './types'
@@ -55,7 +54,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>(
   globalConfigProps,
   props,
-  ['fileActionUpload']
+  ['TaFileActionUpload']
 )
 
 const {
@@ -137,7 +136,7 @@ function handleFileValidate(file: ArgumentsOf<AUploadProps['beforeUpload']>[0]) 
   return false
 }
 
-function handleFilesValidate(files: FileType[]) {
+function handleFilesValidate(files: Record<string, any>[]) {
   const validateFailureUploadFileSizeFiles = files.filter(
     (file) => !validateUploadFileSize(file, mergedProps.value.sizeRange)
   )
@@ -238,7 +237,7 @@ defineExpose({
 </script>
 
 <template>
-  <template v-if="mergedProps.visible && mergedProps.mode !== 'read'">
+  <template v-if="mergedProps.visible">
     <section
       :id="DEFAULT_FILEACTIONUPLOAD_ID"
       ref="elRef"
