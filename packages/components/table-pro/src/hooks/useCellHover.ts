@@ -96,7 +96,7 @@ export function useCellHover(
 
   const onCellMouseenter = (params: VxeGridDefines.CellMouseenterEventParams) => {
     // 详情可参考 vxetable body.ts triggerHeaderTooltipEvent/triggerBodyTooltipEvent/triggerFooterTooltipEvent
-    if (!params) return
+    if (!params || ['action', 'actions'].includes(params.column.field)) return
     showCellTooltip(instances, tablePropsRef, params)
     // showCellTooltip(instances, id, showTooltip, params)
     emit('CellMouseenter', params)
