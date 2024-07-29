@@ -174,7 +174,9 @@ async function open() {
   if (mergedProps.value.immediate) {
     loading.value.value = true
     await useModeFetchDataSource()
-    loading.value.value = false
+    setTimeout(() => {
+      loading.value.value = false
+    }, 150)
   }
 }
 
