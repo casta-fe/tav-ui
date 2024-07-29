@@ -316,11 +316,7 @@ export default defineComponent({
         const upperChart = chart.toUpperCase()
         // 如果列表中有了就往他的list中插入
         Reflect.has(v, 'disabled') ||
-          (v.disabled = propsData.value.useDisabledUser
-            ? false
-            : propsData.value.ignoreFrozenUser
-            ? v.status === 0
-            : false)
+          (v.disabled = propsData.value.useDisabledUser ? false : v.status === 0)
         const item = list.find((v) => v.key === upperChart)
         if (item) {
           item.list.push(v)

@@ -189,17 +189,14 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
+      // 非ignoreUser的用户才能选择
       const list: Options[] = userList
+        .filter((v) => !props.ignoreUser.includes(v.id))
         .map((v) => {
-          // 非ignoreUser的用户才能选择
           const fullCharts = pinyin.getFullChars(v.name).toLowerCase()
           const obj = { ...v, label: v.name, value: v.id, fullCharts }
-          if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
-            obj.disabled = props.useDisabledUser
-              ? false
-              : props.ignoreFrozenUser
-              ? obj.status === 0
-              : false
+          if (!Reflect.has(obj, 'disabled')) {
+            obj.disabled = props.useDisabledUser ? false : obj.status === 0
           }
           return obj
         })
@@ -324,6 +321,7 @@ export default defineComponent({
     }
     const removeItem = (item: UserItem) => {
       pull(state.selectedData[0], item.id)
+      emitHandle()
     }
 
     watch(
