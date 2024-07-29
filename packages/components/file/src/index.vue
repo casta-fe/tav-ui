@@ -216,7 +216,7 @@ defineExpose({
       </section>
 
       <section
-        v-if="props.headerActionsVisible"
+        v-if="props.headerActionsVisible && props.mode !== 'read'"
         :class="`${DEFAULT_FILE_CLASSNAME}-header-actions`"
       >
         <section :class="`${DEFAULT_FILE_CLASSNAME}-type-select-wrapper`">
