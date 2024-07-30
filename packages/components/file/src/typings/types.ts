@@ -17,16 +17,21 @@ import {
 import { DEFAULT_FILE_MODE } from '../consts'
 // import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
 import { type ArgumentsOf } from '../utils'
+import {
+  type FileActionUploadLinkEmits,
+  type FileActionUploadLinkInstance,
+  type FileActionUploadLinkProps,
+} from '../components/FileActionUploadLink'
 import { type GlobalConfigFileProps } from './global-config'
 
 /** 单纯定义参数类型，方便统一管理、使用 */
 export interface ApiParams {
   /**
    * 查询系统的 id，用于：
-   * 1. api/file/queryFileType（非必传）
+   * 1. api/file/queryFileType
    * 2. api/file/upload
-   * 3. api/file/queryFile（非必传）
-   * 4. api/file/queryFileList（非必传）
+   * 3. api/file/queryFile
+   * 4. api/file/queryFileList
    * 5. api/file/updateFile
    * 6. api/file/deleteFileByActualIds
    */
@@ -76,10 +81,10 @@ export interface ApiParams {
    */
   businessCheck: boolean
   /**
-   * 业务自定义数据，用于：
+   * 业务自定义数据，需要在外部使用 json 转为字符串传入。用于：
    * 1. api/file/upload（非必传）
    */
-  businessParamsJson: Record<string, any>
+  businessParamsJson: string
   /**
    * 是否控权限，默认 false，用于：
    * 1. api/file/queryFileType（非必传）
@@ -188,14 +193,12 @@ export const fileProps = {
   fileActionUpload: {
     type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,
   },
-  // /** FileActionUploadLink Props */
-  // fileActionUploadLink: {
-  //   type: Object as PropType<
-  //     FileActionUploadLinkProps & GlobalConfigFileProps['fileActionUploadLink']
-  //   >,
-  // },
-  // /** FileActionUploadLinkForm Props */
-  // fileActionUploadLinkForm: { type: Object as PropType<FileActionsProps & GlobalConfigFileProps['fileActionUploadLink']> },
+  /** FileActionUploadLink Props */
+  fileActionUploadLink: {
+    type: Object as PropType<
+      FileActionUploadLinkProps & GlobalConfigFileProps['TaFileActionUploadLink']
+    >,
+  },
   /** FileTable Props */
   fileTable: { type: Object as PropType<FileTableProps & GlobalConfigFileProps['TaFileTable']> },
   // /** FileVersion Props */
@@ -229,6 +232,15 @@ export const fileEmits = {
   'fileActionUpload:uploadedChange': (
     ...args: ArgumentsOf<FileActionUploadEmits['uploadedChange']>
   ) => args instanceof Object,
+  'fileActionUploadLink:validateSuccessChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateSuccessChange']>
+  ) => args instanceof Object,
+  'fileActionUploadLink:validateFailureChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateFailureChange']>
+  ) => args instanceof Object,
+  'fileActionUploadLink:uploadedChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
+  ) => args instanceof Object,
 }
 
 export type FileEmits = typeof fileEmits
@@ -237,5 +249,6 @@ export interface FileInstance {
   elRef: Ref<HTMLDivElement | undefined>
   fileTypeSelectRef: Ref<FileTypeSelectInstance | undefined>
   fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
+  fileActionUploadLinkRef: Ref<FileActionUploadLinkInstance | undefined>
   fileTableRef: Ref<FileTableInstance | undefined>
 }

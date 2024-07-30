@@ -367,6 +367,7 @@ type ProvideDataType = {
   queryFileList?: (params: any) => any
   // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  uploadLinkFile?: (params: any) => Promise<Result<FileItemType[]>>
   // 更新文件
   updateFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
   // 上传超链接接口

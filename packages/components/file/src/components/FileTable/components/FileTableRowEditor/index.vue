@@ -129,7 +129,7 @@ defineExpose({
       />
     </template>
     <template v-else>
-      <TaForm class="upload-inline-form" @register="formRegister" />
+      <TaForm :class="`${DEFAULT_ROWEDITOR_CLASSNAME}-form`" @register="formRegister" />
     </template>
   </section>
 </template>

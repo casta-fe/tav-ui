@@ -7,7 +7,10 @@ import {
   DEFAULT_MULTIPLE,
 } from '../consts'
 import { type ApiQueryFileTypeParams } from '../components/FileTypeSelect/types'
-import { type ApiUploadFileParams } from '../components/FileActionUpload/types'
+import {
+  type ApiUpdateFileParams,
+  type ApiUploadFileParams,
+} from '../components/FileActionUpload/types'
 import { type ApiPreviewFileParams } from '../components/FilePreview/types'
 import { type ApiQueryFileHistoryParams } from '../components/FileVersion/types'
 import {
@@ -17,8 +20,8 @@ import {
   type ApiQueryFileListParams,
   type ApiQueryFileParams,
   type ApiUpdateFileNameAndLinkParams,
-  type ApiUpdateFileParams,
 } from '../components/FileTable/types'
+import { type ApiUploadLinkFileParams } from '../components/FileActionUploadLink'
 
 export const globalConfigFileProps = {
   /**根据子组件名来划分注入数据 */
@@ -46,17 +49,22 @@ export const globalConfigFileProps = {
     /** 文件名非法字符校验 */
     nameRegExp: { type: Object as PropType<RegExp>, default: DEFAULT_FILE_NAME_REGEXP },
     //:============================== FILE CRUD API ==============================://
-    //  文件上传接口，apiCreateFile
     /** 文件上传接口，传入 uploadFile， */
     apiUploadFile: {
       type: Function as PropType<(params: ApiUploadFileParams) => Promise<any>>,
+    },
+    // 更新文件接口，传入 updateFile
+    apiUpdateFile: {
+      type: Function as PropType<(params: ApiUpdateFileParams) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },
   TaFileActionUploadLink: {
     //:============================== CRUD API ==============================://
-    // 超链接上传接口，传入 uploadHyperlink，apiCreateLink
-    // TODO: RUD API?
+    // 超链接上传接口，传入 uploadHyperlink
+    apiUploadLinkFile: {
+      type: Function as PropType<(params: ApiUploadLinkFileParams) => Promise<any>>,
+    },
     //:============================== CRUD API ==============================://
   },
   TaFileTable: {
@@ -87,10 +95,6 @@ export const globalConfigFileProps = {
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {
       type: Function as PropType<(params: ApiQueryFileHistoryParams) => Promise<any>>,
-    },
-    // 更新文件接口，传入 updateFile
-    apiUpdateFile: {
-      type: Function as PropType<(params: ApiUpdateFileParams) => Promise<any>>,
     },
     // 更新文件部分信息，传入 updateFileNameAndAddress
     apiUpdateFileNameAndLink: {

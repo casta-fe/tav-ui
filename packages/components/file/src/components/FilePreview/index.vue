@@ -180,8 +180,6 @@ async function open() {
   }
 }
 
-modalRef.value?.getVisible
-
 function close() {
   modalVisible.value = false
   emits('close')

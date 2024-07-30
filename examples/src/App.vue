@@ -42,47 +42,22 @@ export default defineComponent({
       permissions: {},
       components: {
         TaUpload: taUploadProvideData,
-        // TaFile: {
-        //   fileTypeSelect: {
-        //     apiQueryFileType: taUploadProvideData.queryFileType,
-        //   },
-        //   fileActionUpload: {
-        //     apiUploadFile: taUploadProvideData.uploadFile,
-        //   },
-        //   fileTable: {
-        //     apiUploadFile: taUploadProvideData.uploadFile,
-        //     apiQueryFile: taUploadProvideData.queryFile,
-        //     apiQueryFileList: taUploadProvideData.queryFileList,
-        //     apiQueryFileHistory: taUploadProvideData.queryFileHistory,
-        //     apiUpdateFile: taUploadProvideData.updateFile,
-        //     apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
-        //     apiDeleteFile: taUploadProvideData.removeFile,
-        //     apiPreviewFile: previewWPSFile,
-        //     apiDownloadFile: taUploadProvideData.download,
-        //     apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
-        //   },
-        //   fileVersion: {
-        //     apiQueryFileHistory: taUploadProvideData.queryFileHistory,
-        //     apiPreviewFile: previewWPSFile,
-        //     apiDownloadFile: taUploadProvideData.download,
-        //     apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
-        //   },
-        //   filePreview: {
-        //     apiPreviewFile: previewWPSFile,
-        //   },
-        // } as any,
+        // tafile
         TaFileTypeSelect: {
           apiQueryFileType: taUploadProvideData.queryFileType,
         },
         TaFileActionUpload: {
           apiUploadFile: taUploadProvideData.uploadFile,
+          apiUpdateFile: taUploadProvideData.updateFile,
+        },
+        TaFileActionUploadLink: {
+          apiUploadLinkFile: taUploadProvideData.uploadLinkFile,
         },
         TaFileTable: {
           apiUploadFile: taUploadProvideData.uploadFile,
           apiQueryFile: taUploadProvideData.queryFile,
           apiQueryFileList: taUploadProvideData.queryFileList,
           apiQueryFileHistory: taUploadProvideData.queryFileHistory,
-          apiUpdateFile: taUploadProvideData.updateFile,
           apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
           apiDeleteFile: taUploadProvideData.removeFile,
           apiPreviewFile: previewWPSFile,

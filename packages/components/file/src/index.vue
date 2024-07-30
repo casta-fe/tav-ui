@@ -11,7 +11,6 @@ import {
   type FileActionUploadInstance,
   TaFileActionUpload,
 } from './components/FileActionUpload'
-// import { TaFileActionUploadLink } from './components/FileActionUploadLink'
 import { type FileTableEmits, type FileTableInstance, TaFileTable } from './components/FileTable'
 import { type FileInstance, fileEmits, fileProps } from './typings'
 import {
@@ -21,6 +20,11 @@ import {
   DEFAULT_FILE_ID,
 } from './consts'
 import { type ArgumentsOf } from './utils'
+import {
+  type FileActionUploadLinkEmits,
+  type FileActionUploadLinkInstance,
+  TaFileActionUploadLink,
+} from './components/FileActionUploadLink'
 
 defineOptions({
   name: 'TaFile',
@@ -28,6 +32,7 @@ defineOptions({
 })
 
 const elRef = ref<UnwrapRef<FileInstance['elRef']>>()
+const headerElRef = ref<HTMLElement>()
 const props = defineProps(fileProps)
 const emits = defineEmits(fileEmits)
 const slots = useSlots()
@@ -74,25 +79,23 @@ const fileActionUploadProps = computed(() => ({
   },
 }))
 
-// const fileActionUploadLinkProps = computed(() => ({
-//   // ...props.fileActionUploadLink,
-//   mode: props.mode,
-//   /** apiparams 已组件中的 apiparams 为准，如果组件内部传递了那么在组件内部维护否则使用大组件的 apiparams 下发 */
-//   ...{
-//     apiParams: props.fileActionUpload?.apiParams
-//       ? {}
-//       : {
-//           appId: fileApiParams.value.value.appId,
-//           moduleCode: fileApiParams.value.value.moduleCode,
-//           typeCode: fileApiParams.value.value.typeCode,
-//           businessId: fileApiParams.value.value.businessId,
-//           businessKey: fileApiParams.value.value.businessKey,
-//           businessParamsJson: fileApiParams.value.value.businessParamsJson,
-//           fileActualId: fileApiParams.value.value.fileActualId,
-//           instantUpdate: fileApiParams.value.value.instantUpdate,
-//         },
-//   },
-// }))
+const fileActionUploadLinkRef = ref<FileActionUploadLinkInstance>()
+const fileActionUploadLinkProps = computed(() => ({
+  ...props.fileActionUploadLink,
+  mode: props.mode,
+  apiParams: {
+    appId: fileApiParams.value.value.appId,
+    address: fileApiParams.value.value.address,
+    moduleCode: fileApiParams.value.value.moduleCode,
+    name: fileApiParams.value.value.name,
+    typeCode: fileApiParams.value.value.typeCode,
+    businessId: fileApiParams.value.value.businessId,
+    businessKey: fileApiParams.value.value.businessKey,
+    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    ...(props.fileActionUploadLink?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+  },
+  getFormContainer: () => headerElRef.value,
+}))
 
 // const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['TaFileTable']>( // 类型太深，ts解析器打包报错，先给 any
 const __fileTableProps = ref<any>(props.fileTable ?? ({} as any))
@@ -183,6 +186,34 @@ function handleFileActionUploadChange(...args: any) {
   }
 }
 
+function handleFileActionUploadLinkChangeValidateSuccessChange(...args: any) {
+  emits(
+    'fileActionUploadLink:validateSuccessChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadLinkEmits['validateSuccessChange']>)
+  )
+}
+
+function handleFileActionUploadLinkChangeValidateFailureChange(...args: any) {
+  emits(
+    'fileActionUploadLink:validateFailureChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadLinkEmits['validateFailureChange']>)
+  )
+}
+
+function handleFileActionUploadLinkChange(...args: any) {
+  emits(
+    'fileActionUploadLink:uploadedChange',
+    ...(args as unknown as ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>)
+  )
+
+  const [files] = args as unknown as ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
+  // 上传成功后将文件数据当作外部准备好的表格数据通过 datasource 传入
+  _fileTableProps.value.value = {
+    ..._fileTableProps.value.value,
+    dataSource: [...files],
+  }
+}
+
 function handleFileTableChange(...args: any) {
   const _args = args as unknown as ArgumentsOf<FileTableEmits['change']>
   emits('change', ..._args)
@@ -197,13 +228,18 @@ defineExpose({
   elRef,
   fileTypeSelectRef,
   fileActionUploadRef,
+  fileActionUploadLinkRef,
   fileTableRef,
 })
 </script>
 
 <template>
   <section :id="DEFAULT_FILE_ID" ref="elRef" :class="DEFAULT_FILE_CLASSNAME">
-    <section v-if="props.headerVisible" :class="`${DEFAULT_FILE_CLASSNAME}-header`">
+    <section
+      v-if="props.headerVisible"
+      ref="headerElRef"
+      :class="`${DEFAULT_FILE_CLASSNAME}-header`"
+    >
       <section :class="`${DEFAULT_FILE_CLASSNAME}-title-wrapper`">
         <template v-if="slots.FileTitle">
           <slot name="FileTitle" />
@@ -261,13 +297,22 @@ defineExpose({
                     <slot name="FileActionMiddle" />
                   </template>
 
-                  <!-- <template v-if="slots['FileActionUploadLink']">
+                  <template v-if="slots['FileActionUploadLink']">
                     <slot name="FileActionUploadLink" v-bind="fileActionUploadLinkProps" />
                   </template>
                   <template v-else>
-                    <TaFileActionUploadLink v-bind="fileActionUploadLinkProps" />
-                    <TaFileActionUploadLinkForm />
-                  </template> -->
+                    <TaFileActionUploadLink
+                      ref="fileActionUploadLinkRef"
+                      v-bind="fileActionUploadLinkProps"
+                      @validate-success-change="
+                        handleFileActionUploadLinkChangeValidateSuccessChange
+                      "
+                      @validate-failure-change="
+                        handleFileActionUploadLinkChangeValidateFailureChange
+                      "
+                      @uploaded-change="handleFileActionUploadLinkChange"
+                    />
+                  </template>
 
                   <template v-if="slots['FileActionSuffix']">
                     <slot name="FileActionSuffix" />

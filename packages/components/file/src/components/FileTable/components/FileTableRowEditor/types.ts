@@ -4,11 +4,6 @@ import { type FileActionUploadApiResponseRecord, type FileMode } from '../../../
 
 export const fileTableRowEditorProps = {
   //:============================== extend props ==============================://
-  // ...globalConfigFileProps['TaFileTableRowEditor'],
-  // apiParams: {
-  //   type: Object,
-  //   default: () => ({ moduleCode: [], typeCodes: [], permissionControl: false }),
-  // },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   //:============================== extend props ==============================://
   row: { type: Object as PropType<FileActionUploadApiResponseRecord> },

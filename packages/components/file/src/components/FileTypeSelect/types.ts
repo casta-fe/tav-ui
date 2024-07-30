@@ -11,7 +11,7 @@ import { DEFAULT_FILE_MODE } from '../../consts'
 
 // 按照 swagger 编写
 export interface ApiQueryFileTypeParams {
-  appId?: ApiParams['appId']
+  appId: ApiParams['appId']
   moduleCode: ApiParams['moduleCode']
   typeCodes?: ApiParams['typeCodes']
   permissionControl?: ApiParams['permissionControl']

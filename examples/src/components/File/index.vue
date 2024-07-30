@@ -314,7 +314,7 @@ const unifiedTaFileData = reactive({
 // }, 20000)
 
 watch(
-  () => unifiedTaFileData.updateInstantly.fileActualIds,
+  () => unifiedTaFileData.update.fileActualIds,
   (cur) => {
     console.log(cur)
   },
@@ -348,8 +348,8 @@ function handlefilechange(...args: any) {
 
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
-      v-bind="unifiedTaFileData.updateInstantly"
-      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      v-bind="unifiedTaFileData.update"
+      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
       @change="handlefilechange"
     />
   </section>

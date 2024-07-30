@@ -15,7 +15,6 @@ import { type ArgumentsOf, fileSingleDownload } from '../../utils'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
-  type FileActionUploadProps,
   TaFileActionUpload as TaFileActionUploadForActionUpdateBtn,
 } from '../FileActionUpload'
 import { TaFileVersion } from '../FileVersion'
@@ -62,7 +61,7 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileTableProps>(
 // 针对业务抽象不同模式进行数据处理
 const {
   useModeConfigTable,
-  apiActions: { rowEditorApiOptions, historyApiOptions, updateApiOptions, deleteApiOptions },
+  apiActions: { rowEditorApiOptions, historyApiOptions, deleteApiOptions },
   dataSourceActions: { editRow, updateRow, deleteRow },
 } = useMode({ mergedProps, emits, VersionCachesController })
 
@@ -217,23 +216,9 @@ async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
   }
 
   actionUpdateClickRow.value = row
-
-  const uploadInnerButtonEl = unref(
-    FileActionUploadForActionUpdateBtnRef.value?.elRef
-  )?.querySelector('[type="button"]') as HTMLButtonElement | undefined
-  uploadInnerButtonEl?.click()
+  FileActionUploadForActionUpdateBtnRef.value?.openFilePicker?.()
 }
 // 点击更新时 upload 回调
-function handleFileActionUploadForActionUpdateBtnBeforeApiUploadFile(...args: any) {
-  loading.value.value = true
-  const [apiParams] = args as unknown as ArgumentsOf<FileActionUploadProps['beforeApiUploadFile']>
-  return updateApiOptions(
-    mergedProps.value.apiParams,
-    apiParams.files!,
-    actionUpdateClickRow.value,
-    FileActionUploadForActionUpdateBtnRef.value?.resetFileList!
-  )
-}
 async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
   const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
 
@@ -373,9 +358,8 @@ defineExpose({
       <TaFileActionUploadForActionUpdateBtn
         ref="FileActionUploadForActionUpdateBtnRef"
         :mode="mergedProps.mode"
-        :multiple="false"
         :api-params="apiParams"
-        :before-api-upload-file="handleFileActionUploadForActionUpdateBtnBeforeApiUploadFile"
+        :update-file="actionUpdateClickRow"
         @uploaded-change="handleFileActionUploadForActionUpdateBtnChange"
       />
       <TaFileVersion

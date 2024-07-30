@@ -18,7 +18,7 @@ export function useMode(options: {
     file: FileActionUploadApiResponseRecord
   ) {
     if (!mergedProps.value.apiQueryFileHistory) {
-      console.warn('[tavui TaFileTable] apiQueryFileHistory is undefined')
+      console.warn('[tavui TaFileVersion] apiQueryFileHistory is undefined')
       return
     }
 

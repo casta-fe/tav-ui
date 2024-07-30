@@ -22,16 +22,26 @@ export interface ApiUploadFileParams {
   fileName?: ApiParams['fileName']
 }
 
+// 按照 swagger 编写
+export interface ApiUpdateFileParams {
+  appId: ApiParams['appId']
+  file: ApiParams['file']
+  fileActualId: ApiParams['fileActualId']
+  instantUpdate: ApiParams['instantUpdate']
+}
+
 // 组件所需的所有 api 参数
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FileActionUploadApiParams extends ApiUploadFileParams {}
+export interface FileActionUploadApiParams
+  extends ApiUploadFileParams,
+    Partial<Omit<ApiUpdateFileParams, 'appId'>> {}
 
 export const fileActionUploadProps = {
   //:============================== extend props ==============================://
   ...globalConfigFileProps['TaFileActionUpload'],
   apiParams: {
     type: Object as PropType<FileActionUploadApiParams>,
-    default: () => ({ businessParamsJson: {} }),
+    default: () => ({ businessParamsJson: JSON.stringify({}) }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // AUpload props, multiple/accept/maxCount 已从 globalConfigFileProps['fileActionUpload'] 解构
@@ -47,11 +57,17 @@ export const fileActionUploadProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
+  /** 更新状态下需要传入要被更新的文件数据 */
+  updateFile: { type: Object as PropType<FileActionUploadApiResponseRecord> },
   /** apiUploadFile 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiUpdateFile: {
+    type: Function as PropType<(apiParams: ApiUpdateFileParams) => Promise<any>>,
+  },
+  afterApiUpdateFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileActionUploadProps = ExtractPropTypes<typeof fileActionUploadProps>
@@ -72,5 +88,5 @@ export type FileActionUploadEmits = typeof fileActionUploadEmits
 
 export interface FileActionUploadInstance {
   elRef: Ref<HTMLDivElement | undefined>
-  resetFileList: () => void
+  openFilePicker: () => Promise<void>
 }

@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { type UnwrapRef, getCurrentInstance, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import {
+  type UnwrapRef,
+  getCurrentInstance,
+  ref,
+  watch /*, useSlots, useAttrs*/,
+  nextTick,
+} from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -58,7 +64,7 @@ const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>
 )
 
 const {
-  apiActions: { uploadApiOptions },
+  apiActions: { uploadApiOptions, updateApiOptions },
   validateActions: { withValidateTypeCode },
 } = useMode({ mergedProps })
 
@@ -220,7 +226,19 @@ async function beforeHandleApiAction3() {
 
   canUploadUnifiedFileList.value = true
 
-  const options = uploadApiOptions(mergedProps.value.apiParams, fileList.value, resetFileList)
+  let options
+  if (mergedProps.value.updateFile) {
+    // 如果传入了 updatefile 则走更新逻辑
+    options = updateApiOptions(
+      mergedProps.value.apiParams,
+      fileList.value,
+      mergedProps.value.updateFile,
+      resetFileList
+    )
+  } else {
+    // 如果未传入 updatefile 则走上传逻辑
+    options = uploadApiOptions(mergedProps.value.apiParams, fileList.value, resetFileList)
+  }
   if (!options) return
   await handleApi(options)
 }
@@ -230,9 +248,17 @@ function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {
   emits('change', ...args)
 }
 
+async function openFilePicker() {
+  await nextTick()
+  const uploadInnerButtonEl = elRef.value?.querySelector('[type="button"]') as
+    | HTMLButtonElement
+    | undefined
+  uploadInnerButtonEl?.click()
+}
+
 defineExpose({
   elRef,
-  resetFileList,
+  openFilePicker,
 })
 </script>
 
@@ -247,7 +273,7 @@ defineExpose({
       <AUpload
         ref="AUploadRef"
         :file-list="[]"
-        :multiple="mergedProps.multiple"
+        :multiple="mergedProps.updateFile ? false : mergedProps.multiple"
         :max-count="mergedProps.maxCount"
         :show-upload-list="false"
         :name="mergedProps.name"

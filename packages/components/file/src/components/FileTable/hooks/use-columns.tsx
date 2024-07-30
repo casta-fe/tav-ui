@@ -37,7 +37,7 @@ export function defaultColumnsBuilder(
       title: tavI18n('Tav.file.columns.1'),
       field: 'fullName',
       fixed: 'left',
-      width: 180,
+      width: 200,
       ...(enabledRowEdit ? { editRender: {} } : {}),
       slots: {
         edit: ({ row: _row }: Record<string, any>) => {

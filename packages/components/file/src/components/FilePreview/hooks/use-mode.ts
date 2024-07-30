@@ -19,7 +19,7 @@ export function useMode(options: {
     file: FileActionUploadApiResponseRecord
   ) {
     if (!mergedProps.value.apiPreviewFile) {
-      console.warn('[tavui TaFileTable] apiPreviewFile is undefined')
+      console.warn('[tavui TaFilePreview] apiPreviewFile is undefined')
       return
     }
 

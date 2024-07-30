@@ -441,6 +441,48 @@ export const taUploadProvideData: Partial<
     //   )
     // )
   },
+  uploadLinkFile: async (payload: any): Promise<any> => {
+    // console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
+    if (!payload.appId) console.error('uploadLinkFile appId required')
+    const params = { ...payload }
+    Reflect.deleteProperty(params, 'appId')
+    let result
+    try {
+      const { data } = await __post(
+        `/api/TIANTA-FILE/api/file/uploadHyperlink/${payload.appId}`,
+        params
+      ) // 走接口
+      result = {
+        data: data
+          ? data
+          : [...(payload.getAll('files') as File[])].map((el) => ({
+              fullName: el.name,
+              typeCode: payload.get('typeCode'),
+              moduleCode: payload.get('moduleCode'),
+              fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+              createByName: 'mxs',
+              createTime: +new Date() + 1000 * 60 * 24 * 3,
+            })),
+        success: true,
+      }
+    } catch {
+      result = {
+        data: result
+          ? result
+          : [...(payload.getAll('files') as File[])].map((el) => ({
+              fullName: el.name,
+              typeCode: payload.get('typeCode'),
+              moduleCode: payload.get('moduleCode'),
+              fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+              createByName: 'mxs',
+              createTime: +new Date() + 1000 * 60 * 24 * 3,
+            })),
+        success: true,
+      }
+    }
+
+    return new Promise((r) => setTimeout(r.bind(null, result)))
+  },
   removeFile: async (payload: any) => {
     // console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
     if (!payload.appId) console.error('removeFile appId required')

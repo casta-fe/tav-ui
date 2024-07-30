@@ -143,7 +143,7 @@ function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
 // 水印下载处理
 async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseRecord) {
   if (!mergedProps.value.apiDownloadWaterMarkerFile) {
-    console.warn('[tavui TaFileTable] apiDownloadWaterMarkerFile is undefined')
+    console.warn('[tavui TaFileVersion] apiDownloadWaterMarkerFile is undefined')
     return
   }
   loading.value.value = true
@@ -157,7 +157,7 @@ async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseR
 // 下载处理
 async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
   if (!mergedProps.value.apiDownloadFile) {
-    console.warn('[tavui TaFileTable] apiDownloadFile is undefined')
+    console.warn('[tavui TaFileVersion] apiDownloadFile is undefined')
     return
   }
   loading.value.value = true

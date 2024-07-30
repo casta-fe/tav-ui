@@ -8,6 +8,7 @@ export const DEFAULT_LOADING_TIP = (i18n: any) => i18n('Tav.common.loadingText')
 export const DEFAULT_TYPE_SELECT_PLACEHOLDER = (i18n: any) => i18n('Tav.file.message.5')
 export const DEFAULT_UPLOAD_TIP = (i18n: any) => i18n('Tav.file.upload.1')
 export const DEFAULT_UPLOADLINK_TIP = (i18n: any) => i18n('Tav.file.upload.3')
+export const DEFAULT_UPLOADLINK_CLOSE_TIP = (i18n: any) => i18n('Tav.file.upload.2')
 
 const ns = createNS('file')
 export const DEFAULT_FILE_CLASSNAME = ns.b()

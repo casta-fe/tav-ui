@@ -1,4 +1,4 @@
-import { type ComputedRef, type Ref, type SetupContext, computed, unref } from 'vue'
+import { type ComputedRef, type Ref, type SetupContext, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import {
@@ -12,7 +12,6 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
-import { type FileActionUploadProps } from '../../FileActionUpload'
 import { type ArgumentsOf } from '../../../utils'
 
 const {
@@ -193,8 +192,8 @@ export function useMode(options: {
                 businessIds: [apiParams.businessId],
               }
             : {}),
-          businessCheck: false,
-          permissionControl: apiParams.permissionControl ?? false,
+          businessCheck: apiParams.businessCheck,
+          permissionControl: apiParams.permissionControl,
         },
         model: { page: 1, limit: 50 },
       },
@@ -238,8 +237,8 @@ export function useMode(options: {
               businessIds: [apiParams.businessId],
             }
           : {}),
-        businessCheck: true,
-        permissionControl: apiParams.permissionControl ?? false,
+        businessCheck: apiParams.businessCheck,
+        permissionControl: apiParams.permissionControl,
       },
     }
 
@@ -310,15 +309,11 @@ export function useMode(options: {
       useSuccessPassRes: true,
     }
 
-    if (mergedProps.value.mode === 'read') {
-      //
-    } else if (mergedProps.value.mode === 'create') {
-      //
-    } else if (mergedProps.value.mode === 'update') {
-      //
-    } else {
-      //
-    }
+    // if (mergedProps.value.mode === 'read') {
+    // } else if (mergedProps.value.mode === 'create') {
+    // } else if (mergedProps.value.mode === 'update') {
+    // } else {
+    // }
 
     return options
   }
@@ -342,7 +337,7 @@ export function useMode(options: {
       apiParams: {
         // appId: apiParams.appId,
         actualIds: [file.actualId!],
-        // permissionControl: apiParams.permissionControl ?? false,
+        // permissionControl: apiParams.permissionControl,
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
@@ -354,94 +349,6 @@ export function useMode(options: {
     // } else if (mergedProps.value.mode === 'update') {
     // } else {
     // }
-
-    return options
-  }
-
-  // table action update api: upload || update
-  function updateApiOptions(
-    apiParams: FileTableProps['apiParams'],
-    files: File[],
-    row: FileActionUploadApiResponseRecord | undefined,
-    callback: () => void
-  ) {
-    if (!mergedProps.value.apiUploadFile) {
-      console.warn('[tavui TaFileTable] apiUploadFile is undefined')
-      return
-    }
-
-    if (!apiParams.moduleCode || !apiParams.typeCode) {
-      console.warn(
-        '[tavui TaFileTable] update button invoke TaFileActionUpload in inner, moduleCode & typeCode required!'
-      )
-      return
-    }
-
-    const options: UseRequestHandleApiDefaultOptions<
-      FileActionUploadProps['apiParams'],
-      FileActionUploadApiResponseRecord[]
-    > = {
-      api: mergedProps.value.apiUploadFile,
-      beforeApi: mergedProps.value.beforeApiUploadFile,
-      afterApi: mergedProps.value.afterApiUploadFile,
-      apiParams: {
-        appId: apiParams.appId,
-        files: unref(files),
-        moduleCode: apiParams.moduleCode,
-        typeCode: apiParams.typeCode,
-        businessParamsJson: apiParams.businessParamsJson ?? {},
-      },
-      transformApiParamsToFormData: {
-        fileFiledName: 'files',
-        filterNames: ['appId', 'fileActualId', 'instantUpdate'],
-      },
-      successMessage: () => {
-        return tavI18n('Tav.file.message.8')
-      },
-      failureMessage: () => {
-        return tavI18n('Tav.common.httpError')
-      },
-      callback,
-    }
-    // 是否为手动上传的文件数据，而非从 api 返回的数据
-    const isManualUploadRow = row?.version === 1 && !(row.businessId || row.businessKey)
-
-    if (mergedProps.value.mode === 'read') {
-      //
-    } else if (mergedProps.value.mode === 'create') {
-      //
-    } else if (mergedProps.value.mode === 'update') {
-      if (!isManualUploadRow) {
-        options['transformApiParamsToFormData'] = undefined
-        options['api'] = mergedProps.value.apiUpdateFile as any
-        options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
-        options['afterApi'] = mergedProps.value.afterApiUpdateFile
-        const formData = new FormData()
-        files.forEach((file) => formData.append('file', file))
-        options['apiParams'] = {
-          appId: apiParams.appId,
-          fileActualId: row?.actualId,
-          instantUpdate: false,
-          formData,
-        } as any
-      } else {
-        //
-      }
-    } else {
-      options['transformApiParamsToFormData'] = undefined
-      options['api'] = mergedProps.value.apiUpdateFile as any
-      options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
-      options['afterApi'] = mergedProps.value.afterApiUpdateFile
-      const formData = new FormData()
-      files.forEach((file) => formData.append('file', file))
-      options['apiParams'] = {
-        appId: apiParams.appId,
-        fileActualId: row?.actualId,
-        instantUpdate: true,
-        formData,
-        businessParamsJson: apiParams.businessParamsJson ?? {},
-      } as any
-    }
 
     return options
   }
@@ -560,7 +467,6 @@ export function useMode(options: {
         'update'
       )
       emits('actualidsChange', VersionCachesController.getCaches())
-
       await editDataSourceRow(changeEventPayload)
     }
   }
@@ -676,7 +582,6 @@ export function useMode(options: {
       apiQueryFileOptions,
       rowEditorApiOptions,
       historyApiOptions,
-      updateApiOptions,
       deleteApiOptions,
     },
     dataSourceActions: {

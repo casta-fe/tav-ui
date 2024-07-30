@@ -34,7 +34,7 @@ export type FileTableAction = TableProActionItem & { field: string }
 
 // 按照 swagger 编写
 export interface ApiQueryFileParams {
-  appId?: ApiParams['appId']
+  appId: ApiParams['appId']
   businessCheck: ApiParams['businessCheck']
   businessIds?: ApiParams['businessIds']
   businessKey?: ApiParams['businessKey']
@@ -51,7 +51,7 @@ export interface ApiQueryFileParams {
 
 // 按照 swagger 编写
 export interface ApiQueryFileListParams {
-  appId?: ApiParams['appId']
+  appId: ApiParams['appId']
   businessCheck: ApiParams['businessCheck']
   businessIds?: ApiParams['businessIds']
   businessKey?: ApiParams['businessKey']
@@ -64,14 +64,6 @@ export interface ApiQueryFileListParams {
   startTime?: ApiParams['startTime']
   suffix?: ApiParams['suffix']
   typeCodes?: ApiParams['typeCodes']
-}
-
-// 按照 swagger 编写
-export interface ApiUpdateFileParams {
-  appId: ApiParams['appId']
-  file: ApiParams['file']
-  fileActualId: ApiParams['fileActualId']
-  instantUpdate: ApiParams['instantUpdate']
 }
 
 // 按照 swagger 编写
@@ -102,9 +94,8 @@ export interface ApiDownloadWaterMarkerFileParams {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FileTableApiParams
   extends Omit<ApiUploadFileParams, 'moduleCode'>,
-    ApiUpdateFileParams,
-    Omit<ApiQueryFileParams, 'appId'>,
-    Omit<ApiQueryFileListParams, 'appId'>,
+    ApiQueryFileParams,
+    ApiQueryFileListParams,
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
@@ -115,7 +106,7 @@ export const fileTableProps = {
   ...globalConfigFileProps['TaFileTable'],
   apiParams: {
     type: Object as PropType<FileTableApiParams>,
-    default: () => ({ permissionControl: false, businessCheck: true }),
+    default: () => ({ permissionControl: false, businessCheck: false }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
@@ -176,10 +167,6 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
   },
   afterApiQueryFileHistory: { type: Function as PropType<(apiResult: any) => Promise<any>> },
-  beforeApiUpdateFile: {
-    type: Function as PropType<(apiParams: ApiUpdateFileParams) => Promise<any>>,
-  },
-  afterApiUpdateFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiUpdateFileNameAndLink: {
     type: Function as PropType<(apiParams: ApiUpdateFileNameAndLinkParams) => Promise<any>>,
   },

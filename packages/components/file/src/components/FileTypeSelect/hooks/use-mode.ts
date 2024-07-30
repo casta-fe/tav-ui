@@ -12,7 +12,7 @@ export function useMode(options: {
   //:========================================: api actions :========================================://
   function typeSelectApiOptions(apiParams: FileTypeSelectProps['apiParams']) {
     if (!mergedProps.value.apiQueryFileType) {
-      console.warn('[tavui TaFileTable] apiQueryFileType is undefined')
+      console.warn('[tavui TaFileTypeSelect] apiQueryFileType is undefined')
       return
     }
 

@@ -1,6 +1,12 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { isBoolean } from '@tav-ui/utils'
 import { DEFAULT_FILE_MODE } from '../../consts'
-import { type ApiParams, type FileMode, globalConfigFileProps } from '../../typings'
+import {
+  type ApiParams,
+  type FileActionUploadApiResponseRecord,
+  type FileMode,
+  globalConfigFileProps,
+} from '../../typings'
 
 // 按照 swagger 编写
 export interface ApiUploadLinkFileParams {
@@ -23,14 +29,19 @@ export const fileActionUploadLinkProps = {
   ...globalConfigFileProps['TaFileActionUploadLink'],
   apiParams: {
     type: Object as PropType<FileActionUploadLinkApiParams>,
-    default: () => ({ businessParamsJson: {} }),
+    default: () => ({ businessParamsJson: JSON.stringify({}) }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
 
-  icon: { type: String, default: 'ant-design:upload-outlined' },
+  icon: { type: String, default: 'ant-design:link-outlined' },
   //:============================== extend props ==============================://
-  // 点开后是弹窗不需要控制显示隐藏，有无由业务数据控制提取到 filetable type 中
-  visible: { type: Boolean, default: true },
+  visible: { type: Boolean, default: false },
+  formVisible: { type: Boolean, default: false },
+  name: { type: String },
+  address: { type: String },
+  getFormContainer: {
+    type: Function as PropType<((instance?: any) => HTMLElement) | undefined>,
+  },
   /** apiUploadLinkFile 已从 ...globalConfigFileProps['fileUploadActionLink'] 取到 */
   beforeApiUploadLinkFile: {
     type: Function as PropType<(apiParams: ApiUploadLinkFileParams) => Promise<any>>,
@@ -41,7 +52,23 @@ export const fileActionUploadLinkProps = {
 export type FileActionUploadLinkProps = ExtractPropTypes<typeof fileActionUploadLinkProps>
 
 export const fileActionUploadLinkEmits = {
-  click: (...args: any[]) => args instanceof Object,
+  formOpen: () => true,
+  formClose: () => true,
+  'update:formVisible': (visible: boolean) => isBoolean(visible),
+  /** 上传成功前校验成功的列表 */
+  validateSuccessChange: (
+    ...args: [
+      { name: ApiUploadLinkFileParams['name']; address: ApiUploadLinkFileParams['address'] }
+    ]
+  ) => args instanceof Object,
+  /** 上传成功前校验失败的列表 */
+  validateFailureChange: (
+    ...args: [
+      { name: ApiUploadLinkFileParams['name']; address: ApiUploadLinkFileParams['address'] }
+    ]
+  ) => args instanceof Object,
+  /** 上传成功后的列表 */
+  uploadedChange: (...args: [FileActionUploadApiResponseRecord[]]) => args instanceof Object,
 }
 
 export type FileActionUploadLinkEmits = typeof fileActionUploadLinkEmits
