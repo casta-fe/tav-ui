@@ -13,8 +13,14 @@ import {
   type FileTableEmits,
   type FileTableInstance,
   type FileTableProps,
+  type FileTableReloadApiParams,
 } from '../components/FileTable'
-import { DEFAULT_FILE_MODE } from '../consts'
+import {
+  DEFAULT_APIPARAM_BUSINESSCHECK,
+  DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
+  DEFAULT_APIPARAM_PERMISSIONCONTROL,
+  DEFAULT_FILE_MODE,
+} from '../consts'
 // import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
 import { type ArgumentsOf } from '../utils'
 import {
@@ -169,7 +175,11 @@ export type FileMode = 'read' | 'create' | 'update' | 'updateInstantly'
 export const fileProps = {
   apiParams: {
     type: Object as PropType<ApiParams>,
-    default: () => ({}),
+    default: () => ({
+      ...DEFAULT_APIPARAM_BUSINESSCHECK,
+      ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
+      ...DEFAULT_APIPARAM_PERMISSIONCONTROL,
+    }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE, required: true },
 
@@ -251,4 +261,5 @@ export interface FileInstance {
   fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
   fileActionUploadLinkRef: Ref<FileActionUploadLinkInstance | undefined>
   fileTableRef: Ref<FileTableInstance | undefined>
+  fileTableRelod: (params?: FileTableReloadApiParams) => Promise<void>
 }

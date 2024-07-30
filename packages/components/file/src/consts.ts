@@ -69,3 +69,16 @@ export const DEFAULT_FILE_MODE: FileMode = 'read'
 /** 链接地址校验 */
 export const DEFAULT_FILE_LINK_REGEXP_STRING =
   /^((?<protocol>http|https|ftp):\/\/)?(?<hostname>[a-zA-Z0-9\u4e00-\u9fa5])+(?<dot>\.){1}(?<rootdomainPathQuery>[a-zA-Z0-9\u4e00-\u9fa5])+/
+
+/** apiparams 默认的 businessParamsJson */
+export const DEFAULT_APIPARAM_BUSINESSPARAMSJSON = {
+  businessParamsJson: JSON.stringify({}),
+}
+/** apiparams 默认的 permissionControl */
+export const DEFAULT_APIPARAM_PERMISSIONCONTROL = {
+  permissionControl: false,
+}
+/** apiparams 默认的 businessCheck */
+export const DEFAULT_APIPARAM_BUSINESSCHECK = {
+  businessCheck: false,
+}

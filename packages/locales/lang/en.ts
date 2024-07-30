@@ -160,6 +160,11 @@ export default {
     },
   },
   file: {
+    filter: {
+      '1': 'Please input file name',
+      '2': 'File type',
+      '3': 'File update datetime range',
+    },
     actions: {
       '1': 'View',
       '2': 'Download',
@@ -180,6 +185,7 @@ export default {
       '7': 'Updater',
       '8': 'Update time',
       '9': 'Link address',
+      '10': 'Upload trigger',
     },
     upload: {
       '1': 'Upload file',

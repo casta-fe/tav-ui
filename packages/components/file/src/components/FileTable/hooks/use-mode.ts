@@ -75,7 +75,6 @@ export function useMode(options: {
         beforeApi?: (...args: any[]) => Promise<any>
         afterApi?: (...args: any[]) => Promise<any>
         pagerConfig: FileTableProps['pagerConfig']
-        immediate: FileTableProps['immediate']
       } = {} as any
 
       if (hasPager) {
@@ -101,10 +100,6 @@ export function useMode(options: {
             pageSizes: pageSizeOptions.map((size) => Number(size)),
             controller: 'backend',
           },
-          immediate: mergedProps.value.immediate,
-          ...(mergedProps.value.filterFormConfig
-            ? { filterFormConfig: mergedProps.value.filterFormConfig }
-            : {}),
         }
       } else {
         dataOrApiConfig = {
@@ -123,10 +118,6 @@ export function useMode(options: {
           beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
           afterApi: (apiOptions!.afterApi ?? undefined) as any,
           pagerConfig: { enabled: false },
-          immediate: mergedProps.value.immediate,
-          ...(mergedProps.value.filterFormConfig
-            ? { filterFormConfig: mergedProps.value.filterFormConfig }
-            : {}),
         }
       }
 
@@ -142,7 +133,6 @@ export function useMode(options: {
           beforeApi: undefined,
           afterApi: undefined,
           pagerConfig: { enabled: false },
-          immediate: mergedProps.value.immediate,
         }
       }
 
@@ -187,9 +177,9 @@ export function useMode(options: {
           appId: apiParams.appId,
           moduleCode: apiParams.moduleCode,
           businessKey: apiParams.businessKey,
-          ...(apiParams.businessId
+          ...(apiParams.businessIds
             ? {
-                businessIds: [apiParams.businessId],
+                businessIds: apiParams.businessIds,
               }
             : {}),
           businessCheck: apiParams.businessCheck,
@@ -232,9 +222,9 @@ export function useMode(options: {
         appId: apiParams.appId,
         moduleCode: apiParams.moduleCode,
         businessKey: apiParams.businessKey,
-        ...(apiParams.businessId
+        ...(apiParams.businessIds
           ? {
-              businessIds: [apiParams.businessId],
+              businessIds: apiParams.businessIds,
             }
           : {}),
         businessCheck: apiParams.businessCheck,

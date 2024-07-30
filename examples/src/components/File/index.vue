@@ -133,6 +133,7 @@ function fileListChange(...args: any[]) {
   console.log(args)
 }
 
+const fileRef = ref()
 const unifiedTaFileData = reactive({
   read: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
@@ -219,12 +220,15 @@ const unifiedTaFileData = reactive({
     mode: 'update',
     apiParams: {
       moduleCode: 'tg_company',
-      appId: 10001,
+      // appId: 10002,
       businessKey: 'GSWU19972MMNPWLF7',
-      businessId: 'GSWU19972MMNPWLF7',
+      businessIds: ['GSWU19972MMNPWLF7'],
     },
     fileActualIds: [],
     fileTable: {
+      // apiParams: {
+      //   appId: 10003,
+      // },
       enabledRowEdit: true,
       // modeQueryApiType: 'pager',
       // showOperations: true,
@@ -252,6 +256,7 @@ const unifiedTaFileData = reactive({
       pagerConfig: {
         enabled: false,
       },
+      actions: handleFileTableActions,
     },
   },
   updateInstantly: {
@@ -309,9 +314,10 @@ const unifiedTaFileData = reactive({
     },
   },
 })
-// setTimeout(() => {
-//   unifiedTaFileData.create.apiParams.moduleCode = 'test'
-// }, 20000)
+setTimeout(() => {
+  // unifiedTaFileData.update.apiParams['businessIds'] = ['GSWU19972MMNPWLF7'] as any
+  // fileRef.value?.fileTableReload()
+}, 3000)
 
 watch(
   () => unifiedTaFileData.update.fileActualIds,
@@ -326,10 +332,14 @@ watch(
 function handlefilechange(...args: any) {
   console.log(args)
 }
+function handleFileTableActions(args: any) {
+  console.log(args)
+  return args
+}
 </script>
 
 <template>
-  <section class="ta-file-test" style="width: 70%; height: 60%; margin: 0 auto 0">
+  <section class="ta-file-test" style="width: 800px; height: 60%; margin: 0 auto">
     <!-- <h2>TaFile 测试</h2> -->
 
     <!-- <h3>TaFile TaFileTypeSelect 测试</h3>
@@ -348,6 +358,7 @@ function handlefilechange(...args: any) {
 
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
+      ref="fileRef"
       v-bind="unifiedTaFileData.update"
       v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
       @change="handlefilechange"

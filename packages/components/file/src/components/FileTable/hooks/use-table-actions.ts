@@ -19,7 +19,6 @@ export function useTableActions(options: {
     beforeApi?: ((...args: any[]) => Promise<any>) | undefined
     afterApi?: ((...args: any[]) => Promise<any>) | undefined
     pagerConfig: TableProProps['pagerConfig']
-    immediate: boolean
   }>
 }) {
   const { configTable } = options

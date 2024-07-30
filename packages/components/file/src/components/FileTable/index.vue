@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, nextTick, ref, unref /*useSlots, useAttrs*/, watch } from 'vue'
+import { type UnwrapRef, computed, nextTick, ref /*useSlots, useAttrs*/, watch } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
@@ -23,10 +23,11 @@ import {
   type ApiUpdateFileNameAndLinkParams,
   type FileTableInstance,
   type FileTableProps,
+  type FileTableReloadApiParams,
   fileTableEmits,
   fileTableProps,
 } from './types'
-import { useActions, useColumns, useMode, useTableActions } from './hooks'
+import { useActions, useColumns, useFilterFormConfig, useMode, useTableActions } from './hooks'
 
 /**
  * 1. Table 数据源来源于 api：queryfile/queryfilelist 与 datasource（upload 上传成功后会将文件数据通过该属性传入）；使用 datasource 传入的数据默认出现在表格最上方
@@ -55,7 +56,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileTableProps>(
   globalConfigProps,
   props,
-  ['TaFileTable']
+  'TaFileTable'
 )
 
 // 针对业务抽象不同模式进行数据处理
@@ -154,9 +155,14 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
 }
 
 // 立即更新模式操作后（更新、删除）刷新数据
-async function refreshTableData(params?: any) {
+async function refreshTableData(params?: FileTableReloadApiParams) {
+  if (!mergedProps.value.visible) return
+
+  await nextTick()
+  loading.value.value = true
   const tableProInstance = (tableProRef.value as any)?.instance as any
-  tableProInstance.reload(params)
+  await tableProInstance.reload(params)
+  loading.value.value = false
 }
 
 // 行编辑处理
@@ -306,6 +312,12 @@ const columns = useColumns({
   hanldeVersionClick,
 })
 
+// 筛选项
+const filterFormConfig = useFilterFormConfig({
+  mergedProps,
+  tableProRef,
+})
+
 // 行编辑配置
 const editConfig = computed<any>(() =>
   mergedProps.value.enabledRowEdit
@@ -335,6 +347,7 @@ defineExpose({
   elRef,
   tableProRef,
   cleanup,
+  reload: refreshTableData,
 })
 </script>
 
@@ -353,6 +366,7 @@ defineExpose({
         :fill-inner="mergedProps.fillInner"
         :columns="columns"
         :edit-config="editConfig"
+        :immediate="mergedProps.immediate"
         v-bind="configTable"
       />
       <TaFileActionUploadForActionUpdateBtn

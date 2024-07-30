@@ -7,7 +7,7 @@ import {
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'
-import { DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_APIPARAM_BUSINESSPARAMSJSON, DEFAULT_FILE_MODE } from '../../consts'
 import type { ExtractPropTypes } from 'vue'
 
 // 按照 swagger 编写
@@ -41,7 +41,7 @@ export const fileActionUploadProps = {
   ...globalConfigFileProps['TaFileActionUpload'],
   apiParams: {
     type: Object as PropType<FileActionUploadApiParams>,
-    default: () => ({ businessParamsJson: JSON.stringify({}) }),
+    default: () => ({ ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // AUpload props, multiple/accept/maxCount 已从 globalConfigFileProps['fileActionUpload'] 解构

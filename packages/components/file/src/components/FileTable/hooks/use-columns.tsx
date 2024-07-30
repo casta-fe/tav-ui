@@ -15,7 +15,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { isVersionColVisible } from '../../../utils'
+import { isModuleFullNameColVisible, isVersionColVisible } from '../../../utils'
 import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
 
 export function defaultColumnsBuilder(
@@ -29,6 +29,7 @@ export function defaultColumnsBuilder(
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const clearEdit = tableProRef.value?.instance?.clearEdit
+  const mode = mergedProps.value.mode
   const enabledVersion = mergedProps.value.enabledVersion
   const enabledRowEdit = mergedProps.value.enabledRowEdit
 
@@ -93,27 +94,32 @@ export function defaultColumnsBuilder(
         },
       },
     },
+    ...(isModuleFullNameColVisible(mode)
+      ? [
+          {
+            title: tavI18n('Tav.file.columns.10'),
+            field: 'moduleFullName',
+            minWidth: 100,
+          },
+        ]
+      : []),
     // typeName 不允许改变
     {
       title: tavI18n('Tav.file.columns.2'),
       field: 'typeName',
-      minWidth: 100,
+      minWidth: 80,
     },
     {
       title: tavI18n('Tav.file.columns.3'),
       field: 'fileSize',
-      minWidth: 100,
-    },
-    {
-      title: tavI18n('Tav.file.columns.5'),
-      field: 'createByName',
+      minWidth: 80,
     },
     ...(isVersionColVisible(enabledVersion)
       ? [
           {
             title: tavI18n('Tav.file.columns.4'),
             field: 'version',
-            minWidth: 100,
+            minWidth: 80,
             customRender: ({ row: _row }: Record<string, any>) => {
               const row = _row as FileActionUploadApiResponseRecord
               const renderVersion = isVersionColVisible(enabledVersion, row.hyperlink, row.auto)
@@ -139,6 +145,10 @@ export function defaultColumnsBuilder(
           },
         ]
       : []),
+    {
+      title: tavI18n('Tav.file.columns.5'),
+      field: 'createByName',
+    },
     {
       title: tavI18n('Tav.file.columns.8'),
       field: 'createTime',

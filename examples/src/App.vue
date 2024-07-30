@@ -28,7 +28,7 @@ export default defineComponent({
         resolve(orgTree)
       })
     const state = reactive({
-      appId: '10002',
+      appId: '10001',
       userInfo: {
         id: 1,
         name: 'admin',

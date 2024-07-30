@@ -7,7 +7,7 @@ import {
   globalConfigFileProps,
 } from '../../typings'
 import { type ArgumentsOf } from '../../utils'
-import { DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_APIPARAM_PERMISSIONCONTROL, DEFAULT_FILE_MODE } from '../../consts'
 
 // 按照 swagger 编写
 export interface ApiQueryFileTypeParams {
@@ -26,7 +26,7 @@ export const fileTypeSelectProps = {
   ...globalConfigFileProps['TaFileTypeSelect'],
   apiParams: {
     type: Object as PropType<FileTypeSelectApiParams>,
-    default: () => ({ permissionControl: false }),
+    default: () => ({ ...DEFAULT_APIPARAM_PERMISSIONCONTROL }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // ASelect props

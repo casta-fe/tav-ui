@@ -30,6 +30,11 @@ export function isVersionColVisible(
   return enabledVersion && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
 }
 
+/** 上传节点列，只读默认隐藏，其他模式默认显示。开发可通过 column 控制 */
+export function isModuleFullNameColVisible(mode: FileMode) {
+  return isReadMode(mode) ? false : true
+}
+
 export function isViewBtnVisible(rowHyperlink: number) {
   return !isHyperlinkRow(rowHyperlink)
 }

@@ -2,6 +2,7 @@ import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
 import {
   type ITableProInstance,
   type TableProActionItem,
+  type TableProApiParams,
   type TableProColumn,
   type TableProProps,
 } from '@tav-ui/components/table-pro'
@@ -11,7 +12,11 @@ import {
   type FileMode,
   globalConfigFileProps,
 } from '../../typings'
-import { DEFAULT_FILE_MODE } from '../../consts'
+import {
+  DEFAULT_APIPARAM_BUSINESSCHECK,
+  DEFAULT_APIPARAM_PERMISSIONCONTROL,
+  DEFAULT_FILE_MODE,
+} from '../../consts'
 import { type FileVersionCache } from '../../hooks'
 import { type ApiUploadFileParams } from './../FileActionUpload/types'
 import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
@@ -31,6 +36,8 @@ import { type ApiPreviewFileParams } from './../FilePreview/types'
 
 export type FileTableColumn = TableProColumn
 export type FileTableAction = TableProActionItem & { field: string }
+export type FileTableFilterFormConfig = TableProProps['filterFormConfig']
+export type FileTableReloadApiParams = TableProApiParams
 
 // 按照 swagger 编写
 export interface ApiQueryFileParams {
@@ -106,7 +113,7 @@ export const fileTableProps = {
   ...globalConfigFileProps['TaFileTable'],
   apiParams: {
     type: Object as PropType<FileTableApiParams>,
-    default: () => ({ permissionControl: false, businessCheck: false }),
+    default: () => ({ ...DEFAULT_APIPARAM_BUSINESSCHECK, ...DEFAULT_APIPARAM_PERMISSIONCONTROL }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
@@ -139,7 +146,7 @@ export const fileTableProps = {
     >,
   },
   filterFormConfig: {
-    type: Object as PropType<TableProProps['filterFormConfig']>,
+    type: Function as PropType<(...args: [FileTableFilterFormConfig]) => FileTableFilterFormConfig>,
   },
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
@@ -215,4 +222,5 @@ export interface FileTableInstance {
   elRef: Ref<HTMLDivElement | undefined>
   tableProRef: Ref<ITableProInstance | undefined>
   cleanup: () => Promise<void>
+  reload: (params?: FileTableReloadApiParams) => Promise<void>
 }

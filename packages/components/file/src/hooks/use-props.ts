@@ -24,39 +24,28 @@ export function useGlobalConfigProps() {
  */
 export function useMergedProps<T extends Record<string, any>, K extends Record<string, any>>(
   globalConfigProps: ComputedRef<T>,
-  props: K,
-  componentNames: string[]
+  props: any,
+  componentName: string
 ) {
-  const result: Record<string, any> = {}
-  const isSignleComponent = componentNames.length === 1
-
   return computed(() => {
-    for (let i = 0; i < componentNames.length; i++) {
-      // 已 props 传入的为准，globalconfig 为辅
-      const globalConfigComponentProps = globalConfigProps.value[componentNames[i]] ?? {}
-      result[componentNames[i]] = {
-        ...(props[componentNames[i]] ?? isSignleComponent ? props : {}),
-        ...{
-          mode:
-            (props[componentNames[i]] ?? ((isSignleComponent ? props : {}) as any))['mode'] ??
-            props['mode'],
-        },
+    const result = {} as any // props 不允许赋值所以这里新建变量存储
+    const globalConfigComponentProps = globalConfigProps.value[componentName] ?? {}
+    const globalConfigAppId = globalConfigProps.value.appId
+
+    // props 属性为 undefined 的话从 globalconfig 中取对应的值（目前只是 api 与 appId）
+    Object.keys(props).forEach((key) => {
+      if (!props[key] && globalConfigComponentProps[key]) {
+        result[key] = globalConfigComponentProps[key]
       }
-      Object.keys(result[componentNames[i]]).forEach((key) => {
-        // if (!result[componentNames[i]][key] && !globalConfigComponentProps[key]) {
-        //   console.warn(
-        //     `[tavui TaFile] use-props.ts warning, props: ${key} is not exist in globalConfig & file props`
-        //   )
-        // }
-        if (!result[componentNames[i]][key] && globalConfigComponentProps[key]) {
-          result[componentNames[i]][key] = globalConfigComponentProps[key]
-        }
-      })
-    }
+    })
 
     return {
       ...props,
-      ...(componentNames.length !== 1 ? result : result[componentNames[0]]),
+      ...result,
+      apiParams: {
+        ...props.apiParams,
+        appId: props.apiParams?.appId ?? globalConfigAppId,
+      },
     } as unknown as T & K
   })
 }

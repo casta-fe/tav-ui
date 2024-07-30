@@ -53,7 +53,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadLinkProps>(
   globalConfigProps,
   props,
-  ['TaFileActionUploadLink']
+  'TaFileActionUploadLink'
 )
 
 const { createMessage } = useMessage()

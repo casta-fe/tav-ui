@@ -1,6 +1,6 @@
 import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
 import { isBoolean } from '@tav-ui/utils'
-import { DEFAULT_FILE_MODE } from '../../consts'
+import { DEFAULT_APIPARAM_BUSINESSPARAMSJSON, DEFAULT_FILE_MODE } from '../../consts'
 import {
   type ApiParams,
   type FileActionUploadApiResponseRecord,
@@ -29,7 +29,7 @@ export const fileActionUploadLinkProps = {
   ...globalConfigFileProps['TaFileActionUploadLink'],
   apiParams: {
     type: Object as PropType<FileActionUploadLinkApiParams>,
-    default: () => ({ businessParamsJson: JSON.stringify({}) }),
+    default: () => ({ ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
 

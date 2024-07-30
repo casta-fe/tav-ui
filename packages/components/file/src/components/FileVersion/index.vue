@@ -39,7 +39,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileVersionProps>(
   globalConfigProps,
   props,
-  ['TaFileVersion']
+  'TaFileVersion'
 )
 
 // 针对业务抽象不同模式进行数据处理

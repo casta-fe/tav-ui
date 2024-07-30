@@ -44,7 +44,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileTypeSelectProps>(
   globalConfigProps,
   props,
-  ['TaFileTypeSelect']
+  'TaFileTypeSelect'
 )
 
 // 针对业务抽象不同模式进行数据处理

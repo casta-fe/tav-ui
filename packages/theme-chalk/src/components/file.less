@@ -28,7 +28,8 @@
     }
     &-main {
       flex: 1;
-      display: flex;
+      width: 100%;
+      height: 100%;
     }
   }
   &-file-type-select {
@@ -52,21 +53,20 @@
     &-form {}
   }
   &-file-table {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    height: 100%;
 
+    .ta-file-action-upload {
+      position: absolute;
+      overflow: hidden;
+      border: 0;
+      width: 0;
+      height: 0;
+    }
+    
     &-wrapper {
-      flex: 1;
-      display: flex;
-
-      .ta-file-action-upload {
-        position: absolute;
-        overflow: hidden;
-        border: 0;
-        width: 0;
-        height: 0;
-      }
+      width: 100%;
+      height: 100%;
     }
 
     &-row-editor {

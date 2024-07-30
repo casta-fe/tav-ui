@@ -60,7 +60,7 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>(
   globalConfigProps,
   props,
-  ['TaFileActionUpload']
+  'TaFileActionUpload'
 )
 
 const {

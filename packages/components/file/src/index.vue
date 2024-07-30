@@ -11,7 +11,12 @@ import {
   type FileActionUploadInstance,
   TaFileActionUpload,
 } from './components/FileActionUpload'
-import { type FileTableEmits, type FileTableInstance, TaFileTable } from './components/FileTable'
+import {
+  type FileTableEmits,
+  type FileTableInstance,
+  type FileTableReloadApiParams,
+  TaFileTable,
+} from './components/FileTable'
 import { type FileInstance, fileEmits, fileProps } from './typings'
 import {
   DEFAULT_FILEACTIONS_CLASSNAME,
@@ -224,12 +229,17 @@ function handleFileTableActualidsChange(...args: any) {
   emits('update:fileActualIds', ..._args)
 }
 
+async function fileTableRelod(params?: FileTableReloadApiParams) {
+  await fileTableRef.value?.reload?.(params)
+}
+
 defineExpose({
   elRef,
   fileTypeSelectRef,
   fileActionUploadRef,
   fileActionUploadLinkRef,
   fileTableRef,
+  fileTableReload: fileTableRelod,
 })
 </script>
 
