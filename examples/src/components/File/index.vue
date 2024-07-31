@@ -142,33 +142,13 @@ const unifiedTaFileData = reactive({
       moduleCode: 'tg_company',
       appId: 10001,
       businessKey: 'GSWU19972MMNPWLF7',
-      businessId: 'GSWU19972MMNPWLF7',
+      businessIds: ['GSWU19972MMNPWLF7'],
     },
     fileActualIds: [],
     fileTable: {
-      modeQueryApiType: 'pager',
+      modeQueryApiType: 'list',
       showOperations: true,
-      filterFormConfig: {
-        inputForm: {
-          field: 'searchValue',
-          componentProps: {
-            'enter-button': true,
-            placeholder: '请输入企业、院所、高校名称',
-          },
-        },
-        pannelForm: [
-          {
-            field: 'filterSearchValue',
-            label: '企业、院所、高校名称',
-            labelWidth: 150,
-            component: 'Input',
-            // componentProps: {
-            //   // "enter-button": true,
-            //   placeholder: "请输入企业、院所、高校名称"
-            // }
-          },
-        ],
-      },
+      filterFormConfig: handleFilterFormConfig,
       pagerConfig: {
         enabled: true,
       },
@@ -230,8 +210,9 @@ const unifiedTaFileData = reactive({
       //   appId: 10003,
       // },
       enabledRowEdit: true,
-      // modeQueryApiType: 'pager',
-      // showOperations: true,
+      modeQueryApiType: 'pager',
+      filterFormConfig: handleFilterFormConfig,
+      showOperations: true,
       // filterFormConfig: {
       //   inputForm: {
       //     field: 'searchValue',
@@ -320,7 +301,7 @@ setTimeout(() => {
 }, 3000)
 
 watch(
-  () => unifiedTaFileData.update.fileActualIds,
+  () => unifiedTaFileData.read.fileActualIds,
   (cur) => {
     console.log(cur)
   },
@@ -333,6 +314,10 @@ function handlefilechange(...args: any) {
   console.log(args)
 }
 function handleFileTableActions(args: any) {
+  console.log(args)
+  return args
+}
+function handleFilterFormConfig(args: any) {
   console.log(args)
   return args
 }
@@ -359,8 +344,8 @@ function handleFileTableActions(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.update"
-      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
+      v-bind="unifiedTaFileData.read"
+      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
       @change="handlefilechange"
     />
   </section>

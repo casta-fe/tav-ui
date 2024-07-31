@@ -163,7 +163,7 @@ export default {
     filter: {
       '1': 'Please input file name',
       '2': 'File type',
-      '3': 'File update datetime range',
+      '3': 'File name',
     },
     actions: {
       '1': 'View',

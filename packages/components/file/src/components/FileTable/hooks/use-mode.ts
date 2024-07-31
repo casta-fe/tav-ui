@@ -67,7 +67,58 @@ export function useMode(options: {
   function useModeConfigTable() {
     return computed(() => {
       const hasPager = mergedProps.value.pagerConfig && !!mergedProps.value.pagerConfig.enabled
+      const modeQueryApiType = mergedProps.value.modeQueryApiType
       const apiOptions = apiQueryFileOptions(mergedProps.value.apiParams)
+
+      const dataOrApiConfigWithPager: any = {
+        data: undefined,
+        api: !apiOptions!.api
+          ? undefined
+          : ({ filter, model }: Record<string, any>) =>
+              apiOptions!.api!(
+                createQueryApiOptionsWithPagerConfig(
+                  apiOptions!.api!.name,
+                  filter,
+                  model,
+                  apiOptions!.apiParams
+                ) as any
+              ),
+        beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
+        afterApi: (apiOptions!.afterApi ?? undefined) as any,
+        pagerConfig: {
+          size: 'mini',
+          layouts: ['PrevPage', 'Number', 'NextPage', 'Sizes', 'Total'],
+          pageSize: defaultPageSize,
+          pageSizes: pageSizeOptions.map((size) => Number(size)),
+          controller: 'backend',
+        },
+      }
+
+      const dataOrApiConfigWithList: any = {
+        data: undefined,
+        api: !apiOptions!.api
+          ? undefined
+          : ({ filter, model }: Record<string, any>) =>
+              apiOptions!.api!(
+                createQueryApiOptionsWithPagerConfig(
+                  apiOptions!.api!.name,
+                  filter,
+                  model,
+                  apiOptions!.apiParams
+                ) as any
+              ),
+        beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
+        afterApi: (apiOptions!.afterApi ?? undefined) as any,
+        pagerConfig: { enabled: false },
+      }
+
+      const dataOrApiConfigWithNull: any = {
+        data: undefined,
+        api: undefined,
+        beforeApi: undefined,
+        afterApi: undefined,
+        pagerConfig: { enabled: false },
+      }
 
       let dataOrApiConfig: {
         data: FileTableProps['dataSource']
@@ -77,48 +128,28 @@ export function useMode(options: {
         pagerConfig: FileTableProps['pagerConfig']
       } = {} as any
 
+      // 可以允许用户外部开启分页器
       if (hasPager) {
-        dataOrApiConfig = {
-          data: undefined,
-          api: !apiOptions!.api
-            ? undefined
-            : ({ filter, model }: Record<string, any>) =>
-                apiOptions!.api!(
-                  createQueryApiOptionsWithPagerConfig(
-                    apiOptions!.api!.name,
-                    filter,
-                    model,
-                    apiOptions!.apiParams
-                  ) as any
-                ),
-          beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
-          afterApi: (apiOptions!.afterApi ?? undefined) as any,
-          pagerConfig: {
-            size: 'mini',
-            layouts: ['PrevPage', 'Number', 'NextPage', 'Sizes', 'Total'],
-            pageSize: defaultPageSize,
-            pageSizes: pageSizeOptions.map((size) => Number(size)),
-            controller: 'backend',
-          },
-        }
+        // 优先获取外部传入的分页器配置
+        dataOrApiConfig = dataOrApiConfigWithPager
       } else {
-        dataOrApiConfig = {
-          data: undefined,
-          api: !apiOptions!.api
-            ? undefined
-            : ({ filter, model }: Record<string, any>) =>
-                apiOptions!.api!(
-                  createQueryApiOptionsWithPagerConfig(
-                    apiOptions!.api!.name,
-                    filter,
-                    model,
-                    apiOptions!.apiParams
-                  ) as any
-                ),
-          beforeApi: (apiOptions!.beforeApi ?? undefined) as any,
-          afterApi: (apiOptions!.afterApi ?? undefined) as any,
-          pagerConfig: { enabled: false },
+        if (modeQueryApiType === 'pager') {
+          dataOrApiConfig = dataOrApiConfigWithPager
+        } else {
+          dataOrApiConfig = dataOrApiConfigWithList
         }
+      }
+
+      if (
+        ['update'].includes(mergedProps.value.mode) &&
+        mergedProps.value.modeQueryApiType === 'pager'
+      ) {
+        // 编辑模式只能使用不分页接口
+        console.warn(
+          '[tavui TaFileTable] apiQueryFile is only used in "read" or "updateInstantly" mode, force to use apiQueryFileList, "pager" not working'
+        )
+
+        dataOrApiConfig = dataOrApiConfigWithList
       }
 
       if (['create'].includes(mergedProps.value.mode)) {
@@ -127,13 +158,7 @@ export function useMode(options: {
           '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
         )
 
-        dataOrApiConfig = {
-          data: undefined,
-          api: undefined,
-          beforeApi: undefined,
-          afterApi: undefined,
-          pagerConfig: { enabled: false },
-        }
+        dataOrApiConfig = dataOrApiConfigWithNull
       }
 
       return dataOrApiConfig

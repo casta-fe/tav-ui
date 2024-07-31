@@ -367,6 +367,7 @@ defineExpose({
         :columns="columns"
         :edit-config="editConfig"
         :immediate="mergedProps.immediate"
+        :filter-form-config="filterFormConfig"
         v-bind="configTable"
       />
       <TaFileActionUploadForActionUpdateBtn
