@@ -230,6 +230,14 @@ async function beforeHandleApiAction3() {
 
   canUploadUnifiedFileList.value = true
 
+  if (mergedProps.value.beforeUpload) {
+    const beforeUploadResult = await mergedProps.value.beforeUpload(
+      fileList.value,
+      mergedProps.value.apiParams.typeCode
+    )
+    if (!beforeUploadResult) return
+  }
+
   let options
   if (mergedProps.value.updateFile) {
     // 如果传入了 updatefile 则走更新逻辑

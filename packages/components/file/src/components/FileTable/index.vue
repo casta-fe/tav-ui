@@ -356,6 +356,10 @@ defineExpose({
   tableProRef,
   cleanup,
   reload: refreshTableData,
+  createRows: tableCreateRows,
+  readRows: tableReadRows,
+  updateRows: tableUpdateRows,
+  deleteRows: tableDeleteRows,
 })
 </script>
 

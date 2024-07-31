@@ -166,6 +166,12 @@ const unifiedTaFileData = reactive({
       businessId: 'GSWU19972MMNPWLF7',
     },
     fileActualIds: [],
+    // fileActionUpload: {
+    //   beforeUpload: (...args) => {
+    //     console.log(args)
+    //     return true
+    //   }
+    // },
     fileTable: {
       modeQueryApiType: 'pager',
       // showOperations: true,
@@ -344,8 +350,8 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.read"
-      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
+      v-bind="unifiedTaFileData.create"
+      v-model:fileActualIds="unifiedTaFileData.create.fileActualIds"
       @change="handlefilechange"
     />
   </section>

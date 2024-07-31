@@ -239,6 +239,18 @@ function handleFileTableActualidsChange(...args: any) {
 async function fileTableRelod(params?: FileTableReloadApiParams) {
   await fileTableRef.value?.reload?.(params)
 }
+async function fileTableCreateRows(...args: ArgumentsOf<FileTableInstance['createRows']>) {
+  await fileTableRef.value?.createRows(...args)
+}
+async function fileTableReadRows(...args: ArgumentsOf<FileTableInstance['readRows']>) {
+  await fileTableRef.value?.readRows(...args)
+}
+async function fileTableUpdateRows(...args: ArgumentsOf<FileTableInstance['updateRows']>) {
+  await fileTableRef.value?.updateRows(...args)
+}
+async function fileTableDeleteRows(...args: ArgumentsOf<FileTableInstance['deleteRows']>) {
+  await fileTableRef.value?.deleteRows(...args)
+}
 
 defineExpose({
   elRef,
@@ -247,6 +259,10 @@ defineExpose({
   fileActionUploadLinkRef,
   fileTableRef,
   fileTableReload: fileTableRelod,
+  fileTableCreateRows,
+  fileTableReadRows,
+  fileTableUpdateRows,
+  fileTableDeleteRows,
 })
 </script>
 

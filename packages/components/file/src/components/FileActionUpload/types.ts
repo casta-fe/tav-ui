@@ -54,6 +54,10 @@ export const fileActionUploadProps = {
     type: Boolean as PropType<AUploadProps['openFileDialogOnClick']>,
     default: true,
   },
+  /** 调用上传接口前执行，可自行停止上传行为 */
+  beforeUpload: {
+    type: Function as PropType<(files: File[], typeCode: string) => boolean | Promise<boolean>>,
+  },
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },

@@ -226,4 +226,22 @@ export interface FileTableInstance {
   tableProRef: Ref<ITableProInstance | undefined>
   cleanup: () => Promise<void>
   reload: (params?: FileTableReloadApiParams) => Promise<void>
+  createRows: (
+    tableProRef: Ref<ITableProInstance | undefined>,
+    rows: FileActionUploadApiResponseRecord[],
+    pos: FileActionUploadApiResponseRecord | -1 | null
+  ) => Promise<void>
+  readRows: (
+    tableProRef: Ref<ITableProInstance | undefined>
+  ) => Promise<FileActionUploadApiResponseRecord[]>
+  updateRows(
+    tableProRef: Ref<ITableProInstance | undefined>,
+    rows: FileActionUploadApiResponseRecord[],
+    deleteRows: FileActionUploadApiResponseRecord[],
+    pos: FileActionUploadApiResponseRecord | null | -1
+  ): Promise<void>
+  deleteRows(
+    tableProRef: Ref<ITableProInstance | undefined>,
+    rows: FileActionUploadApiResponseRecord[]
+  ): Promise<void>
 }
