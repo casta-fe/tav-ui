@@ -9,7 +9,7 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
+import { type FileActionUploadApiResponseRecord } from '../../typings'
 import { fileSingleDownload } from '../../utils'
 import { TaFilePreview } from '../FilePreview'
 import {
@@ -36,11 +36,7 @@ const emits = defineEmits(fileVersionEmits)
 
 // 将 globalconfig 与 fileVersion props 结合，同名 props 已 fileVersion props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileVersionProps>(
-  globalConfigProps,
-  props,
-  'TaFileVersion'
-)
+const mergedProps = useMergedProps<FileVersionProps>(globalConfigProps, props, 'TaFileVersion')
 
 // 针对业务抽象不同模式进行数据处理
 const {

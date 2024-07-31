@@ -19,6 +19,7 @@ import {
 } from './components/FileTable'
 import { type FileInstance, fileEmits, fileProps } from './typings'
 import {
+  DEFAULT_APIPARAMS,
   DEFAULT_FILEACTIONS_CLASSNAME,
   DEFAULT_FILEACTIONS_ID,
   DEFAULT_FILE_CLASSNAME,
@@ -62,7 +63,8 @@ const fileTypeSelectProps = computed(() => ({
     appId: fileApiParams.value.value.appId,
     moduleCode: fileApiParams.value.value.moduleCode,
     typeCodes: fileApiParams.value.value.typeCodes,
-    permissionControl: fileApiParams.value.value.permissionControl,
+    permissionControl:
+      fileApiParams.value.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
     ...(props.fileTypeSelect?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
 }))
@@ -78,7 +80,8 @@ const fileActionUploadProps = computed(() => ({
     typeCode: fileApiParams.value.value.typeCode,
     businessId: fileApiParams.value.value.businessId,
     businessKey: fileApiParams.value.value.businessKey,
-    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    businessParamsJson:
+      fileApiParams.value.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
     fileName: fileApiParams.value.value.fileName,
     ...(props.fileActionUpload?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
@@ -96,7 +99,8 @@ const fileActionUploadLinkProps = computed(() => ({
     typeCode: fileApiParams.value.value.typeCode,
     businessId: fileApiParams.value.value.businessId,
     businessKey: fileApiParams.value.value.businessKey,
-    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    businessParamsJson:
+      fileApiParams.value.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
     ...(props.fileActionUploadLink?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
   },
   getFormContainer: () => headerElRef.value,
@@ -119,17 +123,20 @@ const fileTableProps = computed(() => ({
   apiParams: {
     typeCode: fileApiParams.value.value.typeCode,
     businessId: fileApiParams.value.value.businessId,
-    businessParamsJson: fileApiParams.value.value.businessParamsJson,
+    businessParamsJson:
+      fileApiParams.value.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
 
     appId: fileApiParams.value.value.appId,
-    businessCheck: fileApiParams.value.value.businessCheck,
+    businessCheck: fileApiParams.value.value.businessCheck ?? DEFAULT_APIPARAMS.businessCheck, // 合并默认值
     businessIds: fileApiParams.value.value.businessIds,
     businessKey: fileApiParams.value.value.businessKey,
     endTime: fileApiParams.value.value.endTime,
     finalTypeCodes: fileApiParams.value.value.finalTypeCodes,
     id: fileApiParams.value.value.id,
+    includeStaging: fileApiParams.value.value.includeStaging ?? DEFAULT_APIPARAMS.includeStaging, // 合并默认值
     moduleCode: fileApiParams.value.value.moduleCode,
-    permissionControl: fileApiParams.value.value.permissionControl,
+    permissionControl:
+      fileApiParams.value.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
     searchValue: fileApiParams.value.value.searchValue,
     startTime: fileApiParams.value.value.startTime,
     suffix: fileApiParams.value.value.suffix,

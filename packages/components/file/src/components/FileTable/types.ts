@@ -12,11 +12,7 @@ import {
   type FileMode,
   globalConfigFileProps,
 } from '../../typings'
-import {
-  DEFAULT_APIPARAM_BUSINESSCHECK,
-  DEFAULT_APIPARAM_PERMISSIONCONTROL,
-  DEFAULT_FILE_MODE,
-} from '../../consts'
+import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../../consts'
 import { type FileVersionCache } from '../../hooks'
 import { type ApiUploadFileParams } from './../FileActionUpload/types'
 import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
@@ -48,6 +44,7 @@ export interface ApiQueryFileParams {
   endTime?: ApiParams['endTime']
   finalTypeCodes?: ApiParams['finalTypeCodes']
   id?: ApiParams['id']
+  includeStaging?: ApiParams['includeStaging']
   moduleCode?: ApiParams['moduleCode']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
@@ -65,6 +62,7 @@ export interface ApiQueryFileListParams {
   endTime?: ApiParams['endTime']
   finalTypeCodes?: ApiParams['finalTypeCodes']
   id?: ApiParams['id']
+  includeStaging?: ApiParams['includeStaging']
   moduleCode?: ApiParams['moduleCode']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
@@ -113,7 +111,9 @@ export const fileTableProps = {
   ...globalConfigFileProps['TaFileTable'],
   apiParams: {
     type: Object as PropType<FileTableApiParams>,
-    default: () => ({ ...DEFAULT_APIPARAM_BUSINESSCHECK, ...DEFAULT_APIPARAM_PERMISSIONCONTROL }),
+    default: () => ({
+      ...DEFAULT_APIPARAMS,
+    }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props

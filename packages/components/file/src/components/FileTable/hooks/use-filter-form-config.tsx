@@ -1,6 +1,6 @@
 import { type ComputedRef, type Ref, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import { isBoolean, isFunction } from '@tav-ui/utils'
+import { isBoolean } from '@tav-ui/utils'
 import {
   type FileTableFilterFormConfig,
   type FileTableInstance,

@@ -15,12 +15,7 @@ import {
   type FileTableProps,
   type FileTableReloadApiParams,
 } from '../components/FileTable'
-import {
-  DEFAULT_APIPARAM_BUSINESSCHECK,
-  DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
-  DEFAULT_APIPARAM_PERMISSIONCONTROL,
-  DEFAULT_FILE_MODE,
-} from '../consts'
+import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../consts'
 // import { type FileActionUploadLinkProps } from '../components/FileActionUploadLink'
 import { type ArgumentsOf } from '../utils'
 import {
@@ -124,6 +119,12 @@ export interface ApiParams {
    */
   id: number
   /**
+   * 是否包含暂存，默认 false，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  includeStaging: boolean
+  /**
    * 文件列表，用于：
    * 1. api/file/upload
    */
@@ -176,9 +177,7 @@ export const fileProps = {
   apiParams: {
     type: Object as PropType<ApiParams>,
     default: () => ({
-      ...DEFAULT_APIPARAM_BUSINESSCHECK,
-      ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
-      ...DEFAULT_APIPARAM_PERMISSIONCONTROL,
+      ...DEFAULT_APIPARAMS,
     }),
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE, required: true },

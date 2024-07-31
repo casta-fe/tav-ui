@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, nextTick, ref /*useSlots, useAttrs*/, watch } from 'vue'
+import {
+  type UnwrapRef,
+  computed,
+  nextTick,
+  onUnmounted,
+  ref,
+  watch,
+  /*useSlots, useAttrs*/
+} from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
-import { DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
+import { DEFAULT_APIPARAMS, DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
   VersionCachesController,
   useDisable,
@@ -10,7 +18,7 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
+import { type FileActionUploadApiResponseRecord } from '../../typings'
 import { type ArgumentsOf, fileSingleDownload } from '../../utils'
 import {
   type FileActionUploadEmits,
@@ -53,11 +61,9 @@ const FileActionUploadForActionUpdateBtnRef = ref<FileActionUploadInstance>()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileTableProps>(
-  globalConfigProps,
-  props,
-  'TaFileTable'
-)
+const mergedProps = useMergedProps<FileTableProps>(globalConfigProps, props, 'TaFileTable', {
+  ...DEFAULT_APIPARAMS,
+})
 
 // 针对业务抽象不同模式进行数据处理
 const {
@@ -331,9 +337,7 @@ const editConfig = computed<any>(() =>
 )
 
 // 清空表格状态
-async function cleanup() {
-  await nextTick()
-
+function cleanup() {
   fileVersionModalVisible.value = false
   fileVersionFile.value = undefined
   fileVersionDataSource.value = undefined
@@ -342,6 +346,10 @@ async function cleanup() {
   actionUpdateClickRow.value = undefined
   VersionCachesController.deleteAllFileCaches()
 }
+
+onUnmounted(() => {
+  cleanup()
+})
 
 defineExpose({
   elRef,

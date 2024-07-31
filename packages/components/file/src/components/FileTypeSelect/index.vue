@@ -10,8 +10,8 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type GlobalConfigFileProps } from '../../typings'
 import {
+  DEFAULT_APIPARAM_PERMISSIONCONTROL,
   DEFAULT_EMPTY_TIP,
   DEFAULT_FILETYPESELECT_CLASSNAME,
   DEFAULT_FILETYPESELECT_ID,
@@ -41,10 +41,13 @@ const EmptyImage = Empty.PRESENTED_IMAGE_SIMPLE
 
 // 将 globalconfig 与 filetypeselect props 结合，同名 props 已 filetypeselect props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileTypeSelectProps>(
+const mergedProps = useMergedProps<FileTypeSelectProps>(
   globalConfigProps,
   props,
-  'TaFileTypeSelect'
+  'TaFileTypeSelect',
+  {
+    ...DEFAULT_APIPARAM_PERMISSIONCONTROL,
+  }
 )
 
 // 针对业务抽象不同模式进行数据处理
@@ -206,7 +209,7 @@ defineExpose({
         :get-popup-container="mergedProps.getPopupContainer"
         :allow-clear="options.length > 1"
         :disabled="disabled"
-        :loading="mergedProps.apiQueryFileType && loading"
+        :loading="loading"
         @select="handleSelect"
         @deselect="handleDeselect"
         @dropdown-visible-change="handleDropdownVisibleChange"

@@ -13,6 +13,7 @@ import { TaIcon } from '@tav-ui/components/icon'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
 import {
+  DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
   DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME,
   DEFAULT_FILEACTIONUPLOADLINK_ID,
   DEFAULT_FILE_CLASSNAME,
@@ -27,7 +28,6 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type GlobalConfigFileProps } from '../../typings'
 import { validateUploadFileTypeCode } from '../../utils'
 import { useMode } from './hooks'
 import {
@@ -50,10 +50,13 @@ const emits = defineEmits(fileActionUploadLinkEmits)
 
 // 将 globalconfig 与 fileActionUploadLink props 结合，同名 props 已 fileActionUploadLink props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadLinkProps>(
+const mergedProps = useMergedProps<FileActionUploadLinkProps>(
   globalConfigProps,
   props,
-  'TaFileActionUploadLink'
+  'TaFileActionUploadLink',
+  {
+    ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
+  }
 )
 
 const { createMessage } = useMessage()

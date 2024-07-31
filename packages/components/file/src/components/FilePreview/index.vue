@@ -25,7 +25,6 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type GlobalConfigFileProps } from '../../typings'
 import { useMode } from './hooks'
 import {
   type FilePreviewInstance,
@@ -48,11 +47,7 @@ const emits = defineEmits(filePreviewEmits)
 
 // 将 globalconfig 与 filePreview props 结合，同名 props 已 filePreview props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FilePreviewProps>(
-  globalConfigProps,
-  props,
-  'TaFilePreview'
-)
+const mergedProps = useMergedProps<FilePreviewProps>(globalConfigProps, props, 'TaFilePreview')
 
 const { createMessage } = useMessage()
 const supportWPS = ref(false)

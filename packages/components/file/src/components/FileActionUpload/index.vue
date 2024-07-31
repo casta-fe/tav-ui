@@ -2,9 +2,10 @@
 import {
   type UnwrapRef,
   getCurrentInstance,
-  ref,
-  watch /*, useSlots, useAttrs*/,
   nextTick,
+  ref,
+  watch,
+  /*, useSlots, useAttrs*/
 } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
@@ -27,8 +28,8 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type GlobalConfigFileProps } from '../../typings'
 import {
+  DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
   DEFAULT_FILEACTIONUPLOAD_CLASSNAME,
   DEFAULT_FILEACTIONUPLOAD_ID,
   DEFAULT_UPLOAD_TIP,
@@ -57,10 +58,13 @@ const emits = defineEmits(fileActionUploadEmits)
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
 const globalConfigProps = useGlobalConfigProps()
-const mergedProps = useMergedProps<GlobalConfigFileProps, FileActionUploadProps>(
+const mergedProps = useMergedProps<FileActionUploadProps>(
   globalConfigProps,
   props,
-  'TaFileActionUpload'
+  'TaFileActionUpload',
+  {
+    ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
+  }
 )
 
 const {
