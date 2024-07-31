@@ -1,6 +1,6 @@
 import { type ComputedRef, type Ref, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import { isFunction } from '@tav-ui/utils'
+import { isBoolean, isFunction } from '@tav-ui/utils'
 import {
   type FileTableFilterFormConfig,
   type FileTableInstance,
@@ -69,14 +69,18 @@ export function useFilterFormConfig(options: {
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
 
-    if (filterFormConfig && isFunction(filterFormConfig)) {
+    if (isBoolean(filterFormConfig)) {
+      if (filterFormConfig) {
+        return defaultFilterFormConfigBuilder(mergedProps, tableProRef)
+      } else {
+        return {
+          enabled: false,
+        }
+      }
+    } else {
       let result = defaultFilterFormConfigBuilder(mergedProps, tableProRef)
       result = filterFormConfig(result)
       return result
-    } else {
-      return {
-        enabled: false,
-      }
     }
   })
 }

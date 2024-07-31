@@ -146,7 +146,10 @@ export const fileTableProps = {
     >,
   },
   filterFormConfig: {
-    type: Function as PropType<(...args: [FileTableFilterFormConfig]) => FileTableFilterFormConfig>,
+    type: [Boolean, Function] as PropType<
+      boolean | ((...args: [FileTableFilterFormConfig]) => FileTableFilterFormConfig)
+    >,
+    default: false,
   },
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },

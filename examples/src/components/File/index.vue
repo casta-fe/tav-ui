@@ -148,7 +148,7 @@ const unifiedTaFileData = reactive({
     fileTable: {
       modeQueryApiType: 'list',
       showOperations: true,
-      filterFormConfig: handleFilterFormConfig,
+      filterFormConfig: false,
       pagerConfig: {
         enabled: true,
       },
