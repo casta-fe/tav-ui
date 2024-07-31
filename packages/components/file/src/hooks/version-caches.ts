@@ -140,8 +140,7 @@ export class VersionCaches {
    */
   deleteAllFileCaches() {
     this.actualidCaches.clear()
-    //@ts-ignore
-    this.caches = null
+    this.caches = {}
   }
 
   /**
