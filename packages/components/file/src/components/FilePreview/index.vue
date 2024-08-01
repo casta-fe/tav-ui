@@ -75,7 +75,6 @@ const {
   setDisable,
   setLoading,
   loading,
-  responseDataType: 'object',
 })
 watch(
   () => ApiResult.value,

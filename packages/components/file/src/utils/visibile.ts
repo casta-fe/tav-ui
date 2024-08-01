@@ -22,6 +22,7 @@ export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
   return !!rowSourceFileDownload
 }
 
+// TODO: 与模式无关
 export function isVersionColVisible(
   enabledVersion: boolean,
   rowHyperlink?: number,
@@ -39,6 +40,7 @@ export function isViewBtnVisible(rowHyperlink: number) {
   return !isHyperlinkRow(rowHyperlink)
 }
 
+// 新增 owner 属性判断，enabledVersion 只控制版本列即可
 export function isUpdateBtnVisible(
   mode: FileMode,
   enabledVersion: boolean,

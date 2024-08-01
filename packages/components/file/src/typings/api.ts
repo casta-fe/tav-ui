@@ -205,3 +205,75 @@ export interface FilePreviewApiResponse {
   /** @description wpsAppId */
   wpsAppId?: string
 }
+
+export interface FileFilterFormFileTypeResponseTree {
+  checked?: boolean
+  children?: FileFilterFormFileTypeResponseTree[]
+  code?: string
+  expanded?: boolean
+  id?: { [key: string]: unknown }
+  leaf?: boolean
+  name?: string
+  /** @enum {string} */
+  nodeType?: 'MODULE' | 'TYPE'
+  parentCode?: string
+  parentId?: { [key: string]: unknown }
+  /** @description nodeType为TYPE时才可能有 */
+  permissionsMap?: {
+    [key: string]: {
+      checked?: boolean
+      /** Format: int64 */
+      originTypeId?: number
+      /** @enum {string} */
+      permissionType?: 'VIEW' | 'WATERMARK' | 'SOURCE'
+      typeId?: string
+    }
+  }
+  /** Format: double */
+  seq?: number
+}
+export interface FileFilterFormFileTypeResponseList {
+  /**
+   * Format: int32
+   * @description appId
+   */
+  appId?: number
+  /** @description 文件类型编码，必传不能为空 */
+  code: string
+  /**
+   * Format: int64
+   * @description 主键主键，编辑时不能为空
+   */
+  id?: number
+  /** @description 模块code */
+  moduleCode?: string
+  /**
+   * Format: int64
+   * @description 模块id
+   */
+  moduleId?: number
+  /**
+   * Format: int64
+   * @description 改类型所属模块的上级模块id
+   */
+  moduleParentId?: number
+  /** @description 文件类型名称，必传不能为空 */
+  name: string
+  /** @description 备注，非必传 */
+  remark?: string
+  /**
+   * Format: double
+   * @description 排序号，必传不能为空
+   */
+  seq: number
+  /** @description 字符串拼接id */
+  sid?: string
+}
+export interface FileFilterFormFileTypeResponse {
+  /** @description 是否是树 */
+  isTree?: boolean
+  /** @description 如果不是树，取这个字段 */
+  list?: FileFilterFormFileTypeResponseList[]
+  /** @description 如果是树，取这个字段 */
+  tree?: FileFilterFormFileTypeResponseTree[]
+}

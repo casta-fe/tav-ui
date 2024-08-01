@@ -243,7 +243,8 @@ async function fileTableCreateRows(...args: ArgumentsOf<FileTableInstance['creat
   await fileTableRef.value?.createRows(...args)
 }
 async function fileTableReadRows(...args: ArgumentsOf<FileTableInstance['readRows']>) {
-  await fileTableRef.value?.readRows(...args)
+  const rows = await fileTableRef.value?.readRows(...args)
+  return rows
 }
 async function fileTableUpdateRows(...args: ArgumentsOf<FileTableInstance['updateRows']>) {
   await fileTableRef.value?.updateRows(...args)

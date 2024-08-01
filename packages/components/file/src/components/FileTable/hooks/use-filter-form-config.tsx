@@ -6,13 +6,14 @@ import {
   type FileTableInstance,
   type FileTableProps,
 } from '../types'
+import { DEFAULT_FILETABLE_CLASSNAME } from '../../../consts'
 import { type GlobalConfigFileProps } from '../../../typings'
 
 export function defaultFilterFormConfigBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  tableProRef: Ref<FileTableInstance['tableProRef']['value']>
+  tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
+  filterFormFileTypeData: Ref<any>
 ) {
-  console.log('defaultFilterFormConfigBuilder', mergedProps, tableProRef)
   const DEFAULT_FILTER_FORM_CONFIG: FileTableFilterFormConfig = {
     inputForm: {
       field: 'searchValue',
@@ -35,13 +36,57 @@ export function defaultFilterFormConfigBuilder(
         field: 'typeCode',
         label: tavI18n('Tav.file.filter.2'),
         colProps: { span: 24 },
-        component: 'Select',
-        componentProps: {
-          options: [], // TODO: 等待郭明接口，把上传节点收敛至此处。该项为多选
-          optionFilterProp: 'label',
-          showSearch: true,
-          allowClear: true,
-          mode: 'multiple',
+        component: 'TreeSelect',
+        defaultValue: [],
+        componentProps: ({ formActionType }) => {
+          return {
+            treeData: filterFormFileTypeData.value,
+            treeNodeFilterProp: 'name', // 模糊搜索这里配置原数据中的属性
+            treeCheckable: true,
+            allowClear: true,
+            showCheckedStrategy: 'SHOW_PARENT',
+            treeDataSimpleMode: {
+              id: 'id',
+              pId: 'parentId',
+            },
+            fieldNames: {
+              label: 'name',
+              value: 'id',
+            },
+            dropdownClassName: `${DEFAULT_FILETABLE_CLASSNAME}-filter-form-file-type-tree-select`,
+            dropdownStyle: { maxHeight: '480px', overflow: 'hidden' },
+            listHeight: 450,
+            maxTagCount: 10,
+            treeIcon: true,
+            // treeIcon(...args: any[]) {
+            //   console.log(args)
+            //   return <>123</>
+            // },
+            dropdownRender(args: any) {
+              const VNode = args.menuNode
+              const VNodeProps = args.props
+              return (
+                <>
+                  <VNode {...VNodeProps} />
+                  <div
+                    class={`${DEFAULT_FILETABLE_CLASSNAME}-filter-form-file-type-tree-select-actions`}
+                  >
+                    <button
+                      class="ant-btn ant-btn-link"
+                      onMousedown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        formActionType?.setFieldsValue({
+                          typeCode: filterFormFileTypeData.value.map((v: any) => v.id),
+                        })
+                      }}
+                    >
+                      {tavI18n('Tav.common.selectAllText')}
+                    </button>
+                  </div>
+                </>
+              )
+            },
+          }
         },
       },
       {
@@ -54,6 +99,7 @@ export function defaultFilterFormConfigBuilder(
         },
         valueType: 'array',
       },
+      // TODO: Owners
     ],
   }
 
@@ -63,22 +109,23 @@ export function defaultFilterFormConfigBuilder(
 export function useFilterFormConfig(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>
+  filterFormFileTypeData: Ref<any>
 }) {
-  const { mergedProps, tableProRef } = options
+  const { mergedProps, tableProRef, filterFormFileTypeData } = options
 
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
 
     if (isBoolean(filterFormConfig)) {
       if (filterFormConfig) {
-        return defaultFilterFormConfigBuilder(mergedProps, tableProRef)
+        return defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
       } else {
         return {
           enabled: false,
         }
       }
     } else {
-      let result = defaultFilterFormConfigBuilder(mergedProps, tableProRef)
+      let result = defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
       result = filterFormConfig(result)
       return result
     }

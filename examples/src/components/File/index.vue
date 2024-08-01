@@ -139,31 +139,14 @@ const unifiedTaFileData = reactive({
     //   // },
     // },
     fileTable: {
+      apiParams: {
+        moduleCode: 'default',
+      },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
-      // showOperations: true,
-      // filterFormConfig: {
-      //   inputForm: {
-      //     field: 'searchValue',
-      //     componentProps: {
-      //       'enter-button': true,
-      //       placeholder: '请输入企业、院所、高校名称',
-      //     },
-      //   },
-      //   pannelForm: [
-      //     {
-      //       field: 'filterSearchValue',
-      //       label: '企业、院所、高校名称',
-      //       labelWidth: 150,
-      //       component: 'Input',
-      //       // componentProps: {
-      //       //   // "enter-button": true,
-      //       //   placeholder: "请输入企业、院所、高校名称"
-      //       // }
-      //     },
-      //   ],
-      // },
+      showOperations: true,
+      filterFormConfig: true,
       pagerConfig: {
         enabled: true,
       },

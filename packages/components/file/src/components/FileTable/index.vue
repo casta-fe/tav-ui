@@ -3,6 +3,7 @@ import {
   type UnwrapRef,
   computed,
   nextTick,
+  onMounted,
   onUnmounted,
   ref,
   watch,
@@ -18,7 +19,10 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import { type FileActionUploadApiResponseRecord } from '../../typings'
+import {
+  type FileActionUploadApiResponseRecord,
+  type FileFilterFormFileTypeResponse,
+} from '../../typings'
 import { type ArgumentsOf, fileSingleDownload } from '../../utils'
 import {
   type FileActionUploadEmits,
@@ -68,7 +72,12 @@ const mergedProps = useMergedProps<FileTableProps>(globalConfigProps, props, 'Ta
 // 针对业务抽象不同模式进行数据处理
 const {
   useModeConfigTable,
-  apiActions: { rowEditorApiOptions, historyApiOptions, deleteApiOptions },
+  apiActions: {
+    apiQueryFilterFormFileTypeOptions,
+    rowEditorApiOptions,
+    historyApiOptions,
+    deleteApiOptions,
+  },
   dataSourceActions: { editRow, updateRow, deleteRow },
 } = useMode({ mergedProps, emits, VersionCachesController })
 
@@ -120,7 +129,7 @@ const loading = computed({
 const { setDisable } = useDisable()
 const { setLoading } = useLoading()
 const {
-  // result: ApiResult,
+  result: ApiResult,
   // error: apiError,
   handleApi,
 } = useRequest({
@@ -169,6 +178,26 @@ async function refreshTableData(params?: FileTableReloadApiParams) {
   loading.value.value = true
   const tableProInstance = (tableProRef.value as any)?.instance as any
   await tableProInstance.reload(params)
+  loading.value.value = false
+}
+
+// 获取筛选框 filetype 数据
+const filterFormFileTypeData = ref()
+async function handleFilterFormFileType() {
+  if (!mergedProps.value.filterFormConfig) return
+
+  loading.value.value = true
+  const options = apiQueryFilterFormFileTypeOptions(mergedProps.value.apiParams)
+  if (!options) return
+  await handleApi(options)
+  if (ApiResult.value.isTree) {
+    filterFormFileTypeData.value = ApiResult.value.tree
+  } else {
+    filterFormFileTypeData.value = ApiResult.value.list.map((item: any) => ({
+      ...item,
+      parentId: item.moduleCode,
+    }))
+  }
   loading.value.value = false
 }
 
@@ -315,6 +344,7 @@ const columns = useColumns({
 const filterFormConfig = useFilterFormConfig({
   mergedProps,
   tableProRef,
+  filterFormFileTypeData,
 })
 
 // 行编辑配置
@@ -339,6 +369,10 @@ function cleanup() {
   actionUpdateClickRow.value = undefined
   VersionCachesController.deleteAllFileCaches()
 }
+
+onMounted(async () => {
+  await handleFilterFormFileType()
+})
 
 onUnmounted(() => {
   cleanup()

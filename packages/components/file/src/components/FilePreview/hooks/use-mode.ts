@@ -36,6 +36,7 @@ export function useMode(options: {
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
       },
+      responseDataType: 'object',
     }
 
     // if (mergedProps.value.mode === 'read') {

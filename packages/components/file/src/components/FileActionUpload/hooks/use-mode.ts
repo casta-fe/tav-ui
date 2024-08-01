@@ -171,13 +171,9 @@ export function useMode(options: {
 
   //:========================================: validate actions :========================================://
   function withValidateTypeCode(instance: ComponentInternalInstance | null) {
-    const parentEl = instance?.proxy?.$el
-    if (
-      parentEl &&
-      parentEl.classList.contains('ta-file-table') &&
-      (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly')
-    ) {
-      // filetable 下的 actionupload 在这俩种模式下不校验
+    const parentEl = instance?.proxy?.$el?.parentElement
+    if (parentEl && parentEl.classList.contains('ta-file-table')) {
+      // filetable 下的 actionupload 不对 typecode 校验
       return false
     }
     return true

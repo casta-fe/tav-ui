@@ -3,12 +3,14 @@ import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import {
   type ApiDeleteFileParams,
+  type ApiQueryFilterFormFileTypeParams,
   type ApiUpdateFileNameAndLinkParams,
   type FileTableEmits,
   type FileTableProps,
 } from '../types'
 import {
   type FileActionUploadApiResponseRecord,
+  type FileFilterFormFileTypeResponse,
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
@@ -294,6 +296,40 @@ export function useMode(options: {
     } else {
       //
     }
+
+    return options
+  }
+
+  function apiQueryFilterFormFileTypeOptions(apiParams: FileTableProps['apiParams']) {
+    if (!mergedProps.value.apiQueryFilterFormFileType) {
+      console.warn('[tavui TaFileTable] apiQueryFilterFormFileType is undefined')
+      return
+    }
+
+    const options: UseRequestHandleApiDefaultOptions<
+      ApiQueryFilterFormFileTypeParams,
+      FileFilterFormFileTypeResponse
+    > = {
+      api: mergedProps.value.apiQueryFilterFormFileType,
+      beforeApi: mergedProps.value.beforeApiQueryFilterFormFileType,
+      afterApi: mergedProps.value.afterApiQueryFilterFormFileType,
+      apiParams: {
+        appId: apiParams.appId,
+        ...(apiParams.moduleCode ? { moduleCode: apiParams.moduleCode } : {}),
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
+        permissionControl: apiParams.permissionControl,
+      },
+      failureMessage: () => {
+        return tavI18n('Tav.common.httpError')
+      },
+      responseDataType: 'object',
+    }
+
+    // if (mergedProps.value.mode === 'read') {
+    // } else if (mergedProps.value.mode === 'create') {
+    // } else if (mergedProps.value.mode === 'update') {
+    // } else {
+    // }
 
     return options
   }
@@ -592,6 +628,7 @@ export function useMode(options: {
     useModeConfigTable,
     apiActions: {
       apiQueryFileOptions,
+      apiQueryFilterFormFileTypeOptions,
       rowEditorApiOptions,
       historyApiOptions,
       deleteApiOptions,

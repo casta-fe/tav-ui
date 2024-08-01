@@ -25,21 +25,17 @@ export interface UseRequestHandleApiDefaultOptions<T, K> {
   /** 只用 success 判断接口成功，默认使用 success + data */
   useSuccessPassRes?: boolean
   callback?: () => void
+  responseDataType?: 'object' | 'array'
 }
 
 export function useRequest(options: {
   setLoading: UseLoadingReturn['setLoading']
   setDisable: UseDisableReturn['setDisable']
   loading?: WritableComputedRef<Ref<boolean>>
-  responseDataType?: 'object' | 'array'
 }) {
   const resultRef = ref<any>([])
   const errorRef = ref<string>('')
-  const { setLoading, setDisable, loading, responseDataType = 'array' } = options
-
-  if (responseDataType === 'object') {
-    resultRef.value = {}
-  }
+  const { setLoading, setDisable, loading } = options
 
   async function handleApi<
     O extends Record<string, any>,
@@ -54,8 +50,9 @@ export function useRequest(options: {
       transformApiParamsToFormData: _transformApiParamsToFormData,
       successMessage: _successMessage,
       failureMessage: _failureMessage,
-      callback: _callback,
       useSuccessPassRes: _useSuccessPassRes,
+      callback: _callback,
+      responseDataType: _responseDataType = 'array',
     } = options
 
     let apiParams = _apiParams
@@ -65,8 +62,9 @@ export function useRequest(options: {
     let transformApiParamsToFormData = _transformApiParamsToFormData
     let successMessage = _successMessage
     let failureMessage = _failureMessage
-    let callback = _callback
     let useSuccessPassRes = _useSuccessPassRes
+    let callback = _callback
+    let responseDataType = _responseDataType
 
     if (!api || !isFunction(api)) return
 
@@ -88,13 +86,18 @@ export function useRequest(options: {
           transformApiParamsToFormData = beforeApiResult.transformApiParamsToFormData
           successMessage = beforeApiResult.successMessage
           failureMessage = beforeApiResult.failureMessage
-          callback = beforeApiResult.callback
           useSuccessPassRes = beforeApiResult.useSuccessPassRes
+          callback = beforeApiResult.callback
+          responseDataType = beforeApiResult.responseDataType
         }
         if (isBoolean(beforeApiResult) && beforeApiResult === false) {
           callback && callback()
           return
         }
+      }
+
+      if (responseDataType === 'object') {
+        resultRef.value = {}
       }
 
       let apiResult: { data: K; [k: string]: any }
