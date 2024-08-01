@@ -611,6 +611,11 @@ export const previewFile = async (id: string, appId?: string) => {
 
 export const previewWPSFile = async (params: any, appId?: string) => {
   const response = await __post(`/api/TIANTA-FILE/api/file/webOnline/${params.id}`)
+  return response
+}
 
+export const queryFilterFormFileType = async (params: any) => {
+  if (!params.appId) console.error('queryFileTypeSearchCom appId required')
+  const response = await __post(`/api/TIANTA-FILE/api/file/queryFileTypeSearchCom`, params)
   return response
 }

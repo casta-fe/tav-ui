@@ -76,6 +76,7 @@ const configTable = useModeConfigTable()
 
 const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = useTableActions({
   mergedProps,
+  tableProRef,
   configTable,
 })
 
@@ -88,8 +89,8 @@ watch(
       const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
 
       if (rows.length > 0) {
-        await tableCreateRows(tableProRef, rows, null)
-        const _dataSource = JSON.parse(JSON.stringify(await tableReadRows(tableProRef)))
+        await tableCreateRows(rows, null)
+        const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
         const dataSource = _dataSource.length > 0 ? _dataSource : rows
         emits('change', rows, dataSource, 'upload')
         emits(
@@ -239,7 +240,6 @@ async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
   await updateRow(
     files[0],
     actionUpdateClickRow.value!,
-    tableProRef,
     tableReadRows,
     tableUpdateRows,
     refreshTableData
@@ -288,14 +288,7 @@ async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
 
   loading.value.value = true
   // 删除表格数据
-  await deleteRow(
-    row,
-    tableProRef,
-    tableReadRows,
-    tableDeleteRows,
-    deleteDataSourceRow,
-    refreshTableData
-  )
+  await deleteRow(row, tableReadRows, tableDeleteRows, deleteDataSourceRow, refreshTableData)
   loading.value.value = false
 }
 

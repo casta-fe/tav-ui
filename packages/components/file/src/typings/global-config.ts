@@ -19,6 +19,7 @@ import {
   type ApiDownloadWaterMarkerFileParams,
   type ApiQueryFileListParams,
   type ApiQueryFileParams,
+  type ApiQueryFilterFormFileTypeParams,
   type ApiUpdateFileNameAndLinkParams,
 } from '../components/FileTable/types'
 import { type ApiUploadLinkFileParams } from '../components/FileActionUploadLink'
@@ -114,6 +115,9 @@ export const globalConfigFileProps = {
     /** 下载水印文件接口，传入 downloadToWatermark */
     apiDownloadWaterMarkerFile: {
       type: Function as PropType<(params: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
+    },
+    apiQueryFilterFormFileType: {
+      type: Function as PropType<(params: ApiQueryFilterFormFileTypeParams) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },

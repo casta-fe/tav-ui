@@ -33,8 +33,9 @@ export interface ApiParams {
    * 2. api/file/upload
    * 3. api/file/queryFile
    * 4. api/file/queryFileList
-   * 5. api/file/updateFile
-   * 6. api/file/deleteFileByActualIds
+   * 5. api/file/queryFileTypeSearchCom
+   * 6. api/file/updateFile
+   * 7. api/file/deleteFileByActualIds
    */
   appId: number | string
   /**
@@ -43,6 +44,7 @@ export interface ApiParams {
    * 2. api/file/upload
    * 3. api/file/queryFile（非必传）
    * 4. api/file/queryFileList（非必传）
+   * 5. api/file/queryFileTypeSearchCom（非必传）
    */
   moduleCode: string
   /**
@@ -55,6 +57,7 @@ export interface ApiParams {
    * 1. api/file/queryFileType（非必传）
    * 2. api/file/queryFile（非必传）
    * 3. api/file/queryFileList（非必传）
+   * 4. api/file/queryFileTypeSearchCom（非必传）
    */
   typeCodes: string[]
   /**
@@ -91,6 +94,7 @@ export interface ApiParams {
    * 1. api/file/queryFileType（非必传）
    * 2. api/file/queryFile（非必传）
    * 3. api/file/queryFileList（非必传）
+   * 4. api/file/queryFileTypeSearchCom（非必传）
    */
   permissionControl: boolean
   /**

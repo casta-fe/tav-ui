@@ -72,6 +72,14 @@ export interface ApiQueryFileListParams {
 }
 
 // 按照 swagger 编写
+export interface ApiQueryFilterFormFileTypeParams {
+  appId: ApiParams['appId']
+  moduleCode?: ApiParams['moduleCode']
+  typeCodes?: ApiParams['typeCodes']
+  permissionControl?: ApiParams['permissionControl']
+}
+
+// 按照 swagger 编写
 export interface ApiUpdateFileNameAndLinkParams {
   appId: ApiParams['appId']
   id?: ApiParams['id']
@@ -104,7 +112,8 @@ export interface FileTableApiParams
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
-    Partial<ApiDownloadFileParams> {}
+    Partial<ApiDownloadFileParams>,
+    ApiQueryFilterFormFileTypeParams {}
 
 export const fileTableProps = {
   //:============================== extend props ==============================://
@@ -197,6 +206,10 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
   },
   afterApiDownloadWaterMarkerFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiQueryFilterFormFileType: {
+    type: Function as PropType<(apiParams: ApiQueryFilterFormFileTypeParams) => Promise<any>>,
+  },
+  afterApiQueryFilterFormFileType: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
@@ -227,21 +240,14 @@ export interface FileTableInstance {
   cleanup: () => Promise<void>
   reload: (params?: FileTableReloadApiParams) => Promise<void>
   createRows: (
-    tableProRef: Ref<ITableProInstance | undefined>,
     rows: FileActionUploadApiResponseRecord[],
     pos: FileActionUploadApiResponseRecord | -1 | null
   ) => Promise<void>
-  readRows: (
-    tableProRef: Ref<ITableProInstance | undefined>
-  ) => Promise<FileActionUploadApiResponseRecord[]>
+  readRows: () => Promise<FileActionUploadApiResponseRecord[]>
   updateRows(
-    tableProRef: Ref<ITableProInstance | undefined>,
     rows: FileActionUploadApiResponseRecord[],
     deleteRows: FileActionUploadApiResponseRecord[],
     pos: FileActionUploadApiResponseRecord | null | -1
   ): Promise<void>
-  deleteRows(
-    tableProRef: Ref<ITableProInstance | undefined>,
-    rows: FileActionUploadApiResponseRecord[]
-  ): Promise<void>
+  deleteRows(rows: FileActionUploadApiResponseRecord[]): Promise<void>
 }

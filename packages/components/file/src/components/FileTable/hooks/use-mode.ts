@@ -489,10 +489,8 @@ export function useMode(options: {
   async function updateRow(
     _row: FileActionUploadApiResponseRecord,
     _clickedRow: FileActionUploadApiResponseRecord,
-    tableProRef: any,
-    tableReadRows: (tableProRef: any) => Promise<FileActionUploadApiResponseRecord[]>,
+    tableReadRows: () => Promise<FileActionUploadApiResponseRecord[]>,
     tableUpdateRows: (
-      tableProRef: any,
       rows: FileActionUploadApiResponseRecord[],
       deleteRows: FileActionUploadApiResponseRecord[],
       pos: FileActionUploadApiResponseRecord | null | -1
@@ -504,11 +502,11 @@ export function useMode(options: {
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
     async function action(updatedVersionRow?: FileActionUploadApiResponseRecord) {
-      await tableUpdateRows(tableProRef, [updatedVersionRow ?? row], [clickedRow], clickedRow)
+      await tableUpdateRows([updatedVersionRow ?? row], [clickedRow], clickedRow)
     }
 
     async function getDataSource() {
-      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows(tableProRef)))
+      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
       return _dataSource.length > 0 ? _dataSource : [row]
     }
 
@@ -543,9 +541,8 @@ export function useMode(options: {
 
   async function deleteRow(
     _clickedRow: FileActionUploadApiResponseRecord,
-    tableProRef: any,
-    tableReadRows: (tableProRef: any) => Promise<FileActionUploadApiResponseRecord[]>,
-    tableDeleteRows: (tableProRef: any, rows: FileActionUploadApiResponseRecord[]) => Promise<void>,
+    tableReadRows: () => Promise<FileActionUploadApiResponseRecord[]>,
+    tableDeleteRows: (rows: FileActionUploadApiResponseRecord[]) => Promise<void>,
     deleteDataSourceRow: () => Promise<void>,
     refreshTableData: (...args: any[]) => Promise<any>
   ) {
@@ -553,11 +550,11 @@ export function useMode(options: {
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
     async function action() {
-      await tableDeleteRows(tableProRef, [clickedRow])
+      await tableDeleteRows([clickedRow])
     }
 
     async function getDataSource() {
-      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows(tableProRef)))
+      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
       return _dataSource.length > 0 ? _dataSource : [clickedRow]
     }
 

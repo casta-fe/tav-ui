@@ -1,4 +1,4 @@
-import { type ComputedRef, toRaw } from 'vue'
+import { type ComputedRef, type Ref, toRaw } from 'vue'
 import { type ITableProInstance, type TableProProps } from '@tav-ui/components/table-pro'
 import {
   type FileActionUploadApiResponseRecord,
@@ -13,6 +13,7 @@ import { type FileTableProps } from '../types'
  */
 export function useTableActions(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
+  tableProRef: Ref<ITableProInstance | undefined>
   configTable: ComputedRef<{
     data: FileActionUploadApiResponseRecord[] | undefined
     api?: ((...args: any[]) => Promise<any>) | undefined
@@ -21,10 +22,9 @@ export function useTableActions(options: {
     pagerConfig: TableProProps['pagerConfig']
   }>
 }) {
-  const { configTable } = options
+  const { tableProRef, configTable } = options
 
   async function tableCreateRows(
-    tableProRef: any,
     rows: FileActionUploadApiResponseRecord[],
     /** row 指定位置、null从第一行插入、-1 从最后插入 */
     pos: FileActionUploadApiResponseRecord | null | -1
@@ -35,7 +35,7 @@ export function useTableActions(options: {
     await Promise.all(promiseAll)
   }
 
-  async function tableReadRows(tableProRef: any) {
+  async function tableReadRows() {
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
     const { fullData, tableData } = await tableProInstance.getTableData()
@@ -45,17 +45,16 @@ export function useTableActions(options: {
   }
 
   async function tableUpdateRows(
-    tableProRef: any,
     rows: FileActionUploadApiResponseRecord[],
     deleteRows: FileActionUploadApiResponseRecord[],
     /** row 指定位置、null从第一行插入、-1 从最后插入 */
     pos: FileActionUploadApiResponseRecord | null | -1
   ) {
-    await tableCreateRows(tableProRef, rows, pos)
-    await tableDeleteRows(tableProRef, deleteRows)
+    await tableCreateRows(rows, pos)
+    await tableDeleteRows(deleteRows)
   }
 
-  async function tableDeleteRows(tableProRef: any, rows: FileActionUploadApiResponseRecord[]) {
+  async function tableDeleteRows(rows: FileActionUploadApiResponseRecord[]) {
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
     // 指定 row 或 [row, ...] 删除多条数据，如果为空则删除所有数据

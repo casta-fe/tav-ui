@@ -47,6 +47,21 @@ const routes: RouteRecordRaw[] = [
     name: 'File',
     component: () => import('../components/File/index.vue'),
   },
+  {
+    path: '/file-type-select',
+    name: 'FileTypeSelect',
+    component: () => import('../components/File/type-select.vue'),
+  },
+  {
+    path: '/file-upload',
+    name: 'FileUpload',
+    component: () => import('../components/File/upload.vue'),
+  },
+  {
+    path: '/file-table',
+    name: 'FileTable',
+    component: () => import('../components/File/table.vue'),
+  },
 ]
 
 export const router = createRouter({
