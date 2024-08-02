@@ -164,7 +164,7 @@ export const fileTableProps = {
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
   // 控制行编辑，只能编辑 filename 以及 hyperlinkaddress
   enabledRowEdit: { type: Boolean, default: false },
-  // 控制 version 与操作列更新按钮有无，除了这个标识还需要根据返回数据中的字段 hyperlink 与 auto 来判断
+  // 控制 version 列
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
   enabledPreview: { type: Boolean, default: true },
@@ -215,9 +215,9 @@ export const fileTableProps = {
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
 
 export const fileTableEmits = {
-  change: (
-    ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
-  ) => args instanceof Object,
+  // change: (
+  //   ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
+  // ) => args instanceof Object,
   actualidsChange: (
     ...args: [
       (
@@ -230,6 +230,9 @@ export const fileTableEmits = {
       )[]
     ]
   ) => args instanceof Object,
+  rowEdit: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
+  rowUpdate: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
+  rowDelete: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
 }
 
 export type FileTableEmits = typeof fileTableEmits

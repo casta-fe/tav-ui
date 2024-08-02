@@ -22,7 +22,6 @@ export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
   return !!rowSourceFileDownload
 }
 
-// TODO: 与模式无关
 export function isVersionColVisible(
   enabledVersion: boolean,
   rowHyperlink?: number,
@@ -40,14 +39,9 @@ export function isViewBtnVisible(rowHyperlink: number) {
   return !isHyperlinkRow(rowHyperlink)
 }
 
-// 新增 owner 属性判断，enabledVersion 只控制版本列即可
-export function isUpdateBtnVisible(
-  mode: FileMode,
-  enabledVersion: boolean,
-  rowHyperlink: number,
-  rowAuto: number
-) {
-  return !isReadMode(mode) && isVersionColVisible(enabledVersion, rowHyperlink, rowAuto)
+// TODO: 新增 owner 属性判断
+export function isUpdateBtnVisible(mode: FileMode, rowHyperlink: number, rowAuto: number) {
+  return !isReadMode(mode) && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
 }
 
 export function isDownloadWatermarkBtnVisible(

@@ -24,7 +24,6 @@ export function defaultActionsBuilder(
   handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const mode = mergedProps.value.mode
-  const enabledVersion = mergedProps.value.enabledVersion
 
   const DEFAULT_ACTIONS: FileTableAction[] = [
     ...(mergedProps.value.enabledPreview
@@ -32,7 +31,6 @@ export function defaultActionsBuilder(
           {
             field: 'view',
             label: tavI18n('Tav.file.actions.1'),
-            // 抛出去通过 field 控制
             // permission: props.tableActionPermission.preview,
             enabled: isViewBtnVisible(row.hyperlink!),
             onClick: () => {
@@ -41,12 +39,12 @@ export function defaultActionsBuilder(
           },
         ]
       : []),
-    ...(isUpdateBtnVisible(mode, enabledVersion, row.hyperlink!, row.auto!)
+    ...(isUpdateBtnVisible(mode, row.hyperlink!, row.auto!)
       ? [
           {
             field: 'update',
             label: tavI18n('Tav.file.actions.5'),
-            enabled: isUpdateBtnVisible(mode, enabledVersion, row.hyperlink!, row.auto!),
+            enabled: isUpdateBtnVisible(mode, row.hyperlink!, row.auto!),
             onClick: async () => {
               await handleUpdateBtnClick(row)
             },
@@ -56,7 +54,6 @@ export function defaultActionsBuilder(
     {
       field: 'downloadWatermark',
       label: tavI18n('Tav.file.actions.4'),
-      // permission: props.tableActionPermission.download,
       enabled: isDownloadWatermarkBtnVisible(row.hyperlink!, row.watermarkFileDownload!),
       onClick: async () => {
         await handleDownloadWatermarkBtnClick(row)

@@ -1,6 +1,7 @@
-import { type ComputedRef, type Ref, type SetupContext, computed } from 'vue'
+import { type ComputedRef, type Ref, type SetupContext, computed, nextTick, toRaw } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
+import { type ITableProInstance } from '@tav-ui/components/table-pro'
 import {
   type ApiDeleteFileParams,
   type ApiQueryFilterFormFileTypeParams,
@@ -55,12 +56,46 @@ function createQueryApiOptionsWithPagerConfig(
   }
 }
 
+/**
+ * 在 api 返回后处理外部传入的 datasource 并且返回初始化事件
+ * @param options
+ */
+function handlePropsDataSourceInAfterApi(options: {
+  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
+  emits: SetupContext<FileTableEmits>['emit']
+  VersionCachesController: VersionCaches
+  tableProRef: Ref<ITableProInstance | undefined>
+  apiResult: any
+}) {
+  const { mergedProps, emits, VersionCachesController, tableProRef, apiResult } = options
+
+  setTimeout(async () => {
+    // 外部传入的 datasource 处理
+    const rawDataSource = toRaw(mergedProps.value.dataSource ?? [])
+    await nextTick()
+    const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
+    const promiseAll = rawDataSource.map(async (row) => tableProInstance.insertAt(row, null))
+    await Promise.all(promiseAll)
+
+    const rows = JSON.parse(JSON.stringify([...rawDataSource, ...(apiResult ?? [])]))
+    // 在初始化时机抛出事件
+    // emits('change', rows, rows, 'init')
+    emits(
+      'actualidsChange',
+      rows.map((file: any) => file.actualId)
+    )
+
+    VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+  }, 150)
+}
+
 export function useMode(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
+  tableProRef: Ref<ITableProInstance | undefined>
 }) {
-  const { mergedProps, emits, VersionCachesController } = options
+  const { mergedProps, emits, VersionCachesController, tableProRef } = options
 
   /**
    * 根据 props 来设置 tablepro 的参数，包括：data、api、beforeapi、afterapi、pagerconfig、immediate
@@ -160,6 +195,15 @@ export function useMode(options: {
           '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
         )
 
+        // 即使是空也要判断外部传入的 datasource
+        handlePropsDataSourceInAfterApi({
+          mergedProps,
+          emits,
+          VersionCachesController,
+          tableProRef,
+          apiResult: [],
+        })
+
         dataOrApiConfig = dataOrApiConfigWithNull
       }
 
@@ -185,17 +229,13 @@ export function useMode(options: {
       afterApi: async (apiResult: any) => {
         const _apiResult = (await mergedProps.value.afterApiQueryFile?.(apiResult)) || apiResult
 
-        // 在初始化时机抛出事件
-        setTimeout(() => {
-          const rows = JSON.parse(JSON.stringify([...(_apiResult.data[listField] ?? [])]))
-          emits('change', rows, rows, 'init')
-          emits(
-            'actualidsChange',
-            rows.map((file: any) => file.actualId)
-          )
-
-          VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
-        }, 150)
+        handlePropsDataSourceInAfterApi({
+          mergedProps,
+          emits,
+          VersionCachesController,
+          tableProRef,
+          apiResult: _apiResult.data[listField] ?? [],
+        })
 
         return _apiResult
       },
@@ -225,17 +265,13 @@ export function useMode(options: {
         // const _apiResult = (await mergedProps.value.afterApiQueryFileList?.(apiResult)) || apiResult // 与上面 afterApiQueryFile 合并为一个函数
         const _apiResult = (await mergedProps.value.afterApiQueryFile?.(apiResult)) || apiResult
 
-        // 在初始化时机抛出事件
-        setTimeout(() => {
-          const rows = JSON.parse(JSON.stringify([...(_apiResult.data ?? [])]))
-          emits('change', rows, rows, 'init')
-          emits(
-            'actualidsChange',
-            rows.map((file: any) => file.actualId)
-          )
-
-          VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
-        }, 150)
+        handlePropsDataSourceInAfterApi({
+          mergedProps,
+          emits,
+          VersionCachesController,
+          tableProRef,
+          apiResult: _apiResult.data ?? [],
+        })
 
         // 不分页接口需要劫持 afterapi 组装分页数据将分页器显示出来，这样避免想使用分页器必须传入分页接口的情况
         return {
@@ -263,17 +299,6 @@ export function useMode(options: {
     if (mergedProps.value.modeQueryApiType === 'pager') {
       apiConfig = modeQueryApiTypePagerConfig
     } else {
-      apiConfig = modeQueryApiTypeListConfig
-    }
-
-    if (
-      ['update'].includes(mergedProps.value.mode) &&
-      mergedProps.value.modeQueryApiType === 'pager'
-    ) {
-      // 编辑模式只能使用不分页接口
-      console.warn(
-        '[tavui TaFileTable] apiQueryFile is only used in "read" or "updateInstantly" mode, force to use apiQueryFileList'
-      )
       apiConfig = modeQueryApiTypeListConfig
     }
 
@@ -450,75 +475,92 @@ export function useMode(options: {
 
   //:========================================: dataSource actions :========================================://
   async function editRow(
-    dataSource: Ref<FileActionUploadApiResponseRecord[] | undefined>,
-    row: FileActionUploadApiResponseRecord,
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
-    editDataSourceRow: (...args: any[]) => Promise<any>
+    _row: FileActionUploadApiResponseRecord,
+    tableReadRows: () => Promise<FileActionUploadApiResponseRecord[]>,
+    tableCreateRows: (
+      rows: FileActionUploadApiResponseRecord[],
+      pos: FileActionUploadApiResponseRecord | null | -1
+    ) => Promise<void>,
+    tableDeleteRows: (rows: FileActionUploadApiResponseRecord[]) => Promise<void>,
+    editDataSourceRow: (...args: any[]) => Promise<any>,
+    refreshTableData: (...args: any[]) => Promise<any>
   ) {
     const mode = mergedProps.value.mode
+    const row = JSON.parse(JSON.stringify(_row))
 
-    function action() {
-      const rows = [...(dataSource.value ?? [])]
-      const idx = rows.findIndex((r) => r.actualId === row.actualId)
-
-      if (changeEventPayload.name) row.name = changeEventPayload.name
-      if (row.hyperlink) {
-        if (changeEventPayload.address) row.address = changeEventPayload.address
+    async function action() {
+      const newrow = { ...row }
+      if (changeEventPayload.name) newrow.name = changeEventPayload.name
+      if (newrow.hyperlink) {
+        if (changeEventPayload.address) newrow.address = changeEventPayload.address
       } else {
-        if (changeEventPayload.name) row.fullName = `${changeEventPayload.name}.${row.suffix}`
+        if (changeEventPayload.name) newrow.fullName = `${changeEventPayload.name}.${newrow.suffix}`
       }
+      await tableDeleteRows([row])
+      await tableCreateRows([newrow], null)
+      return newrow
+    }
 
-      rows.splice(idx, 1, row)
-      return rows
+    async function getDataSource() {
+      const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
+      return _dataSource.length > 0 ? _dataSource : [row]
     }
 
     if (mode === 'read') {
-      dataSource.value = [...action()]
-      VersionCachesController.updateFileCaches(row)
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      const newrow = await action()
+      const dataSource = await getDataSource()
+      VersionCachesController.updateFileCaches(newrow)
+      // emits(
+      //   'change',
+      //   [{ ...newrow }],
+      //   JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+      //   'update'
+      // )
       emits(
         'actualidsChange',
         JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
       )
     } else if (mode === 'create') {
-      dataSource.value = [...action()]
-      VersionCachesController.updateFileCaches(row)
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      const newrow = await action()
+      const dataSource = await getDataSource()
+      VersionCachesController.updateFileCaches(newrow)
+      // emits(
+      //   'change',
+      //   [{ ...newrow }],
+      //   JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+      //   'update'
+      // )
       emits(
         'actualidsChange',
         JSON.parse(JSON.stringify([...(dataSource.value ?? [])])).map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      dataSource.value = [...action()]
-      VersionCachesController.updateFileCaches(row)
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      const newrow = await action()
+      const dataSource = await getDataSource()
+      VersionCachesController.updateFileCaches(newrow)
+      // emits(
+      //   'change',
+      //   [{ ...newrow }],
+      //   JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+      //   'update'
+      // )
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      dataSource.value = [...action()]
-      VersionCachesController.updateFileCaches(row)
-      emits(
-        'change',
-        [{ ...row }],
-        JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
-        'update'
-      )
+      const newrow = await action()
+      const dataSource = await getDataSource()
+      VersionCachesController.updateFileCaches(newrow)
+      // emits(
+      //   'change',
+      //   [{ ...newrow }],
+      //   JSON.parse(JSON.stringify([...(dataSource.value ?? [])])),
+      //   'update'
+      // )
       emits('actualidsChange', VersionCachesController.getCaches())
+
       await editDataSourceRow(changeEventPayload)
+      // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
+      // await refreshTableData()
     }
   }
 
@@ -551,7 +593,7 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const dataSource = await getDataSource()
-      emits('change', [row], dataSource, 'update')
+      // emits('change', [row], dataSource, 'update')
       emits(
         'actualidsChange',
         dataSource.map((file: any) => file.actualId)
@@ -563,15 +605,17 @@ export function useMode(options: {
       )
       await action(latestVersionFileCache)
       const dataSource = await getDataSource()
-      emits('change', [row], dataSource, 'update')
+      // emits('change', [row], dataSource, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.createFileCache(row, mode)
       await action()
       const dataSource = await getDataSource()
-      emits('change', [row], dataSource, 'update')
+      // emits('change', [row], dataSource, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
-      await refreshTableData()
+
+      // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
+      // await refreshTableData()
     }
   }
 
@@ -599,7 +643,7 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const dataSource = await getDataSource()
-      emits('change', [clickedRow], dataSource, 'delete')
+      // emits('change', [clickedRow], dataSource, 'delete')
       emits(
         'actualidsChange',
         dataSource.map((file: any) => file.actualId)
@@ -609,17 +653,18 @@ export function useMode(options: {
       await action()
       const dataSource = await getDataSource()
 
-      emits('change', [clickedRow], dataSource, 'delete')
+      // emits('change', [clickedRow], dataSource, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.deleteFileCaches(clickedRow.actualId!)
       await action()
       const dataSource = await getDataSource()
-      emits('change', [clickedRow], dataSource, 'delete')
+      // emits('change', [clickedRow], dataSource, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       await deleteDataSourceRow()
-      await refreshTableData()
+      // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
+      // await refreshTableData()
     }
   }
   //:========================================: dataSource actions :========================================://

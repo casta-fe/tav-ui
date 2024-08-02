@@ -226,14 +226,29 @@ function handleFileActionUploadLinkChange(...args: any) {
   }
 }
 
-function handleFileTableChange(...args: any) {
-  const _args = args as unknown as ArgumentsOf<FileTableEmits['change']>
-  emits('change', ..._args)
-}
+// function handleFileTableChange(...args: any) {
+//   const _args = args as unknown as ArgumentsOf<FileTableEmits['change']>
+//   emits('change', ..._args)
+// }
 
 function handleFileTableActualidsChange(...args: any) {
   const _args = args as unknown as ArgumentsOf<FileTableEmits['actualidsChange']>
   emits('update:fileActualIds', ..._args)
+}
+
+function handleFileTableRowEdit(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['rowEdit']>
+  emits('fileTable:rowEdit', ..._args)
+}
+
+function handleFileTableRowUpdate(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['rowUpdate']>
+  emits('fileTable:rowUpdate', ..._args)
+}
+
+function handleFileTableRowDelete(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['rowDelete']>
+  emits('fileTable:rowDelete', ..._args)
 }
 
 async function fileTableRelod(params?: FileTableReloadApiParams) {
@@ -365,11 +380,14 @@ defineExpose({
           <slot name="FileTable" v-bind="fileTableProps" />
         </template>
         <template v-else>
+          <!-- @change="handleFileTableChange" -->
           <TaFileTable
             ref="fileTableRef"
             v-bind="fileTableProps"
-            @change="handleFileTableChange"
             @actualids-change="handleFileTableActualidsChange"
+            @row-edit="handleFileTableRowEdit"
+            @row-update="handleFileTableRowUpdate"
+            @row-delete="handleFileTableRowDelete"
           />
         </template>
       </section>

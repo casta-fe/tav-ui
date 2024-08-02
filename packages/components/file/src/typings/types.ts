@@ -227,7 +227,7 @@ export const fileProps = {
 export type FileProps = ExtractPropTypes<typeof fileProps>
 
 export const fileEmits = {
-  change: (...args: ArgumentsOf<FileTableEmits['change']>) => args instanceof Object,
+  // change: (...args: ArgumentsOf<FileTableEmits['change']>) => args instanceof Object,
   'update:fileActualIds': (...args: ArgumentsOf<FileTableEmits['actualidsChange']>) =>
     args instanceof Object,
 
@@ -254,6 +254,12 @@ export const fileEmits = {
   'fileActionUploadLink:uploadedChange': (
     ...args: ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
   ) => args instanceof Object,
+
+  'fileTable:rowEdit': (...args: ArgumentsOf<FileTableEmits['rowEdit']>) => args instanceof Object,
+  'fileTable:rowUpdate': (...args: ArgumentsOf<FileTableEmits['rowUpdate']>) =>
+    args instanceof Object,
+  'fileTable:rowDelete': (...args: ArgumentsOf<FileTableEmits['rowDelete']>) =>
+    args instanceof Object,
 }
 
 export type FileEmits = typeof fileEmits

@@ -19,10 +19,7 @@ import {
   useMergedProps,
   useRequest,
 } from '../../hooks'
-import {
-  type FileActionUploadApiResponseRecord,
-  type FileFilterFormFileTypeResponse,
-} from '../../typings'
+import { type FileActionUploadApiResponseRecord } from '../../typings'
 import { type ArgumentsOf, fileSingleDownload } from '../../utils'
 import {
   type FileActionUploadEmits,
@@ -79,7 +76,7 @@ const {
     deleteApiOptions,
   },
   dataSourceActions: { editRow, updateRow, deleteRow },
-} = useMode({ mergedProps, emits, VersionCachesController })
+} = useMode({ mergedProps, emits, VersionCachesController, tableProRef })
 
 const configTable = useModeConfigTable()
 
@@ -89,8 +86,6 @@ const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = use
   configTable,
 })
 
-// datasource 处理外部传入 datasource（不用 api）的情况，上传成功后也会通过 datasource 将文件传入
-const dataSource = ref(mergedProps.value.dataSource)
 watch(
   () => mergedProps.value.dataSource,
   async (curdatasource) => {
@@ -101,7 +96,7 @@ watch(
         await tableCreateRows(rows, null)
         const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
         const dataSource = _dataSource.length > 0 ? _dataSource : rows
-        emits('change', rows, dataSource, 'upload')
+        // emits('change', rows, dataSource, 'upload')
         emits(
           'actualidsChange',
           dataSource.map((file: any) => file.actualId)
@@ -112,6 +107,11 @@ watch(
       }
     }
   }
+  // 不初始化监听是因为将外部传入的 datasource 初始化工作移动至 use-mode.ts 中的 handlePropsDataSourceInAfterApi（datasource 处理必须在 api 请求回来后，因为当传入 api 的时候 tablepro 的渲染依赖于 api）
+  // 后续 datasource 的变化在 watch 中与 upload 共同处理
+  // {
+  //   immediate: true,
+  // }
 )
 
 // 统一内部 loading 状态
@@ -223,8 +223,18 @@ async function handleCellEditClick(
 
   loading.value.value = true
   // 更新表格数据
-  await editRow(dataSource, row, changeEventPayload, editDataSourceRow)
+  await editRow(
+    changeEventPayload,
+    row,
+    tableReadRows,
+    tableCreateRows,
+    tableDeleteRows,
+    editDataSourceRow,
+    refreshTableData
+  )
   loading.value.value = false
+
+  emits('rowEdit', row)
 }
 
 // version 弹窗处理
@@ -259,6 +269,8 @@ async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
 
   actionUpdateClickRow.value = row
   FileActionUploadForActionUpdateBtnRef.value?.openFilePicker?.()
+
+  emits('rowUpdate', row)
 }
 // 点击更新时 upload 回调
 async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
@@ -319,6 +331,8 @@ async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
   // 删除表格数据
   await deleteRow(row, tableReadRows, tableDeleteRows, deleteDataSourceRow, refreshTableData)
   loading.value.value = false
+
+  emits('rowDelete', row)
 }
 
 // 处理操作列

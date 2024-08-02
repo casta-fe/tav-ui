@@ -235,7 +235,10 @@ async function beforeHandleApiAction3() {
       fileList.value,
       mergedProps.value.apiParams.typeCode
     )
-    if (!beforeUploadResult) return
+    if (!beforeUploadResult) {
+      resetFileList()
+      return
+    }
   }
 
   let options

@@ -86,29 +86,8 @@ const unifiedTaFileData = reactive({
       // },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
-      filterFormConfig: handleFilterFormConfig,
-      showOperations: true,
-      // filterFormConfig: {
-      //   inputForm: {
-      //     field: 'searchValue',
-      //     componentProps: {
-      //       'enter-button': true,
-      //       placeholder: '请输入企业、院所、高校名称',
-      //     },
-      //   },
-      //   pannelForm: [
-      //     {
-      //       field: 'filterSearchValue',
-      //       label: '企业、院所、高校名称',
-      //       labelWidth: 150,
-      //       component: 'Input',
-      //       // componentProps: {
-      //       //   // "enter-button": true,
-      //       //   placeholder: "请输入企业、院所、高校名称"
-      //       // }
-      //     },
-      //   ],
-      // },
+      // filterFormConfig: handleFilterFormConfig,
+      // showOperations: true,
       pagerConfig: {
         enabled: false,
       },
@@ -132,12 +111,18 @@ const unifiedTaFileData = reactive({
     },
     fileActualIds: [],
     // fileTypeSelect: {
-    //   // apiParams: {
-    //   //   moduleCode: 'kf_pitch',
-    //   //   appId: 10002,
-    //   //   permissionControl: true
-    //   // },
+    //   apiParams: {
+    //     moduleCode: 'kf_pitch',
+    //     appId: 10002,
+    //     permissionControl: true
+    //   },
     // },
+    fileActionUpload: {
+      beforeUpload(...args: any[]) {
+        console.log(args)
+        return false
+      },
+    },
     fileTable: {
       apiParams: {
         moduleCode: 'default',
@@ -145,11 +130,45 @@ const unifiedTaFileData = reactive({
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
-      showOperations: true,
-      filterFormConfig: true,
-      pagerConfig: {
-        enabled: true,
-      },
+      dataSource: [
+        {
+          id: 73086,
+          appId: 10001,
+          actualId: '5d8e721a997348c19c46041178348834',
+          moduleId: 9,
+          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+          businessId: 'TG-20240607000003-0',
+          type: 9,
+          deleted: 0,
+          version: 1,
+          name: '10',
+          suffix: 'png',
+          fullName: '10.png',
+          size: 45113,
+          address: '/20240607/17177485273641322.png',
+          runtime: null,
+          hyperlink: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 2,
+          fileSize: '44KB',
+          createBy: '1',
+          createByName: '系统管理员',
+          expand: null,
+          dataType: null,
+          toPdf: 0,
+          errorMsg: null,
+          moduleCode: 'tg_company',
+          moduleName: '评估立项',
+          typeCode: 'INVEST_FOUND_BFJY',
+          typeName: '拜访纪要',
+          createTime: '2024-06-07 16:22:07',
+        },
+      ],
+      // showOperations: true,
+      // filterFormConfig: true,
+      // pagerConfig: {
+      //   enabled: true,
+      // },
     },
   },
 })
@@ -168,15 +187,12 @@ watch(
   }
 )
 
-function handlefilechange(...args: any) {
-  console.log(args)
-}
 function handleFileTableActions(args: any) {
-  console.log(args)
+  // console.log(args)
   return args
 }
 function handleFilterFormConfig(args: any) {
-  console.log(args)
+  // console.log(args)
   return args
 }
 </script>
@@ -188,7 +204,6 @@ function handleFilterFormConfig(args: any) {
       ref="fileRef"
       v-bind="unifiedTaFileData.updateInstantly"
       v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
-      @change="handlefilechange"
     />
   </section>
 </template>
