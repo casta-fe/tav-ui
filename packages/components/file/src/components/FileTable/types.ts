@@ -160,6 +160,14 @@ export const fileTableProps = {
     >,
     default: false,
   },
+  /** tafile 内部使用勿传 */
+  __uploadDataSource: {
+    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
+  },
+  /** tafile 内部使用勿传 */
+  __uploadLinkDataSource: {
+    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
+  },
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
   // 控制行编辑，只能编辑 filename 以及 hyperlinkaddress
@@ -168,6 +176,8 @@ export const fileTableProps = {
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
   enabledPreview: { type: Boolean, default: true },
+  // 控制操作列更新按钮有无
+  enabledUpdate: { type: Boolean, default: true },
   /** apiUploadFile 已从 ...globalConfigFileProps['filetable'] 取到 */
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,

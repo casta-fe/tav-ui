@@ -6,7 +6,6 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  watch,
   /*useSlots, useAttrs*/
 } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
@@ -36,12 +35,19 @@ import {
   fileTableEmits,
   fileTableProps,
 } from './types'
-import { useActions, useColumns, useFilterFormConfig, useMode, useTableActions } from './hooks'
+import {
+  useActions,
+  useColumns,
+  useDataSource,
+  useFilterFormConfig,
+  useMode,
+  useTableActions,
+} from './hooks'
 
 /**
- * 1. Table 数据源来源于 api：queryfile/queryfilelist 与 datasource（upload 上传成功后会将文件数据通过该属性传入）；使用 datasource 传入的数据默认出现在表格最上方
+ * 1. Table 数据源来源于 api：queryfile/queryfilelist 与 datasource（__uploadDataSource、__uploadLinkDataSource 为内部使用的上传文件、超链接数据源）
  * 2. useRequest 只用于行操作的请求，例如：删除、行编辑
- * 2. 表格行数据的增删改查直接调用 vxetable api 实现而非借用 datasource 操作，这样能解耦数据操作降低复杂度
+ * 2. 表格行数据的增删改查直接调用 vxetable api 实现而非像 taupload 中共用一个 datasource 操作，这样能解耦数据操作降低复杂度
  * 3. 表格默认调用 queryfile/queryfilelist，本次修改将分页器也支持不分页接口，做到分页器与接口数据解耦
  * 4. 文件数据的缓存只用于编辑/立即更新模式，因为这俩种模式下点击更新后都会由前端计算并将数据作为 verisonlist 通过双向绑定的 actualids 传出；只读/新增模式点击版本时直接调用 queryfilehistory
  * 5. 与模式强相关的操作都在 use-mode.ts 中
@@ -66,54 +72,6 @@ const mergedProps = useMergedProps<FileTableProps>(globalConfigProps, props, 'Ta
   ...DEFAULT_APIPARAMS,
 })
 
-// 针对业务抽象不同模式进行数据处理
-const {
-  useModeConfigTable,
-  apiActions: {
-    apiQueryFilterFormFileTypeOptions,
-    rowEditorApiOptions,
-    historyApiOptions,
-    deleteApiOptions,
-  },
-  dataSourceActions: { editRow, updateRow, deleteRow },
-} = useMode({ mergedProps, emits, VersionCachesController, tableProRef })
-
-const configTable = useModeConfigTable()
-
-const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = useTableActions({
-  mergedProps,
-  tableProRef,
-  configTable,
-})
-
-watch(
-  () => mergedProps.value.dataSource,
-  async (curdatasource) => {
-    if (curdatasource) {
-      const rows = JSON.parse(JSON.stringify([...(curdatasource ?? [])]))
-
-      if (rows.length > 0) {
-        await tableCreateRows(rows, null)
-        const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
-        const dataSource = _dataSource.length > 0 ? _dataSource : rows
-        // emits('change', rows, dataSource, 'upload')
-        emits(
-          'actualidsChange',
-          dataSource.map((file: any) => file.actualId)
-        )
-
-        // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
-        // (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') && (await refreshTableData())
-      }
-    }
-  }
-  // 不初始化监听是因为将外部传入的 datasource 初始化工作移动至 use-mode.ts 中的 handlePropsDataSourceInAfterApi（datasource 处理必须在 api 请求回来后，因为当传入 api 的时候 tablepro 的渲染依赖于 api）
-  // 后续 datasource 的变化在 watch 中与 upload 共同处理
-  // {
-  //   immediate: true,
-  // }
-)
-
 // 统一内部 loading 状态
 const _loading = ref(mergedProps.value.loading)
 const loading = computed({
@@ -123,6 +81,36 @@ const loading = computed({
   set(newLoading: any) {
     _loading.value = newLoading.value
   },
+})
+
+// 针对业务抽象不同模式进行数据处理
+const {
+  useModeConfigTable,
+  apiActions: {
+    apiQueryFilterFormFileTypeOptions,
+    rowEditorApiOptions,
+    historyApiOptions,
+    deleteApiOptions,
+  },
+  dataActions: { editRow, updateRow, deleteRow },
+} = useMode({ mergedProps, emits, VersionCachesController })
+
+const configTable = useModeConfigTable()
+
+const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = useTableActions({
+  mergedProps,
+  tableProRef,
+  configTable,
+  loading,
+})
+
+useDataSource({
+  mergedProps,
+  tableCreateRows,
+  tableReadRows,
+  tableDeleteRows,
+  emits,
+  VersionCachesController,
 })
 
 // 使用 api 处理数据
@@ -171,7 +159,7 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
 }
 
 // 立即更新模式操作后（更新、删除）刷新数据
-async function refreshTableData(params?: FileTableReloadApiParams) {
+async function refreshTableDataApiAction(params?: FileTableReloadApiParams) {
   if (!mergedProps.value.visible) return
 
   await nextTick()
@@ -215,7 +203,7 @@ async function handleCellEditClick(
     return
   }
 
-  async function editDataSourceRow() {
+  async function editRowApiAction() {
     const options = rowEditorApiOptions(mergedProps.value.apiParams, changeEventPayload)
     if (!options) return
     await handleApi(options)
@@ -229,8 +217,8 @@ async function handleCellEditClick(
     tableReadRows,
     tableCreateRows,
     tableDeleteRows,
-    editDataSourceRow,
-    refreshTableData
+    editRowApiAction,
+    refreshTableDataApiAction
   )
   loading.value.value = false
 
@@ -283,7 +271,7 @@ async function handleFileActionUploadForActionUpdateBtnChange(...args: any) {
     actionUpdateClickRow.value!,
     tableReadRows,
     tableUpdateRows,
-    refreshTableData
+    refreshTableDataApiAction
   )
   loading.value.value = false
 
@@ -321,7 +309,7 @@ async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
 // 删除处理
 async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
   // 立即更新模式调接口删除
-  async function deleteDataSourceRow() {
+  async function deleteRowApiAction() {
     const options = deleteApiOptions(mergedProps.value.apiParams, row)
     if (!options) return
     await handleApi(options)
@@ -329,7 +317,13 @@ async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
 
   loading.value.value = true
   // 删除表格数据
-  await deleteRow(row, tableReadRows, tableDeleteRows, deleteDataSourceRow, refreshTableData)
+  await deleteRow(
+    row,
+    tableReadRows,
+    tableDeleteRows,
+    deleteRowApiAction,
+    refreshTableDataApiAction
+  )
   loading.value.value = false
 
   emits('rowDelete', row)
@@ -396,7 +390,7 @@ defineExpose({
   elRef,
   tableProRef,
   cleanup,
-  reload: refreshTableData,
+  reload: refreshTableDataApiAction,
   createRows: tableCreateRows,
   readRows: tableReadRows,
   updateRows: tableUpdateRows,
@@ -443,9 +437,9 @@ defineExpose({
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"
         :mode="mergedProps.mode"
+        :immediate="true"
         :api-params="mergedProps.apiParams"
         :file="filePreviewFile"
-        :immediate="true"
       />
     </section>
   </template>

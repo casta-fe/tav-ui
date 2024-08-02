@@ -191,10 +191,10 @@ function handleFileActionUploadChange(...args: any) {
   )
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
-  // 上传成功后将文件数据当作外部准备好的表格数据通过 datasource 传入
+  // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadDataSource 传入
   _fileTableProps.value.value = {
     ..._fileTableProps.value.value,
-    dataSource: [...files],
+    __uploadDataSource: [...files],
   }
 }
 
@@ -219,10 +219,10 @@ function handleFileActionUploadLinkChange(...args: any) {
   )
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
-  // 上传成功后将文件数据当作外部准备好的表格数据通过 datasource 传入
+  // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadLinkDataSource 传入
   _fileTableProps.value.value = {
     ..._fileTableProps.value.value,
-    dataSource: [...files],
+    __uploadLinkDataSource: [...files],
   }
 }
 
@@ -267,6 +267,8 @@ async function fileTableUpdateRows(...args: ArgumentsOf<FileTableInstance['updat
 async function fileTableDeleteRows(...args: ArgumentsOf<FileTableInstance['deleteRows']>) {
   await fileTableRef.value?.deleteRows(...args)
 }
+
+console.log(slots)
 
 defineExpose({
   elRef,
@@ -339,7 +341,14 @@ defineExpose({
                       @validate-success-change="handleFileActionUploadChangeValidateSuccessChange"
                       @validate-failure-change="handleFileActionUploadChangeValidateFailureChange"
                       @uploaded-change="handleFileActionUploadChange"
-                    />
+                    >
+                      <template
+                        v-if="slots['FileActionUploadButton']"
+                        #FileActionUploadButton="data"
+                      >
+                        <slot name="FileActionUploadButton" v-bind="data || {}" />
+                      </template>
+                    </TaFileActionUpload>
                   </template>
 
                   <template v-if="slots['FileActionMiddle']">

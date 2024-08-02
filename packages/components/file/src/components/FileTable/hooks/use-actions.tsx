@@ -24,14 +24,15 @@ export function defaultActionsBuilder(
   handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const mode = mergedProps.value.mode
+  const enabledPreview = mergedProps.value.enabledPreview
+  const enabledUpdate = mergedProps.value.enabledUpdate
 
   const DEFAULT_ACTIONS: FileTableAction[] = [
-    ...(mergedProps.value.enabledPreview
+    ...(enabledPreview
       ? [
           {
             field: 'view',
             label: tavI18n('Tav.file.actions.1'),
-            // permission: props.tableActionPermission.preview,
             enabled: isViewBtnVisible(row.hyperlink!),
             onClick: () => {
               handleViewBtnClick(row)
@@ -39,12 +40,12 @@ export function defaultActionsBuilder(
           },
         ]
       : []),
-    ...(isUpdateBtnVisible(mode, row.hyperlink!, row.auto!)
+    ...(isUpdateBtnVisible(enabledUpdate, mode, row.hyperlink!, row.auto!)
       ? [
           {
             field: 'update',
             label: tavI18n('Tav.file.actions.5'),
-            enabled: isUpdateBtnVisible(mode, row.hyperlink!, row.auto!),
+            enabled: isUpdateBtnVisible(enabledUpdate, mode, row.hyperlink!, row.auto!),
             onClick: async () => {
               await handleUpdateBtnClick(row)
             },

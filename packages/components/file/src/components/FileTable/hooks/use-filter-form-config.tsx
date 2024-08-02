@@ -116,6 +116,13 @@ export function useFilterFormConfig(options: {
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
 
+    if (mergedProps.value.dataSource) {
+      // 如果传入 datasource 则隐藏筛选
+      return {
+        enabled: false,
+      }
+    }
+
     if (isBoolean(filterFormConfig)) {
       if (filterFormConfig) {
         return defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)

@@ -21,6 +21,40 @@ const unifiedTaFileData = reactive({
       pagerConfig: {
         enabled: true,
       },
+      dataSource: [
+        {
+          id: 73086,
+          appId: 10001,
+          actualId: '5d8e721a997348c19c46041178348834',
+          moduleId: 9,
+          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+          businessId: 'TG-20240607000003-0',
+          type: 9,
+          deleted: 0,
+          version: 1,
+          name: '10',
+          suffix: 'png',
+          fullName: '10.png',
+          size: 45113,
+          address: '/20240607/17177485273641322.png',
+          runtime: null,
+          hyperlink: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 2,
+          fileSize: '44KB',
+          createBy: '1',
+          createByName: '系统管理员',
+          expand: null,
+          dataType: null,
+          toPdf: 0,
+          errorMsg: null,
+          moduleCode: 'tg_company',
+          moduleName: '评估立项',
+          typeCode: 'INVEST_FOUND_BFJY',
+          typeName: '拜访纪要',
+          createTime: '2024-06-07 16:22:07',
+        },
+      ],
     },
   },
   create: {
@@ -44,27 +78,40 @@ const unifiedTaFileData = reactive({
     fileTable: {
       modeQueryApiType: 'pager',
       // showOperations: true,
-      // filterFormConfig: {
-      //   inputForm: {
-      //     field: 'searchValue',
-      //     componentProps: {
-      //       'enter-button': true,
-      //       placeholder: '请输入企业、院所、高校名称',
-      //     },
-      //   },
-      //   pannelForm: [
-      //     {
-      //       field: 'filterSearchValue',
-      //       label: '企业、院所、高校名称',
-      //       labelWidth: 150,
-      //       component: 'Input',
-      //       // componentProps: {
-      //       //   // "enter-button": true,
-      //       //   placeholder: "请输入企业、院所、高校名称"
-      //       // }
-      //     },
-      //   ],
-      // },
+      dataSource: [
+        {
+          id: 73086,
+          appId: 10001,
+          actualId: '5d8e721a997348c19c46041178348834',
+          moduleId: 9,
+          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+          businessId: 'TG-20240607000003-0',
+          type: 9,
+          deleted: 0,
+          version: 1,
+          name: '10',
+          suffix: 'png',
+          fullName: '10.png',
+          size: 45113,
+          address: '/20240607/17177485273641322.png',
+          runtime: null,
+          hyperlink: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 2,
+          fileSize: '44KB',
+          createBy: '1',
+          createByName: '系统管理员',
+          expand: null,
+          dataType: null,
+          toPdf: 0,
+          errorMsg: null,
+          moduleCode: 'tg_company',
+          moduleName: '评估立项',
+          typeCode: 'INVEST_FOUND_BFJY',
+          typeName: '拜访纪要',
+          createTime: '2024-06-07 16:22:07',
+        },
+      ],
       pagerConfig: {
         enabled: true,
       },
@@ -100,7 +147,7 @@ const unifiedTaFileData = reactive({
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
     mode: 'updateInstantly',
     apiParams: {
-      moduleCode: 'tg_company',
+      moduleCode: 'tg_invest',
       appId: 10001,
       businessKey: 'GSWU19972MMNPWLF7',
       businessId: 'GSWU19972MMNPWLF7',
@@ -120,48 +167,80 @@ const unifiedTaFileData = reactive({
     fileActionUpload: {
       beforeUpload(...args: any[]) {
         console.log(args)
-        return false
+        return true
       },
     },
     fileTable: {
       apiParams: {
-        moduleCode: 'default',
+        moduleCode: 'tg_invest',
       },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
       dataSource: [
         {
-          id: 73086,
+          id: 78211,
           appId: 10001,
-          actualId: '5d8e721a997348c19c46041178348834',
-          moduleId: 9,
-          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
-          businessId: 'TG-20240607000003-0',
-          type: 9,
+          actualId: 'd546eff9ced84a88adc1a3d50e7423f5',
+          moduleId: 13,
+          businessKey: 'GS9L29723MD7UCPCB-tg_invest-TG-20240731000001',
+          businessId: 'TG-20240731000001-4',
+          type: 466,
           deleted: 0,
           version: 1,
-          name: '10',
-          suffix: 'png',
-          fullName: '10.png',
-          size: 45113,
-          address: '/20240607/17177485273641322.png',
+          name: '再融资立项表模版',
+          suffix: 'xlsx',
+          fullName: '再融资立项表模版.xlsx',
+          size: 15584,
+          address: '/20240801/17225143685779413.xlsx',
           runtime: null,
           hyperlink: 0,
           sourceFileDownload: 1,
           watermarkFileDownload: 2,
-          fileSize: '44KB',
+          fileSize: '15KB',
           createBy: '1',
           createByName: '系统管理员',
           expand: null,
           dataType: null,
           toPdf: 0,
           errorMsg: null,
-          moduleCode: 'tg_company',
-          moduleName: '评估立项',
-          typeCode: 'INVEST_FOUND_BFJY',
-          typeName: '拜访纪要',
-          createTime: '2024-06-07 16:22:07',
+          moduleCode: 'tg_invest_agreement',
+          moduleName: '协议签署',
+          typeCode: 'INVEST_XYQS_QZBTZXY',
+          typeName: '签章版投资协议',
+          createTime: '2024-08-01 20:12:49',
+        },
+        {
+          id: 78210,
+          appId: 10001,
+          actualId: '0d6fe0b6bea64c24bfe94c299af1c9e3',
+          moduleId: 13,
+          businessKey: 'GS9L29723MD7UCPCB-tg_invest-TG-20240731000001',
+          businessId: 'TG-20240731000001-4',
+          type: 466,
+          deleted: 0,
+          version: 1,
+          name: 'output (1)',
+          suffix: 'png',
+          fullName: 'output (1).png',
+          size: 395998,
+          address: '/20240801/17225143647377890.png',
+          runtime: null,
+          hyperlink: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 2,
+          fileSize: '386KB',
+          createBy: '1',
+          createByName: '系统管理员',
+          expand: null,
+          dataType: null,
+          toPdf: 0,
+          errorMsg: null,
+          moduleCode: 'tg_invest_agreement',
+          moduleName: '协议签署',
+          typeCode: 'INVEST_XYQS_QZBTZXY',
+          typeName: '签章版投资协议',
+          createTime: '2024-08-01 20:12:45',
         },
       ],
       // showOperations: true,
@@ -204,6 +283,10 @@ function handleFilterFormConfig(args: any) {
       ref="fileRef"
       v-bind="unifiedTaFileData.updateInstantly"
       v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
-    />
+    >
+      <template #FileActionUploadButton="{ disabled, loading, validate }">
+        <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>
+      </template>
+    </TaFile>
   </section>
 </template>

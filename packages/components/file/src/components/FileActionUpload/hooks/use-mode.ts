@@ -95,11 +95,6 @@ export function useMode(options: {
       return
     }
 
-    if (!apiParams.moduleCode || !apiParams.typeCode) {
-      console.warn('[tavui TaFileActionUpload] apiUpdateFile moduleCode & typeCode required!')
-      return
-    }
-
     const options: UseRequestHandleApiDefaultOptions<
       FileActionUploadProps['apiParams'],
       FileActionUploadApiResponseRecord[]

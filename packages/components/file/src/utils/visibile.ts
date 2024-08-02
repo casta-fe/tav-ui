@@ -40,8 +40,13 @@ export function isViewBtnVisible(rowHyperlink: number) {
 }
 
 // TODO: 新增 owner 属性判断
-export function isUpdateBtnVisible(mode: FileMode, rowHyperlink: number, rowAuto: number) {
-  return !isReadMode(mode) && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
+export function isUpdateBtnVisible(
+  enabledUpdate: boolean,
+  mode: FileMode,
+  rowHyperlink: number,
+  rowAuto: number
+) {
+  return !isReadMode(mode) && enabledUpdate && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
 }
 
 export function isDownloadWatermarkBtnVisible(

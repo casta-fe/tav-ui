@@ -5,7 +5,7 @@ import {
   nextTick,
   ref,
   watch,
-  /*, useSlots, useAttrs*/
+  useSlots /* useAttrs*/,
 } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
@@ -53,7 +53,7 @@ defineOptions({
 const elRef = ref<UnwrapRef<FileActionUploadInstance['elRef']>>()
 const props = defineProps(fileActionUploadProps)
 const emits = defineEmits(fileActionUploadEmits)
-// const slots = useSlots()
+const slots = useSlots()
 // const attrs = useAttrs()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
@@ -299,32 +299,40 @@ defineExpose({
         :custom-request="beforeHandleApiAction3"
         @change="handleChange"
       >
-        <TaButton :disabled="disable" @click="beforeHandleApiAction1">
-          <template v-if="loading">
-            <span class="ant-btn-loading-icon" style="">
-              <span role="img" aria-label="loading" class="anticon anticon-loading">
-                <svg
-                  focusable="false"
-                  class="anticon-spin"
-                  data-icon="loading"
-                  width="1em"
-                  height="1em"
-                  fill="currentColor"
-                  aria-hidden="true"
-                  viewBox="0 0 1024 1024"
-                >
-                  <path
-                    d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"
-                  />
-                </svg>
+        <template v-if="slots['FileActionUploadButton']">
+          <slot
+            name="FileActionUploadButton"
+            v-bind="{ disabled: disable, loading, validate: beforeHandleApiAction1 }"
+          />
+        </template>
+        <template v-else>
+          <TaButton :disabled="disable" @click="beforeHandleApiAction1">
+            <template v-if="loading">
+              <span class="ant-btn-loading-icon" style="">
+                <span role="img" aria-label="loading" class="anticon anticon-loading">
+                  <svg
+                    focusable="false"
+                    class="anticon-spin"
+                    data-icon="loading"
+                    width="1em"
+                    height="1em"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    viewBox="0 0 1024 1024"
+                  >
+                    <path
+                      d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"
+                    />
+                  </svg>
+                </span>
               </span>
-            </span>
-          </template>
-          <template v-else>
-            <TaIcon :icon="mergedProps.icon" />
-          </template>
-          {{ DEFAULT_UPLOAD_TIP(tavI18n) }}
-        </TaButton>
+            </template>
+            <template v-else>
+              <TaIcon :icon="mergedProps.icon" />
+            </template>
+            {{ DEFAULT_UPLOAD_TIP(tavI18n) }}
+          </TaButton>
+        </template>
       </AUpload>
     </section>
   </template>
