@@ -251,7 +251,7 @@ function handleFileTableRowDelete(...args: any) {
   emits('fileTable:rowDelete', ..._args)
 }
 
-async function fileTableRelod(params?: FileTableReloadApiParams) {
+async function fileTableReload(params?: FileTableReloadApiParams) {
   await fileTableRef.value?.reload?.(params)
 }
 async function fileTableCreateRows(...args: ArgumentsOf<FileTableInstance['createRows']>) {
@@ -276,7 +276,7 @@ defineExpose({
   fileActionUploadRef,
   fileActionUploadLinkRef,
   fileTableRef,
-  fileTableReload: fileTableRelod,
+  fileTableReload,
   fileTableCreateRows,
   fileTableReadRows,
   fileTableUpdateRows,

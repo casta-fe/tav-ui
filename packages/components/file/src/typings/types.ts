@@ -270,7 +270,7 @@ export interface FileInstance {
   fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
   fileActionUploadLinkRef: Ref<FileActionUploadLinkInstance | undefined>
   fileTableRef: Ref<FileTableInstance | undefined>
-  fileTableRelod: (params?: FileTableReloadApiParams) => Promise<void>
+  fileTableReload: (params?: FileTableReloadApiParams) => Promise<void>
   fileTableCreateRows: FileTableInstance['createRows']
   fileTableReadRows: FileTableInstance['readRows']
   fileTableUpdateRows: FileTableInstance['updateRows']

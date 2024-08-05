@@ -64,23 +64,21 @@ function handleAfterApiEmit(options: {
 }) {
   const { mergedProps, emits, VersionCachesController, apiResult } = options
 
-  setTimeout(async () => {
-    const rows = JSON.parse(
-      JSON.stringify([...(apiResult ?? [])])
-    ) as FileActionUploadApiResponseRecord[]
-    // 在初始化时机抛出事件
-    // emits('change', rows, rows, 'init')
-    emits(
-      'actualidsChange',
-      rows.map((file: any) => file.actualId)
-    )
+  const rows = JSON.parse(
+    JSON.stringify([...(apiResult ?? [])])
+  ) as FileActionUploadApiResponseRecord[]
+  // 在初始化时机抛出事件
+  // emits('change', rows, rows, 'init')
+  emits(
+    'actualidsChange',
+    rows.map((file: any) => file.actualId)
+  )
 
-    if (rows.length > 0) {
-      VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
-    } else {
-      VersionCachesController.deleteAllFileCaches()
-    }
-  }, 150)
+  if (rows.length > 0) {
+    VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+  } else {
+    VersionCachesController.deleteAllFileCaches()
+  }
 }
 
 export function useMode(options: {
@@ -258,7 +256,7 @@ export function useMode(options: {
           mergedProps,
           emits,
           VersionCachesController,
-          apiResult: _apiResult.data[listField] ?? [],
+          apiResult: _apiResult.data ?? [],
         })
 
         // 不分页接口需要劫持 afterapi 组装分页数据将分页器显示出来，这样避免想使用分页器必须传入分页接口的情况
