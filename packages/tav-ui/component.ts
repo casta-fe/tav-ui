@@ -41,6 +41,8 @@ import { TaFileView } from '@tav-ui/components/file-view'
 import {
   TaFile,
   TaFileActionUpload,
+  TaFileActionUploadLink,
+  TaFileLog,
   TaFilePreview,
   TaFileTable,
   TaFileTypeSelect,
@@ -97,9 +99,11 @@ export default [
   TaCascadeProSelect,
   TaFileView,
   TaFile,
-  TaFileTable,
   TaFileTypeSelect,
   TaFileActionUpload,
-  TaFilePreview,
+  TaFileActionUploadLink,
+  TaFileTable,
   TaFileVersion,
+  TaFilePreview,
+  TaFileLog,
 ] as Plugin[]

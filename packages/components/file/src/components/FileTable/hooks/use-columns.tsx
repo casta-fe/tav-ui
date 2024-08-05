@@ -99,7 +99,7 @@ export function defaultColumnsBuilder(
           {
             title: tavI18n('Tav.file.columns.10'),
             field: 'moduleFullName',
-            minWidth: 100,
+            minWidth: 180,
           },
         ]
       : []),
@@ -151,8 +151,8 @@ export function defaultColumnsBuilder(
     },
     {
       title: tavI18n('Tav.file.columns.8'),
-      field: 'createTime',
-      minWidth: 150,
+      field: 'updateTime',
+      minWidth: 120,
     },
     {
       title: tavI18n('Tav.common.actions'),

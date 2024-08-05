@@ -268,8 +268,6 @@ async function fileTableDeleteRows(...args: ArgumentsOf<FileTableInstance['delet
   await fileTableRef.value?.deleteRows(...args)
 }
 
-console.log(slots)
-
 defineExpose({
   elRef,
   fileTypeSelectRef,

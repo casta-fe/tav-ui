@@ -36,6 +36,7 @@ export interface ApiParams {
    * 5. api/file/queryFileTypeSearchCom
    * 6. api/file/updateFile
    * 7. api/file/deleteFileByActualIds
+   * 8. api/file/getFileLogModuleList（非必传）
    */
   appId: number | string
   /**
@@ -45,6 +46,7 @@ export interface ApiParams {
    * 3. api/file/queryFile（非必传）
    * 4. api/file/queryFileList（非必传）
    * 5. api/file/queryFileTypeSearchCom（非必传）
+   * 6. api/file/getFileLogModuleList
    */
   moduleCode: string
   /**
@@ -58,6 +60,7 @@ export interface ApiParams {
    * 2. api/file/queryFile（非必传）
    * 3. api/file/queryFileList（非必传）
    * 4. api/file/queryFileTypeSearchCom（非必传）
+   * 5. api/file/getFileLogModuleList（非必传）
    */
   typeCodes: string[]
   /**
@@ -65,6 +68,7 @@ export interface ApiParams {
    * 1. api/file/upload（非必传）
    * 2. api/file/queryFile（非必传）
    * 3. api/file/queryFileList（非必传）
+   * 4. api/file/getFileLogModuleList（非必传）
    */
   businessKey: string
   /**
@@ -76,6 +80,7 @@ export interface ApiParams {
    * 业务 businessIds，用于：
    * 1. api/file/queryFile（非必传）
    * 2. api/file/queryFileList（非必传）
+   * 3. api/file/getFileLogModuleList（非必传）
    */
   businessIds: string[]
   /**
@@ -106,6 +111,7 @@ export interface ApiParams {
    * 文件真实 ids，用于：
    * 1. api/file/queryHistoryFileByFileActualIds
    * 2. api/file/deleteFileByActualIds
+   * 3. api/file/getFileLogModuleList
    */
   actualIds: string[]
   /**

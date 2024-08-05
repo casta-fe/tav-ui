@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  type Ref,
   type UnwrapRef,
   computed,
   nextTick,
@@ -9,6 +10,7 @@ import {
   /*useSlots, useAttrs*/
 } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { DEFAULT_APIPARAMS, DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
   VersionCachesController,
@@ -25,7 +27,8 @@ import {
   type FileActionUploadInstance,
   TaFileActionUpload as TaFileActionUploadForActionUpdateBtn,
 } from '../FileActionUpload'
-import { TaFileVersion } from '../FileVersion'
+import { type FileVersionTableAction, TaFileVersion } from '../FileVersion'
+import { TaFileLog } from '../FileLog'
 import { TaFilePreview } from '../FilePreview'
 import {
   type ApiUpdateFileNameAndLinkParams,
@@ -329,6 +332,16 @@ async function handleDeleteBtnClick(row: FileActionUploadApiResponseRecord) {
   emits('rowDelete', row)
 }
 
+// 日志处理
+const fileLogModalVisible = ref(false)
+const fileLogFile = ref<FileActionUploadApiResponseRecord>()
+async function handleLogBtnClick(row: FileActionUploadApiResponseRecord) {
+  fileLogFile.value = row
+  fileLogModalVisible.value = true
+}
+
+const globalConfigUserInfo = useGlobalConfig('userInfo') as Ref<Record<string, any>>
+
 // 处理操作列
 const actions = useActions({
   mergedProps,
@@ -337,6 +350,8 @@ const actions = useActions({
   handleDownloadWatermarkBtnClick,
   handleDownloadBtnClick,
   handleDeleteBtnClick,
+  handleLogBtnClick,
+  globalConfigUserInfo,
 })
 
 // 处理表格列
@@ -366,6 +381,30 @@ const editConfig = computed<any>(() =>
       }
     : undefined
 )
+
+// fileversion actions 继承 filetable actions 权限
+function handleFileVersionActions(
+  ...args: [FileVersionTableAction[], { row: FileActionUploadApiResponseRecord }]
+) {
+  const [fileVersionActions, { row }] = args
+  const useFileVersionRowGenerateFileTableActions = actions.value(row)
+  return fileVersionActions.map((action) => {
+    const existedFileTableAction = useFileVersionRowGenerateFileTableActions.find(
+      (_action) => _action.field === action.field
+    )
+    if (existedFileTableAction) {
+      const { enabled, permission, permissionCode } = action
+      return {
+        ...action,
+        enabled,
+        permission,
+        permissionCode,
+      }
+    }
+
+    return action
+  })
+}
 
 // 清空表格状态
 function cleanup() {
@@ -433,6 +472,7 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :file="fileVersionFile"
         :data-source="fileVersionDataSource"
+        :actions="handleFileVersionActions"
       />
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"
@@ -440,6 +480,12 @@ defineExpose({
         :immediate="true"
         :api-params="mergedProps.apiParams"
         :file="filePreviewFile"
+      />
+      <TaFileLog
+        v-model:visible="fileLogModalVisible"
+        :mode="mergedProps.mode"
+        :api-params="mergedProps.apiParams"
+        :file="fileLogFile"
       />
     </section>
   </template>

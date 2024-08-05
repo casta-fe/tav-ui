@@ -99,7 +99,17 @@ export function defaultFilterFormConfigBuilder(
         },
         valueType: 'array',
       },
-      // TODO: Owners
+      {
+        label: tavI18n('Tav.member.2'),
+        field: 'owners',
+        colProps: { span: 24 },
+        component: 'MemberSelect',
+        defaultValue: [],
+        componentProps: {
+          allowClear: true,
+          multiple: true,
+        },
+      },
     ],
   }
 

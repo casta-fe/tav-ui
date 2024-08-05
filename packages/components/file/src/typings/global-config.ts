@@ -23,6 +23,7 @@ import {
   type ApiUpdateFileNameAndLinkParams,
 } from '../components/FileTable/types'
 import { type ApiUploadLinkFileParams } from '../components/FileActionUploadLink'
+import { type ApiQueryFileLogParams } from '../components/FileLog'
 
 export const globalConfigFileProps = {
   /**根据子组件名来划分注入数据 */
@@ -141,6 +142,21 @@ export const globalConfigFileProps = {
   TaFilePreview: {
     apiPreviewFile: {
       type: Function as PropType<(params: ApiPreviewFileParams) => Promise<any>>,
+    },
+  },
+  TaFileLog: {
+    apiQueryFileLog: {
+      type: Function as PropType<
+        (params: {
+          filter: ApiQueryFileLogParams
+          model: {
+            dir?: string
+            limit?: number
+            page?: number
+            sort?: string
+          }
+        }) => Promise<any>
+      >,
     },
   },
 }

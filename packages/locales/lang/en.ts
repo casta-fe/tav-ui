@@ -174,6 +174,7 @@ export default {
       '41': 'Watermark..',
       '5': 'Update',
       '6': 'Delete',
+      '7': 'Log',
     },
     columns: {
       '1': 'File name',
@@ -186,6 +187,9 @@ export default {
       '8': 'Update time',
       '9': 'Link address',
       '10': 'Upload trigger',
+      '11': 'Operation',
+      '12': 'Applier',
+      '13': 'Consumer',
     },
     upload: {
       '1': 'Upload file',

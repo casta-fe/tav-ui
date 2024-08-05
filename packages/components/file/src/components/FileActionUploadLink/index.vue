@@ -122,7 +122,7 @@ async function handleFormSubmitClick() {
     if (!options) return
     await handleApi(options)
   } catch (e: any) {
-    console.log('not passing', e)
+    console.warn('[tavui TaFileActionUploadLink] form validate not passing', e)
     const formData = await getFieldsValue()
     const { name, address } = JSON.parse(JSON.stringify(formData))
     emits('validateFailureChange', { name, address })

@@ -619,3 +619,14 @@ export const queryFilterFormFileType = async (params: any) => {
   const response = await __post(`/api/TIANTA-FILE/api/file/queryFileTypeSearchCom`, params)
   return response
 }
+export const queryFileLog = async (params: any) => {
+  const response = await __post(`/api/TIANTA-FILE/api/file/getFileLogListPager`, params)
+  return response
+}
+
+export async function UserListApi(data, url = '/api/TIANTA-SYSTEM/sys/user/listExcludeDel') {
+  // 复制 ai at rd cookie：guid
+  // await __get('/api/TIANTA-SYSTEM/test.html')
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}

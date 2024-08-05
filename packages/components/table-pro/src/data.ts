@@ -250,7 +250,6 @@ export async function __get(url = '') {
   })
   return response.ok
 }
-
 export async function API__POE_INVEST_ALL(
   data,
   url = '/api/STARLIGHT-POE-WEB/invesinstitution/listPager'

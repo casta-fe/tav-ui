@@ -15,8 +15,10 @@ import 'dayjs/locale/zh-cn'
 import { useI18n } from './hooks/useI18n'
 import { i18n } from './locales/setupI18n'
 import {
+  UserListApi,
   previewFile,
   previewWPSFile,
+  queryFileLog,
   queryFilterFormFileType,
 } from './components/TaUpload/provideData'
 dayjs.locale('zh-cn')
@@ -34,10 +36,11 @@ export default defineComponent({
     const state = reactive({
       appId: '10001',
       userInfo: {
-        id: 1,
-        name: 'admin',
-        organizationId: 1,
+        userId: 1,
+        username: 'admin',
+        isAdmin: true,
         phone: '13999999999',
+        realName: '系统管理员',
       },
       i18nFun: {
         t,
@@ -78,11 +81,15 @@ export default defineComponent({
         TaFilePreview: {
           apiPreviewFile: previewWPSFile,
         },
+        TaFileLog: {
+          apiQueryFileLog: queryFileLog,
+        },
         TaMemberSelect: {
           orgApi,
           allUserList: allUsers.data.map((v) => {
             return { label: v.name, value: v.id, ...v }
           }),
+          userListApi: UserListApi,
         },
         // TaTablePro: {
         //   actionLabelLimit: 4,

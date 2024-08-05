@@ -1,4 +1,4 @@
-import { type ComputedRef, computed } from 'vue'
+import { type ComputedRef, type Ref, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
 import { type FileTableAction, type FileTableProps } from '../types'
@@ -10,6 +10,7 @@ import {
   isDeleteBtnVisible,
   isDownloadBtnVisible,
   isDownloadWatermarkBtnVisible,
+  isLogBtnVisible,
   isUpdateBtnVisible,
   isViewBtnVisible,
 } from '../../../utils'
@@ -21,7 +22,9 @@ export function defaultActionsBuilder(
   handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
-  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  handleLogBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
+  globalConfigUserInfo: Ref<Record<string, any>>
 ) {
   const mode = mergedProps.value.mode
   const enabledPreview = mergedProps.value.enabledPreview
@@ -40,12 +43,26 @@ export function defaultActionsBuilder(
           },
         ]
       : []),
-    ...(isUpdateBtnVisible(enabledUpdate, mode, row.hyperlink!, row.auto!)
+    ...(isUpdateBtnVisible(
+      enabledUpdate,
+      mode,
+      row.hyperlink!,
+      row.auto!,
+      row.owner ?? '',
+      globalConfigUserInfo.value
+    )
       ? [
           {
             field: 'update',
             label: tavI18n('Tav.file.actions.5'),
-            enabled: isUpdateBtnVisible(enabledUpdate, mode, row.hyperlink!, row.auto!),
+            enabled: isUpdateBtnVisible(
+              enabledUpdate,
+              mode,
+              row.hyperlink!,
+              row.auto!,
+              row.owner ?? '',
+              globalConfigUserInfo.value
+            ),
             onClick: async () => {
               await handleUpdateBtnClick(row)
             },
@@ -71,12 +88,20 @@ export function defaultActionsBuilder(
     {
       field: 'delete',
       label: tavI18n('Tav.file.actions.6'),
-      enabled: isDeleteBtnVisible(mode),
+      enabled: isDeleteBtnVisible(mode, row.owner ?? '', globalConfigUserInfo.value),
       popConfirm: {
         title: tavI18n('Tav.file.message.9'),
         confirm: async () => {
           await handleDeleteBtnClick(row)
         },
+      },
+    },
+    {
+      field: 'log',
+      label: tavI18n('Tav.file.actions.7'),
+      enabled: isLogBtnVisible(row.owner ?? '', globalConfigUserInfo.value),
+      onClick: async () => {
+        await handleLogBtnClick(row)
       },
     },
   ]
@@ -91,6 +116,8 @@ export function useActions(options: {
   handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
   handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
   handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  handleLogBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
+  globalConfigUserInfo: Ref<Record<string, any>>
 }) {
   const {
     mergedProps,
@@ -99,6 +126,8 @@ export function useActions(options: {
     handleDownloadWatermarkBtnClick,
     handleDownloadBtnClick,
     handleDeleteBtnClick,
+    handleLogBtnClick,
+    globalConfigUserInfo,
   } = options
 
   return computed(() => (row: FileActionUploadApiResponseRecord) => {
@@ -111,7 +140,9 @@ export function useActions(options: {
       handleUpdateBtnClick,
       handleDownloadWatermarkBtnClick,
       handleDownloadBtnClick,
-      handleDeleteBtnClick
+      handleDeleteBtnClick,
+      handleLogBtnClick,
+      globalConfigUserInfo
     )
 
     if (actions && isFunction(actions)) {

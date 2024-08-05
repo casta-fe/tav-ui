@@ -12,6 +12,10 @@ export function isAutoRow(rowAuto?: number) {
   return rowAuto === 1
 }
 
+export function isOwnerOrAdmin(owner: string, globalConfigUserInfo: Record<string, any>) {
+  return (owner && owner === `${globalConfigUserInfo.userId}`) || globalConfigUserInfo.isAdmin
+}
+
 /** 是否有下载水印权限，后端判断通过该字段体现 */
 export function isWatermarkFileDownloadRow(rowWatermarkFileDownload?: number) {
   return !!rowWatermarkFileDownload
@@ -32,21 +36,27 @@ export function isVersionColVisible(
 
 /** 上传节点列，只读默认隐藏，其他模式默认显示。开发可通过 column 控制 */
 export function isModuleFullNameColVisible(mode: FileMode) {
-  return isReadMode(mode) ? false : true
+  return isReadMode(mode) ? true : false
 }
 
 export function isViewBtnVisible(rowHyperlink: number) {
   return !isHyperlinkRow(rowHyperlink)
 }
 
-// TODO: 新增 owner 属性判断
 export function isUpdateBtnVisible(
   enabledUpdate: boolean,
   mode: FileMode,
   rowHyperlink: number,
-  rowAuto: number
+  rowAuto: number,
+  owner: string,
+  globalConfigUserInfo: Record<string, any>
 ) {
-  return !isReadMode(mode) && enabledUpdate && !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto))
+  return (
+    !isReadMode(mode) &&
+    enabledUpdate &&
+    !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto)) &&
+    isOwnerOrAdmin(owner, globalConfigUserInfo)
+  )
 }
 
 export function isDownloadWatermarkBtnVisible(
@@ -60,6 +70,14 @@ export function isDownloadBtnVisible(rowHyperlink: number, rowSourceFileDownload
   return !isHyperlinkRow(rowHyperlink) && isSourceFileDownloadRow(rowSourceFileDownload)
 }
 
-export function isDeleteBtnVisible(mode: FileMode) {
-  return !isReadMode(mode)
+export function isDeleteBtnVisible(
+  mode: FileMode,
+  owner: string,
+  globalConfigUserInfo: Record<string, any>
+) {
+  return !isReadMode(mode) && isOwnerOrAdmin(owner, globalConfigUserInfo)
+}
+
+export function isLogBtnVisible(owner: string, globalConfigUserInfo: Record<string, any>) {
+  return isOwnerOrAdmin(owner, globalConfigUserInfo)
 }

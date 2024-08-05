@@ -11,7 +11,9 @@ export function useGlobalConfigProps() {
       ({
         appId: globalConfigAppId || '',
         ...(globalConfigFile || {}),
-      } as unknown as GlobalConfigFileProps & { appId: string | number })
+      } as unknown as GlobalConfigFileProps & {
+        appId: string | number
+      })
   )
 }
 

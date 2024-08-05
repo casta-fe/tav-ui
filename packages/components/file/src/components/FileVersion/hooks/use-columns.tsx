@@ -46,7 +46,7 @@ export function defaultColumnsBuilder(
     },
 
     {
-      title: tavI18n('Tav.file.columns.8'),
+      title: tavI18n('Tav.file.columns.6'),
       field: 'createTime',
       minWidth: 150,
     },

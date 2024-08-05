@@ -45,9 +45,15 @@ const {
 
 const dataSource = ref(mergedProps.value.dataSource)
 watch(
-  () => mergedProps.value.dataSource,
-  (curdatasource) => {
-    if (curdatasource) dataSource.value = [...curdatasource]
+  () => JSON.stringify(mergedProps.value.dataSource),
+  (curdatasource, predatasource) => {
+    if (curdatasource && curdatasource !== predatasource) {
+      const rows = JSON.parse(
+        JSON.stringify([...(mergedProps.value.dataSource ?? [])])
+      ) as FileActionUploadApiResponseRecord[]
+
+      dataSource.value = [...rows]
+    }
   }
 )
 const dataSourceOrApiConfig = computed<{
@@ -62,18 +68,6 @@ const dataSourceOrApiConfig = computed<{
       api: undefined,
       beforeApi: undefined,
       afterApi: undefined,
-    }
-  } else if (mergedProps.value.api) {
-    // 如果外部传入 api 则自行控制
-    return {
-      data: undefined,
-      api: ({ filter, model }: Record<string, any>) =>
-        mergedProps.value.api!({
-          filter: { ...filter, ...mergedProps.value.apiParams },
-          model,
-        }),
-      beforeApi: (mergedProps.value.beforeApi ?? undefined) as any,
-      afterApi: (mergedProps.value.afterApi ?? undefined) as any,
     }
   } else {
     return {
@@ -108,24 +102,15 @@ const {
   setLoading,
   loading,
 })
-watch(
-  () => ApiResult.value,
-  (curdatasource) => {
-    if (curdatasource) {
-      const rows = JSON.parse(JSON.stringify(curdatasource ?? []))
 
-      // 只读/新增模式会默认把当前行数据传进来，这俩种模式下使用 upload 上传后文件无历史版本文件，所以不能直接覆盖在这里做判断
-      if (rows && rows.length > 0) {
-        dataSource.value = rows
-      }
-    }
-  }
-)
-// 针对各种模式使用传入的 api 自动请求数据
 async function useModeFetchDataSource() {
   const options = historyApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
   if (!options) return
   await handleApi(options)
+
+  if (ApiResult.value.length > 0) {
+    dataSource.value = JSON.parse(JSON.stringify(ApiResult.value ?? []))
+  }
 }
 
 // 预览处理

@@ -74,10 +74,7 @@ const {
 watch(
   () => JSON.stringify(mergedProps.value.apiParams),
   (curApiParams, preApiParams) => {
-    if (!curApiParams) {
-      console.warn('please select typeCode')
-    }
-    if (curApiParams !== preApiParams) {
+    if (curApiParams && curApiParams !== preApiParams) {
       beforeHandleApiAction()
     }
   }

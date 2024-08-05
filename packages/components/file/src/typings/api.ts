@@ -13,6 +13,10 @@ export interface FileActionUploadApiResponseRecord {
    * @description 现生成的文件 1：是，0否，默认为0
    */
   auto?: number
+  /** @description 业务属性对应的业务实际名称，需要调用业务系统进行翻译 */
+  businessDisplayItemText?: string
+  /** @description 业务属性值 */
+  businessDisplayItemValue?: string
   /** @description 业务表实际id，非必传 */
   businessId?: string
   /** @description 业务key，由业务端拼接而成，如果不为空的话businessId一定也不饿能为空，非必传 */
@@ -22,7 +26,7 @@ export interface FileActionUploadApiResponseRecord {
   createByName?: string
   /**
    * Format: date-time
-   * @description 上传日期
+   * @description 上传时间
    */
   createTime?: string
   /**
@@ -30,8 +34,6 @@ export interface FileActionUploadApiResponseRecord {
    * @description 0:未删除，1:已删除，必传不能为空
    */
   deleted: number
-  /** @description pdf转换失败原因 */
-  errorMsg?: string
   /** @description 扩展字段 */
   expand?: string
   /** @description 文件大小 */
@@ -59,6 +61,9 @@ export interface FileActionUploadApiResponseRecord {
   moduleId: number
   /** @description 文件名称（不包含后缀），必传不能为空 */
   name: string
+  owner?: string
+  /** @description 负责人 */
+  ownerName?: string
   /**
    * Format: int64
    * @description 文件大小，必传不能为空
@@ -69,18 +74,8 @@ export interface FileActionUploadApiResponseRecord {
    * @description 源文件下载标识
    */
   sourceFileDownload?: number
-  /**
-   * Format: int32
-   * @description 是否暂存文件 1是 0否
-   */
-  staging?: number
   /** @description 文件后缀，必传不能为空 */
   suffix: string
-  /**
-   * Format: int32
-   * @description 是否转了pdf 1:已转 0:未转  2:失败 默认为0
-   */
-  toPdf?: number
   /**
    * Format: int64
    * @description 文件类型，关联f_type-id，必传不能为空
@@ -91,6 +86,11 @@ export interface FileActionUploadApiResponseRecord {
   /** @description 关联的文件类型名称 */
   typeName?: string
   /**
+   * Format: date-time
+   * @description 更新时间
+   */
+  updateTime?: string
+  /**
    * Format: int64
    * @description 版本号，默认为1，如果有更新则累加，必传不能为空
    */
@@ -100,11 +100,6 @@ export interface FileActionUploadApiResponseRecord {
    * @description 水印文件下载标识
    */
   watermarkFileDownload?: number
-  /**
-   * Format: int32
-   * @description 流程复制的文件 1：是，0否，默认为0
-   */
-  workflowCopy?: number
 }
 
 export interface FileTypeSelectApiResponseRecord {
@@ -276,4 +271,47 @@ export interface FileFilterFormFileTypeResponse {
   list?: FileFilterFormFileTypeResponseList[]
   /** @description 如果是树，取这个字段 */
   tree?: FileFilterFormFileTypeResponseTree[]
+}
+
+export interface FileLogApiResponseRecord {
+  /** @description 文件真实id */
+  actualId?: string
+  /**
+   * Format: int32
+   * @description appId
+   */
+  appId?: number
+  /** @description 应用端 */
+  appName?: string
+  /**
+   * Format: int64
+   * @description 操作人Id
+   */
+  createBy?: number
+  /** @description 操作人 */
+  createByName?: string
+  /**
+   * Format: date-time
+   * @description 操作时间
+   */
+  createTime?: string
+  /** @description 操作端 */
+  deviceInfo?: string
+  /** @description esId */
+  esId?: string
+  /** @description 拓展字段 */
+  extend?: string
+  /**
+   * Format: int32
+   * @description 文件appid
+   */
+  fileAppId?: number
+  /** @description 文件名称 */
+  fileName?: string
+  /** @description 模块名称 */
+  moduleFullName?: string
+  /** @description 执行操作 */
+  operation?: string
+  /** @description 文件类型名称 */
+  typeName?: string
 }
