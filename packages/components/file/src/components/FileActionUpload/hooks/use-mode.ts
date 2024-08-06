@@ -48,11 +48,7 @@ export function useMode(options: {
         filterNames: ['appId'],
       },
       successMessage: () => {
-        if (mergedProps.value.mode === 'read' || mergedProps.value.mode === 'create') {
-          return tavI18n('Tav.file.message.6')
-        } else {
-          return tavI18n('Tav.file.message.8')
-        }
+        return tavI18n('Tav.file.message.6')
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')

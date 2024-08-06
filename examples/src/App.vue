@@ -61,7 +61,6 @@ export default defineComponent({
           apiUploadLinkFile: taUploadProvideData.uploadLinkFile,
         },
         TaFileTable: {
-          apiUploadFile: taUploadProvideData.uploadFile,
           apiQueryFile: taUploadProvideData.queryFile,
           apiQueryFileList: taUploadProvideData.queryFileList,
           apiQueryFilterFormFileType: queryFilterFormFileType,

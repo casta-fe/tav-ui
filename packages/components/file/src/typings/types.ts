@@ -178,6 +178,8 @@ export interface ApiParams {
    * 2. api/file/queryFileList（非必传）
    */
   suffix: string
+  name: string
+  address: string
 }
 
 /** 只读/新增/编辑（更新）/立即更新，默认只读 */

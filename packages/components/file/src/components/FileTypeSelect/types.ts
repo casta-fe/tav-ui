@@ -30,7 +30,7 @@ export const fileTypeSelectProps = {
   },
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // ASelect props
-  value: { type: Object as PropType<ASelectProps['value']> },
+  value: { type: String as PropType<ASelectProps['value']> },
   options: { type: Array as PropType<ASelectProps['options']>, default: () => [] },
   fieldNames: {
     type: Object as PropType<ASelectProps['fieldNames']>,

@@ -10,15 +10,22 @@ import { type UseTableActionsReturn } from './use-table-actions'
 async function handleDataSourceChangeEmit(
   rows: FileActionUploadApiResponseRecord[],
   tableReadRows: UseTableActionsReturn['tableReadRows'],
-  emits: SetupContext<FileTableEmits>['emit']
+  emits: SetupContext<FileTableEmits>['emit'],
+  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
+  VersionCachesController: VersionCaches
 ) {
   const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
   const dataSource = _dataSource.length > 0 ? _dataSource : rows
+
   // emits('change', rows, dataSource, 'upload')
-  emits(
-    'actualidsChange',
-    dataSource.map((file: any) => file.actualId)
-  )
+  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+    emits('actualidsChange', VersionCachesController.getCaches())
+  } else {
+    emits(
+      'actualidsChange',
+      dataSource.map((file: any) => file.actualId)
+    )
+  }
 
   // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
   // (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') && (await refreshTableData())
@@ -52,8 +59,14 @@ export function useDataSource(options: {
 
         if (rows.length > 0) {
           await tableCreateRows(rows, null)
-          await handleDataSourceChangeEmit(rows, tableReadRows, emits)
           VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+          await handleDataSourceChangeEmit(
+            rows,
+            tableReadRows,
+            emits,
+            mergedProps,
+            VersionCachesController
+          )
         }
       }
     }
@@ -70,8 +83,14 @@ export function useDataSource(options: {
 
         if (rows.length > 0) {
           await tableCreateRows(rows, null)
-          await handleDataSourceChangeEmit(rows, tableReadRows, emits)
           VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+          await handleDataSourceChangeEmit(
+            rows,
+            tableReadRows,
+            emits,
+            mergedProps,
+            VersionCachesController
+          )
         }
       }
     }
@@ -93,14 +112,19 @@ export function useDataSource(options: {
 
         if (rows.length > 0) {
           await tableCreateRows(rows, null)
-          await handleDataSourceChangeEmit(rows, tableReadRows, emits)
           VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
         } else {
           const currentRows = await tableReadRows()
           await tableDeleteRows(currentRows)
-          await handleDataSourceChangeEmit([], tableReadRows, emits)
           VersionCachesController.deleteAllFileCaches()
         }
+        await handleDataSourceChangeEmit(
+          rows,
+          tableReadRows,
+          emits,
+          mergedProps,
+          VersionCachesController
+        )
       }
     }
   )

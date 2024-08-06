@@ -223,6 +223,7 @@ async function beforeHandleApiAction3() {
       !canUploadUnifiedFileList.value
     )
   ) {
+    resetFileList()
     emits('validateFailureChange', fileList.value)
     return
   }
@@ -254,7 +255,10 @@ async function beforeHandleApiAction3() {
     // 如果未传入 updatefile 则走上传逻辑
     options = uploadApiOptions(mergedProps.value.apiParams, fileList.value, resetFileList)
   }
-  if (!options) return
+  if (!options) {
+    resetFileList()
+    return
+  }
   await handleApi(options)
 }
 

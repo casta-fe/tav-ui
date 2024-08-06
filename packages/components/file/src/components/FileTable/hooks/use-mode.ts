@@ -67,17 +67,22 @@ function handleAfterApiEmit(options: {
   const rows = JSON.parse(
     JSON.stringify([...(apiResult ?? [])])
   ) as FileActionUploadApiResponseRecord[]
-  // 在初始化时机抛出事件
-  // emits('change', rows, rows, 'init')
-  emits(
-    'actualidsChange',
-    rows.map((file: any) => file.actualId)
-  )
 
   if (rows.length > 0) {
     VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
   } else {
     VersionCachesController.deleteAllFileCaches()
+  }
+
+  // 在初始化时机抛出事件
+  // emits('change', rows, rows, 'init')
+  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+    emits('actualidsChange', VersionCachesController.getCaches())
+  } else {
+    emits(
+      'actualidsChange',
+      rows.map((file: any) => file.actualId)
+    )
   }
 }
 

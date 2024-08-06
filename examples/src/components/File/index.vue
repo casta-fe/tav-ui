@@ -157,13 +157,28 @@ const unifiedTaFileData = reactive({
       }),
     },
     fileActualIds: [],
-    // fileTypeSelect: {
-    //   apiParams: {
-    //     moduleCode: 'kf_pitch',
-    //     appId: 10002,
-    //     permissionControl: true
-    //   },
-    // },
+    fileTypeSelect: {
+      value: undefined,
+      // options: [
+      //   {
+      //     id: 9,
+      //     appId: 10001,
+      //     code: 'INVEST_FOUND_BFJY',
+      //     name: '拜访纪要',
+      //     seq: 8.0,
+      //     remark: '立项',
+      //     moduleId: 9,
+      //     moduleCode: 'tg_invest_evaluation',
+      //     moduleParentId: 2,
+      //     sid: '9-9',
+      //   },
+      // ],
+      // apiParams: {
+      //   moduleCode: 'kf_pitch',
+      //   appId: 10002,
+      //   permissionControl: true
+      // },
+    },
     fileActionUpload: {
       beforeUpload(...args: any[]) {
         console.log(args)
@@ -251,10 +266,10 @@ const unifiedTaFileData = reactive({
     },
   },
 })
-// setTimeout(() => {
-//   unifiedTaFileData.read.apiParams['businessCheck'] = true as any
-//   fileRef.value?.fileTableReload()
-// }, 5000)
+setTimeout(() => {
+  // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
+  unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
+}, 10000)
 
 watch(
   () => unifiedTaFileData.updateInstantly.fileActualIds,

@@ -57,7 +57,14 @@ const {
 
 // // Embedded in the form, just use the hook binding to perform form verification
 // const [state] = useRuleFormItem(props, 'value', 'change', emitData)
-const value = ref<FileTypeSelectProps['value']>(props.value)
+const selectValue = ref<FileTypeSelectProps['value']>(props.value)
+
+watch(
+  () => JSON.stringify(mergedProps.value.value),
+  () => {
+    selectValue.value = mergedProps.value.value
+  }
+)
 
 // 使用 api 处理数据
 const { disable, setDisable } = useDisable()
@@ -73,9 +80,9 @@ const {
 // api 相关参数变化重新发起请求
 watch(
   () => JSON.stringify(mergedProps.value.apiParams),
-  (curApiParams, preApiParams) => {
+  async (curApiParams, preApiParams) => {
     if (curApiParams && curApiParams !== preApiParams) {
-      beforeHandleApiAction()
+      await beforeHandleApiAction()
     }
   }
 )
@@ -96,7 +103,7 @@ watch(
 
       // 当 options 只有一项时默认选中
       if (options.value.length === 1) {
-        value.value = mergedProps.value.fieldNames
+        selectValue.value = mergedProps.value.fieldNames
           ? options.value[0][mergedProps.value.fieldNames['value']!]
           : options.value[0].value ?? options.value[0]
         emits(
@@ -115,8 +122,13 @@ watch(
             mergedProps.value.fieldNames,
           ] as any)
         )
+      } else {
+        selectValue.value = undefined
       }
     }
+  },
+  {
+    immediate: true,
   }
 )
 
@@ -141,6 +153,8 @@ const placeholder = computed(() =>
 // }
 
 function handleSelect(...args: ArgumentsOf<FileTypeSelectEmits['select']>) {
+  selectValue.value = args[0] as string
+
   emits(
     'select',
     ...([...args, mergedProps.value.fieldNames] as unknown as ArgumentsOf<
@@ -166,13 +180,13 @@ function handleDropdownVisibleChange(
 }
 
 function handleClear() {
-  value.value = undefined
+  selectValue.value = undefined
 
   emits('clear', ...([undefined, undefined, mergedProps.value.fieldNames] as any))
   emits('change', ...([undefined, undefined, mergedProps.value.fieldNames] as any))
 }
 
-function beforeHandleApiAction() {
+async function beforeHandleApiAction() {
   // 已传入的 options 为主
   if (
     !mergedProps.value.options ||
@@ -180,12 +194,12 @@ function beforeHandleApiAction() {
   ) {
     const options = typeSelectApiOptions(mergedProps.value.apiParams)
     if (!options) return
-    handleApi(options)
+    await handleApi(options)
   }
 }
 
-onMounted(() => {
-  beforeHandleApiAction()
+onMounted(async () => {
+  await beforeHandleApiAction()
 })
 
 defineExpose({
@@ -199,7 +213,7 @@ defineExpose({
       <!-- @change="handleChange" -->
       <ASelect
         ref="ASelectRef"
-        :value="value"
+        :value="selectValue"
         :options="options"
         :field-names="mergedProps.fieldNames"
         :placeholder="placeholder"
