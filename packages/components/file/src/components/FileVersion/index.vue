@@ -128,11 +128,16 @@ async function handleDownloadWatermarkBtnClick(row: FileActionUploadApiResponseR
     return
   }
   loading.value.value = true
-  await fileSingleDownload({
-    file: row,
-    api: mergedProps.value.apiDownloadWaterMarkerFile!,
-  })
-  loading.value.value = false
+  try {
+    await fileSingleDownload({
+      file: row,
+      api: mergedProps.value.apiDownloadWaterMarkerFile!,
+    })
+  } catch (error) {
+    console.warn('[tavui TaFileTable] apiDownloadWaterMarkerFile has error', error)
+  } finally {
+    loading.value.value = false
+  }
 }
 
 // 下载处理
@@ -142,11 +147,16 @@ async function handleDownloadBtnClick(row: FileActionUploadApiResponseRecord) {
     return
   }
   loading.value.value = true
-  await fileSingleDownload({
-    file: row,
-    api: mergedProps.value.apiDownloadFile!,
-  })
-  loading.value.value = false
+  try {
+    await fileSingleDownload({
+      file: row,
+      api: mergedProps.value.apiDownloadFile!,
+    })
+  } catch (error) {
+    console.warn('[tavui TaFileTable] apiDownloadFile has error', error)
+  } finally {
+    loading.value.value = false
+  }
 }
 
 // 处理操作列

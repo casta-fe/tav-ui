@@ -182,10 +182,7 @@ export function useMode(options: {
 
       if (mergedProps.value.dataSource) {
         // 如果传入 datasource 则不使用接口数据
-        dataOrApiConfig = {
-          ...dataOrApiConfigWithNull,
-          data: mergedProps.value.dataSource,
-        }
+        dataOrApiConfig = dataOrApiConfigWithNull
       }
 
       if (['create'].includes(mergedProps.value.mode)) {
