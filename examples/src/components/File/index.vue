@@ -125,8 +125,12 @@ const unifiedTaFileData = reactive({
       // appId: 10002,
       businessKey: 'GSWU19972MMNPWLF7',
       businessIds: ['GSWU19972MMNPWLF7'],
+      businessId: 'GSWU19972MMNPWLF7',
     },
     fileActualIds: [],
+    fileActionUploadLink: {
+      visible: true,
+    },
     fileTable: {
       // apiParams: {
       //   appId: 10003,
@@ -184,6 +188,9 @@ const unifiedTaFileData = reactive({
         console.log(args)
         return true
       },
+    },
+    fileActionUploadLink: {
+      visible: true,
     },
     fileTable: {
       apiParams: {
@@ -266,13 +273,13 @@ const unifiedTaFileData = reactive({
     },
   },
 })
-setTimeout(() => {
-  // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
-  unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
-}, 10000)
+// setTimeout(() => {
+//   // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
+//   unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
+// }, 10000)
 
 watch(
-  () => unifiedTaFileData.updateInstantly.fileActualIds,
+  () => unifiedTaFileData.update.fileActualIds,
   (cur) => {
     console.log(cur)
   },
@@ -296,12 +303,12 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.updateInstantly"
-      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      v-bind="unifiedTaFileData.update"
+      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
     >
-      <template #FileActionUploadButton="{ disabled, loading, validate }">
+      <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>
-      </template>
+      </template> -->
     </TaFile>
   </section>
 </template>

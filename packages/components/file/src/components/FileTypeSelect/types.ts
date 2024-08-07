@@ -39,7 +39,7 @@ export const fileTypeSelectProps = {
       value: 'code',
     }),
   },
-  disabled: { type: Object as PropType<ASelectProps['disabled']> },
+  disabled: { type: Boolean as PropType<ASelectProps['disabled']> },
   placeholder: { type: String as PropType<ASelectProps['placeholder']> },
   getPopupContainer: {
     type: Function as PropType<ASelectProps['getPopupContainer']>,

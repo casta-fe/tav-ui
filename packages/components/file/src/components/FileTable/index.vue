@@ -114,6 +114,7 @@ useDataSource({
   tableDeleteRows,
   emits,
   VersionCachesController,
+  refreshTableDataApiAction,
 })
 
 // 使用 api 处理数据

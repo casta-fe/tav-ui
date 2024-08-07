@@ -58,7 +58,7 @@ export default defineComponent({
           apiUpdateFile: taUploadProvideData.updateFile,
         },
         TaFileActionUploadLink: {
-          apiUploadLinkFile: taUploadProvideData.uploadLinkFile,
+          apiUploadFileLink: taUploadProvideData.uploadFileLink,
         },
         TaFileTable: {
           apiQueryFile: taUploadProvideData.queryFile,

@@ -212,7 +212,7 @@ function handleFileActionUploadChange(...args: any) {
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
   // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadDataSource 传入
-  _fileTableProps.value.value = {
+  _fileTableProps.value = {
     ..._fileTableProps.value,
     __uploadDataSource: [...files],
   }
@@ -240,7 +240,7 @@ function handleFileActionUploadLinkChange(...args: any) {
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
   // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadLinkDataSource 传入
-  _fileTableProps.value.value = {
+  _fileTableProps.value = {
     ..._fileTableProps.value,
     __uploadLinkDataSource: [...files],
   }

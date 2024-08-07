@@ -441,7 +441,7 @@ export const taUploadProvideData: Partial<
     //   )
     // )
   },
-  uploadLinkFile: async (payload: any): Promise<any> => {
+  uploadFileLink: async (payload: any): Promise<any> => {
     // console.log('[uploadFile] parame', payload, Object.fromEntries(payload as any))
     if (!payload.appId) console.error('uploadLinkFile appId required')
     const params = { ...payload }

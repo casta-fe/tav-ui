@@ -53,4 +53,5 @@ export const buildConfigEntries = Object.entries(buildConfig) as BuildConfigEntr
 export type BuildConfig = typeof buildConfig
 export type BuildConfigEntries = [Module, BuildInfo][]
 
-export const target = 'es2018'
+// export const target = 'es2018'
+export const target = 'es2020'

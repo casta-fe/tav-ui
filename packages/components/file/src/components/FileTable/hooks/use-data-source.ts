@@ -3,7 +3,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { type FileTableEmits, type FileTableProps } from '../types'
+import { type FileTableEmits, type FileTableProps, type FileTableReloadApiParams } from '../types'
 import { type VersionCaches } from './../../../hooks'
 import { type UseTableActionsReturn } from './use-table-actions'
 
@@ -12,13 +12,17 @@ async function handleDataSourceChangeEmit(
   tableReadRows: UseTableActionsReturn['tableReadRows'],
   emits: SetupContext<FileTableEmits>['emit'],
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  VersionCachesController: VersionCaches
+  VersionCachesController: VersionCaches,
+  refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
 ) {
   const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
   const dataSource = _dataSource.length > 0 ? _dataSource : rows
 
   // emits('change', rows, dataSource, 'upload')
-  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+  if (mergedProps.value.mode === 'updateInstantly') {
+    // emits('actualidsChange', VersionCachesController.getCaches()) // 刷接口时会抛出 actualidsChange，所以这里注释
+    await refreshTableDataApiAction()
+  } else if (mergedProps.value.mode === 'update') {
     emits('actualidsChange', VersionCachesController.getCaches())
   } else {
     emits(
@@ -26,9 +30,6 @@ async function handleDataSourceChangeEmit(
       dataSource.map((file: any) => file.actualId)
     )
   }
-
-  // 这里隐藏掉，减少一次刷新，因为立即更新模式下会带着 bizid/bizcode 上传，成功已入库
-  // (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') && (await refreshTableData())
 }
 
 export function useDataSource(options: {
@@ -38,6 +39,7 @@ export function useDataSource(options: {
   tableDeleteRows: UseTableActionsReturn['tableDeleteRows']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
+  refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
 }) {
   const {
     mergedProps,
@@ -46,6 +48,7 @@ export function useDataSource(options: {
     tableDeleteRows,
     emits,
     VersionCachesController,
+    refreshTableDataApiAction,
   } = options
 
   /** upload 组件上传成功数据源 */
@@ -65,7 +68,8 @@ export function useDataSource(options: {
             tableReadRows,
             emits,
             mergedProps,
-            VersionCachesController
+            VersionCachesController,
+            refreshTableDataApiAction
           )
         }
       }
@@ -89,7 +93,8 @@ export function useDataSource(options: {
             tableReadRows,
             emits,
             mergedProps,
-            VersionCachesController
+            VersionCachesController,
+            refreshTableDataApiAction
           )
         }
       }
@@ -123,7 +128,8 @@ export function useDataSource(options: {
           tableReadRows,
           emits,
           mergedProps,
-          VersionCachesController
+          VersionCachesController,
+          refreshTableDataApiAction
         )
       }
     }

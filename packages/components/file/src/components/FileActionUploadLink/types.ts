@@ -9,7 +9,7 @@ import {
 } from '../../typings'
 
 // 按照 swagger 编写
-export interface ApiUploadLinkFileParams {
+export interface ApiUploadFileLinkParams {
   appId: ApiParams['appId']
   address: string
   moduleCode: ApiParams['moduleCode']
@@ -22,7 +22,7 @@ export interface ApiUploadLinkFileParams {
 
 // 组件所需的所有 api 参数
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FileActionUploadLinkApiParams extends ApiUploadLinkFileParams {}
+export interface FileActionUploadLinkApiParams extends ApiUploadFileLinkParams {}
 
 export const fileActionUploadLinkProps = {
   //:============================== extend props ==============================://
@@ -42,11 +42,11 @@ export const fileActionUploadLinkProps = {
   getFormContainer: {
     type: Function as PropType<((instance?: any) => HTMLElement) | undefined>,
   },
-  /** apiUploadLinkFile 已从 ...globalConfigFileProps['fileUploadActionLink'] 取到 */
-  beforeApiUploadLinkFile: {
-    type: Function as PropType<(apiParams: ApiUploadLinkFileParams) => Promise<any>>,
+  /** apiUploadFileLink 已从 ...globalConfigFileProps['fileUploadActionLink'] 取到 */
+  beforeApiUploadFileLink: {
+    type: Function as PropType<(apiParams: ApiUploadFileLinkParams) => Promise<any>>,
   },
-  afterApiUploadLinkFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  afterApiUploadFileLink: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileActionUploadLinkProps = ExtractPropTypes<typeof fileActionUploadLinkProps>
@@ -58,13 +58,13 @@ export const fileActionUploadLinkEmits = {
   /** 上传成功前校验成功的列表 */
   validateSuccessChange: (
     ...args: [
-      { name: ApiUploadLinkFileParams['name']; address: ApiUploadLinkFileParams['address'] }
+      { name: ApiUploadFileLinkParams['name']; address: ApiUploadFileLinkParams['address'] }
     ]
   ) => args instanceof Object,
   /** 上传成功前校验失败的列表 */
   validateFailureChange: (
     ...args: [
-      { name: ApiUploadLinkFileParams['name']; address: ApiUploadLinkFileParams['address'] }
+      { name: ApiUploadFileLinkParams['name']; address: ApiUploadFileLinkParams['address'] }
     ]
   ) => args instanceof Object,
   /** 上传成功后的列表 */

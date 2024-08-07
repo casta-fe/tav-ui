@@ -7,6 +7,7 @@ import {
   type ApiUpdateFileNameAndLinkParams,
   type FileTableEmits,
   type FileTableProps,
+  type FileTableReloadApiParams,
 } from '../types'
 import {
   type FileActionUploadApiResponseRecord,
@@ -469,7 +470,7 @@ export function useMode(options: {
     tableCreateRows: UseTableActionsReturn['tableCreateRows'],
     tableDeleteRows: UseTableActionsReturn['tableDeleteRows'],
     editRowApiAction: (...args: any[]) => Promise<any>,
-    refreshTableDataApiAction: (...args: any[]) => Promise<any>
+    refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
   ) {
     const mode = mergedProps.value.mode
     const row = JSON.parse(JSON.stringify(_row))
@@ -556,7 +557,7 @@ export function useMode(options: {
     _clickedRow: FileActionUploadApiResponseRecord,
     tableReadRows: UseTableActionsReturn['tableReadRows'],
     tableUpdateRows: UseTableActionsReturn['tableUpdateRows'],
-    refreshTableDataApiAction: (...args: any[]) => Promise<any>
+    refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
   ) {
     const mode = mergedProps.value.mode
     const row = JSON.parse(JSON.stringify(_row))
@@ -609,7 +610,7 @@ export function useMode(options: {
     tableReadRows: UseTableActionsReturn['tableReadRows'],
     tableDeleteRows: UseTableActionsReturn['tableDeleteRows'],
     deleteRowApiAction: () => Promise<void>,
-    refreshTableDataApiAction: (...args: any[]) => Promise<any>
+    refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
   ) {
     const mode = mergedProps.value.mode
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))

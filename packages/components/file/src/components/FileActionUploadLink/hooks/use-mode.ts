@@ -20,8 +20,8 @@ export function useMode(options: {
       address?: string
     }
   ) {
-    if (!mergedProps.value.apiUploadLinkFile) {
-      console.warn('[tavui TaFileActionUploadLink] apiUploadLinkFile is undefined')
+    if (!mergedProps.value.apiUploadFileLink) {
+      console.warn('[tavui TaFileActionUploadLink] apiUploadFileLink is undefined')
       return
     }
 
@@ -29,9 +29,9 @@ export function useMode(options: {
       FileActionUploadLinkProps['apiParams'],
       FileActionUploadApiResponseRecord[]
     > = {
-      api: mergedProps.value.apiUploadLinkFile,
-      beforeApi: mergedProps.value.beforeApiUploadLinkFile,
-      afterApi: mergedProps.value.afterApiUploadLinkFile,
+      api: mergedProps.value.apiUploadFileLink,
+      beforeApi: mergedProps.value.beforeApiUploadFileLink,
+      afterApi: mergedProps.value.afterApiUploadFileLink,
       apiParams: {
         appId: apiParams.appId,
         address: payload.address ?? apiParams.address,

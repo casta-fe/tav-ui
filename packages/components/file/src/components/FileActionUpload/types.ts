@@ -48,7 +48,7 @@ export const fileActionUploadProps = {
   // /** 暂时不考虑接收外部已上传的 file，因为当前组件不展示 previewlist 只负责上传 */
   // fileList: { type: Array as PropType<AUploadProps['fileList']> },
   icon: { type: String, default: 'ant-design:upload-outlined' },
-  disabled: { type: Object as PropType<AUploadProps['disabled']> },
+  disabled: { type: Boolean as PropType<AUploadProps['disabled']> },
   name: { type: String as PropType<AUploadProps['name']>, default: 'files' },
   openFileDialogOnClick: {
     type: Boolean as PropType<AUploadProps['openFileDialogOnClick']>,

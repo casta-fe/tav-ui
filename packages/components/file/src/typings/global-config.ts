@@ -22,7 +22,7 @@ import {
   type ApiQueryFilterFormFileTypeParams,
   type ApiUpdateFileNameAndLinkParams,
 } from '../components/FileTable/types'
-import { type ApiUploadLinkFileParams } from '../components/FileActionUploadLink'
+import { type ApiUploadFileLinkParams } from '../components/FileActionUploadLink'
 import { type ApiQueryFileLogParams } from '../components/FileLog'
 
 export const globalConfigFileProps = {
@@ -64,8 +64,8 @@ export const globalConfigFileProps = {
   TaFileActionUploadLink: {
     //:============================== CRUD API ==============================://
     // 超链接上传接口，传入 uploadHyperlink
-    apiUploadLinkFile: {
-      type: Function as PropType<(params: ApiUploadLinkFileParams) => Promise<any>>,
+    apiUploadFileLink: {
+      type: Function as PropType<(params: ApiUploadFileLinkParams) => Promise<any>>,
     },
     //:============================== CRUD API ==============================://
   },
