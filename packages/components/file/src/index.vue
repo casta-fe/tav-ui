@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots, watch } from 'vue'
+import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots, watch, onUnmounted } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
 import {
   type FileTypeSelectEmits,
@@ -55,66 +55,85 @@ const slots = useSlots()
 //   },
 // })
 const fileApiParams = ref(props.apiParams)
+const fileTableInnerUploadDataSource = ref(props.fileTable?.__uploadDataSource)
+const fileTableInnerUploadLinkDataSource = ref(props.fileTable?.__uploadLinkDataSource)
 watch(
-  () => JSON.stringify(props.apiParams),
-  (curfileApiParams, prefileApiParams) => {
-    if (curfileApiParams !== prefileApiParams) {
-      fileApiParams.value = {
-        ...props.apiParams,
-      }
+  () => [
+    JSON.stringify(props.apiParams),
+    JSON.stringify(props.fileTable?.__uploadDataSource ?? []),
+    JSON.stringify(props.fileTable?.__uploadLinkDataSource ?? []),
+  ],
+  async (
+    [curapiParams, curuploadDataSource, curuploadLinkDataSource],
+    [preapiParams, preuploadDataSource, preuploadLinkDataSource]
+  ) => {
+    if (curapiParams !== preapiParams) {
+      fileApiParams.value = props.apiParams
+    }
+
+    if (curuploadDataSource !== preuploadDataSource) {
+      fileTableInnerUploadDataSource.value = props.fileTable?.__uploadDataSource
+    }
+
+    if (curuploadLinkDataSource !== preuploadLinkDataSource) {
+      fileTableInnerUploadLinkDataSource.value = props.fileTable?.__uploadLinkDataSource
     }
   }
 )
 
 const fileTypeSelectRef = ref<FileTypeSelectInstance>()
-const fileTypeSelectProps = computed(() => ({
-  ...props.fileTypeSelect,
-  mode: props.mode,
-  apiParams: {
-    appId: fileApiParams.value.appId,
-    moduleCode: fileApiParams.value.moduleCode,
-    typeCodes: fileApiParams.value.typeCodes,
-    permissionControl: fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
-    ...(props.fileTypeSelect?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
-  },
-}))
+const fileTypeSelectProps = computed(() => {
+  return {
+    ...props.fileTypeSelect,
+    mode: props.mode,
+    apiParams: {
+      appId: fileApiParams.value.appId,
+      moduleCode: fileApiParams.value.moduleCode,
+      typeCodes: fileApiParams.value.typeCodes,
+      permissionControl:
+        fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
+      ...(props.fileTypeSelect?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+    },
+  }
+})
 
 const fileActionUploadRef = ref<FileActionUploadInstance>()
-const fileActionUploadProps = computed(() => ({
-  ...props.fileActionUpload,
-  mode: props.mode,
-  apiParams: {
-    appId: fileApiParams.value.appId,
-    // files: fileApiParams.value.files,
-    moduleCode: fileApiParams.value.moduleCode,
-    typeCode: fileApiParams.value.typeCode,
-    businessId: fileApiParams.value.businessId,
-    businessKey: fileApiParams.value.businessKey,
-    businessParamsJson:
-      fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
-    fileName: fileApiParams.value.fileName,
-    ...(props.fileActionUpload?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
-  },
-}))
+const fileActionUploadProps = computed(() => {
+  return {
+    ...props.fileActionUpload,
+    mode: props.mode,
+    apiParams: {
+      appId: fileApiParams.value.appId,
+      moduleCode: fileApiParams.value.moduleCode,
+      typeCode: fileApiParams.value.typeCode,
+      businessId: fileApiParams.value.businessId,
+      businessKey: fileApiParams.value.businessKey,
+      businessParamsJson:
+        fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
+      fileName: fileApiParams.value.fileName,
+      ...(props.fileActionUpload?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+    },
+  }
+})
 
 const fileActionUploadLinkRef = ref<FileActionUploadLinkInstance>()
-const fileActionUploadLinkProps = computed(() => ({
-  ...props.fileActionUploadLink,
-  mode: props.mode,
-  apiParams: {
-    appId: fileApiParams.value.appId,
-    address: fileApiParams.value.address,
-    moduleCode: fileApiParams.value.moduleCode,
-    name: fileApiParams.value.name,
-    typeCode: fileApiParams.value.typeCode,
-    businessId: fileApiParams.value.businessId,
-    businessKey: fileApiParams.value.businessKey,
-    businessParamsJson:
-      fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
-    ...(props.fileActionUploadLink?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
-  },
-  getFormContainer: () => headerElRef.value,
-}))
+const fileActionUploadLinkProps = computed(() => {
+  return {
+    ...props.fileActionUploadLink,
+    mode: props.mode,
+    apiParams: {
+      appId: fileApiParams.value.appId,
+      moduleCode: fileApiParams.value.moduleCode,
+      typeCode: fileApiParams.value.typeCode,
+      businessId: fileApiParams.value.businessId,
+      businessKey: fileApiParams.value.businessKey,
+      businessParamsJson:
+        fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
+      ...(props.fileActionUploadLink?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+    },
+    getFormContainer: () => headerElRef.value,
+  }
+})
 
 // const __fileTableProps = ref<FileTableProps & GlobalConfigFileProps['TaFileTable']>( // 类型太深，ts解析器打包报错，先给 any
 // const __fileTableProps = ref<any>(props.fileTable ?? ({} as any))
@@ -126,51 +145,46 @@ const fileActionUploadLinkProps = computed(() => ({
 //     __fileTableProps.value = { ...curFileTableProps.value }
 //   },
 // })
-const _fileTableProps = ref<any>(props.fileTable ?? ({} as any))
-watch(
-  () => JSON.stringify(props.fileTable),
-  (curfileTableProps, prefileTableProps) => {
-    if (curfileTableProps !== prefileTableProps) {
-      _fileTableProps.value = {
-        ...(props.fileTable ?? ({} as any)),
-      }
-    }
-  }
-)
 const fileTableRef = ref<FileTableInstance>()
-const fileTableProps = computed(() => ({
-  ..._fileTableProps.value,
-  mode: props.mode,
-  apiParams: {
-    typeCode: fileApiParams.value.typeCode,
-    businessId: fileApiParams.value.businessId,
-    businessParamsJson:
-      fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
+const fileTableProps = computed(() => {
+  return {
+    ...props.fileTable,
+    mode: props.mode,
+    apiParams: {
+      typeCode: fileApiParams.value.typeCode,
+      businessId: fileApiParams.value.businessId,
+      businessParamsJson:
+        fileApiParams.value.businessParamsJson ?? DEFAULT_APIPARAMS.businessParamsJson, // 合并默认值
 
-    appId: fileApiParams.value.appId,
-    businessCheck: fileApiParams.value.businessCheck ?? DEFAULT_APIPARAMS.businessCheck, // 合并默认值
-    businessIds: fileApiParams.value.businessIds,
-    businessKey: fileApiParams.value.businessKey,
-    endTime: fileApiParams.value.endTime,
-    finalTypeCodes: fileApiParams.value.finalTypeCodes,
-    id: fileApiParams.value.id,
-    includeStaging: fileApiParams.value.includeStaging ?? DEFAULT_APIPARAMS.includeStaging, // 合并默认值
-    moduleCode: fileApiParams.value.moduleCode,
-    permissionControl: fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
-    searchValue: fileApiParams.value.searchValue,
-    startTime: fileApiParams.value.startTime,
-    suffix: fileApiParams.value.suffix,
-    typeCodes: fileApiParams.value.typeCodes,
+      appId: fileApiParams.value.appId,
+      businessCheck: fileApiParams.value.businessCheck ?? DEFAULT_APIPARAMS.businessCheck, // 合并默认值
+      businessIds: fileApiParams.value.businessIds,
+      businessKey: fileApiParams.value.businessKey,
+      endTime: fileApiParams.value.endTime,
+      finalTypeCodes: fileApiParams.value.finalTypeCodes,
+      id: fileApiParams.value.id,
+      includeStaging: fileApiParams.value.includeStaging ?? DEFAULT_APIPARAMS.includeStaging, // 合并默认值
+      moduleCode: fileApiParams.value.moduleCode,
+      permissionControl:
+        fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
+      searchValue: fileApiParams.value.searchValue,
+      startTime: fileApiParams.value.startTime,
+      suffix: fileApiParams.value.suffix,
+      typeCodes: fileApiParams.value.typeCodes,
 
-    file: fileApiParams.value.file,
-    fileActualId: fileApiParams.value.fileActualId,
-    instantUpdate: fileApiParams.value.instantUpdate,
+      file: fileApiParams.value.file,
+      fileActualId: fileApiParams.value.fileActualId,
+      instantUpdate: fileApiParams.value.instantUpdate,
 
-    actualIds: fileApiParams.value.actualIds,
+      actualIds: fileApiParams.value.actualIds,
 
-    ...(_fileTableProps.value?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
-  },
-}))
+      ...(props.fileTable?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+    },
+    __uploadDataSource: fileTableInnerUploadDataSource.value ?? props.fileTable?.__uploadDataSource,
+    __uploadLinkDataSource:
+      fileTableInnerUploadLinkDataSource.value ?? props.fileTable?.__uploadLinkDataSource,
+  }
+})
 
 function handleFileTypeSelectChange(...args: any) {
   const data = args as unknown as ArgumentsOf<FileTypeSelectEmits['select']>
@@ -212,10 +226,7 @@ function handleFileActionUploadChange(...args: any) {
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadEmits['uploadedChange']>
   // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadDataSource 传入
-  _fileTableProps.value = {
-    ..._fileTableProps.value,
-    __uploadDataSource: [...files],
-  }
+  fileTableInnerUploadDataSource.value = [...files]
 }
 
 function handleFileActionUploadLinkChangeValidateSuccessChange(...args: any) {
@@ -240,10 +251,7 @@ function handleFileActionUploadLinkChange(...args: any) {
 
   const [files] = args as unknown as ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
   // 上传成功后将文件数据当作外部准备好的表格数据通过 __uploadLinkDataSource 传入
-  _fileTableProps.value = {
-    ..._fileTableProps.value,
-    __uploadLinkDataSource: [...files],
-  }
+  fileTableInnerUploadLinkDataSource.value = [...files]
 }
 
 // function handleFileTableChange(...args: any) {
@@ -254,6 +262,11 @@ function handleFileActionUploadLinkChange(...args: any) {
 function handleFileTableActualidsChange(...args: any) {
   const _args = args as unknown as ArgumentsOf<FileTableEmits['actualidsChange']>
   emits('update:fileActualIds', ..._args)
+}
+
+function handleFileTableDataSourceChange(...args: any) {
+  const _args = args as unknown as ArgumentsOf<FileTableEmits['dataSourceChange']>
+  emits('fileTable:dataSourceChange', ..._args)
 }
 
 function handleFileTableRowEdit(...args: any) {
@@ -288,6 +301,17 @@ async function fileTableDeleteRows(...args: ArgumentsOf<FileTableInstance['delet
   await fileTableRef.value?.deleteRows(...args)
 }
 
+function cleanup() {
+  fileTypeSelectRef.value?.cleanup()
+  fileActionUploadRef.value?.cleanup()
+  fileActionUploadLinkRef.value?.cleanup()
+  fileTableRef.value?.cleanup()
+}
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
   fileTypeSelectRef,
@@ -299,6 +323,7 @@ defineExpose({
   fileTableReadRows,
   fileTableUpdateRows,
   fileTableDeleteRows,
+  cleanup,
 })
 </script>
 
@@ -412,6 +437,7 @@ defineExpose({
             ref="fileTableRef"
             v-bind="fileTableProps"
             @actualids-change="handleFileTableActualidsChange"
+            @data-source-change="handleFileTableDataSourceChange"
             @row-edit="handleFileTableRowEdit"
             @row-update="handleFileTableRowUpdate"
             @row-delete="handleFileTableRowDelete"

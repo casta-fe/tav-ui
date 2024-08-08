@@ -31,7 +31,7 @@ export const fileTypeSelectProps = {
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // ASelect props
   value: { type: String as PropType<ASelectProps['value']> },
-  options: { type: Array as PropType<ASelectProps['options']>, default: () => [] },
+  options: { type: Array as PropType<ASelectProps['options']> },
   fieldNames: {
     type: Object as PropType<ASelectProps['fieldNames']>,
     default: () => ({
@@ -48,6 +48,13 @@ export const fileTypeSelectProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
+  /**
+   * 自动请求，包含功能：
+   * 1. 初始化是否自动请求（如果有 api 的话）
+   * 2. api依赖参数变化后是否自动请求（如果有 api 以及 api 参数）
+   * 3. 如果组件有除 api 外的其他数据源，关闭该属性后才能使用其他数据源
+   */
+  immediate: { type: Boolean, default: true },
   /** apiQueryFileType 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiQueryFileType: {
     type: Function as PropType<(apiParams: ApiQueryFileTypeParams) => Promise<any>>,
@@ -94,4 +101,5 @@ export type FileTypeSelectEmits = typeof fileTypeSelectEmits
 
 export interface FileTypeSelectInstance {
   elRef: Ref<HTMLDivElement | undefined>
+  cleanup(): void
 }

@@ -2,6 +2,7 @@
 import {
   type UnwrapRef,
   computed,
+  onUnmounted,
   ref,
   watch,
   /*useSlots, useAttrs*/
@@ -194,10 +195,50 @@ function validateFileType() {
   return true
 }
 
+// 清空状态
+function cleanup() {
+  close()
+}
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    cleanup()
+    // if (mergedProps.value.immediate && modalVisible.value) {
+    //   loading.value.value = true
+    //   await useModeFetchDataSource()
+    //   setTimeout(() => {
+    //     loading.value.value = false
+    //   }, 150)
+    // }
+  }
+)
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate && modalVisible.value) {
+        loading.value.value = true
+        await useModeFetchDataSource()
+        setTimeout(() => {
+          loading.value.value = false
+        }, 150)
+      }
+    }
+  }
+)
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
   open,
   close,
+  cleanup,
 })
 </script>
 

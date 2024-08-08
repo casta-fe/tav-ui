@@ -82,7 +82,7 @@ export const DEFAULT_APIPARAM_PERMISSIONCONTROL = {
 }
 /** apiparams 默认的 businessCheck */
 export const DEFAULT_APIPARAM_BUSINESSCHECK = {
-  businessCheck: false,
+  businessCheck: true,
 }
 /** apiparams 默认的 includeStaging */
 export const DEFAULT_APIPARAM_INCLUDESTAGING = {

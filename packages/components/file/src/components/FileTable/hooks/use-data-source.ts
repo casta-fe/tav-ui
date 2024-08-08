@@ -1,4 +1,4 @@
-import { type ComputedRef, type SetupContext, watch } from 'vue'
+import { type ComputedRef, type SetupContext, onMounted, watch } from 'vue'
 import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
@@ -20,8 +20,7 @@ async function handleDataSourceChangeEmit(
 
   // emits('change', rows, dataSource, 'upload')
   if (mergedProps.value.mode === 'updateInstantly') {
-    // emits('actualidsChange', VersionCachesController.getCaches()) // 刷接口时会抛出 actualidsChange，所以这里注释
-    await refreshTableDataApiAction()
+    emits('actualidsChange', VersionCachesController.getCaches())
   } else if (mergedProps.value.mode === 'update') {
     emits('actualidsChange', VersionCachesController.getCaches())
   } else {
@@ -101,37 +100,45 @@ export function useDataSource(options: {
     }
   )
 
-  /** 外部传入数据源 */
-  watch(
-    () => JSON.stringify(mergedProps.value.dataSource),
-    async (curdatasource, predatasource) => {
-      if (
-        curdatasource &&
-        curdatasource !== predatasource &&
-        // datasource 载入后变为双向绑定数据，vxetable 会自动带上 __id 这样还会触发 watch 所以手动排除
-        !curdatasource.includes('__id')
-      ) {
-        const rows = JSON.parse(
-          JSON.stringify([...(mergedProps.value.dataSource ?? [])])
-        ) as FileActionUploadApiResponseRecord[]
+  onMounted(() => {
+    /** 外部传入数据源 */
+    watch(
+      () => JSON.stringify(mergedProps.value.dataSource),
+      async (curdatasource, predatasource) => {
+        if (
+          curdatasource &&
+          curdatasource !== predatasource &&
+          // datasource 载入后变为双向绑定数据，vxetable 会自动带上 __id 这样还会触发 watch 所以手动排除
+          !curdatasource.includes('__id')
+        ) {
+          const rows = JSON.parse(
+            JSON.stringify([...(mergedProps.value.dataSource ?? [])])
+          ) as FileActionUploadApiResponseRecord[]
 
-        if (rows.length > 0) {
-          await tableCreateRows(rows, null)
-          VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
-        } else {
-          const currentRows = await tableReadRows()
-          await tableDeleteRows(currentRows)
-          VersionCachesController.deleteAllFileCaches()
+          if (predatasource !== undefined) {
+            await tableDeleteRows([], true, true)
+          }
+
+          if (rows.length > 0) {
+            await tableCreateRows(rows, null)
+            VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
+          } else {
+            await tableDeleteRows([], true, true)
+            VersionCachesController.deleteAllFileCaches()
+          }
+          await handleDataSourceChangeEmit(
+            rows,
+            tableReadRows,
+            emits,
+            mergedProps,
+            VersionCachesController,
+            refreshTableDataApiAction
+          )
         }
-        await handleDataSourceChangeEmit(
-          rows,
-          tableReadRows,
-          emits,
-          mergedProps,
-          VersionCachesController,
-          refreshTableDataApiAction
-        )
+      },
+      {
+        immediate: true,
       }
-    }
-  )
+    )
+  })
 }

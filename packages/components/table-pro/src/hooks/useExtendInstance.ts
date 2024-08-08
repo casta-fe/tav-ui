@@ -101,6 +101,9 @@ function createExendApis(
 
     const apiParams: TableProApiParams = { filter: tableFilterSearchParams, model: {} }
     if (options) {
+      if (options.filter) {
+        apiParams.filter = { ...apiParams.filter, ...(options.filter ?? {}) }
+      }
       if (options.page && options.page > 0) {
         apiParams.model = { ...(options.model ?? {}), page: options.page }
       }

@@ -7,6 +7,7 @@ import {
   onMounted,
   onUnmounted,
   ref,
+  watch,
   /*useSlots, useAttrs*/
 } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
@@ -90,6 +91,7 @@ const loading = computed({
 const {
   useModeConfigTable,
   apiActions: {
+    apiQueryFileOptions,
     apiQueryFilterFormFileTypeOptions,
     rowEditorApiOptions,
     historyApiOptions,
@@ -417,20 +419,43 @@ function handleFileVersionActions(
   })
 }
 
-// 清空表格状态
+// 清空状态
 function cleanup() {
-  fileVersionModalVisible.value = false
-  fileVersionFile.value = undefined
-  fileVersionDataSource.value = undefined
-  filePreviewModalVisible.value = false
-  filePreviewFile.value = undefined
-  actionUpdateClickRow.value = undefined
   VersionCachesController.deleteAllFileCaches()
 }
 
 onMounted(async () => {
   await handleFilterFormFileType()
 })
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  () => {
+    cleanup()
+  }
+)
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate) {
+        if (!mergedProps.value.dataSource) {
+          const curoptions = apiQueryFileOptions(mergedProps.value.apiParams)
+          if (!curoptions) return
+          const preoptions = apiQueryFileOptions(JSON.parse(preApiParams))
+          if (!preoptions) return
+          if (JSON.stringify(curoptions.apiParams) !== JSON.stringify(preoptions.apiParams)) {
+            loading.value.value = true
+            await refreshTableDataApiAction(curoptions.apiParams as any)
+            loading.value.value = false
+          }
+        }
+      }
+    }
+  }
+)
 
 onUnmounted(() => {
   cleanup()
@@ -470,7 +495,7 @@ defineExpose({
       <TaFileActionUploadForActionUpdateBtn
         ref="FileActionUploadForActionUpdateBtnRef"
         :mode="mergedProps.mode"
-        :api-params="apiParams"
+        :api-params="mergedProps.apiParams"
         :update-file="actionUpdateClickRow"
         @uploaded-change="handleFileActionUploadForActionUpdateBtnChange"
       />

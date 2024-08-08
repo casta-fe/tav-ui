@@ -3,6 +3,7 @@ import {
   type UnwrapRef,
   getCurrentInstance,
   nextTick,
+  onUnmounted,
   ref,
   watch,
   useSlots /* useAttrs*/,
@@ -275,9 +276,27 @@ async function openFilePicker() {
   uploadInnerButtonEl?.click()
 }
 
+// 清空状态
+function cleanup() {
+  resetFileList()
+}
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  () => {
+    cleanup()
+  }
+)
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
   openFilePicker,
+  cleanup,
 })
 </script>
 
@@ -292,6 +311,7 @@ defineExpose({
       <AUpload
         ref="AUploadRef"
         :file-list="[]"
+        :accpet="mergedProps.accept"
         :multiple="mergedProps.updateFile ? false : mergedProps.multiple"
         :max-count="mergedProps.maxCount"
         :show-upload-list="false"

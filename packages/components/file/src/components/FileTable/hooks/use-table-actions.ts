@@ -63,13 +63,21 @@ export function useTableActions(options: {
     if (useLoading) loading.value.value = false
   }
 
-  async function tableDeleteRows(rows: FileActionUploadApiResponseRecord[], useLoading = true) {
+  async function tableDeleteRows(
+    rows: FileActionUploadApiResponseRecord[],
+    useLoading = true,
+    deleteAll = false
+  ) {
     await nextTick()
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
     if (useLoading) loading.value.value = true
     // 指定 row 或 [row, ...] 删除多条数据，如果为空则删除所有数据
-    await tableProInstance.remove(toRaw(rows))
+    if (deleteAll) {
+      await tableProInstance.remove()
+    } else {
+      await tableProInstance.remove(toRaw(rows))
+    }
     if (useLoading) loading.value.value = false
   }
 

@@ -186,17 +186,17 @@ export function useMode(options: {
         dataOrApiConfig = dataOrApiConfigWithList
       }
 
-      if (mergedProps.value.dataSource) {
-        // 如果传入 datasource 则不使用接口数据
-        dataOrApiConfig = dataOrApiConfigWithNull
-      }
-
       if (['create'].includes(mergedProps.value.mode)) {
         // 新增模式必须是空数据，不接收、使用任何 dataSource 与 api
         console.warn(
           '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
         )
 
+        dataOrApiConfig = dataOrApiConfigWithNull
+      }
+
+      if (mergedProps.value.dataSource) {
+        // 如果传入 datasource 则不使用接口数据
         dataOrApiConfig = dataOrApiConfigWithNull
       }
 
@@ -493,55 +493,24 @@ export function useMode(options: {
       return _tableData.length > 0 ? _tableData : [row]
     }
 
+    const newrow = await action()
+    VersionCachesController.updateFileCaches(newrow)
+
     if (mode === 'read') {
-      const newrow = await action()
       const tableData = await getTableData()
-      VersionCachesController.updateFileCaches(newrow)
-      // emits(
-      //   'change',
-      //   [{ ...newrow }],
-      //   JSON.parse(JSON.stringify([...(tableData.value ?? [])])),
-      //   'update'
-      // )
       emits(
         'actualidsChange',
         JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
       )
     } else if (mode === 'create') {
-      const newrow = await action()
-      VersionCachesController.updateFileCaches(newrow)
       const tableData = await getTableData()
-      // emits(
-      //   'change',
-      //   [{ ...newrow }],
-      //   JSON.parse(JSON.stringify([...(tableData.value ?? [])])),
-      //   'update'
-      // )
       emits(
         'actualidsChange',
         JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      const newrow = await action()
-      VersionCachesController.updateFileCaches(newrow)
-      // const tableData = await getTableData()
-      // emits(
-      //   'change',
-      //   [{ ...newrow }],
-      //   JSON.parse(JSON.stringify([...(tableData.value ?? [])])),
-      //   'update'
-      // )
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
-      const newrow = await action()
-      VersionCachesController.updateFileCaches(newrow)
-      // const tableData = await getTableData()
-      // emits(
-      //   'change',
-      //   [{ ...newrow }],
-      //   JSON.parse(JSON.stringify([...(tableData.value ?? [])])),
-      //   'update'
-      // )
       emits('actualidsChange', VersionCachesController.getCaches())
 
       if (!mergedProps.value.dataSource) {
@@ -549,6 +518,11 @@ export function useMode(options: {
         await editRowApiAction(changeEventPayload)
         await refreshTableDataApiAction()
       }
+    }
+
+    if (mergedProps.value.dataSource) {
+      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
+      emits('dataSourceChange', [_tableData])
     }
   }
 
@@ -603,6 +577,11 @@ export function useMode(options: {
         await refreshTableDataApiAction()
       }
     }
+
+    if (mergedProps.value.dataSource) {
+      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
+      emits('dataSourceChange', [_tableData])
+    }
   }
 
   async function deleteRow(
@@ -652,6 +631,11 @@ export function useMode(options: {
         await deleteRowApiAction()
         await refreshTableDataApiAction()
       }
+    }
+
+    if (mergedProps.value.dataSource) {
+      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
+      emits('dataSourceChange', [_tableData])
     }
   }
   //:========================================: data actions :========================================://

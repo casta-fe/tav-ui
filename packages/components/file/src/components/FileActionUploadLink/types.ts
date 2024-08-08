@@ -75,4 +75,5 @@ export type FileActionUploadLinkEmits = typeof fileActionUploadLinkEmits
 
 export interface FileActionUploadLinkInstance {
   elRef: Ref<HTMLDivElement | undefined>
+  cleanup(): Promise<void>
 }

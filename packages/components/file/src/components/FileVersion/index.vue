@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, computed, ref, watch, onUnmounted /*useSlots, useAttrs*/ } from 'vue'
 import { TaModal, TaTablePro } from '@tav-ui/components'
 import { DEFAULT_FILEVERSION_CLASSNAME, DEFAULT_FILEVERSION_ID } from '../../consts'
 import {
@@ -210,10 +210,45 @@ function handleOnVisibleChange(isOpen: boolean) {
   }
 }
 
+function cleanup() {
+  close()
+}
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    cleanup()
+    // if (mergedProps.value.immediate && modalVisible.value) {
+    //   loading.value.value = true
+    //   await useModeFetchDataSource()
+    //   loading.value.value = false
+    // }
+  }
+)
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate && modalVisible.value) {
+        loading.value.value = true
+        await useModeFetchDataSource()
+        loading.value.value = false
+      }
+    }
+  }
+)
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
   open,
   close,
+  cleanup,
 })
 </script>
 
@@ -245,6 +280,7 @@ defineExpose({
             :fill-inner="mergedProps.fillInner"
             :columns="columns"
             v-bind="dataSourceOrApiConfig"
+            :immediate="mergedProps.immediate"
           />
         </div>
         <TaFilePreview

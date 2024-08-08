@@ -2,6 +2,7 @@
 import {
   type UnwrapRef,
   Teleport,
+  onUnmounted,
   ref,
   watch,
   onMounted,
@@ -43,6 +44,7 @@ defineOptions({
 })
 
 const elRef = ref<UnwrapRef<FileActionUploadLinkInstance['elRef']>>()
+const formRef = ref()
 const props = defineProps(fileActionUploadLinkProps)
 const emits = defineEmits(fileActionUploadLinkEmits)
 // const slots = useSlots()
@@ -213,8 +215,26 @@ onBeforeUnmount(() => {
   }
 })
 
+// 清空状态
+async function cleanup() {
+  formRef.value && (await resetFields())
+  close()
+}
+
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    await cleanup()
+  }
+)
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
+  cleanup,
 })
 </script>
 
@@ -256,6 +276,7 @@ defineExpose({
         <Teleport :to="formContainer">
           <section :class="`${DEFAULT_FILE_CLASSNAME}-header-actions-extra`">
             <TaForm
+              ref="formRef"
               :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form`"
               @register="formRegister"
             >

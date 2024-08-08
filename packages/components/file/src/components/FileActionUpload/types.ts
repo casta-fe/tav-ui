@@ -93,4 +93,5 @@ export type FileActionUploadEmits = typeof fileActionUploadEmits
 export interface FileActionUploadInstance {
   elRef: Ref<HTMLDivElement | undefined>
   openFilePicker: () => Promise<void>
+  cleanup(): void
 }

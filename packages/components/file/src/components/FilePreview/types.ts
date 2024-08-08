@@ -48,7 +48,12 @@ export const filePreviewProps = {
   },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
-  /** 是否自动请求 */
+  /**
+   * 自动请求，包含功能：
+   * 1. 初始化是否自动请求（如果有 api 的话）
+   * 2. api依赖参数变化后是否自动请求（如果有 api 以及 api 参数）
+   * 3. 如果组件有除 api 外的其他数据源，关闭该属性后才能使用其他数据源
+   */
   immediate: { type: Boolean, default: true },
   /** 预览文件 */
   file: {
@@ -80,4 +85,5 @@ export interface FilePreviewInstance {
   elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
+  cleanup(): void
 }

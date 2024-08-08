@@ -181,7 +181,7 @@ export default {
       '2': 'File type',
       '3': 'File size',
       '4': 'Version',
-      '5': 'Uploader',
+      '5': 'File Owner',
       '6': 'Upload time',
       '7': 'Updater',
       '8': 'Update time',

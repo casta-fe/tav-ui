@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, onMounted, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
+import {
+  type UnwrapRef,
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch /*, useSlots, useAttrs*/,
+} from 'vue'
 import { Select as ASelect, Empty } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type ArgumentsOf } from '../../utils'
@@ -77,15 +84,6 @@ const {
   setDisable,
   setLoading,
 })
-// api 相关参数变化重新发起请求
-watch(
-  () => JSON.stringify(mergedProps.value.apiParams),
-  async (curApiParams, preApiParams) => {
-    if (curApiParams && curApiParams !== preApiParams) {
-      await beforeHandleApiAction()
-    }
-  }
-)
 
 const options = computed(() => {
   if (mergedProps.value.options && mergedProps.value.options.length > 0) {
@@ -122,8 +120,6 @@ watch(
             mergedProps.value.fieldNames,
           ] as any)
         )
-      } else {
-        selectValue.value = undefined
       }
     }
   },
@@ -187,23 +183,54 @@ function handleClear() {
 }
 
 async function beforeHandleApiAction() {
-  // 已传入的 options 为主
-  if (
-    !mergedProps.value.options ||
-    (mergedProps.value.options && mergedProps.value.options.length === 0)
-  ) {
+  // 已非 api 的数据源为主
+  if (!mergedProps.value.options) {
     const options = typeSelectApiOptions(mergedProps.value.apiParams)
     if (!options) return
     await handleApi(options)
   }
 }
 
+// 清空状态
+function cleanup() {
+  selectValue.value = undefined
+}
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    cleanup()
+    // if (mergedProps.value.immediate) {
+    //   await beforeHandleApiAction()
+    // }
+  }
+)
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate) {
+        await beforeHandleApiAction()
+      }
+    }
+  }
+)
+
 onMounted(async () => {
-  await beforeHandleApiAction()
+  if (mergedProps.value.immediate) {
+    await beforeHandleApiAction()
+  }
+})
+
+onUnmounted(() => {
+  cleanup()
 })
 
 defineExpose({
   elRef,
+  cleanup,
 })
 </script>
 

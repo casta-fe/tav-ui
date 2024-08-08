@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, watch /*useSlots, useAttrs*/ } from 'vue'
-import { TaModal, TaTablePro } from '@tav-ui/components'
+import { type UnwrapRef, computed, ref, watch, onUnmounted /*useSlots, useAttrs*/ } from 'vue'
+import { type ITableProInstance, TaModal, TaTablePro } from '@tav-ui/components'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import { DEFAULT_FILELOG_CLASSNAME, DEFAULT_FILELOG_ID } from '../../consts'
-import {
-  useDisable,
-  useGlobalConfigProps,
-  useLoading,
-  useMergedProps,
-  useRequest,
-} from '../../hooks'
+import { useGlobalConfigProps, useMergedProps } from '../../hooks'
 import { type FileLogInstance, type FileLogProps, fileLogEmits, fileLogProps } from './types'
 import { useColumns, useMode } from './hooks'
 
@@ -30,6 +24,7 @@ defineOptions({
 })
 
 const elRef = ref<UnwrapRef<FileLogInstance['elRef']>>()
+const fileLogTableProRef = ref<ITableProInstance>()
 const props = defineProps(fileLogProps)
 const emits = defineEmits(fileLogEmits)
 // const slots = useSlots()
@@ -63,7 +58,7 @@ const dataSourceOrApiConfig = computed<{
       data: undefined,
       api: async ({ filter, model }: Record<string, any>) => {
         const options = logApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
-        const { apiParams } = options || {}
+        const { apiParams = {} } = options || {}
 
         const result = await mergedProps.value.apiQueryFileLog?.({
           filter: {
@@ -108,19 +103,6 @@ const loading = computed({
   },
 })
 
-// 使用 api 处理数据
-const { setDisable } = useDisable()
-const { setLoading } = useLoading()
-const {
-  result: ApiResult,
-  // error: apiError,
-  // handleApi,
-} = useRequest({
-  setDisable,
-  setLoading,
-  loading,
-})
-
 // 处理表格列
 const columns = useColumns({
   mergedProps,
@@ -157,10 +139,52 @@ function handleOnVisibleChange(isOpen: boolean) {
   }
 }
 
+// 清空状态
+function cleanup() {
+  close()
+}
+
+// mode 变化置空状态
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    cleanup()
+    // if (mergedProps.value.immediate && modalVisible.value) {
+    //   loading.value.value = false
+    //   const options = logApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
+    //   const { apiParams = {} } = options || {}
+    //   const tableProInstance = (fileLogTableProRef.value as any)?.instance as any
+    //   await tableProInstance?.reload({ filter: apiParams })
+    //   loading.value.value = true
+    // }
+  }
+)
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate && modalVisible.value) {
+        loading.value.value = false
+        const options = logApiOptions(mergedProps.value.apiParams, mergedProps.value.file!)
+        const { apiParams = {} } = options || {}
+        const tableProInstance = (fileLogTableProRef.value as any)?.instance as any
+        await tableProInstance?.reload({ filter: apiParams })
+        loading.value.value = true
+      }
+    }
+  }
+)
+
+onUnmounted(() => {
+  cleanup()
+})
+
 defineExpose({
   elRef,
   open,
   close,
+  cleanup,
 })
 </script>
 
@@ -185,6 +209,7 @@ defineExpose({
       <template #default>
         <div :class="`${DEFAULT_FILELOG_CLASSNAME}-modal-body`">
           <TaTablePro
+            ref="fileLogTableProRef"
             :loading="loading.value"
             :checkbox-config="mergedProps.checkboxConfig"
             :pager-config="mergedProps.pagerConfig"
@@ -192,6 +217,7 @@ defineExpose({
             :fill-inner="mergedProps.fillInner"
             :columns="columns"
             v-bind="dataSourceOrApiConfig"
+            :immediate="mergedProps.immediate"
           />
         </div>
       </template>

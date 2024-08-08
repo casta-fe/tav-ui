@@ -153,12 +153,12 @@ const unifiedTaFileData = reactive({
     apiParams: {
       moduleCode: 'tg_invest',
       appId: 10001,
-      businessKey: 'GSWU19972MMNPWLF7',
-      businessId: 'GSWU19972MMNPWLF7',
-      businessParamsJson: JSON.stringify({
-        investCompanyCode: 'test1',
-        investInvProjectNumber: 'test1',
-      }),
+      // businessKey: 'GSWU19972MMNPWLF7',
+      // businessIds: ['GSWU19972MMNPWLF7'],
+      // businessParamsJson: JSON.stringify({
+      //   investCompanyCode: 'test1',
+      //   investInvProjectNumber: 'test1',
+      // }),
     },
     fileActualIds: [],
     fileTypeSelect: {
@@ -193,78 +193,90 @@ const unifiedTaFileData = reactive({
       visible: true,
     },
     fileTable: {
-      apiParams: {
-        moduleCode: 'tg_invest',
-      },
+      // apiParams: {
+      //   moduleCode: 'tg_invest',
+      // },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
-      // dataSource: [
-      //   {
-      //     id: 78211,
-      //     appId: 10001,
-      //     actualId: 'd546eff9ced84a88adc1a3d50e7423f5',
-      //     moduleId: 13,
-      //     businessKey: 'GS9L29723MD7UCPCB-tg_invest-TG-20240731000001',
-      //     businessId: 'TG-20240731000001-4',
-      //     type: 466,
-      //     deleted: 0,
-      //     version: 1,
-      //     name: '再融资立项表模版',
-      //     suffix: 'xlsx',
-      //     fullName: '再融资立项表模版.xlsx',
-      //     size: 15584,
-      //     address: '/20240801/17225143685779413.xlsx',
-      //     runtime: null,
-      //     hyperlink: 0,
-      //     sourceFileDownload: 1,
-      //     watermarkFileDownload: 2,
-      //     fileSize: '15KB',
-      //     createBy: '1',
-      //     createByName: '系统管理员',
-      //     expand: null,
-      //     dataType: null,
-      //     toPdf: 0,
-      //     errorMsg: null,
-      //     moduleCode: 'tg_invest_agreement',
-      //     moduleName: '协议签署',
-      //     typeCode: 'INVEST_XYQS_QZBTZXY',
-      //     typeName: '签章版投资协议',
-      //     createTime: '2024-08-01 20:12:49',
-      //   },
-      //   {
-      //     id: 78210,
-      //     appId: 10001,
-      //     actualId: '0d6fe0b6bea64c24bfe94c299af1c9e3',
-      //     moduleId: 13,
-      //     businessKey: 'GS9L29723MD7UCPCB-tg_invest-TG-20240731000001',
-      //     businessId: 'TG-20240731000001-4',
-      //     type: 466,
-      //     deleted: 0,
-      //     version: 1,
-      //     name: 'output (1)',
-      //     suffix: 'png',
-      //     fullName: 'output (1).png',
-      //     size: 395998,
-      //     address: '/20240801/17225143647377890.png',
-      //     runtime: null,
-      //     hyperlink: 0,
-      //     sourceFileDownload: 1,
-      //     watermarkFileDownload: 2,
-      //     fileSize: '386KB',
-      //     createBy: '1',
-      //     createByName: '系统管理员',
-      //     expand: null,
-      //     dataType: null,
-      //     toPdf: 0,
-      //     errorMsg: null,
-      //     moduleCode: 'tg_invest_agreement',
-      //     moduleName: '协议签署',
-      //     typeCode: 'INVEST_XYQS_QZBTZXY',
-      //     typeName: '签章版投资协议',
-      //     createTime: '2024-08-01 20:12:45',
-      //   },
-      // ],
+      dataSource: [
+        {
+          id: 78144,
+          appId: 10001,
+          actualId: '922819270e4b4556a40c219be1e1d444',
+          moduleId: 2,
+          businessKey: 'GSWU19972MMNPWLF7',
+          businessId: 'GSWU19972MMNPWLF7',
+          type: 12,
+          deleted: 0,
+          version: 1,
+          name: 'test',
+          suffix: 'docx',
+          fullName: 'test.docx',
+          size: 13426,
+          address: '/20240807/17230009624311784.docx',
+          hyperlink: 0,
+          auto: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 1,
+          fileSize: '13KB',
+          createBy: '1',
+          owner: '1',
+          createByName: '系统管理员',
+          ownerName: '系统管理员',
+          expand: null,
+          workflowCopy: 0,
+          toPdf: 0,
+          errorMsg: null,
+          createTime: '2024-08-07 11:22:42',
+          updateTime: '2024-08-07 11:22:42',
+          moduleCode: 'tg_invest',
+          moduleFullName: '股权投资',
+          typeCode: 'INVEST_FOUND_NDA',
+          typeName: 'NDA',
+          staging: 0,
+          businessDisplayItemValue: null,
+          businessDisplayItemText: null,
+        },
+        {
+          id: 77898,
+          appId: 10001,
+          actualId: '00273843cd7b460099df34dc84b13926',
+          moduleId: 2,
+          businessKey: 'GSWU19972MMNPWLF7',
+          businessId: 'GSWU19972MMNPWLF7',
+          type: 12,
+          deleted: 0,
+          version: 1,
+          name: 'test',
+          suffix: 'pptx',
+          fullName: 'test.pptx',
+          size: 33856,
+          address: '/20240805/17228501611116563.pptx',
+          hyperlink: 0,
+          auto: 0,
+          sourceFileDownload: 1,
+          watermarkFileDownload: 1,
+          fileSize: '33KB',
+          createBy: '1',
+          owner: '1',
+          createByName: '系统管理员',
+          ownerName: '系统管理员',
+          expand: null,
+          workflowCopy: 0,
+          toPdf: 0,
+          errorMsg: null,
+          createTime: '2024-08-05 17:29:21',
+          updateTime: '2024-08-05 17:29:21',
+          moduleCode: 'tg_invest',
+          moduleFullName: '股权投资',
+          typeCode: 'INVEST_FOUND_NDA',
+          typeName: 'NDA',
+          staging: 0,
+          businessDisplayItemValue: null,
+          businessDisplayItemText: null,
+        },
+      ],
       showOperations: true,
       filterFormConfig: true,
       // pagerConfig: {
@@ -273,15 +285,59 @@ const unifiedTaFileData = reactive({
     },
   },
 })
-// setTimeout(() => {
-//   // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
-//   unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
-// }, 10000)
+setTimeout(() => {
+  // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
+  unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
+  // unifiedTaFileData.updateInstantly.apiParams.typeCodes = ['INVEST_FOUND_BFJY']
+
+  // setTimeout(() => {
+  //   unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_invest'
+  // }, 5000)
+  // unifiedTaFileData.updateInstantly.mode = 'update'
+  unifiedTaFileData.updateInstantly.fileTable.dataSource.push({
+    id: 78147,
+    appId: 10001,
+    actualId: '433de6d5e44a4d2998726af6519b64b7',
+    moduleId: 2,
+    businessKey: 'GSWU19972MMNPWLF7',
+    businessId: 'GSWU19972MMNPWLF7',
+    type: 11,
+    deleted: 0,
+    version: 1,
+    name: 'bbb',
+    suffix: null,
+    fullName: null,
+    size: null,
+    address: 'https://bbb.com',
+    hyperlink: 1,
+    auto: 0,
+    sourceFileDownload: 1,
+    watermarkFileDownload: 1,
+    fileSize: null,
+    createBy: '1',
+    owner: '1',
+    createByName: '系统管理员',
+    ownerName: '系统管理员',
+    expand: null,
+    workflowCopy: 0,
+    toPdf: 0,
+    errorMsg: null,
+    createTime: '2024-08-07 11:24:39',
+    updateTime: '2024-08-07 11:24:39',
+    moduleCode: 'tg_invest',
+    moduleFullName: '股权投资',
+    typeCode: 'INVEST_FOUND_TZJYS_',
+    typeName: '投资建议书(脱敏)',
+    staging: 0,
+    businessDisplayItemValue: null,
+    businessDisplayItemText: null,
+  })
+}, 5000)
 
 watch(
-  () => unifiedTaFileData.update.fileActualIds,
+  () => unifiedTaFileData.updateInstantly.fileActualIds,
   (cur) => {
-    console.log(cur)
+    console.log('fileActualIds: ', cur)
   },
   {
     deep: true,
@@ -296,6 +352,9 @@ function handleFilterFormConfig(args: any) {
   // console.log(args)
   return args
 }
+function handleFileTableDataSourceChange(args: any) {
+  console.log('handleFileTableDataSourceChange: ', args)
+}
 </script>
 
 <template>
@@ -303,8 +362,9 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.update"
-      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
+      v-bind="unifiedTaFileData.updateInstantly"
+      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      @file-table:data-source-change="handleFileTableDataSourceChange"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>
