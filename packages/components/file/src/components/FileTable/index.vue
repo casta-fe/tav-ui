@@ -3,7 +3,6 @@ import {
   type Ref,
   type UnwrapRef,
   computed,
-  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -22,7 +21,7 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord } from '../../typings'
-import { type ArgumentsOf, fileSingleDownload } from '../../utils'
+import { type ArgumentsOf, fileSingleDownload, isOwnerOrAdmin } from '../../utils'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
@@ -97,8 +96,8 @@ const {
     historyApiOptions,
     deleteApiOptions,
   },
-  dataActions: { editRow, updateRow, deleteRow },
-} = useMode({ mergedProps, emits, VersionCachesController })
+  dataActions: { reloadRows, editRow, updateRow, deleteRow },
+} = useMode({ mergedProps, tableProRef, emits, VersionCachesController })
 
 const configTable = useModeConfigTable()
 
@@ -113,10 +112,8 @@ useDataSource({
   mergedProps,
   tableCreateRows,
   tableReadRows,
-  tableDeleteRows,
   emits,
   VersionCachesController,
-  refreshTableDataApiAction,
 })
 
 // 使用 api 处理数据
@@ -166,12 +163,8 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
 
 // 立即更新模式操作后（更新、删除）刷新数据
 async function refreshTableDataApiAction(params?: FileTableReloadApiParams) {
-  if (!mergedProps.value.visible) return
-
-  await nextTick()
   loading.value.value = true
-  const tableProInstance = (tableProRef.value as any)?.instance as any
-  await tableProInstance.reload(params)
+  await reloadRows(params)
   loading.value.value = false
 }
 
@@ -192,6 +185,34 @@ async function handleFilterFormFileType() {
       parentId: item.moduleCode,
     }))
   }
+
+  const traverse = (datas: any[], isDeep = false) => {
+    for (let i = 0; i < datas.length; i++) {
+      const data = datas[i]
+      if (data.nodeType === 'MODULE') {
+        data.class = data.class
+          ? `${data.class} child--type-module-node`
+          : 'child--type-module-node'
+      } else {
+        data.class = data.class
+          ? `${data.class} child--type-normal-node`
+          : 'child--type-normal-node'
+      }
+
+      if (data.children && data.children.length) {
+        isDeep = true
+        data.children = traverse(data.children, isDeep)
+        isDeep = false
+      } else {
+        if (isDeep) {
+          data.class = data.class ? `${data.class} child--deep-node` : 'child--deep-node'
+        }
+      }
+    }
+
+    return datas
+  }
+  traverse(filterFormFileTypeData.value)
   loading.value.value = false
 }
 
@@ -374,6 +395,7 @@ const columns = useColumns({
   actions,
   handleCellEditClick,
   hanldeVersionClick,
+  globalConfigUserInfo,
 })
 
 // 筛选项
@@ -385,7 +407,8 @@ const filterFormConfig = useFilterFormConfig({
 
 // 行编辑配置
 const editConfig = computed<any>(() =>
-  mergedProps.value.enabledRowEdit
+  mergedProps.value.enabledRowEdit &&
+  (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
     ? {
         // trigger: 'manual',
         trigger: 'click',
@@ -420,8 +443,9 @@ function handleFileVersionActions(
 }
 
 // 清空状态
-function cleanup() {
+async function cleanup() {
   VersionCachesController.deleteAllFileCaches()
+  await tableDeleteRows([], true, true)
 }
 
 onMounted(async () => {
@@ -431,8 +455,8 @@ onMounted(async () => {
 // mode 变化置空状态
 watch(
   () => mergedProps.value.mode,
-  () => {
-    cleanup()
+  async () => {
+    await cleanup()
   }
 )
 // apiparams 变化重新请求

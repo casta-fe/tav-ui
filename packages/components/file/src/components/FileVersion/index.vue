@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, watch, onUnmounted /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, computed, onUnmounted, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { tavI18n } from '@tav-ui/locales'
 import { TaModal, TaTablePro } from '@tav-ui/components'
 import { DEFAULT_FILEVERSION_CLASSNAME, DEFAULT_FILEVERSION_ID } from '../../consts'
 import {
@@ -258,6 +259,7 @@ defineExpose({
       :visible="modalVisible"
       title="TaFileVersion"
       :width="mergedProps.width"
+      :min-height="400"
       :wrap-class-name="`${DEFAULT_FILEVERSION_CLASSNAME}-modal ${mergedProps.wrapClassName ?? ''}`"
       :destroy-on-close="mergedProps.destroyOnClose"
       :mask-closable="mergedProps.maskClosable"
@@ -267,7 +269,9 @@ defineExpose({
     >
       <template #title>
         <div :class="`${DEFAULT_FILEVERSION_CLASSNAME}-modal-title`">
-          {{ mergedProps.file?.fullName || mergedProps.file?.name }}
+          {{
+            `${mergedProps.file?.fullName || mergedProps.file?.name} ${tavI18n('Tav.file.modal.1')}`
+          }}
         </div>
       </template>
       <template #default>

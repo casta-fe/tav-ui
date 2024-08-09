@@ -266,8 +266,6 @@ export const fileEmits = {
     args instanceof Object,
   'fileTable:rowDelete': (...args: ArgumentsOf<FileTableEmits['rowDelete']>) =>
     args instanceof Object,
-  'fileTable:dataSourceChange': (...args: ArgumentsOf<FileTableEmits['dataSourceChange']>) =>
-    args instanceof Object,
 }
 
 export type FileEmits = typeof fileEmits

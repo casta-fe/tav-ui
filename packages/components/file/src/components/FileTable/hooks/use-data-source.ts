@@ -3,7 +3,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { type FileTableEmits, type FileTableProps, type FileTableReloadApiParams } from '../types'
+import { type FileTableEmits, type FileTableProps } from '../types'
 import { type VersionCaches } from './../../../hooks'
 import { type UseTableActionsReturn } from './use-table-actions'
 
@@ -12,16 +12,13 @@ async function handleDataSourceChangeEmit(
   tableReadRows: UseTableActionsReturn['tableReadRows'],
   emits: SetupContext<FileTableEmits>['emit'],
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  VersionCachesController: VersionCaches,
-  refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
+  VersionCachesController: VersionCaches
 ) {
   const _dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
   const dataSource = _dataSource.length > 0 ? _dataSource : rows
 
   // emits('change', rows, dataSource, 'upload')
-  if (mergedProps.value.mode === 'updateInstantly') {
-    emits('actualidsChange', VersionCachesController.getCaches())
-  } else if (mergedProps.value.mode === 'update') {
+  if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
     emits('actualidsChange', VersionCachesController.getCaches())
   } else {
     emits(
@@ -35,20 +32,10 @@ export function useDataSource(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
   tableCreateRows: UseTableActionsReturn['tableCreateRows']
   tableReadRows: UseTableActionsReturn['tableReadRows']
-  tableDeleteRows: UseTableActionsReturn['tableDeleteRows']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
-  refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
 }) {
-  const {
-    mergedProps,
-    tableCreateRows,
-    tableReadRows,
-    tableDeleteRows,
-    emits,
-    VersionCachesController,
-    refreshTableDataApiAction,
-  } = options
+  const { mergedProps, tableCreateRows, tableReadRows, emits, VersionCachesController } = options
 
   /** upload 组件上传成功数据源 */
   watch(
@@ -67,8 +54,7 @@ export function useDataSource(options: {
             tableReadRows,
             emits,
             mergedProps,
-            VersionCachesController,
-            refreshTableDataApiAction
+            VersionCachesController
           )
         }
       }
@@ -92,8 +78,7 @@ export function useDataSource(options: {
             tableReadRows,
             emits,
             mergedProps,
-            VersionCachesController,
-            refreshTableDataApiAction
+            VersionCachesController
           )
         }
       }
@@ -107,32 +92,29 @@ export function useDataSource(options: {
       async (curdatasource, predatasource) => {
         if (
           curdatasource &&
-          curdatasource !== predatasource &&
-          // datasource 载入后变为双向绑定数据，vxetable 会自动带上 __id 这样还会触发 watch 所以手动排除
-          !curdatasource.includes('__id')
+          curdatasource !== predatasource
+          // &&
+          // // 因为使用 datasource 时 datasource 传入 vxetable 被自动转为双向绑定数据然后其内部会为每条数据附带 __id 字段这样会再次触发 watch
+          // // 为了优化所以判断当 curdatasource 包含 __id 时再执行，!curdatasource.includes('__id') && predatasource === undefined 是为了在初始化时触发一次，将 fileactualids 数据传出去
+          // ((!curdatasource.includes('__id') && predatasource === undefined) ||
+          //   curdatasource.includes('__id'))
         ) {
           const rows = JSON.parse(
             JSON.stringify([...(mergedProps.value.dataSource ?? [])])
           ) as FileActionUploadApiResponseRecord[]
 
-          if (predatasource !== undefined) {
-            await tableDeleteRows([], true, true)
-          }
+          VersionCachesController.deleteAllFileCaches()
 
           if (rows.length > 0) {
-            await tableCreateRows(rows, null)
             VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
-          } else {
-            await tableDeleteRows([], true, true)
-            VersionCachesController.deleteAllFileCaches()
           }
+
           await handleDataSourceChangeEmit(
             rows,
             tableReadRows,
             emits,
             mergedProps,
-            VersionCachesController,
-            refreshTableDataApiAction
+            VersionCachesController
           )
         }
       },

@@ -264,11 +264,6 @@ function handleFileTableActualidsChange(...args: any) {
   emits('update:fileActualIds', ..._args)
 }
 
-function handleFileTableDataSourceChange(...args: any) {
-  const _args = args as unknown as ArgumentsOf<FileTableEmits['dataSourceChange']>
-  emits('fileTable:dataSourceChange', ..._args)
-}
-
 function handleFileTableRowEdit(...args: any) {
   const _args = args as unknown as ArgumentsOf<FileTableEmits['rowEdit']>
   emits('fileTable:rowEdit', ..._args)
@@ -437,7 +432,6 @@ defineExpose({
             ref="fileTableRef"
             v-bind="fileTableProps"
             @actualids-change="handleFileTableActualidsChange"
-            @data-source-change="handleFileTableDataSourceChange"
             @row-edit="handleFileTableRowEdit"
             @row-update="handleFileTableRowUpdate"
             @row-delete="handleFileTableRowDelete"

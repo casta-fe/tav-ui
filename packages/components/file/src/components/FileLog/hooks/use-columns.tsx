@@ -9,28 +9,29 @@ export function defaultColumnsBuilder(
 ) {
   const DEFAULT_COLUMNS: FileLogTableColumn[] = [
     {
-      title: tavI18n('Tav.file.columns.6'),
+      title: tavI18n('Tav.file.columns.15'),
       field: 'createTime',
+      width: 200,
+    },
+    {
+      title: tavI18n('Tav.file.columns.14'),
+      field: 'createByName',
       width: 150,
     },
     {
-      title: tavI18n('Tav.file.columns.5'),
-      field: 'createByName',
-    },
-    {
       title: tavI18n('Tav.file.columns.11'),
-      field: 'operation',
+      field: 'operationName',
       width: 150,
     },
     {
       title: tavI18n('Tav.file.columns.12'),
       field: 'appName',
-      width: 100,
+      width: 200,
     },
     {
       title: tavI18n('Tav.file.columns.13'),
       field: 'deviceInfo',
-      width: 100,
+      minWidth: 200,
     },
   ]
 

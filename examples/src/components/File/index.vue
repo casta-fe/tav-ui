@@ -193,9 +193,11 @@ const unifiedTaFileData = reactive({
       visible: true,
     },
     fileTable: {
-      // apiParams: {
-      //   moduleCode: 'tg_invest',
-      // },
+      apiParams: {
+        // moduleCode: 'tg_invest',
+        businessKey: 'GSWU19972MMNPWLF7',
+        businessIds: ['GSWU19972MMNPWLF7'],
+      },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
@@ -287,13 +289,14 @@ const unifiedTaFileData = reactive({
 })
 setTimeout(() => {
   // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
-  unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
+  // unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
   // unifiedTaFileData.updateInstantly.apiParams.typeCodes = ['INVEST_FOUND_BFJY']
 
-  // setTimeout(() => {
-  //   unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_invest'
-  // }, 5000)
+  setTimeout(() => {
+    unifiedTaFileData.updateInstantly.fileTable.dataSource = []
+  }, 5000)
   // unifiedTaFileData.updateInstantly.mode = 'update'
+  // unifiedTaFileData.updateInstantly.fileTable.dataSource[0].fullName = 'xxxxx.qqq'
   unifiedTaFileData.updateInstantly.fileTable.dataSource.push({
     id: 78147,
     appId: 10001,
@@ -352,9 +355,6 @@ function handleFilterFormConfig(args: any) {
   // console.log(args)
   return args
 }
-function handleFileTableDataSourceChange(args: any) {
-  console.log('handleFileTableDataSourceChange: ', args)
-}
 </script>
 
 <template>
@@ -364,7 +364,6 @@ function handleFileTableDataSourceChange(args: any) {
       ref="fileRef"
       v-bind="unifiedTaFileData.updateInstantly"
       v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
-      @file-table:data-source-change="handleFileTableDataSourceChange"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

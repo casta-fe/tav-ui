@@ -48,8 +48,9 @@ export function defaultActionsBuilder(
       mode,
       row.hyperlink!,
       row.auto!,
-      row.owner ?? '',
-      globalConfigUserInfo.value
+      mergedProps.value.enabledOwner,
+      globalConfigUserInfo.value,
+      row.owner
     )
       ? [
           {
@@ -60,8 +61,9 @@ export function defaultActionsBuilder(
               mode,
               row.hyperlink!,
               row.auto!,
-              row.owner ?? '',
-              globalConfigUserInfo.value
+              mergedProps.value.enabledOwner,
+              globalConfigUserInfo.value,
+              row.owner
             ),
             onClick: async () => {
               await handleUpdateBtnClick(row)
@@ -88,7 +90,12 @@ export function defaultActionsBuilder(
     {
       field: 'delete',
       label: tavI18n('Tav.file.actions.6'),
-      enabled: isDeleteBtnVisible(mode, row.owner ?? '', globalConfigUserInfo.value),
+      enabled: isDeleteBtnVisible(
+        mode,
+        mergedProps.value.enabledOwner,
+        globalConfigUserInfo.value,
+        row.owner
+      ),
       popConfirm: {
         title: tavI18n('Tav.file.message.9'),
         confirm: async () => {
@@ -99,7 +106,11 @@ export function defaultActionsBuilder(
     {
       field: 'log',
       label: tavI18n('Tav.file.actions.7'),
-      enabled: isLogBtnVisible(row.owner ?? '', globalConfigUserInfo.value),
+      enabled: isLogBtnVisible(
+        mergedProps.value.enabledOwner,
+        globalConfigUserInfo.value,
+        row.owner
+      ),
       onClick: async () => {
         await handleLogBtnClick(row)
       },

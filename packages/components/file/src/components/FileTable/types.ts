@@ -175,7 +175,7 @@ export const fileTableProps = {
   },
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
-  // 控制行编辑，只能编辑 filename 以及 hyperlinkaddress
+  // 控制行编辑，默认只能编辑 filename 以及 hyperlinkaddress，想编辑其他字段需自行处理
   enabledRowEdit: { type: Boolean, default: false },
   // 控制 version 列
   enabledVersion: { type: Boolean, default: true },
@@ -183,6 +183,8 @@ export const fileTableProps = {
   enabledPreview: { type: Boolean, default: true },
   // 控制操作列更新按钮有无
   enabledUpdate: { type: Boolean, default: true },
+  // 开启角色控制
+  enabledOwner: { type: Boolean, default: true },
   /** apiUploadFile 已从 ...globalConfigFileProps['filetable'] 取到 */
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
@@ -245,8 +247,6 @@ export const fileTableEmits = {
       )[]
     ]
   ) => args instanceof Object,
-  dataSourceChange: (...args: [(FileActionUploadApiResponseRecord & { [key: string]: any })[]]) =>
-    args instanceof Object,
   rowEdit: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowUpdate: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowDelete: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,

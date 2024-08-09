@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, watch, onUnmounted /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, computed, onUnmounted, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { tavI18n } from '@tav-ui/locales'
 import { type ITableProInstance, TaModal, TaTablePro } from '@tav-ui/components'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import { DEFAULT_FILELOG_CLASSNAME, DEFAULT_FILELOG_ID } from '../../consts'
@@ -194,6 +195,7 @@ defineExpose({
       :visible="modalVisible"
       title="TaFileLog"
       :width="mergedProps.width"
+      :min-height="400"
       :wrap-class-name="`${DEFAULT_FILELOG_CLASSNAME}-modal ${mergedProps.wrapClassName ?? ''}`"
       :destroy-on-close="mergedProps.destroyOnClose"
       :mask-closable="mergedProps.maskClosable"
@@ -203,7 +205,9 @@ defineExpose({
     >
       <template #title>
         <div :class="`${DEFAULT_FILELOG_CLASSNAME}-modal-title`">
-          {{ mergedProps.file?.fullName || mergedProps.file?.name }}
+          {{
+            `${mergedProps.file?.fullName || mergedProps.file?.name} ${tavI18n('Tav.file.modal.2')}`
+          }}
         </div>
       </template>
       <template #default>

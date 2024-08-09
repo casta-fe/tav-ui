@@ -44,7 +44,7 @@ export function defaultFilterFormConfigBuilder(
             treeNodeFilterProp: 'name', // 模糊搜索这里配置原数据中的属性
             treeCheckable: true,
             allowClear: true,
-            showCheckedStrategy: 'SHOW_PARENT',
+            // showCheckedStrategy: 'SHOW_PARENT',
             treeDataSimpleMode: {
               id: 'id',
               pId: 'parentId',
@@ -54,8 +54,9 @@ export function defaultFilterFormConfigBuilder(
               value: 'id',
             },
             dropdownClassName: `${DEFAULT_FILETABLE_CLASSNAME}-filter-form-file-type-tree-select`,
-            dropdownStyle: { maxHeight: '480px', overflow: 'hidden' },
+            dropdownStyle: { maxHeight: '500px', overflow: 'hidden' },
             listHeight: 450,
+            virtual: false,
             maxTagCount: 10,
             treeIcon: true,
             // treeIcon(...args: any[]) {
@@ -126,25 +127,58 @@ export function useFilterFormConfig(options: {
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
 
-    if (mergedProps.value.dataSource) {
-      // 如果传入 datasource 则隐藏筛选
-      return {
-        enabled: false,
+    const filterFormConfigWithNull = {
+      enabled: false,
+    }
+
+    const filterFormConfigWithDefault = () => {
+      if (isBoolean(filterFormConfig)) {
+        if (filterFormConfig) {
+          return defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
+        } else {
+          return { ...filterFormConfigWithNull }
+        }
+      } else {
+        let result = defaultFilterFormConfigBuilder(
+          mergedProps,
+          tableProRef,
+          filterFormFileTypeData
+        )
+        result = filterFormConfig(result)
+        return result
       }
     }
 
-    if (isBoolean(filterFormConfig)) {
-      if (filterFormConfig) {
-        return defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
+    if (mergedProps.value.mode === 'read') {
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "filterFormConfig" not working in mode "read" combine with "dataSource"'
+        )
+        return { ...filterFormConfigWithNull }
       } else {
-        return {
-          enabled: false,
-        }
+        return filterFormConfigWithDefault()
+      }
+    } else if (mergedProps.value.mode === 'create') {
+      console.warn('[tavui TaFileTable] "filterFormConfig" not working in mode "create"')
+      return { ...filterFormConfigWithNull }
+    } else if (mergedProps.value.mode === 'update') {
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "filterFormConfig" not working in mode "read" combine with "dataSource"'
+        )
+        return { ...filterFormConfigWithNull }
+      } else {
+        return filterFormConfigWithDefault()
       }
     } else {
-      let result = defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
-      result = filterFormConfig(result)
-      return result
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "filterFormConfig" not working in mode "read" combine with "dataSource"'
+        )
+        return { ...filterFormConfigWithNull }
+      } else {
+        return filterFormConfigWithDefault()
+      }
     }
   })
 }

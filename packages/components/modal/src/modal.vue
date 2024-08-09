@@ -168,7 +168,7 @@ export default defineComponent({
       extHeightRef.value = height
     }
 
-    function handleTitleDbClick(e) {
+    function handleTitleDbClick(e: any) {
       if (!props.canFullscreen) return
       e.stopPropagation()
       handleFullScreen(e)

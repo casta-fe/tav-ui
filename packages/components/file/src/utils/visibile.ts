@@ -12,7 +12,7 @@ export function isAutoRow(rowAuto?: number) {
   return rowAuto === 1
 }
 
-export function isOwnerOrAdmin(owner: string, globalConfigUserInfo: Record<string, any>) {
+export function isOwnerOrAdmin(globalConfigUserInfo: Record<string, any>, owner?: string) {
   return (owner && owner === `${globalConfigUserInfo.userId}`) || globalConfigUserInfo.isAdmin
 }
 
@@ -48,14 +48,15 @@ export function isUpdateBtnVisible(
   mode: FileMode,
   rowHyperlink: number,
   rowAuto: number,
-  owner: string,
-  globalConfigUserInfo: Record<string, any>
+  enabledOwner: boolean,
+  globalConfigUserInfo: Record<string, any>,
+  owner?: string
 ) {
   return (
     !isReadMode(mode) &&
     enabledUpdate &&
     !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto)) &&
-    isOwnerOrAdmin(owner, globalConfigUserInfo)
+    (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
   )
 }
 
@@ -72,12 +73,17 @@ export function isDownloadBtnVisible(rowHyperlink: number, rowSourceFileDownload
 
 export function isDeleteBtnVisible(
   mode: FileMode,
-  owner: string,
-  globalConfigUserInfo: Record<string, any>
+  enabledOwner: boolean,
+  globalConfigUserInfo: Record<string, any>,
+  owner?: string
 ) {
-  return !isReadMode(mode) && isOwnerOrAdmin(owner, globalConfigUserInfo)
+  return !isReadMode(mode) && (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
 }
 
-export function isLogBtnVisible(owner: string, globalConfigUserInfo: Record<string, any>) {
-  return isOwnerOrAdmin(owner, globalConfigUserInfo)
+export function isLogBtnVisible(
+  enabledOwner: boolean,
+  globalConfigUserInfo: Record<string, any>,
+  owner?: string
+) {
+  return enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true
 }

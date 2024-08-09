@@ -20,7 +20,7 @@ export function defaultColumnsBuilder(
     {
       title: tavI18n('Tav.file.columns.4'),
       field: 'version',
-      minWidth: 100,
+      width: 80,
       customRender: ({ row: _row }: Record<string, any>) => {
         const row = _row as FileActionUploadApiResponseRecord
         return <>v{row.version}</>
@@ -29,7 +29,7 @@ export function defaultColumnsBuilder(
     {
       title: tavI18n('Tav.file.columns.1'),
       field: 'fullName',
-      width: 180,
+      width: 300,
       customRender: ({ row: _row }: Record<string, any>) => {
         const row = _row as FileActionUploadApiResponseRecord
         return <>{row.hyperlink === 0 ? row.fullName : row.name}</>
@@ -38,13 +38,12 @@ export function defaultColumnsBuilder(
     {
       title: tavI18n('Tav.file.columns.3'),
       field: 'fileSize',
-      minWidth: 100,
+      width: 100,
     },
-    {
-      title: tavI18n('Tav.file.columns.5'),
-      field: 'createByName',
-    },
-
+    // {
+    //   title: tavI18n('Tav.file.columns.5'),
+    //   field: 'createByName',
+    // },
     {
       title: tavI18n('Tav.file.columns.6'),
       field: 'createTime',

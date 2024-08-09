@@ -190,6 +190,8 @@ export default {
       '11': 'Operation',
       '12': 'Applier',
       '13': 'Consumer',
+      '14': 'Operator',
+      '15': 'Operation Time',
     },
     upload: {
       '1': 'Upload file',
@@ -215,6 +217,10 @@ export default {
     download: {
       '1': 'Please select file which you want to download',
       '2': 'Multiple download',
+    },
+    modal: {
+      '1': 'Version List',
+      '2': 'Log List',
     },
   },
 }

@@ -1,4 +1,4 @@
-import { type ComputedRef, type SetupContext, computed } from 'vue'
+import { type ComputedRef, type SetupContext, computed, nextTick } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import {
@@ -6,6 +6,7 @@ import {
   type ApiQueryFilterFormFileTypeParams,
   type ApiUpdateFileNameAndLinkParams,
   type FileTableEmits,
+  type FileTableInstance,
   type FileTableProps,
   type FileTableReloadApiParams,
 } from '../types'
@@ -89,10 +90,11 @@ function handleAfterApiEmit(options: {
 
 export function useMode(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
+  tableProRef: FileTableInstance['tableProRef']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
 }) {
-  const { mergedProps, emits, VersionCachesController } = options
+  const { mergedProps, tableProRef, emits, VersionCachesController } = options
 
   /**
    * 根据 props 来设置 tablepro 的参数，包括：data、api、beforeapi、afterapi、pagerconfig、immediate
@@ -100,8 +102,6 @@ export function useMode(options: {
    */
   function useModeConfigTable() {
     return computed(() => {
-      const hasPager = mergedProps.value.pagerConfig && !!mergedProps.value.pagerConfig.enabled
-      const modeQueryApiType = mergedProps.value.modeQueryApiType
       const apiOptions = apiQueryFileOptions(mergedProps.value.apiParams)
 
       const dataOrApiConfigWithPager: any = {
@@ -162,42 +162,90 @@ export function useMode(options: {
         pagerConfig: FileTableProps['pagerConfig']
       } = {} as any
 
-      // 可以允许用户外部开启分页器
-      if (hasPager) {
-        // 优先获取外部传入的分页器配置
-        dataOrApiConfig = dataOrApiConfigWithPager
-      } else {
-        if (modeQueryApiType === 'pager') {
-          dataOrApiConfig = dataOrApiConfigWithPager
+      if (mergedProps.value.mode === 'read') {
+        if (mergedProps.value.dataSource) {
+          /**
+           * 只读模式，使用 datasource 数据源
+           * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+           * 2. 分页，TODO: 组件内部后期支持，优先级低
+           * 3. reload 方法直接返回（给不执行提示）
+           */
+          dataOrApiConfig = {
+            ...dataOrApiConfigWithNull,
+            data: mergedProps.value.dataSource,
+          }
         } else {
-          dataOrApiConfig = dataOrApiConfigWithList
+          /**
+           * 只读模式，使用 api 数据源
+           * 1. 支持分页与不分页接口
+           */
+          if (mergedProps.value.modeQueryApiType === 'pager') {
+            dataOrApiConfig = dataOrApiConfigWithPager
+          } else {
+            dataOrApiConfig = dataOrApiConfigWithList
+          }
         }
-      }
+      } else if (mergedProps.value.mode === 'create') {
+        /**
+         * 新增模式，必须是空数据表格。
+         * 1. 不接受/使用 api/datasource
+         * 2. 无筛选、分页
+         * 3. reload 方法直接返回（给不执行提示）
+         */
 
-      if (
-        ['update'].includes(mergedProps.value.mode) &&
-        mergedProps.value.modeQueryApiType === 'pager'
-      ) {
-        // 编辑模式只能使用不分页接口
-        console.warn(
-          '[tavui TaFileTable] apiQueryFile is only used in "read" or "updateInstantly" mode, force to use apiQueryFileList, "pager" not working'
-        )
-
-        dataOrApiConfig = dataOrApiConfigWithList
-      }
-
-      if (['create'].includes(mergedProps.value.mode)) {
-        // 新增模式必须是空数据，不接收、使用任何 dataSource 与 api
         console.warn(
           '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
         )
-
         dataOrApiConfig = dataOrApiConfigWithNull
-      }
-
-      if (mergedProps.value.dataSource) {
-        // 如果传入 datasource 则不使用接口数据
-        dataOrApiConfig = dataOrApiConfigWithNull
+      } else if (mergedProps.value.mode === 'update') {
+        if (mergedProps.value.dataSource) {
+          /**
+           * 编辑模式，使用 datasource 数据源
+           * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+           * 2. 分页，TODO: 组件内部后期支持，优先级低
+           * 3. reload 方法直接返回（给不执行提示）
+           */
+          dataOrApiConfig = {
+            ...dataOrApiConfigWithNull,
+            data: mergedProps.value.dataSource,
+          }
+        } else {
+          /**
+           * 编辑模式，使用 api 数据源
+           * 1. 只能使用不分页接口
+           */
+          if (mergedProps.value.modeQueryApiType === 'pager') {
+            console.warn(
+              '[tavui TaFileTable] apiQueryFile is only used in "read" or "updateInstantly" mode, force to use apiQueryFileList, "pager" not working'
+            )
+            dataOrApiConfig = dataOrApiConfigWithList
+          } else {
+            dataOrApiConfig = dataOrApiConfigWithList
+          }
+        }
+      } else {
+        if (mergedProps.value.dataSource) {
+          /**
+           * 立即更新模式，使用 datasource 数据源
+           * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+           * 2. 分页，TODO: 组件内部后期支持，优先级低
+           * 3. reload 方法直接返回（给不执行提示）
+           */
+          dataOrApiConfig = {
+            ...dataOrApiConfigWithNull,
+            data: mergedProps.value.dataSource,
+          }
+        } else {
+          /**
+           * 立即更新模式，使用 api 数据源
+           * 1. 支持分页与不分页接口
+           */
+          if (mergedProps.value.modeQueryApiType === 'pager') {
+            dataOrApiConfig = dataOrApiConfigWithPager
+          } else {
+            dataOrApiConfig = dataOrApiConfigWithList
+          }
+        }
       }
 
       return dataOrApiConfig
@@ -463,6 +511,44 @@ export function useMode(options: {
   //:========================================: api actions :========================================://
 
   //:========================================: data actions :========================================://
+  async function reloadRows(params?: FileTableReloadApiParams) {
+    if (!mergedProps.value.visible) return
+    await nextTick()
+
+    const handleReload = async () => {
+      const tableProInstance = (tableProRef.value as any)?.instance as any
+      await tableProInstance.reload(params)
+    }
+
+    if (mergedProps.value.mode === 'read') {
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "reload" not working in mode "read" combine with "dataSource"'
+        )
+      } else {
+        await handleReload()
+      }
+    } else if (mergedProps.value.mode === 'create') {
+      console.warn('[tavui TaFileTable] "reload" not working in mode "create"')
+    } else if (mergedProps.value.mode === 'update') {
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "reload" not working in mode "update" combine with "dataSource"'
+        )
+      } else {
+        await handleReload()
+      }
+    } else {
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "reload" not working in mode "updateInstantly" combine with "dataSource"'
+        )
+      } else {
+        await handleReload()
+      }
+    }
+  }
+
   async function editRow(
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     _row: FileActionUploadApiResponseRecord,
@@ -519,11 +605,6 @@ export function useMode(options: {
         await refreshTableDataApiAction()
       }
     }
-
-    if (mergedProps.value.dataSource) {
-      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
-      emits('dataSourceChange', [_tableData])
-    }
   }
 
   async function updateRow(
@@ -577,11 +658,6 @@ export function useMode(options: {
         await refreshTableDataApiAction()
       }
     }
-
-    if (mergedProps.value.dataSource) {
-      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
-      emits('dataSourceChange', [_tableData])
-    }
   }
 
   async function deleteRow(
@@ -632,11 +708,6 @@ export function useMode(options: {
         await refreshTableDataApiAction()
       }
     }
-
-    if (mergedProps.value.dataSource) {
-      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
-      emits('dataSourceChange', [_tableData])
-    }
   }
   //:========================================: data actions :========================================://
 
@@ -650,6 +721,7 @@ export function useMode(options: {
       deleteApiOptions,
     },
     dataActions: {
+      reloadRows,
       editRow,
       updateRow,
       deleteRow,
