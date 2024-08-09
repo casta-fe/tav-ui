@@ -23,17 +23,19 @@
           @change="emitHandle"
           @blur="handleBlur"
         >
-          <!-- :filter-option="filterOptionHandle" -->
+          <template #tagRender="{ label, option }">
+            <Tag color="blue" closable @close.prevent="removeItem(option)"> {{ label }}</Tag>
+          </template>
           <template #option="item">
             <div class="ta-member-select-option-item">
-              <span
-                >{{ item.label }}
-                <template v-if="item.status === 0">
-                  ({{ tavI18n('Tav.member.4') }})
-                </template></span
-              >
-              <span>{{ getSex(item) }}</span>
-              <span>{{ item.phone }}</span>
+              <span>
+                {{ item.label }}
+                <template v-if="item.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
+              </span>
+              <span :title="item.userOrgs[0]?.organizationName">
+                {{ item.userOrgs[0]?.organizationName || '-' }}
+              </span>
+              <span :title="item.phone">{{ item.phone }}</span>
             </div>
           </template>
           <template #dropdownRender="{ menuNode: menu }">
@@ -100,8 +102,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
-import { Select, TreeSelect } from 'ant-design-vue'
-import { isEqual } from 'lodash-es'
+import { Select, Tag, TreeSelect } from 'ant-design-vue'
+import { isEqual, pull } from 'lodash-es'
 import pinyin from 'js-pinyin'
 import Button from '@tav-ui/components/button'
 import BasicModal from '@tav-ui/components/modal'
@@ -118,6 +120,7 @@ export default defineComponent({
     VNodes: (_, { attrs }) => {
       return attrs.vnodes
     },
+    Tag,
     BasicModal,
     MemberModal,
     Button,
@@ -186,17 +189,14 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
+      // 非ignoreUser的用户才能选择
       const list: Options[] = userList
+        .filter((v) => !props.ignoreUser.includes(v.id))
         .map((v) => {
-          // 非ignoreUser的用户才能选择
           const fullCharts = pinyin.getFullChars(v.name).toLowerCase()
           const obj = { ...v, label: v.name, value: v.id, fullCharts }
-          if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
-            obj.disabled = props.useDisabledUser
-              ? false
-              : props.ignoreFrozenUser
-              ? obj.status === 0
-              : false
+          if (!Reflect.has(obj, 'disabled')) {
+            obj.disabled = props.useDisabledUser ? false : obj.status === 0
           }
           return obj
         })
@@ -303,13 +303,12 @@ export default defineComponent({
         }, 200)
       } else {
         filterOptions.value = state.userList.filter(
-          (user) => user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
+          (user) =>
+            user.fullCharts.indexOf(keyword) > -1 ||
+            user.name.indexOf(keyword) > -1 ||
+            user.userOrgs[0]?.organizationName.indexOf(keyword) > -1
         )
       }
-      console.log(keyword, filterOptions.value)
-    }
-    const filterOptionHandle = (keyword: string, user: any) => {
-      return user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
     }
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
@@ -320,26 +319,9 @@ export default defineComponent({
     const orgVisibleChange = () => {
       // console.log(v);
     }
-    const getSex = (item: UserItem) => {
-      //     { label: "男", value: 1 },
-      // { label: "女", value: 2 },
-      // { label: "其他", value: 3 },
-      // { label: "保密", value: 0 }
-      let res = ''
-      switch (item.sex) {
-        case 1:
-          res = tavI18n('Tav.member.8')
-          break
-        case 2:
-          res = tavI18n('Tav.member.9')
-          break
-        case 3:
-          res = tavI18n('Tav.member.12')
-          break
-        default:
-          res = tavI18n('Tav.member.13')
-      }
-      return res
+    const removeItem = (item: UserItem) => {
+      pull(state.selectedData[0], item.id)
+      emitHandle()
     }
 
     watch(
@@ -399,11 +381,10 @@ export default defineComponent({
     return {
       ...toRefs(state),
       userSelectRef,
+      removeItem,
       filterOptions,
       tavI18n,
-      getSex,
       selectSearchHanle,
-      filterOptionHandle,
       userShowMore,
       orgVisibleChange,
       showModal,

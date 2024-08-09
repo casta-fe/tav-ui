@@ -10,13 +10,15 @@
           </Input>
         </div>
         <Tabs v-model:activeKey="tabActive">
-          <TabPane key="0" :tab="tavI18n('Tav.member.1')">
+          <TabPane v-if="!hideOrgTabs" key="0" :tab="tavI18n('Tav.member.1')">
             <template v-if="propsData.multiple">
-              <CheckboxGroup v-model:value="checkboxData">
+              <CheckboxGroup :value="checkboxData">
+                <!-- loaded-keys 为了解决loaddata会无限递归问题 -->
                 <Tree
                   :tree-data="orgTree"
                   block-node
                   :expanded-keys="orgExpandedKeys"
+                  :loaded-keys="orgExpandedKeys"
                   :auto-expand-parent="autoExpandParent"
                   :selectable="false"
                   :load-data="getOrgUser"
@@ -26,8 +28,12 @@
                   <template #title="item">
                     <!-- ant的bug 如果没查到会把他转成isleaf，但是 组织我们有不让选的 -->
                     <!-- {{ item.isLeaf }} == {{ item.leaf }} -->
-                    <template v-if="item.isLeaf">
-                      <Checkbox :value="item.userId" :disabled="item.disabled">
+                    <template v-if="item.isLeaf && !item.leaf">
+                      <Checkbox
+                        :value="item.userId"
+                        :disabled="item.disabled"
+                        @change="treeCheckboxChange"
+                      >
                         <firstLetter :value="item" />{{ item.name }}
                         <template v-if="item.status === 0">
                           ({{ tavI18n('Tav.member.4') }})
@@ -208,7 +214,7 @@ import {
 } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
 import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons-vue'
-import { countBy, pickBy, sortBy } from 'lodash-es'
+import { countBy, pickBy, pull, sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
@@ -310,11 +316,7 @@ export default defineComponent({
         const upperChart = chart.toUpperCase()
         // 如果列表中有了就往他的list中插入
         Reflect.has(v, 'disabled') ||
-          (v.disabled = propsData.value.useDisabledUser
-            ? false
-            : propsData.value.ignoreFrozenUser
-            ? v.status === 0
-            : false)
+          (v.disabled = propsData.value.useDisabledUser ? false : v.status === 0)
         const item = list.find((v) => v.key === upperChart)
         if (item) {
           item.list.push(v)
@@ -421,6 +423,17 @@ export default defineComponent({
     const getOrgName = (user: UserItem) => {
       return user.userOrgs?.map((v) => v.organizationName).join('，')
     }
+    const treeCheckboxChange = ({ target }) => {
+      if (!target) {
+        return
+      }
+      const { checked, value } = target
+      if (checked) {
+        state.checkboxData.push(value)
+      } else {
+        pull(state.checkboxData, value)
+      }
+    }
     watch(
       () => state.checkboxData,
       (val) => {
@@ -487,6 +500,7 @@ export default defineComponent({
       clearTag,
       onExpand,
       letterClick,
+      treeCheckboxChange,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
     }
   },
