@@ -187,16 +187,24 @@ export function useMode(options: {
         }
       } else if (mergedProps.value.mode === 'create') {
         /**
-         * 新增模式，必须是空数据表格。
-         * 1. 不接受/使用 api/datasource
-         * 2. 无筛选、分页
+         * 新增模式，使用 datasource 数据源
+         * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+         * 2. 分页，TODO: 组件内部后期支持，优先级低
          * 3. reload 方法直接返回（给不执行提示）
          */
-
-        console.warn(
-          '[tavui TaFileTable] "create" mode must empty data, force "dataSource" and "api" empty'
-        )
-        dataOrApiConfig = dataOrApiConfigWithNull
+        if (mergedProps.value.dataSource) {
+          dataOrApiConfig = {
+            ...dataOrApiConfigWithNull,
+            data: mergedProps.value.dataSource,
+          }
+        } else {
+          /**
+           * 新增模式，不支持 api 数据源，因为此时无 bizid & bizkey。
+           * 强制置为empty
+           */
+          console.warn('[tavui TaFileTable] "create" mode force "api" empty')
+          dataOrApiConfig = dataOrApiConfigWithNull
+        }
       } else if (mergedProps.value.mode === 'update') {
         if (mergedProps.value.dataSource) {
           /**
@@ -529,7 +537,13 @@ export function useMode(options: {
         await handleReload()
       }
     } else if (mergedProps.value.mode === 'create') {
-      console.warn('[tavui TaFileTable] "reload" not working in mode "create"')
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "reload" not working in mode "create" combine with "dataSource"'
+        )
+      } else {
+        console.warn('[tavui TaFileTable] "reload" not working in mode "create"')
+      }
     } else if (mergedProps.value.mode === 'update') {
       if (mergedProps.value.dataSource) {
         console.warn(
@@ -619,7 +633,11 @@ export function useMode(options: {
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
     async function action(updatedVersionRow?: FileActionUploadApiResponseRecord) {
-      await tableUpdateRows([updatedVersionRow ?? row], [clickedRow], clickedRow)
+      await tableUpdateRows(
+        [{ ...clickedRow, ...(updatedVersionRow ?? row) }], // merge 原数据，兼容插入的业务字段
+        [clickedRow],
+        clickedRow
+      )
     }
 
     async function getTableData() {

@@ -159,8 +159,17 @@ export function useFilterFormConfig(options: {
         return filterFormConfigWithDefault()
       }
     } else if (mergedProps.value.mode === 'create') {
-      console.warn('[tavui TaFileTable] "filterFormConfig" not working in mode "create"')
-      return { ...filterFormConfigWithNull }
+      if (mergedProps.value.dataSource) {
+        console.warn(
+          '[tavui TaFileTable] "filterFormConfig" not working in mode "create" combine with "dataSource"'
+        )
+        return { ...filterFormConfigWithNull }
+      } else {
+        console.warn(
+          '[tavui TaFileTable] "filterFormConfig" not working in mode "create" combine with "api"'
+        )
+        return { ...filterFormConfigWithNull }
+      }
     } else if (mergedProps.value.mode === 'update') {
       if (mergedProps.value.dataSource) {
         console.warn(

@@ -41,11 +41,13 @@ export function useTableActions(options: {
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
     if (useLoading) loading.value.value = true
-    const { fullData, tableData } = await tableProInstance.getTableData()
+    // const { fullData, tableData } = await tableProInstance.getTableData()
+    const { fullData } = await tableProInstance.getTableData()
     if (useLoading) loading.value.value = false
-    return configTable.value.api?.name.endsWith('List')
-      ? (fullData as FileActionUploadApiResponseRecord[])
-      : (tableData as FileActionUploadApiResponseRecord[])
+    // return configTable.value.api?.name.endsWith('List')
+    //   ? (fullData as FileActionUploadApiResponseRecord[])
+    //   : (tableData as FileActionUploadApiResponseRecord[])
+    return fullData
   }
 
   async function tableUpdateRows(

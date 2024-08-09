@@ -48,7 +48,6 @@ export function defaultColumnsBuilder(
           const row = _row as FileActionUploadApiResponseRecord
 
           return [
-            // <UpdateNameForm />
             <FileTableRowEditor
               row={row}
               onEnter={() => {
