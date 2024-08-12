@@ -3,7 +3,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { type FileTableEmits, type FileTableProps } from '../types'
+import { type FileTableEmits, type FileTableProps, type FileTableReloadApiParams } from '../types'
 import { type VersionCaches } from './../../../hooks'
 import { type UseTableActionsReturn } from './use-table-actions'
 
@@ -34,8 +34,16 @@ export function useDataSource(options: {
   tableReadRows: UseTableActionsReturn['tableReadRows']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
+  refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
 }) {
-  const { mergedProps, tableCreateRows, tableReadRows, emits, VersionCachesController } = options
+  const {
+    mergedProps,
+    tableCreateRows,
+    tableReadRows,
+    emits,
+    VersionCachesController,
+    refreshTableDataApiAction,
+  } = options
 
   /** upload 组件上传成功数据源 */
   watch(
@@ -47,7 +55,10 @@ export function useDataSource(options: {
         ) as FileActionUploadApiResponseRecord[]
 
         if (rows.length > 0) {
-          await tableCreateRows(rows, null)
+          await tableCreateRows({
+            rows,
+            position: null,
+          })
           VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
           await handleDataSourceChangeEmit(
             rows,
@@ -56,6 +67,13 @@ export function useDataSource(options: {
             mergedProps,
             VersionCachesController
           )
+          if (
+            (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') &&
+            !mergedProps.value.dataSource
+          ) {
+            // 无外部传入的 datasource 才操作
+            await refreshTableDataApiAction()
+          }
         }
       }
     }
@@ -71,7 +89,10 @@ export function useDataSource(options: {
         ) as FileActionUploadApiResponseRecord[]
 
         if (rows.length > 0) {
-          await tableCreateRows(rows, null)
+          await tableCreateRows({
+            rows,
+            position: null,
+          })
           VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
           await handleDataSourceChangeEmit(
             rows,
@@ -80,6 +101,13 @@ export function useDataSource(options: {
             mergedProps,
             VersionCachesController
           )
+          if (
+            (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') &&
+            !mergedProps.value.dataSource
+          ) {
+            // 无外部传入的 datasource 才操作
+            await refreshTableDataApiAction()
+          }
         }
       }
     }

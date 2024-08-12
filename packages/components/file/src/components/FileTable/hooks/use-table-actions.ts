@@ -1,4 +1,4 @@
-import { type ComputedRef, type Ref, type WritableComputedRef, nextTick, toRaw } from 'vue'
+import { type ComputedRef, type Ref, type WritableComputedRef, toRaw } from 'vue'
 import { type ITableProInstance } from '@tav-ui/components/table-pro'
 import {
   type FileActionUploadApiResponseRecord,
@@ -7,6 +7,36 @@ import {
 import { type FileTableProps } from '../types'
 import { type ReturnOf } from './../../../utils'
 import { type UseModeReturn } from './use-mode'
+
+export interface TableCreateRowsOptions {
+  /** 要新增的行数据 */
+  rows: FileActionUploadApiResponseRecord[]
+  /** 插入行的位置 */
+  position?: FileActionUploadApiResponseRecord[] | FileActionUploadApiResponseRecord | null | -1
+  /** 使用组件内部 loading 状态 */
+  useLoading?: boolean
+}
+
+export interface TableReadRowsOptions {
+  /** 使用组件内部 loading 状态 */
+  useLoading?: boolean
+}
+
+export interface TableUpdateRowsOptions {
+  /** 要新增的行数据 */
+  rows: FileActionUploadApiResponseRecord[]
+  /** 要删除的行数据 */
+  deleteRows: FileActionUploadApiResponseRecord[]
+  /** 使用组件内部 loading 状态 */
+  useLoading?: boolean
+}
+
+export interface TableDeleteRowsOptions {
+  /** 要删除的行数据，不传的话默认删除全部 */
+  rows?: FileActionUploadApiResponseRecord[]
+  /** 使用组件内部 loading 状态 */
+  useLoading?: boolean
+}
 
 /**
  * 封装 tablepro（vxetable）操作数据的方法
@@ -19,68 +49,69 @@ export function useTableActions(options: {
   configTable: ReturnOf<UseModeReturn['useModeConfigTable']>
   loading: WritableComputedRef<any>
 }) {
-  const { tableProRef, configTable, loading } = options
+  const { tableProRef, loading } = options
 
-  async function tableCreateRows(
-    rows: FileActionUploadApiResponseRecord[],
-    /** row 指定位置、null从第一行插入、-1 从最后插入 */
-    pos: FileActionUploadApiResponseRecord | null | -1,
-    useLoading = true
-  ) {
-    await nextTick()
+  async function tableCreateRows(_options: TableCreateRowsOptions) {
+    const { rows, position, useLoading } = _options
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
-    if (useLoading) loading.value.value = true
-    const promiseAll = toRaw(rows).map(async (row) => tableProInstance.insertAt(row, pos))
+    if (useLoading !== undefined && useLoading) loading.value.value = true
+    let promiseAll
+    if (Array.isArray(position)) {
+      promiseAll = toRaw(rows).map(async (row, idx) => {
+        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
+        const result = await tableProInstance.insertAt(row, position[idx])
+        return result
+      })
+    } else {
+      promiseAll = toRaw(rows).map(async (row) => {
+        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
+        const result = await tableProInstance.insertAt(row, position)
+        return result
+      })
+    }
     await Promise.all(promiseAll)
-    if (useLoading) loading.value.value = false
+    if (useLoading !== undefined && useLoading) loading.value.value = false
   }
 
-  async function tableReadRows(useLoading = true) {
-    await nextTick()
+  async function tableReadRows(_options: TableReadRowsOptions = {}) {
+    const { useLoading } = _options
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
-    if (useLoading) loading.value.value = true
+    if (useLoading !== undefined && useLoading) loading.value.value = true
     // const { fullData, tableData } = await tableProInstance.getTableData()
     const { fullData } = await tableProInstance.getTableData()
-    if (useLoading) loading.value.value = false
+    if (useLoading !== undefined && useLoading) loading.value.value = false
     // return configTable.value.api?.name.endsWith('List')
     //   ? (fullData as FileActionUploadApiResponseRecord[])
     //   : (tableData as FileActionUploadApiResponseRecord[])
     return fullData
   }
 
-  async function tableUpdateRows(
-    rows: FileActionUploadApiResponseRecord[],
-    deleteRows: FileActionUploadApiResponseRecord[],
-    /** row 指定位置、null从第一行插入、-1 从最后插入 */
-    pos: FileActionUploadApiResponseRecord | null | -1,
-    useLoading = true
-  ) {
-    await nextTick()
+  async function tableUpdateRows(_options: TableUpdateRowsOptions) {
+    const { rows, deleteRows, useLoading } = _options
 
-    if (useLoading) loading.value.value = true
-    await tableCreateRows(rows, pos)
-    await tableDeleteRows(deleteRows)
-    if (useLoading) loading.value.value = false
+    if (useLoading !== undefined && useLoading) loading.value.value = true
+    await tableCreateRows({
+      rows,
+      position: deleteRows,
+    })
+    await tableDeleteRows({ rows: deleteRows })
+    if (useLoading !== undefined && useLoading) loading.value.value = false
   }
 
-  async function tableDeleteRows(
-    rows: FileActionUploadApiResponseRecord[],
-    useLoading = true,
-    deleteAll = false
-  ) {
-    await nextTick()
+  async function tableDeleteRows(_options: TableDeleteRowsOptions) {
+    const { rows, useLoading } = _options
     const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
 
-    if (useLoading) loading.value.value = true
+    if (useLoading !== undefined && useLoading) loading.value.value = true
     // 指定 row 或 [row, ...] 删除多条数据，如果为空则删除所有数据
-    if (deleteAll) {
+    if (rows === undefined) {
       await tableProInstance.remove()
     } else {
       await tableProInstance.remove(toRaw(rows))
     }
-    if (useLoading) loading.value.value = false
+    if (useLoading !== undefined && useLoading) loading.value.value = false
   }
 
   return {

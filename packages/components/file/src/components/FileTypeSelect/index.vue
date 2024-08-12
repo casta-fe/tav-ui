@@ -3,7 +3,7 @@ import {
   type UnwrapRef,
   computed,
   onMounted,
-  onUnmounted,
+  onBeforeUnmount,
   ref,
   watch /*, useSlots, useAttrs*/,
 } from 'vue'
@@ -224,7 +224,7 @@ onMounted(async () => {
   }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

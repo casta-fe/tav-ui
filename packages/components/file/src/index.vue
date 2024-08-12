@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots, watch, onUnmounted } from 'vue'
+import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots, watch, onBeforeUnmount } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
 import {
   type FileTypeSelectEmits,
@@ -303,7 +303,7 @@ function cleanup() {
   fileTableRef.value?.cleanup()
 }
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

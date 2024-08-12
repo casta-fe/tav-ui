@@ -3,8 +3,8 @@ import {
   type Ref,
   type UnwrapRef,
   computed,
+  onBeforeUnmount,
   onMounted,
-  onUnmounted,
   ref,
   watch,
   /*useSlots, useAttrs*/
@@ -114,6 +114,7 @@ useDataSource({
   tableReadRows,
   emits,
   VersionCachesController,
+  refreshTableDataApiAction,
 })
 
 // 使用 api 处理数据
@@ -242,8 +243,7 @@ async function handleCellEditClick(
     changeEventPayload,
     row,
     tableReadRows,
-    tableCreateRows,
-    tableDeleteRows,
+    tableUpdateRows,
     editRowApiAction,
     refreshTableDataApiAction
   )
@@ -445,7 +445,9 @@ function handleFileVersionActions(
 // 清空状态
 async function cleanup() {
   VersionCachesController.deleteAllFileCaches()
-  await tableDeleteRows([], true, true)
+  await tableDeleteRows({
+    useLoading: true,
+  })
 }
 
 onMounted(async () => {
@@ -481,7 +483,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

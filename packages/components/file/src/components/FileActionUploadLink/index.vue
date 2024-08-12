@@ -2,7 +2,6 @@
 import {
   type UnwrapRef,
   Teleport,
-  onUnmounted,
   ref,
   watch,
   onMounted,
@@ -228,7 +227,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

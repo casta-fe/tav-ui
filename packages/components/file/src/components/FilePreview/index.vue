@@ -2,7 +2,7 @@
 import {
   type UnwrapRef,
   computed,
-  onUnmounted,
+  onBeforeUnmount,
   ref,
   watch,
   /*useSlots, useAttrs*/
@@ -230,7 +230,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

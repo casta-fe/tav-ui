@@ -3,7 +3,7 @@ import {
   type UnwrapRef,
   getCurrentInstance,
   nextTick,
-  onUnmounted,
+  onBeforeUnmount,
   ref,
   watch,
   useSlots /* useAttrs*/,
@@ -289,7 +289,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

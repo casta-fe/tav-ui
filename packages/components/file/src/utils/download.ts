@@ -7,9 +7,10 @@ const { createMessage } = useMessage()
 export async function fileSingleDownload(options: {
   file: FileActionUploadApiResponseRecord
   api: (...args: any[]) => Promise<any>
+  isWaterMarker?: boolean
   fileName?: string
 }) {
-  const { file, api, fileName } = options
+  const { file, api, fileName, isWaterMarker = false } = options
 
   if (!file || !file.id) {
     createMessage.warning(tavI18n('Tav.file.download.1'))
@@ -22,7 +23,8 @@ export async function fileSingleDownload(options: {
     aEl.setAttribute(
       'download',
       fileName ||
-        (api.name.includes('ater') ? decodeURIComponent(data.split('/').at(-1)) : file.fullName)
+        // api.name // 打包之后读取到的函数名为混淆代码！
+        (isWaterMarker ? decodeURIComponent(data.split('/').at(-1)) : file.fullName)
     )
     aEl.setAttribute('href', data)
     aEl.setAttribute('target', '_blank')

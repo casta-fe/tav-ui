@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, onUnmounted, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { type UnwrapRef, computed, onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type ITableProInstance, TaModal, TaTablePro } from '@tav-ui/components'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
@@ -177,7 +177,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   cleanup()
 })
 

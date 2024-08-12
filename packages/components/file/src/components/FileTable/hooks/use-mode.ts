@@ -111,7 +111,8 @@ export function useMode(options: {
           : ({ filter, model }: Record<string, any>) =>
               apiOptions!.api!(
                 createQueryApiOptionsWithPagerConfig(
-                  apiOptions!.api!.name,
+                  // apiOptions!.api!.name, // 打包之后读取到的函数名为混淆代码！
+                  'Pager',
                   filter,
                   model,
                   apiOptions!.apiParams
@@ -135,7 +136,8 @@ export function useMode(options: {
           : ({ filter, model }: Record<string, any>) =>
               apiOptions!.api!(
                 createQueryApiOptionsWithPagerConfig(
-                  apiOptions!.api!.name,
+                  // apiOptions!.api!.name, // 打包之后读取到的函数名为混淆代码！
+                  'List',
                   filter,
                   model,
                   apiOptions!.apiParams
@@ -567,8 +569,7 @@ export function useMode(options: {
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     _row: FileActionUploadApiResponseRecord,
     tableReadRows: UseTableActionsReturn['tableReadRows'],
-    tableCreateRows: UseTableActionsReturn['tableCreateRows'],
-    tableDeleteRows: UseTableActionsReturn['tableDeleteRows'],
+    tableUpdateRows: UseTableActionsReturn['tableUpdateRows'],
     editRowApiAction: (...args: any[]) => Promise<any>,
     refreshTableDataApiAction: (params?: FileTableReloadApiParams) => Promise<void>
   ) {
@@ -583,8 +584,10 @@ export function useMode(options: {
       } else {
         if (changeEventPayload.name) newrow.fullName = `${changeEventPayload.name}.${newrow.suffix}`
       }
-      await tableDeleteRows([row], false)
-      await tableCreateRows([newrow], null, false)
+      await tableUpdateRows({
+        rows: [newrow],
+        deleteRows: [row],
+      })
       return newrow
     }
 
@@ -633,11 +636,10 @@ export function useMode(options: {
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
     async function action(updatedVersionRow?: FileActionUploadApiResponseRecord) {
-      await tableUpdateRows(
-        [{ ...clickedRow, ...(updatedVersionRow ?? row) }], // merge 原数据，兼容插入的业务字段
-        [clickedRow],
-        clickedRow
-      )
+      await tableUpdateRows({
+        rows: [{ ...clickedRow, ...(updatedVersionRow ?? row) }], // merge 原数据，兼容插入的业务字段
+        deleteRows: [clickedRow],
+      })
     }
 
     async function getTableData() {
@@ -689,7 +691,9 @@ export function useMode(options: {
     const clickedRow = JSON.parse(JSON.stringify(_clickedRow))
 
     async function action() {
-      await tableDeleteRows([clickedRow])
+      await tableDeleteRows({
+        rows: [clickedRow],
+      })
     }
 
     async function getTableData() {

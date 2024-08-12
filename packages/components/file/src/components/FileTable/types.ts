@@ -14,6 +14,7 @@ import {
 } from '../../typings'
 import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../../consts'
 import { type FileVersionCache } from '../../hooks'
+import { type UseTableActionsReturn } from './hooks/use-table-actions'
 import { type ApiUploadFileParams } from './../FileActionUpload/types'
 import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
 import { type ApiPreviewFileParams } from './../FilePreview/types'
@@ -259,15 +260,8 @@ export interface FileTableInstance {
   tableProRef: Ref<ITableProInstance | undefined>
   cleanup: () => Promise<void>
   reload: (params?: FileTableReloadApiParams) => Promise<void>
-  createRows: (
-    rows: FileActionUploadApiResponseRecord[],
-    pos: FileActionUploadApiResponseRecord | -1 | null
-  ) => Promise<void>
-  readRows: () => Promise<FileActionUploadApiResponseRecord[]>
-  updateRows(
-    rows: FileActionUploadApiResponseRecord[],
-    deleteRows: FileActionUploadApiResponseRecord[],
-    pos: FileActionUploadApiResponseRecord | null | -1
-  ): Promise<void>
-  deleteRows(rows: FileActionUploadApiResponseRecord[]): Promise<void>
+  createRows: UseTableActionsReturn['tableCreateRows']
+  readRows: UseTableActionsReturn['tableReadRows']
+  updateRows: UseTableActionsReturn['tableUpdateRows']
+  deleteRows: UseTableActionsReturn['tableDeleteRows']
 }
