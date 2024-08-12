@@ -67,10 +67,7 @@ export function useDataSource(options: {
             mergedProps,
             VersionCachesController
           )
-          if (
-            (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') &&
-            !mergedProps.value.dataSource
-          ) {
+          if (mergedProps.value.mode === 'updateInstantly' && !mergedProps.value.dataSource) {
             // 无外部传入的 datasource 才操作
             await refreshTableDataApiAction()
           }
@@ -101,10 +98,7 @@ export function useDataSource(options: {
             mergedProps,
             VersionCachesController
           )
-          if (
-            (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') &&
-            !mergedProps.value.dataSource
-          ) {
+          if (mergedProps.value.mode === 'updateInstantly' && !mergedProps.value.dataSource) {
             // 无外部传入的 datasource 才操作
             await refreshTableDataApiAction()
           }
