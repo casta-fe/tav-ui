@@ -53,20 +53,22 @@ export function useTableActions(options: {
 
   async function tableCreateRows(_options: TableCreateRowsOptions) {
     const { rows, position, useLoading } = _options
-    const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
+    const tableProInstance = (tableProRef.value as any)?.instance as
+      | ITableProInstance['instance']
+      | null
 
     if (useLoading !== undefined && useLoading) loading.value.value = true
     let promiseAll
     if (Array.isArray(position)) {
       promiseAll = toRaw(rows).map(async (row, idx) => {
         Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
-        const result = await tableProInstance.insertAt(row, position[idx])
+        const result = await tableProInstance?.insertAt(row, position[idx])
         return result
       })
     } else {
       promiseAll = toRaw(rows).map(async (row) => {
         Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
-        const result = await tableProInstance.insertAt(row, position)
+        const result = await tableProInstance?.insertAt(row, position)
         return result
       })
     }
@@ -76,11 +78,13 @@ export function useTableActions(options: {
 
   async function tableReadRows(_options: TableReadRowsOptions = {}) {
     const { useLoading } = _options
-    const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
+    const tableProInstance = (tableProRef.value as any)?.instance as
+      | ITableProInstance['instance']
+      | null
 
     if (useLoading !== undefined && useLoading) loading.value.value = true
     // const { fullData, tableData } = await tableProInstance.getTableData()
-    const { fullData } = await tableProInstance.getTableData()
+    const { fullData } = (await tableProInstance?.getTableData()) || { fullData: [], tableData: [] }
     if (useLoading !== undefined && useLoading) loading.value.value = false
     // return configTable.value.api?.name.endsWith('List')
     //   ? (fullData as FileActionUploadApiResponseRecord[])
@@ -102,14 +106,16 @@ export function useTableActions(options: {
 
   async function tableDeleteRows(_options: TableDeleteRowsOptions) {
     const { rows, useLoading } = _options
-    const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
+    const tableProInstance = (tableProRef.value as any)?.instance as
+      | ITableProInstance['instance']
+      | null
 
     if (useLoading !== undefined && useLoading) loading.value.value = true
     // 指定 row 或 [row, ...] 删除多条数据，如果为空则删除所有数据
     if (rows === undefined) {
-      await tableProInstance.remove()
+      await tableProInstance?.remove()
     } else {
-      await tableProInstance.remove(toRaw(rows))
+      await tableProInstance?.remove(toRaw(rows))
     }
     if (useLoading !== undefined && useLoading) loading.value.value = false
   }
