@@ -43,6 +43,22 @@ export function defaultActionsBuilder(
           },
         ]
       : []),
+    {
+      field: 'delete',
+      label: tavI18n('Tav.file.actions.6'),
+      enabled: isDeleteBtnVisible(
+        mode,
+        mergedProps.value.enabledOwner,
+        globalConfigUserInfo.value,
+        row.owner
+      ),
+      popConfirm: {
+        title: tavI18n('Tav.file.message.9'),
+        confirm: async () => {
+          await handleDeleteBtnClick(row)
+        },
+      },
+    },
     ...(isUpdateBtnVisible(
       enabledUpdate,
       mode,
@@ -85,22 +101,6 @@ export function defaultActionsBuilder(
       enabled: isDownloadBtnVisible(row.hyperlink!, row.sourceFileDownload!),
       onClick: async () => {
         await handleDownloadBtnClick(row)
-      },
-    },
-    {
-      field: 'delete',
-      label: tavI18n('Tav.file.actions.6'),
-      enabled: isDeleteBtnVisible(
-        mode,
-        mergedProps.value.enabledOwner,
-        globalConfigUserInfo.value,
-        row.owner
-      ),
-      popConfirm: {
-        title: tavI18n('Tav.file.message.9'),
-        confirm: async () => {
-          await handleDeleteBtnClick(row)
-        },
       },
     },
     {

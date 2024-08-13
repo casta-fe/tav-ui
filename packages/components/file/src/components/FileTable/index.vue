@@ -13,7 +13,7 @@ import { TaTablePro } from '@tav-ui/components/table-pro'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { DEFAULT_APIPARAMS, DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
-  VersionCachesController,
+  VersionCaches,
   useDisable,
   useGlobalConfigProps,
   useLoading,
@@ -68,6 +68,7 @@ const emits = defineEmits(fileTableEmits)
 // const attrs = useAttrs()
 
 const FileActionUploadForActionUpdateBtnRef = ref<FileActionUploadInstance>()
+const VersionCachesController = new VersionCaches()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
 const globalConfigProps = useGlobalConfigProps()

@@ -204,4 +204,4 @@ export class VersionCaches {
   }
 }
 
-export const VersionCachesController = VersionCaches.getInstance()
+export const VersionCachesSingleton = VersionCaches.getInstance()
