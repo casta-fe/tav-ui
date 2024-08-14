@@ -12,7 +12,8 @@ import { type GlobalConfigFileProps } from '../../../typings'
 export function defaultFilterFormConfigBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
-  filterFormFileTypeData: Ref<any>
+  filterFormFileTypeData: Ref<any>,
+  filterFormFileTypeAllTypeCodesData: Ref<string[]>
 ) {
   const DEFAULT_FILTER_FORM_CONFIG: FileTableFilterFormConfig = {
     inputForm: {
@@ -33,7 +34,7 @@ export function defaultFilterFormConfigBuilder(
         },
       },
       {
-        field: 'typeCode',
+        field: 'typeCodes',
         label: tavI18n('Tav.file.filter.2'),
         colProps: { span: 24 },
         component: 'TreeSelect',
@@ -46,12 +47,12 @@ export function defaultFilterFormConfigBuilder(
             allowClear: true,
             // showCheckedStrategy: 'SHOW_PARENT',
             treeDataSimpleMode: {
-              id: 'id',
+              id: 'code',
               pId: 'parentId',
             },
             fieldNames: {
               label: 'name',
-              value: 'id',
+              value: 'code',
             },
             dropdownClassName: `${DEFAULT_FILETABLE_CLASSNAME}-filter-form-file-type-tree-select`,
             dropdownStyle: { maxHeight: '500px', overflow: 'hidden' },
@@ -77,7 +78,7 @@ export function defaultFilterFormConfigBuilder(
                       onMousedown={(e) => e.preventDefault()}
                       onClick={() => {
                         formActionType?.setFieldsValue({
-                          typeCode: filterFormFileTypeData.value.map((v: any) => v.id),
+                          typeCodes: filterFormFileTypeAllTypeCodesData.value,
                         })
                       }}
                     >
@@ -121,8 +122,10 @@ export function useFilterFormConfig(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
   tableProRef: Ref<FileTableInstance['tableProRef']['value']>
   filterFormFileTypeData: Ref<any>
+  filterFormFileTypeAllTypeCodesData: Ref<string[]>
 }) {
-  const { mergedProps, tableProRef, filterFormFileTypeData } = options
+  const { mergedProps, tableProRef, filterFormFileTypeData, filterFormFileTypeAllTypeCodesData } =
+    options
 
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
@@ -134,7 +137,12 @@ export function useFilterFormConfig(options: {
     const filterFormConfigWithDefault = () => {
       if (isBoolean(filterFormConfig)) {
         if (filterFormConfig) {
-          return defaultFilterFormConfigBuilder(mergedProps, tableProRef, filterFormFileTypeData)
+          return defaultFilterFormConfigBuilder(
+            mergedProps,
+            tableProRef,
+            filterFormFileTypeData,
+            filterFormFileTypeAllTypeCodesData
+          )
         } else {
           return { ...filterFormConfigWithNull }
         }
@@ -142,7 +150,8 @@ export function useFilterFormConfig(options: {
         let result = defaultFilterFormConfigBuilder(
           mergedProps,
           tableProRef,
-          filterFormFileTypeData
+          filterFormFileTypeData,
+          filterFormFileTypeAllTypeCodesData
         )
         result = filterFormConfig(result)
         return result

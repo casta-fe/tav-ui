@@ -154,13 +154,13 @@ const unifiedTaFileData = reactive({
       moduleCode: 'tg_invest',
       appId: 10001,
       businessCheck: true,
-      // businessKey: 'GSWU19972MMNPWLF7',
-      // businessId: 'GSWU19972MMNPWLF7',
-      // businessIds: ['GSWU19972MMNPWLF7'],
-      // businessParamsJson: JSON.stringify({
-      //   investCompanyCode: 'test1',
-      //   investInvProjectNumber: 'test1',
-      // }),
+      businessKey: 'GSWU19972MMNPWLF7',
+      businessId: 'GSWU19972MMNPWLF7',
+      businessIds: ['GSWU19972MMNPWLF7'],
+      businessParamsJson: JSON.stringify({
+        investCompanyCode: 'test1',
+        investInvProjectNumber: 'test1',
+      }),
     },
     fileActualIds: [],
     fileTypeSelect: {

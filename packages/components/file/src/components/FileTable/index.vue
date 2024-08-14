@@ -172,6 +172,7 @@ async function refreshTableDataApiAction(params?: FileTableReloadApiParams) {
 
 // 获取筛选框 filetype 数据
 const filterFormFileTypeData = ref()
+const filterFormFileTypeAllTypeCodesData = ref<string[]>([])
 async function handleFilterFormFileType() {
   if (!mergedProps.value.filterFormConfig) return
 
@@ -199,6 +200,7 @@ async function handleFilterFormFileType() {
         data.class = data.class
           ? `${data.class} child--type-normal-node`
           : 'child--type-normal-node'
+        filterFormFileTypeAllTypeCodesData.value.push(data.code)
       }
 
       if (data.children && data.children.length) {
@@ -404,6 +406,7 @@ const filterFormConfig = useFilterFormConfig({
   mergedProps,
   tableProRef,
   filterFormFileTypeData,
+  filterFormFileTypeAllTypeCodesData,
 })
 
 // 行编辑配置
