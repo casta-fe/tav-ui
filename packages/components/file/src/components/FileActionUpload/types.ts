@@ -1,4 +1,4 @@
-import { type PropType, type Ref } from 'vue'
+import { type PropType } from 'vue'
 import { type UploadProps as AUploadProps } from 'ant-design-vue'
 import {
   type ApiParams,
@@ -91,7 +91,6 @@ export const fileActionUploadEmits = {
 export type FileActionUploadEmits = typeof fileActionUploadEmits
 
 export interface FileActionUploadInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   openFilePicker: () => Promise<void>
   cleanup(): void
 }

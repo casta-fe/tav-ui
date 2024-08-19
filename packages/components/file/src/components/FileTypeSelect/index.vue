@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  type UnwrapRef,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  ref,
-  watch /*, useSlots, useAttrs*/,
-} from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, watch /*, useSlots, useAttrs*/ } from 'vue'
 import { Select as ASelect, Empty } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type ArgumentsOf } from '../../utils'
@@ -27,7 +20,6 @@ import {
 import { useMode } from './hooks'
 import {
   type FileTypeSelectEmits,
-  type FileTypeSelectInstance,
   type FileTypeSelectProps,
   fileTypeSelectEmits,
   fileTypeSelectProps,
@@ -38,7 +30,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileTypeSelectInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const props = defineProps(fileTypeSelectProps)
 const emits = defineEmits(fileTypeSelectEmits)
 // const slots = useSlots()
@@ -229,7 +221,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   cleanup,
 })
 </script>

@@ -60,7 +60,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileTableInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const tableProRef = ref<UnwrapRef<FileTableInstance['tableProRef']>>()
 const props = defineProps(fileTableProps)
 const emits = defineEmits(fileTableEmits)
@@ -452,6 +452,9 @@ async function cleanup() {
   await tableDeleteRows({
     useLoading: true,
   })
+  const tableProInstance = (tableProRef.value as any)?.instance as any
+  await tableProInstance.filterRef?.resetFilterInput?.(false)
+  await tableProInstance.filterRef?.resetFilterPannel?.(false)
 }
 
 onMounted(async () => {
@@ -492,7 +495,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   tableProRef,
   cleanup,
   reload: refreshTableDataApiAction,
@@ -512,6 +514,7 @@ defineExpose({
     >
       <TaTablePro
         ref="tableProRef"
+        :min-height="200"
         :loading="loading.value"
         :checkbox-config="mergedProps.checkboxConfig"
         :show-operations="mergedProps.showOperations"

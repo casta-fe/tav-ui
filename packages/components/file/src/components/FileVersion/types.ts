@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import {
   type TableProActionItem,
   type TableProColumn,
@@ -129,7 +129,6 @@ export const fileVersionEmits = {
 export type FileVersionEmits = typeof fileVersionEmits
 
 export interface FileVersionInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
   cleanup(): void

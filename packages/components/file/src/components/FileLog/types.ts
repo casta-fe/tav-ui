@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import {
   type TableProActionItem,
   type TableProColumn,
@@ -114,7 +114,6 @@ export const fileLogEmits = {
 export type FileLogEmits = typeof fileLogEmits
 
 export interface FileLogInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
   cleanup(): void

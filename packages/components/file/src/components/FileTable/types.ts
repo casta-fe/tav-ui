@@ -256,7 +256,6 @@ export const fileTableEmits = {
 export type FileTableEmits = typeof fileTableEmits
 
 export interface FileTableInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   tableProRef: Ref<ITableProInstance | undefined>
   cleanup: () => Promise<void>
   reload: (params?: FileTableReloadApiParams) => Promise<void>

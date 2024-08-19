@@ -163,6 +163,7 @@ export function useExtendInstance(
         Object.keys(outerExtendApis).forEach((name) => {
           state.instance![name] = outerExtendApis[name]
         })
+        state.instance!['filterRef'] = filterRef.value
       }
     }
   )

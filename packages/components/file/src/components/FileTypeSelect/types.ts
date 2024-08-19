@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import { type SelectProps as ASelectProps } from 'ant-design-vue'
 import {
   type ApiParams,
@@ -100,6 +100,5 @@ export const fileTypeSelectEmits = {
 export type FileTypeSelectEmits = typeof fileTypeSelectEmits
 
 export interface FileTypeSelectInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   cleanup(): void
 }

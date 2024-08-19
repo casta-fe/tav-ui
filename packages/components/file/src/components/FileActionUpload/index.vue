@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  type UnwrapRef,
   getCurrentInstance,
   nextTick,
   onBeforeUnmount,
@@ -38,7 +37,6 @@ import {
 import { useFileList, useMode } from './hooks'
 import {
   type FileActionUploadEmits,
-  type FileActionUploadInstance,
   type FileActionUploadProps,
   fileActionUploadEmits,
   fileActionUploadProps,
@@ -51,7 +49,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileActionUploadInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const props = defineProps(fileActionUploadProps)
 const emits = defineEmits(fileActionUploadEmits)
 const slots = useSlots()
@@ -294,7 +292,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   openFilePicker,
   cleanup,
 })

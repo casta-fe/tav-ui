@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import { type ModalProps } from '@tav-ui/components/modal'
 import { isBoolean } from '@tav-ui/utils'
 import { DEFAULT_FILE_IGNORE_TYPES, DEFAULT_FILE_MODE } from '../../consts'
@@ -82,7 +82,6 @@ export const filePreviewEmits = {
 export type FilePreviewEmits = typeof filePreviewEmits
 
 export interface FilePreviewInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
   cleanup(): void

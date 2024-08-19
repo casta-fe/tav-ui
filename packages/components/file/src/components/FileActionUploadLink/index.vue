@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  type UnwrapRef,
-  Teleport,
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount /*useSlots, useAttrs*/,
-} from 'vue'
+import { onMounted, onBeforeUnmount, ref, Teleport, watch /*useSlots, useAttrs*/ } from 'vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -31,7 +24,6 @@ import {
 import { validateUploadFileTypeCode } from '../../utils'
 import { useMode } from './hooks'
 import {
-  type FileActionUploadLinkInstance,
   type FileActionUploadLinkProps,
   fileActionUploadLinkEmits,
   fileActionUploadLinkProps,
@@ -42,7 +34,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileActionUploadLinkInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const formRef = ref()
 const props = defineProps(fileActionUploadLinkProps)
 const emits = defineEmits(fileActionUploadLinkEmits)
@@ -232,7 +224,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   cleanup,
 })
 </script>

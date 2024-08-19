@@ -366,12 +366,12 @@ function handleFilterFormConfig(args: any) {
 </script>
 
 <template>
-  <section class="ta-file-test" style="width: 800px; height: 60%; margin: 0 auto">
+  <section class="ta-file-test" style="width: 800px; height: 500px; margin: 0 auto">
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.updateInstantly"
-      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      v-bind="unifiedTaFileData.update"
+      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

@@ -259,28 +259,33 @@ export default defineComponent({
       closePannelFormModal()
     }
 
-    async function handleInputFormResetFields() {
+    async function handleInputFormResetFields(withRequest = true) {
       await inputFormResetFields()
       await nextTick()
       state.inputForm = inputFormGetFieldsValue()
       state.currentFilter = { ...state.inputForm, ...state.pannelForm }
-      unref(props.tableRef)?.commitProxy('query', {
-        filter: { ...state.currentFilter },
-        model: { page: 1 },
-      })
+      if (withRequest) {
+        unref(props.tableRef)?.commitProxy('query', {
+          filter: { ...state.currentFilter },
+          model: { page: 1 },
+        })
+      }
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
 
-    function handlePannelFormResetFields() {
-      pannelFormResetFields()
+    async function handlePannelFormResetFields(withRequest = true) {
+      await pannelFormResetFields()
+      await nextTick()
       state.visible = false
       state.choosedNum = 0
       state.pannelForm = {}
       state.currentFilter = { ...state.inputForm }
-      unref(props.tableRef)?.commitProxy('query', {
-        filter: { ...state.currentFilter },
-        model: { page: 1 },
-      })
+      if (withRequest) {
+        unref(props.tableRef)?.commitProxy('query', {
+          filter: { ...state.currentFilter },
+          model: { page: 1 },
+        })
+      }
       closePannelFormModal()
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
@@ -298,7 +303,10 @@ export default defineComponent({
       { immediate: true }
     )
 
-    expose({ resetFilterInput: handleInputFormResetFields })
+    expose({
+      resetFilterInput: handleInputFormResetFields,
+      resetFilterPannel: handlePannelFormResetFields,
+    })
 
     return () => {
       return unref(isFilterFormShow) ? (

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { computed, onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { TaModal, TaTablePro } from '@tav-ui/components'
 import { DEFAULT_FILEVERSION_CLASSNAME, DEFAULT_FILEVERSION_ID } from '../../consts'
@@ -13,12 +13,7 @@ import {
 import { type FileActionUploadApiResponseRecord } from '../../typings'
 import { fileSingleDownload } from '../../utils'
 import { TaFilePreview } from '../FilePreview'
-import {
-  type FileVersionInstance,
-  type FileVersionProps,
-  fileVersionEmits,
-  fileVersionProps,
-} from './types'
+import { type FileVersionProps, fileVersionEmits, fileVersionProps } from './types'
 import { useActions, useColumns, useMode } from './hooks'
 
 /**
@@ -29,7 +24,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileVersionInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const props = defineProps(fileVersionProps)
 const emits = defineEmits(fileVersionEmits)
 // const slots = useSlots()
@@ -246,7 +241,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   open,
   close,
   cleanup,

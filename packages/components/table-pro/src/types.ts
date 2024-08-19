@@ -90,6 +90,9 @@ export const tableProProps = {
   maxHeight: {
     type: [String, Number] as PropType<VxeTablePropTypes.MaxHeight>,
   },
+  minHeight: {
+    type: [String, Number] as PropType<VxeTablePropTypes.MinHeight>,
+  },
   /**
    * 表格数据（数据为响应式，在使用时建议每次变化直接赋值，与 loadData 行为一致，更新数据是不会重置状态）
    * 1. 参考 https://vxetable.cn/#/grid/api
