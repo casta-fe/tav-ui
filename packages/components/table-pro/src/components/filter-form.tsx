@@ -304,6 +304,7 @@ export default defineComponent({
     )
 
     expose({
+      filterParams: tableFilterParams,
       resetFilterInput: handleInputFormResetFields,
       resetFilterPannel: handlePannelFormResetFields,
     })

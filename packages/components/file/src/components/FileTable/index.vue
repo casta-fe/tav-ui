@@ -453,8 +453,10 @@ async function cleanup() {
     useLoading: true,
   })
   const tableProInstance = (tableProRef.value as any)?.instance as any
-  await tableProInstance.filterRef?.resetFilterInput?.(false)
-  await tableProInstance.filterRef?.resetFilterPannel?.(false)
+  if (tableProInstance.filterRef?.filterParams !== '{}') {
+    await tableProInstance.filterRef?.resetFilterInput?.(false)
+    await tableProInstance.filterRef?.resetFilterPannel?.(false)
+  }
 }
 
 onMounted(async () => {
@@ -483,6 +485,16 @@ watch(
             loading.value.value = true
             await refreshTableDataApiAction(curoptions.apiParams as any)
             loading.value.value = false
+          }
+        }
+
+        if (mergedProps.value.filterFormConfig) {
+          const curoptions = apiQueryFilterFormFileTypeOptions(mergedProps.value.apiParams)
+          if (!curoptions) return
+          const preoptions = apiQueryFilterFormFileTypeOptions(JSON.parse(preApiParams))
+          if (!preoptions) return
+          if (JSON.stringify(curoptions.apiParams) !== JSON.stringify(preoptions.apiParams)) {
+            await handleFilterFormFileType()
           }
         }
       }
