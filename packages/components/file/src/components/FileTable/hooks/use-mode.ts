@@ -1,6 +1,7 @@
 import { type ComputedRef, type SetupContext, computed, nextTick } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
+import { type ITableProInstance } from '@tav-ui/components/table-pro'
 import {
   type ApiDeleteFileParams,
   type ApiQueryFilterFormFileTypeParams,
@@ -526,8 +527,21 @@ export function useMode(options: {
     await nextTick()
 
     const handleReload = async () => {
-      const tableProInstance = (tableProRef.value as any)?.instance as any
+      const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
       await tableProInstance.reload(params)
+
+      // reload 后需清空缓存重新载入数据
+      VersionCachesController.deleteAllFileCaches()
+      const { fullData } = (await tableProInstance?.getTableData()) || {
+        fullData: [],
+        tableData: [],
+      }
+      handleAfterApiEmit({
+        mergedProps,
+        emits,
+        VersionCachesController,
+        apiResult: fullData,
+      })
     }
 
     if (mergedProps.value.mode === 'read') {
