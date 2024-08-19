@@ -177,7 +177,7 @@ export const fileTableProps = {
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
   // 控制行编辑，默认只能编辑 filename 以及 hyperlinkaddress，想编辑其他字段需自行处理
-  enabledRowEdit: { type: Boolean, default: false },
+  enabledRowEdit: { type: Boolean, default: true },
   // 控制 version 列
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无

@@ -41,6 +41,7 @@ export function defaultColumnsBuilder(
       minWidth: 220,
       ...(isFullNameColEdit(
         mergedProps.value.enabledRowEdit,
+        mode,
         mergedProps.value.enabledOwner,
         globalConfigUserInfo.value
       )

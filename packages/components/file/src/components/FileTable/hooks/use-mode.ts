@@ -627,6 +627,10 @@ export function useMode(options: {
         'actualidsChange',
         JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
       )
+      if (!mergedProps.value.dataSource) {
+        // 无外部传入的 datasource 才操作
+        await editRowApiAction(changeEventPayload)
+      }
     } else if (mode === 'update') {
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {

@@ -78,43 +78,43 @@ const unifiedTaFileData = reactive({
     fileTable: {
       modeQueryApiType: 'pager',
       // showOperations: true,
-      dataSource: [
-        {
-          id: 73086,
-          appId: 10001,
-          actualId: '5d8e721a997348c19c46041178348834',
-          moduleId: 9,
-          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
-          businessId: 'TG-20240607000003-0',
-          type: 9,
-          deleted: 0,
-          version: 1,
-          name: '10',
-          suffix: 'png',
-          fullName: '10.png',
-          size: 45113,
-          address: '/20240607/17177485273641322.png',
-          runtime: null,
-          hyperlink: 0,
-          sourceFileDownload: 1,
-          watermarkFileDownload: 2,
-          fileSize: '44KB',
-          createBy: '1',
-          createByName: '系统管理员',
-          expand: null,
-          dataType: null,
-          toPdf: 0,
-          errorMsg: null,
-          moduleCode: 'tg_company',
-          moduleName: '评估立项',
-          typeCode: 'INVEST_FOUND_BFJY',
-          typeName: '拜访纪要',
-          createTime: '2024-06-07 16:22:07',
-        },
-      ],
-      pagerConfig: {
-        enabled: true,
-      },
+      // dataSource: [
+      //   {
+      //     id: 73086,
+      //     appId: 10001,
+      //     actualId: '5d8e721a997348c19c46041178348834',
+      //     moduleId: 9,
+      //     businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+      //     businessId: 'TG-20240607000003-0',
+      //     type: 9,
+      //     deleted: 0,
+      //     version: 1,
+      //     name: '10',
+      //     suffix: 'png',
+      //     fullName: '10.png',
+      //     size: 45113,
+      //     address: '/20240607/17177485273641322.png',
+      //     runtime: null,
+      //     hyperlink: 0,
+      //     sourceFileDownload: 1,
+      //     watermarkFileDownload: 2,
+      //     fileSize: '44KB',
+      //     createBy: '1',
+      //     createByName: '系统管理员',
+      //     expand: null,
+      //     dataType: null,
+      //     toPdf: 0,
+      //     errorMsg: null,
+      //     moduleCode: 'tg_company',
+      //     moduleName: '评估立项',
+      //     typeCode: 'INVEST_FOUND_BFJY',
+      //     typeName: '拜访纪要',
+      //     createTime: '2024-06-07 16:22:07',
+      //   },
+      // ],
+      // pagerConfig: {
+      //   enabled: true,
+      // },
     },
   },
   update: {
@@ -370,8 +370,8 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.update"
-      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
+      v-bind="unifiedTaFileData.create"
+      v-model:fileActualIds="unifiedTaFileData.create.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

@@ -4,6 +4,10 @@ export function isReadMode(mode: FileMode) {
   return mode === 'read'
 }
 
+export function isUpdateMode(mode: FileMode) {
+  return mode === 'update' || mode === 'updateInstantly'
+}
+
 export function isHyperlinkRow(rowHyperlink?: number) {
   return rowHyperlink === 1
 }
@@ -28,11 +32,14 @@ export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
 
 export function isFullNameColEdit(
   enabledRowEdit: boolean,
+  mode: FileMode,
   enabledOwner: boolean,
   globalConfigUserInfo: Record<string, any>,
   owner?: string
 ) {
-  return enabledRowEdit && (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
+  return !isReadMode(mode)
+    ? enabledRowEdit && (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
+    : false
 }
 
 export function isVersionColVisible(
