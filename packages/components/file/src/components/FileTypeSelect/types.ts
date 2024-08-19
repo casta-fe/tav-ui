@@ -63,9 +63,6 @@ export const fileTypeSelectProps = {
   afterApiQueryFileType: {
     type: Function as PropType<(apiResult: FileTypeSelectApiResponseRecord[]) => Promise<any>>,
   },
-
-  //:============================== tafile inner usage ==============================://
-  //:============================== tafile inner usage ==============================://
 }
 
 export type FileTypeSelectProps = ExtractPropTypes<typeof fileTypeSelectProps>

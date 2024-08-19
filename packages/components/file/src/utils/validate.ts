@@ -1,4 +1,5 @@
 import { type FileActionUploadProps } from '../components/FileActionUpload/types'
+import { type FileTypeSelectApiResponseRecord } from '../typings'
 
 // 文件名是否通过空白字符校验
 export function validateUploadFileEmptyName(name: string) {
@@ -61,4 +62,13 @@ export function validateUploadFileTypeCode(
   typeCode: FileActionUploadProps['apiParams']['typeCode']
 ) {
   return typeCode ? true : false
+}
+
+export function validateTypeCodesEqual(
+  typeCodes: string[],
+  apiRes: FileTypeSelectApiResponseRecord[]
+) {
+  const apiResTypeCodes = apiRes.map((res) => res.code)
+
+  return JSON.stringify(typeCodes) === JSON.stringify(apiResTypeCodes)
 }

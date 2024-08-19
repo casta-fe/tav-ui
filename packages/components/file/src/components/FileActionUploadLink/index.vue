@@ -176,10 +176,12 @@ watch(
 )
 
 async function open() {
-  const validateFileTypeCodeResult = validateFileTypeCode()
-  if (!validateFileTypeCodeResult) {
-    close()
-    return
+  if (mergedProps.value.validateTypeCode) {
+    const validateFileTypeCodeResult = validateFileTypeCode()
+    if (!validateFileTypeCodeResult) {
+      close()
+      return
+    }
   }
 
   formVisible.value = true

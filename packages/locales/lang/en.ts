@@ -222,5 +222,9 @@ export default {
       '1': 'Version List',
       '2': 'Log List',
     },
+    cards: {
+      '1': 'Upload',
+      '2': 'Uploaded',
+    },
   },
 }

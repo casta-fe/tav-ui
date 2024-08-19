@@ -10,7 +10,7 @@ export const DEFAULT_UPLOAD_TIP = (i18n: any) => i18n('Tav.file.upload.1')
 export const DEFAULT_UPLOADLINK_TIP = (i18n: any) => i18n('Tav.file.upload.3')
 export const DEFAULT_UPLOADLINK_CLOSE_TIP = (i18n: any) => i18n('Tav.file.upload.2')
 
-const ns = createNS('file')
+export const ns = createNS('file')
 export const DEFAULT_FILE_CLASSNAME = ns.b()
 export const DEFAULT_FILE_ID = createId(DEFAULT_FILE_CLASSNAME)
 export const DEFAULT_FILEACTIONS_CLASSNAME = ns.b('actions')
@@ -35,6 +35,8 @@ export const DEFAULT_FILELOG_CLASSNAME = ns.b('log')
 export const DEFAULT_FILELOG_ID = createId(DEFAULT_FILELOG_CLASSNAME)
 export const DEFAULT_ROWEDITOR_CLASSNAME = ns.b('table-row-editor')
 export const DEFAULT_ROWEDITOR_ID = createId(DEFAULT_ROWEDITOR_CLASSNAME)
+export const DEFAULT_FILECARDS_CLASSNAME = ns.b('cards')
+export const DEFAULT_FILECARDS_ID = createId(DEFAULT_FILECARDS_CLASSNAME)
 
 export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
 export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']

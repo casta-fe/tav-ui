@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  type UnwrapRef,
-  getCurrentInstance,
-  nextTick,
-  onBeforeUnmount,
-  ref,
-  watch,
-  useSlots /* useAttrs*/,
-} from 'vue'
+import { type UnwrapRef, nextTick, onBeforeUnmount, ref, useSlots /* useAttrs*/, watch } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -70,10 +62,7 @@ const mergedProps = useMergedProps<FileActionUploadProps>(
 
 const {
   apiActions: { uploadApiOptions, updateApiOptions },
-  validateActions: { withValidateTypeCode },
 } = useMode({ mergedProps })
-
-const instance = getCurrentInstance()
 
 // // Embedded in the form, just use the hook binding to perform form verification
 // const [state] = useRuleFormItem(props, 'value', 'change', emitData)
@@ -182,7 +171,7 @@ function handleFilesValidate(files: Record<string, any>[]) {
  * @param e
  */
 function beforeHandleApiAction1(e: Event) {
-  if (withValidateTypeCode(instance)) {
+  if (mergedProps.value.validateTypeCode) {
     const validateUploadFileTypeCodeResult = validateUploadFileTypeCode(
       mergedProps.value.apiParams.typeCode
     )
@@ -330,7 +319,11 @@ defineExpose({
           />
         </template>
         <template v-else>
-          <TaButton :disabled="disable" @click="beforeHandleApiAction1">
+          <TaButton
+            :type="mergedProps.buttonType"
+            :disabled="disable"
+            @click="beforeHandleApiAction1"
+          >
             <template v-if="loading">
               <span class="ant-btn-loading-icon" style="">
                 <span role="img" aria-label="loading" class="anticon anticon-loading">

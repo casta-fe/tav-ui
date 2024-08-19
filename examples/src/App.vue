@@ -83,6 +83,20 @@ export default defineComponent({
         TaFileLog: {
           apiQueryFileLog: queryFileLog,
         },
+        TaFileCards: {
+          apiQueryFileType: taUploadProvideData.queryFileType,
+          apiQueryFileList: taUploadProvideData.queryFileList,
+        },
+        TaFileCard: {
+          apiQueryFileList: taUploadProvideData.queryFileList,
+          apiQueryFileHistory: taUploadProvideData.queryFileHistory,
+          apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
+          apiDeleteFile: taUploadProvideData.removeFile,
+          apiPreviewFile: previewWPSFile,
+          apiDownloadFile: taUploadProvideData.download,
+          apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
+        },
+
         TaMemberSelect: {
           orgApi,
           allUserList: allUsers.data.map((v) => {

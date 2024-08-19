@@ -523,6 +523,7 @@ defineExpose({
         ref="FileActionUploadForActionUpdateBtnRef"
         :mode="mergedProps.mode"
         :api-params="mergedProps.apiParams"
+        :validate-type-code="false"
         :update-file="actionUpdateClickRow"
         @uploaded-change="handleFileActionUploadForActionUpdateBtnChange"
       />

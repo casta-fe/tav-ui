@@ -159,6 +159,63 @@ export const globalConfigFileProps = {
       >,
     },
   },
+  TaFileCards: {
+    /** filetype 查询接口 */
+    apiQueryFileType: {
+      type: Function as PropType<(params: ApiQueryFileTypeParams) => Promise<any>>,
+    },
+    /** 查询文件接口，传入 queryfilelist 不分页 */
+    apiQueryFileList: {
+      type: Function as PropType<(params: ApiQueryFileListParams) => Promise<any>>,
+    },
+  },
+  TaFileCard: {
+    /** 文件上传接口，传入 uploadFile， */
+    apiUploadFile: {
+      type: Function as PropType<(params: ApiUploadFileParams) => Promise<any>>,
+    },
+    /** 查询文件接口，传入 queryfile 分页 */
+    apiQueryFile: {
+      type: Function as PropType<
+        (params: {
+          filter: ApiQueryFileParams
+          model: {
+            dir?: string
+            limit?: number
+            page?: number
+            sort?: string
+          }
+        }) => Promise<any>
+      >,
+    },
+    /** 查询文件接口，传入 queryfilelist 不分页 */
+    apiQueryFileList: {
+      type: Function as PropType<(params: ApiQueryFileListParams) => Promise<any>>,
+    },
+    /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
+    apiQueryFileHistory: {
+      type: Function as PropType<(params: ApiQueryFileHistoryParams) => Promise<any>>,
+    },
+    // 更新文件部分信息，传入 updateFileNameAndAddress
+    apiUpdateFileNameAndLink: {
+      type: Function as PropType<(params: ApiUpdateFileNameAndLinkParams) => Promise<any>>,
+    },
+    // 删除文件接口，传入 removeFile
+    apiDeleteFile: {
+      type: Function as PropType<(params: ApiDeleteFileParams) => Promise<any>>,
+    },
+    apiPreviewFile: {
+      type: Function as PropType<(params: ApiPreviewFileParams) => Promise<any>>,
+    },
+    /** 下载接口，传入 fileDownload */
+    apiDownloadFile: {
+      type: Function as PropType<(params: ApiDownloadFileParams) => Promise<any>>,
+    },
+    /** 下载水印文件接口，传入 downloadToWatermark */
+    apiDownloadWaterMarkerFile: {
+      type: Function as PropType<(params: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
+    },
+  },
 }
 
 export type GlobalConfigFileProps = ExtractPropTypes<typeof globalConfigFileProps>

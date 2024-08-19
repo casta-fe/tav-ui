@@ -42,6 +42,8 @@ import {
   TaFile,
   TaFileActionUpload,
   TaFileActionUploadLink,
+  TaFileCard,
+  TaFileCards,
   TaFileLog,
   TaFilePreview,
   TaFileTable,
@@ -106,4 +108,6 @@ export default [
   TaFileVersion,
   TaFilePreview,
   TaFileLog,
+  TaFileCards,
+  TaFileCard,
 ] as Plugin[]

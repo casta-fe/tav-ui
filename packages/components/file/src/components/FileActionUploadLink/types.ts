@@ -36,6 +36,10 @@ export const fileActionUploadLinkProps = {
   icon: { type: String, default: 'ant-design:link-outlined' },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  validateTypeCode: {
+    type: Boolean,
+    default: true,
+  },
   formVisible: { type: Boolean, default: false },
   name: { type: String },
   address: { type: String },

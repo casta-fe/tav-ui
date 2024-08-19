@@ -1,5 +1,5 @@
 import { type PropType, type Ref } from 'vue'
-import { type UploadProps as AUploadProps } from 'ant-design-vue'
+import { type ButtonProps as AButtonProps, type UploadProps as AUploadProps } from 'ant-design-vue'
 import {
   type ApiParams,
   type FileActionUploadApiResponseRecord,
@@ -61,6 +61,14 @@ export const fileActionUploadProps = {
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
+  buttonType: {
+    type: String as PropType<AButtonProps['type']>,
+    default: 'default',
+  },
+  validateTypeCode: {
+    type: Boolean,
+    default: true,
+  },
   /** 更新状态下需要传入要被更新的文件数据 */
   updateFile: { type: Object as PropType<FileActionUploadApiResponseRecord> },
   /** apiUploadFile 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
