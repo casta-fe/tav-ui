@@ -453,7 +453,7 @@ async function cleanup() {
     useLoading: true,
   })
   const tableProInstance = (tableProRef.value as any)?.instance as any
-  if (tableProInstance.filterRef?.filterParams !== '{}') {
+  if (tableProInstance?.filterRef?.filterParams !== '{}') {
     await tableProInstance.filterRef?.resetFilterInput?.(false)
     await tableProInstance.filterRef?.resetFilterPannel?.(false)
   }

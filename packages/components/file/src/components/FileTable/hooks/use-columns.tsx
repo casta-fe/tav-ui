@@ -15,7 +15,7 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { isModuleFullNameColVisible, isOwnerOrAdmin, isVersionColVisible } from '../../../utils'
+import { isFullNameColEdit, isModuleFullNameColVisible, isVersionColVisible } from '../../../utils'
 import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
 
 export function defaultColumnsBuilder(
@@ -32,9 +32,6 @@ export function defaultColumnsBuilder(
   const clearEdit = tableProRef.value?.instance?.clearEdit
   const mode = mergedProps.value.mode
   const enabledVersion = mergedProps.value.enabledVersion
-  const enabledRowEdit =
-    mergedProps.value.enabledRowEdit &&
-    (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
 
   const DEFAULT_COLUMNS: FileTableColumn[] = [
     {
@@ -42,7 +39,13 @@ export function defaultColumnsBuilder(
       field: 'fullName',
       fixed: 'left',
       minWidth: 220,
-      ...(enabledRowEdit ? { editRender: {} } : {}),
+      ...(isFullNameColEdit(
+        mergedProps.value.enabledRowEdit,
+        mergedProps.value.enabledOwner,
+        globalConfigUserInfo.value
+      )
+        ? { editRender: {} }
+        : {}),
       slots: {
         edit: ({ row: _row }: Record<string, any>) => {
           const row = _row as FileActionUploadApiResponseRecord

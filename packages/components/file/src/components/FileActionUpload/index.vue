@@ -308,7 +308,7 @@ defineExpose({
       <AUpload
         ref="AUploadRef"
         :file-list="[]"
-        :accpet="mergedProps.accept"
+        :accept="mergedProps.accept"
         :multiple="mergedProps.updateFile ? false : mergedProps.multiple"
         :max-count="mergedProps.maxCount"
         :show-upload-list="false"

@@ -294,6 +294,7 @@ export function useMode(options: {
         filter: {
           appId: apiParams.appId,
           moduleCode: apiParams.moduleCode,
+          ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
           businessKey: apiParams.businessKey,
           ...(apiParams.businessIds
             ? {
@@ -332,6 +333,7 @@ export function useMode(options: {
       apiParams: {
         appId: apiParams.appId,
         moduleCode: apiParams.moduleCode,
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
         businessKey: apiParams.businessKey,
         ...(apiParams.businessIds
           ? {

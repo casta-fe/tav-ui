@@ -26,6 +26,15 @@ export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
   return !!rowSourceFileDownload
 }
 
+export function isFullNameColEdit(
+  enabledRowEdit: boolean,
+  enabledOwner: boolean,
+  globalConfigUserInfo: Record<string, any>,
+  owner?: string
+) {
+  return enabledRowEdit && (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
+}
+
 export function isVersionColVisible(
   enabledVersion: boolean,
   rowHyperlink?: number,

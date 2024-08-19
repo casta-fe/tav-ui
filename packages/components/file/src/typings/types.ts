@@ -129,11 +129,11 @@ export interface ApiParams {
    */
   id: number
   /**
-   * 是否包含暂存，默认 false，用于：
+   * 排除暂存，默认 false，用于：
    * 1. api/file/queryFile（非必传）
    * 2. api/file/queryFileList（非必传）
    */
-  includeStaging: boolean
+  excludeStaging: boolean
   /**
    * 文件列表，用于：
    * 1. api/file/upload

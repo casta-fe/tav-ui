@@ -163,7 +163,7 @@ const fileTableProps = computed(() => {
       endTime: fileApiParams.value.endTime,
       finalTypeCodes: fileApiParams.value.finalTypeCodes,
       id: fileApiParams.value.id,
-      includeStaging: fileApiParams.value.includeStaging ?? DEFAULT_APIPARAMS.includeStaging, // 合并默认值
+      // excludeStaging: fileApiParams.value.excludeStaging ?? DEFAULT_APIPARAMS.excludeStaging, // 合并默认值
       moduleCode: fileApiParams.value.moduleCode,
       permissionControl:
         fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
