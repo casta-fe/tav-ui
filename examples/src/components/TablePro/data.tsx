@@ -141,27 +141,27 @@ export const columns1 = (): TableProColumn[] => {
                     console.log('edit')
                   },
                 },
-                {
-                  label: '测试1',
-                  onClick: () => {
-                    console.log('test 1')
-                  },
-                },
-                {
-                  label: '测试2',
-                  onClick: () => {
-                    console.log('test 2')
-                  },
-                },
-                {
-                  label: '删除',
-                  popConfirm: {
-                    title: '删除后将无法恢复，确定删除吗？',
-                    confirm: () => {
-                      console.log('del')
-                    },
-                  },
-                },
+                // {
+                //   label: '测试1',
+                //   onClick: () => {
+                //     console.log('test 1')
+                //   },
+                // },
+                // {
+                //   label: '测试2',
+                //   onClick: () => {
+                //     console.log('test 2')
+                //   },
+                // },
+                // {
+                //   label: '删除',
+                //   popConfirm: {
+                //     title: '删除后将无法恢复，确定删除吗？',
+                //     confirm: () => {
+                //       console.log('del')
+                //     },
+                //   },
+                // },
               ]}
             />,
           ]

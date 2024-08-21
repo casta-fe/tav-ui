@@ -13,6 +13,7 @@ export interface UseRequestHandleApiDefaultOptions<T, K> {
   /** 返回 true 继续执行；返回 T 代表修改后的 apiparams，用其继续执行；返回其他则退出请求*/
   beforeApi?: (params: T) => Promise<T | boolean>
   afterApi?: (params: K) => Promise<any>
+  catchError?: (params: K) => Promise<any>
   /** 是否将参数全部转换为 formdata */
   transformApiParamsToFormData?: {
     fileFiledName?: string
@@ -47,6 +48,7 @@ export function useRequest(options: {
       api: _api,
       beforeApi: _beforeApi,
       afterApi: _afterApi,
+      catchError: _catchError,
       transformApiParamsToFormData: _transformApiParamsToFormData,
       successMessage: _successMessage,
       failureMessage: _failureMessage,
@@ -59,6 +61,7 @@ export function useRequest(options: {
     let api = _api
     let beforeApi = _beforeApi
     let afterApi = _afterApi
+    let catchError = _catchError
     let transformApiParamsToFormData = _transformApiParamsToFormData
     let successMessage = _successMessage
     let failureMessage = _failureMessage
@@ -83,6 +86,7 @@ export function useRequest(options: {
           api = beforeApiResult.api
           beforeApi = beforeApiResult.beforeApi
           afterApi = beforeApiResult.afterApi
+          catchError = beforeApiResult.catchError
           transformApiParamsToFormData = beforeApiResult.transformApiParamsToFormData
           successMessage = beforeApiResult.successMessage
           failureMessage = beforeApiResult.failureMessage
@@ -166,6 +170,9 @@ export function useRequest(options: {
       resultRef.value = []
       errorRef.value = failureMessage ? failureMessage() : DEFAULT_HTTP_ERROR_TIP(tavI18n)
       // createMessage.error(failureMessage ? failureMessage() : DEFAULT_HTTP_ERROR_TIP(tavI18n))
+      if (catchError && isFunction(catchError)) {
+        await catchError(error)
+      }
     } finally {
       if (loading) {
         loading.value.value = false

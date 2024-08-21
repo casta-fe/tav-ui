@@ -50,7 +50,7 @@ export function defaultColumnsBuilder(
       minWidth: 150,
     },
     {
-      title: tavI18n('Tav.common.actions'),
+      title: tavI18n('Tav.common.action'),
       field: 'action',
       fixed: 'right',
       width: 150,

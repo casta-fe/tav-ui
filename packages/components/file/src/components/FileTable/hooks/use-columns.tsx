@@ -19,8 +19,11 @@ import { isFullNameColEdit, isModuleFullNameColVisible, isVersionColVisible } fr
 import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
 
 export function defaultColumnsBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
+  mode: FileTableProps['mode'],
+  enabledRowEdit: FileTableProps['enabledRowEdit'],
+  enabledVersion: FileTableProps['enabledVersion'],
+  enabledOwner: FileTableProps['enabledOwner'],
+  clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
   handleCellEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
@@ -29,22 +32,13 @@ export function defaultColumnsBuilder(
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   globalConfigUserInfo: Ref<Record<string, any>>
 ) {
-  const clearEdit = tableProRef.value?.instance?.clearEdit
-  const mode = mergedProps.value.mode
-  const enabledVersion = mergedProps.value.enabledVersion
-
   const DEFAULT_COLUMNS: FileTableColumn[] = [
     {
       title: tavI18n('Tav.file.columns.1'),
       field: 'fullName',
       fixed: 'left',
       minWidth: 220,
-      ...(isFullNameColEdit(
-        mergedProps.value.enabledRowEdit,
-        mode,
-        mergedProps.value.enabledOwner,
-        globalConfigUserInfo.value
-      )
+      ...(isFullNameColEdit(enabledRowEdit, mode, enabledOwner, globalConfigUserInfo.value)
         ? { editRender: {} }
         : {}),
       slots: {
@@ -55,7 +49,10 @@ export function defaultColumnsBuilder(
             <FileTableRowEditor
               row={row}
               onEnter={() => {
-                clearEdit?.()
+                clearEdit &&
+                  setTimeout(() => {
+                    clearEdit()
+                  }, 16)
               }}
               onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
                 await handleCellEditClick(payload, row)
@@ -77,9 +74,14 @@ export function defaultColumnsBuilder(
                   <Cell column={{ field: 'fullName' }} type="body">
                     {/* // 超链接 */}
                     {/* eslint-disable-next-line no-irregular-whitespace */}
-                    <span>{row.name}</span>　
-                    <br />
+                    <div style={{ display: 'inline-block', lineHeight: 1 }}>{row.name}</div>　
                     <a
+                      style={{
+                        display: 'block',
+                        lineHeight: 1,
+                        fontSize: '12px',
+                        marginBottom: '6px',
+                      }}
                       onClick={() => {
                         window
                           .open(row.address.includes('//') ? row.address : `//${row.address}`)
@@ -162,18 +164,14 @@ export function defaultColumnsBuilder(
       minWidth: 120,
     },
     {
-      title: tavI18n('Tav.common.actions'),
+      title: tavI18n('Tav.common.action'),
       field: 'action',
       fixed: 'right',
-      width: 150,
+      // width: 150,
       align: 'center',
       customRender: ({ row: _row }: Record<string, any>) => {
         const row = _row as FileActionUploadApiResponseRecord
-        return (
-          <>
-            <TaTableProAction actions={actions.value(row)} />
-          </>
-        )
+        return <TaTableProAction key={row.id} actions={actions.value(row)} />
       },
     },
   ]
@@ -203,10 +201,18 @@ export function useColumns(options: {
 
   return computed(() => {
     const columns = mergedProps.value.columns
+    const clearEdit = tableProRef.value?.instance?.clearEdit ?? undefined
+    const mode = mergedProps.value.mode
+    const enabledRowEdit = mergedProps.value.enabledRowEdit
+    const enabledVersion = mergedProps.value.enabledVersion
+    const enabledOwner = mergedProps.value.enabledOwner
 
     let result = defaultColumnsBuilder(
-      mergedProps,
-      tableProRef,
+      mode,
+      enabledRowEdit,
+      enabledVersion,
+      enabledOwner,
+      clearEdit,
       actions,
       handleCellEditClick,
       hanldeVersionClick,

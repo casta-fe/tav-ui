@@ -34,6 +34,7 @@ import { type ApiPreviewFileParams } from './../FilePreview/types'
 export type FileTableColumn = TableProColumn
 export type FileTableAction = TableProActionItem & { field: string }
 export type FileTableFilterFormConfig = TableProProps['filterFormConfig']
+export type FileTableCustomActionConfig = TableProProps['customActionConfig']
 export type FileTableReloadApiParams = TableProApiParams
 
 // 按照 swagger 编写
@@ -139,8 +140,23 @@ export const fileTableProps = {
     type: Object as PropType<TableProProps['pagerConfig']>,
     default: () => ({ enabled: false }),
   },
-  showOperations: { type: Boolean, default: false },
-  fillInner: { type: Boolean, default: false },
+  /** 给table填充颜色，将table和filterform区分开 */
+  fillInner: {
+    type: Boolean,
+    default: false,
+  },
+  /** 控制 filterform & customaction 整体显示与隐藏 */
+  showOperations: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 筛选是否互斥
+   */
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
@@ -163,6 +179,12 @@ export const fileTableProps = {
   filterFormConfig: {
     type: [Boolean, Function] as PropType<
       boolean | ((...args: [FileTableFilterFormConfig]) => FileTableFilterFormConfig)
+    >,
+    default: false,
+  },
+  customActionConfig: {
+    type: [Boolean, Function] as PropType<
+      boolean | ((...args: [FileTableCustomActionConfig]) => FileTableCustomActionConfig)
     >,
     default: false,
   },

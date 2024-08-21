@@ -224,21 +224,26 @@ export default defineComponent({
       const res = JSON.parse(JSON.stringify(_res))
       state.visible = false
       state.pannelForm = res
-      state.choosedNum = Object.keys(res).reduce((result, cur) => {
-        if (
-          !isNullOrUnDef(res[cur]) &&
-          JSON.stringify(res[cur]) !== '[]' &&
-          JSON.stringify(res[cur]) !== '["",""]' &&
-          JSON.stringify(res[cur]) !== '[null,""]' &&
-          JSON.stringify(res[cur]) !== '["",null]' &&
-          JSON.stringify(res[cur]) !== '{}' &&
-          res[cur] !== '' &&
-          JSON.stringify(res[cur])
-        ) {
-          result++
-        }
-        return result
-      }, 0)
+      const filterWithoutShowSchemas = pannelFormSchema.value.filter(
+        (s) => typeof s.show === 'undefined'
+      )
+      state.choosedNum = Object.keys(res)
+        .filter((field) => !!filterWithoutShowSchemas.find((s: FormSchema) => s.field === field))
+        .reduce((result, cur) => {
+          if (
+            !isNullOrUnDef(res[cur]) &&
+            JSON.stringify(res[cur]) !== '[]' &&
+            JSON.stringify(res[cur]) !== '["",""]' &&
+            JSON.stringify(res[cur]) !== '[null,""]' &&
+            JSON.stringify(res[cur]) !== '["",null]' &&
+            JSON.stringify(res[cur]) !== '{}' &&
+            res[cur] !== '' &&
+            JSON.stringify(res[cur])
+          ) {
+            result++
+          }
+          return result
+        }, 0)
       if (props.filterExclusion) {
         state.currentFilter = {}
         state.currentFilter = state.pannelForm

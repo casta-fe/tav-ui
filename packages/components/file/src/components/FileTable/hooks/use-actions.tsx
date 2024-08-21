@@ -16,7 +16,10 @@ import {
 } from '../../../utils'
 
 export function defaultActionsBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
+  mode: FileTableProps['mode'],
+  enabledPreview: FileTableProps['enabledPreview'],
+  enabledUpdate: FileTableProps['enabledUpdate'],
+  enabledOwner: FileTableProps['enabledOwner'],
   row: FileActionUploadApiResponseRecord,
   handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => void,
   handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
@@ -26,10 +29,6 @@ export function defaultActionsBuilder(
   handleLogBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   globalConfigUserInfo: Ref<Record<string, any>>
 ) {
-  const mode = mergedProps.value.mode
-  const enabledPreview = mergedProps.value.enabledPreview
-  const enabledUpdate = mergedProps.value.enabledUpdate
-
   const DEFAULT_ACTIONS: FileTableAction[] = [
     ...(enabledPreview
       ? [
@@ -46,12 +45,7 @@ export function defaultActionsBuilder(
     {
       field: 'delete',
       label: tavI18n('Tav.file.actions.6'),
-      enabled: isDeleteBtnVisible(
-        mode,
-        mergedProps.value.enabledOwner,
-        globalConfigUserInfo.value,
-        row.owner
-      ),
+      enabled: isDeleteBtnVisible(mode, enabledOwner, globalConfigUserInfo.value, row.owner),
       popConfirm: {
         title: tavI18n('Tav.file.message.9'),
         confirm: async () => {
@@ -64,7 +58,7 @@ export function defaultActionsBuilder(
       mode,
       row.hyperlink!,
       row.auto!,
-      mergedProps.value.enabledOwner,
+      enabledOwner,
       globalConfigUserInfo.value,
       row.owner
     )
@@ -77,7 +71,7 @@ export function defaultActionsBuilder(
               mode,
               row.hyperlink!,
               row.auto!,
-              mergedProps.value.enabledOwner,
+              enabledOwner,
               globalConfigUserInfo.value,
               row.owner
             ),
@@ -106,11 +100,7 @@ export function defaultActionsBuilder(
     {
       field: 'log',
       label: tavI18n('Tav.file.actions.7'),
-      enabled: isLogBtnVisible(
-        mergedProps.value.enabledOwner,
-        globalConfigUserInfo.value,
-        row.owner
-      ),
+      enabled: isLogBtnVisible(enabledOwner, globalConfigUserInfo.value, row.owner),
       onClick: async () => {
         await handleLogBtnClick(row)
       },
@@ -143,9 +133,16 @@ export function useActions(options: {
 
   return computed(() => (row: FileActionUploadApiResponseRecord) => {
     const actions = mergedProps.value.actions
+    const mode = mergedProps.value.mode
+    const enabledPreview = mergedProps.value.enabledPreview
+    const enabledUpdate = mergedProps.value.enabledUpdate
+    const enabledOwner = mergedProps.value.enabledOwner
 
     let result = defaultActionsBuilder(
-      mergedProps,
+      mode,
+      enabledPreview,
+      enabledUpdate,
+      enabledOwner,
       row,
       handleViewBtnClick,
       handleUpdateBtnClick,

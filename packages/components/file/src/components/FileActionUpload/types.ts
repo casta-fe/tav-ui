@@ -68,6 +68,7 @@ export const fileActionUploadProps = {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  catchApiUploadFileError: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiUpdateFile: {
     type: Function as PropType<(apiParams: ApiUpdateFileParams) => Promise<any>>,
   },

@@ -10,8 +10,8 @@ import { DEFAULT_FILETABLE_CLASSNAME } from '../../../consts'
 import { type GlobalConfigFileProps } from '../../../typings'
 
 export function defaultFilterFormConfigBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
+  // mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
+  // tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
   filterFormFileTypeData: Ref<any>,
   filterFormFileTypeAllTypeCodesData: Ref<string[]>
 ) {
@@ -25,7 +25,7 @@ export function defaultFilterFormConfigBuilder(
     },
     pannelForm: [
       {
-        field: 'name',
+        field: 'searchValue',
         label: tavI18n('Tav.file.filter.3'),
         colProps: { span: 24 },
         component: 'Input',
@@ -96,13 +96,36 @@ export function defaultFilterFormConfigBuilder(
         field: 'timeRange',
         colProps: { span: 24 },
         component: 'RangePicker',
-        componentProps: {
-          valueFormat: 'YYYY-MM-DD 00:00:00',
-        },
         valueType: 'array',
+        componentProps: ({ formActionType }) => {
+          return {
+            valueFormat: 'YYYY-MM-DD 00:00:00',
+            onChange: (...args: any[]) => {
+              const [startTime, endTime] = args[0] as string[]
+              formActionType?.setFieldsValue({
+                startTime,
+                endTime,
+              })
+            },
+          }
+        },
       },
       {
-        label: tavI18n('Tav.member.2'),
+        label: tavI18n('Tav.file.columns.8'),
+        field: 'startTime',
+        show: false,
+        colProps: { span: 24 },
+        component: 'Input',
+      },
+      {
+        label: tavI18n('Tav.file.columns.8'),
+        field: 'endTime',
+        show: false,
+        colProps: { span: 24 },
+        component: 'Input',
+      },
+      {
+        label: tavI18n('Tav.file.columns.5'),
         field: 'owners',
         colProps: { span: 24 },
         component: 'MemberSelect',
@@ -124,8 +147,7 @@ export function useFilterFormConfig(options: {
   filterFormFileTypeData: Ref<any>
   filterFormFileTypeAllTypeCodesData: Ref<string[]>
 }) {
-  const { mergedProps, tableProRef, filterFormFileTypeData, filterFormFileTypeAllTypeCodesData } =
-    options
+  const { mergedProps, filterFormFileTypeData, filterFormFileTypeAllTypeCodesData } = options
 
   return computed(() => {
     const filterFormConfig = mergedProps.value.filterFormConfig
@@ -138,8 +160,8 @@ export function useFilterFormConfig(options: {
       if (isBoolean(filterFormConfig)) {
         if (filterFormConfig) {
           return defaultFilterFormConfigBuilder(
-            mergedProps,
-            tableProRef,
+            // mergedProps,
+            // tableProRef,
             filterFormFileTypeData,
             filterFormFileTypeAllTypeCodesData
           )
@@ -148,8 +170,8 @@ export function useFilterFormConfig(options: {
         }
       } else {
         let result = defaultFilterFormConfigBuilder(
-          mergedProps,
-          tableProRef,
+          // mergedProps,
+          // tableProRef,
           filterFormFileTypeData,
           filterFormFileTypeAllTypeCodesData
         )

@@ -41,6 +41,7 @@ import {
 import {
   useActions,
   useColumns,
+  useCustomActionConfig,
   useDataSource,
   useFilterFormConfig,
   useMode,
@@ -409,6 +410,12 @@ const filterFormConfig = useFilterFormConfig({
   filterFormFileTypeAllTypeCodesData,
 })
 
+// custom action
+const customActionConfig = useCustomActionConfig({
+  mergedProps,
+  tableProRef,
+})
+
 // 行编辑配置
 const editConfig = computed<any>(() =>
   mergedProps.value.enabledRowEdit &&
@@ -530,12 +537,14 @@ defineExpose({
         :min-height="200"
         :loading="loading.value"
         :checkbox-config="mergedProps.checkboxConfig"
-        :show-operations="mergedProps.showOperations"
         :fill-inner="mergedProps.fillInner"
+        :show-operations="mergedProps.showOperations"
+        :filter-exclusion="mergedProps.filterExclusion"
         :columns="columns"
         :edit-config="editConfig"
         :immediate="mergedProps.immediate"
         :filter-form-config="filterFormConfig"
+        :custom-action-config="customActionConfig"
         v-bind="configTable"
       />
       <TaFileActionUploadForActionUpdateBtn

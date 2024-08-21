@@ -633,6 +633,13 @@ export function useMode(options: {
       }
     } else if (mode === 'update') {
       emits('actualidsChange', VersionCachesController.getCaches())
+
+      if (!mergedProps.value.dataSource) {
+        // 是否为手动上传的文件数据，而非从 api 返回的数据
+        const isManualUploadRow = row?.version === 1 && !(row.businessId || row.businessKey)
+        // 无外部传入的 datasource 才操作
+        if (isManualUploadRow) await editRowApiAction(changeEventPayload)
+      }
     } else {
       emits('actualidsChange', VersionCachesController.getCaches())
 
@@ -678,7 +685,14 @@ export function useMode(options: {
         tableData.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      VersionCachesController.createFileCache(row, mode)
+      // 是否为手动上传的文件数据，而非从 api 返回的数据
+      const isManualUploadRow =
+        clickedRow?.version === 1 && !(clickedRow.businessId || clickedRow.businessKey)
+      if (isManualUploadRow) {
+        VersionCachesController.createFileCache(row, mode, clickedRow)
+      } else {
+        VersionCachesController.createFileCache(row, mode)
+      }
       const latestVersionFileCache = VersionCachesController.readFileCacheLatestVersion(
         row.actualId!
       )

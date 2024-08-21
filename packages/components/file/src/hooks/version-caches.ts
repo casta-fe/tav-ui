@@ -84,15 +84,24 @@ export class VersionCaches {
    * @param updatedFile
    * @returns
    */
-  createFileCache(updatedFile: FileActionUploadApiResponseRecord, mode?: FileMode) {
-    const file = this.serialize(updatedFile)
-    if (mode !== 'updateInstantly' && this.actualidCaches.has(file.actualId!)) {
+  createFileCache(
+    updatedFile: FileActionUploadApiResponseRecord,
+    mode: FileMode,
+    file?: FileActionUploadApiResponseRecord
+  ) {
+    const _updatedFile = this.serialize(updatedFile)
+    if (mode !== 'updateInstantly' && this.actualidCaches.has(_updatedFile.actualId!)) {
       this.updateFileCaches(updatedFile)
       return
     }
 
-    this.actualidCaches.add(file.actualId!)
-    this.updateFileCacheVersion(file)
+    if (file) {
+      if (this.actualidCaches.has(file.actualId!)) {
+        this.actualidCaches.delete(file.actualId!)
+      }
+    }
+    this.actualidCaches.add(_updatedFile.actualId!)
+    this.updateFileCacheVersion(_updatedFile, file)
   }
 
   readFileCaches(actualId: string) {
@@ -161,16 +170,25 @@ export class VersionCaches {
    * @param updatedFile
    * @returns
    */
-  updateFileCacheVersion(updatedFile: FileActionUploadApiResponseRecord) {
-    const latestVersionFileCache = this.readFileCacheLatestVersion(updatedFile.actualId!)
-    if (!latestVersionFileCache) return
-
-    const cacheFile = this.buildCache(updatedFile)
-    if (this.caches[updatedFile.actualId!]) {
-      cacheFile.version = latestVersionFileCache.version + 1
-      this.caches[updatedFile.actualId!] = [...this.caches[updatedFile.actualId!]!, cacheFile]
-    } else {
+  updateFileCacheVersion(
+    updatedFile: FileActionUploadApiResponseRecord,
+    file?: FileActionUploadApiResponseRecord
+  ) {
+    if (file) {
+      Reflect.deleteProperty(this.caches, file.actualId!)
+      const cacheFile = this.buildCache(updatedFile)
       this.caches[updatedFile.actualId!] = [cacheFile]
+    } else {
+      const latestVersionFileCache = this.readFileCacheLatestVersion(updatedFile.actualId!)
+      if (!latestVersionFileCache) return
+
+      const cacheFile = this.buildCache(updatedFile)
+      if (this.caches[updatedFile.actualId!]) {
+        cacheFile.version = latestVersionFileCache.version + 1
+        this.caches[updatedFile.actualId!] = [...this.caches[updatedFile.actualId!]!, cacheFile]
+      } else {
+        this.caches[updatedFile.actualId!] = [cacheFile]
+      }
     }
   }
 
