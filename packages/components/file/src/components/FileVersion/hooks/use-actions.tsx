@@ -31,7 +31,6 @@ export function defaultActionsBuilder(
     {
       field: 'downloadWatermark',
       label: tavI18n('Tav.file.actions.4'),
-      // permission: props.tableActionPermission.download,
       enabled: isDownloadWatermarkBtnVisible(row.hyperlink!, row.watermarkFileDownload!),
       onClick: async () => {
         await handleDownloadWatermarkBtnClick(row)

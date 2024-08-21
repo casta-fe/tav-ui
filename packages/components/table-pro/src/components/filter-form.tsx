@@ -174,11 +174,11 @@ export default defineComponent({
 
     const fixPannelFormModalPos = () => {
       const dom: HTMLDivElement | null = pannelContainerRef.value
-      const actionDom: HTMLDivElement | null = customerActionRef.value
-      if (dom && actionDom) {
-        const { bottom = 0 } = actionDom.getBoundingClientRect()
+      const operationDom: HTMLDivElement | null = operationRef.value
+      if (dom && operationDom) {
+        const { bottom = 0 } = operationDom.getBoundingClientRect()
         const { width = 0, left = 0 } = dom.getBoundingClientRect()
-        state.dialogStyle.top = `${bottom + 16}px`
+        state.dialogStyle.top = `${bottom}px`
         state.dialogStyle.left = `${left}px`
         state.dialogStyle.width = `${width}px`
         state.dialogStyle.margin = `${0}px`
@@ -190,9 +190,11 @@ export default defineComponent({
     useWindowSizeFn(debounceFixPannelFormModalPos)
 
     const pannelContainerRef = ref<any>(null)
+    const operationRef = ref<any>(null)
     const customerActionRef = ref<any>(null)
-    tableEmitter.on('table-pro:dom-ready', async ({ table, action }) => {
+    tableEmitter.on('table-pro:dom-ready', async ({ table, operation, action }) => {
       pannelContainerRef.value = table
+      operationRef.value = operation
       customerActionRef.value = action
     })
 

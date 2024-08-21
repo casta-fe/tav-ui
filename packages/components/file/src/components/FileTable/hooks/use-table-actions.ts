@@ -61,13 +61,11 @@ export function useTableActions(options: {
     let promiseAll
     if (Array.isArray(position)) {
       promiseAll = toRaw(rows).map(async (row, idx) => {
-        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
         const result = await tableProInstance?.insertAt(row, position[idx])
         return result
       })
     } else {
       promiseAll = toRaw(rows).map(async (row) => {
-        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
         const result = await tableProInstance?.insertAt(row, position)
         return result
       })
@@ -97,10 +95,10 @@ export function useTableActions(options: {
 
     if (useLoading !== undefined && useLoading) loading.value.value = true
     await tableCreateRows({
-      rows,
-      position: deleteRows,
+      rows: JSON.parse(JSON.stringify(rows)),
+      position: JSON.parse(JSON.stringify(deleteRows)),
     })
-    await tableDeleteRows({ rows: deleteRows })
+    await tableDeleteRows({ rows: JSON.parse(JSON.stringify(deleteRows)) })
     if (useLoading !== undefined && useLoading) loading.value.value = false
   }
 

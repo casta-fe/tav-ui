@@ -17,7 +17,7 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
-import { type ArgumentsOf, type ReturnOf } from '../../../utils'
+import { type ArgumentsOf, type ReturnOf, validateFileFromLocal } from '../../../utils'
 import { type UseTableActionsReturn } from './use-table-actions'
 
 const {
@@ -616,36 +616,24 @@ export function useMode(options: {
     VersionCachesController.updateFileCaches(newrow)
 
     if (mode === 'read') {
-      const tableData = await getTableData()
-      emits(
-        'actualidsChange',
-        JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
-      )
+      //
     } else if (mode === 'create') {
       const tableData = await getTableData()
       emits(
         'actualidsChange',
-        JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
+        tableData.map((file: any) => file.actualId)
       )
-      if (!mergedProps.value.dataSource) {
-        // 无外部传入的 datasource 才操作
-        await editRowApiAction(changeEventPayload)
-      }
+      await editRowApiAction(changeEventPayload)
     } else if (mode === 'update') {
       emits('actualidsChange', VersionCachesController.getCaches())
 
-      if (!mergedProps.value.dataSource) {
-        // 是否为手动上传的文件数据，而非从 api 返回的数据
-        const isManualUploadRow = row?.version === 1 && !(row.businessId || row.businessKey)
-        // 无外部传入的 datasource 才操作
-        if (isManualUploadRow) await editRowApiAction(changeEventPayload)
-      }
+      validateFileFromLocal(row) && (await editRowApiAction(changeEventPayload))
     } else {
       emits('actualidsChange', VersionCachesController.getCaches())
 
+      await editRowApiAction(changeEventPayload)
       if (!mergedProps.value.dataSource) {
         // 无外部传入的 datasource 才操作
-        await editRowApiAction(changeEventPayload)
         await refreshTableDataApiAction()
       }
     }
@@ -679,7 +667,6 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits(
         'actualidsChange',
         tableData.map((file: any) => file.actualId)
@@ -697,14 +684,10 @@ export function useMode(options: {
         row.actualId!
       )
       await action(latestVersionFileCache)
-      // const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.createFileCache(row, mode)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       if (!mergedProps.value.dataSource) {
@@ -740,7 +723,6 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits(
         'actualidsChange',
         tableData.map((file: any) => file.actualId)
@@ -748,14 +730,10 @@ export function useMode(options: {
     } else if (mode === 'update') {
       VersionCachesController.deleteFileCaches(clickedRow.actualId!)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.deleteFileCaches(clickedRow.actualId!)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       if (!mergedProps.value.dataSource) {

@@ -29,7 +29,7 @@ import {
   type FileActionUploadInstance,
   TaFileActionUpload as TaFileActionUploadForActionUpdateBtn,
 } from '../FileActionUpload'
-import { type FileVersionTableAction, TaFileVersion } from '../FileVersion'
+import { TaFileVersion } from '../FileVersion'
 import { TaFileLog } from '../FileLog'
 import { TaFilePreview } from '../FilePreview'
 import {
@@ -161,7 +161,14 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   const { success, data } = await mergedProps.value.apiQueryFileHistory!(options.apiParams)
   if (success === true && data) {
     loading.value.value = false
-    return [...(VersionCachesController.createFileCaches(row, data) ?? [])]
+    // 继承当前行的权限判断数据
+    const _data = data.map((d: FileActionUploadApiResponseRecord) => ({
+      ...d,
+      hyperlink: row.hyperlink,
+      watermarkFileDownload: row.watermarkFileDownload,
+      sourceFileDownload: row.sourceFileDownload,
+    }))
+    return [...(VersionCachesController.createFileCaches(row, _data) ?? [])]
   }
 
   loading.value.value = false
@@ -447,30 +454,6 @@ const editConfig = computed<any>(() =>
     : undefined
 )
 
-// fileversion actions 继承 filetable actions 权限
-function handleFileVersionActions(
-  ...args: [FileVersionTableAction[], { row: FileActionUploadApiResponseRecord }]
-) {
-  const [fileVersionActions, { row }] = args
-  const useFileVersionRowGenerateFileTableActions = actions.value(row)
-  return fileVersionActions.map((action) => {
-    const existedFileTableAction = useFileVersionRowGenerateFileTableActions.find(
-      (_action) => _action.field === action.field
-    )
-    if (existedFileTableAction) {
-      const { enabled, permission, permissionCode } = action
-      return {
-        ...action,
-        enabled,
-        permission,
-        permissionCode,
-      }
-    }
-
-    return action
-  })
-}
-
 // 清空状态
 async function cleanup() {
   VersionCachesController.deleteAllFileCaches()
@@ -563,6 +546,7 @@ defineExpose({
         :immediate="mergedProps.immediate"
         :filter-form-config="filterFormConfig"
         :custom-action-config="customActionConfig"
+        :row-config="mergedProps.rowConfig"
         v-bind="configTable"
       />
       <TaFileActionUploadForActionUpdateBtn
@@ -581,7 +565,6 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :file="fileVersionFile"
         :data-source="fileVersionDataSource"
-        :actions="handleFileVersionActions"
       />
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"

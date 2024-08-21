@@ -6,6 +6,7 @@ import {
   type TableProColumn,
   type TableProProps,
 } from '@tav-ui/components/table-pro'
+import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
 import {
   type ApiParams,
   type FileActionUploadApiResponseRecord,
@@ -187,6 +188,13 @@ export const fileTableProps = {
       boolean | ((...args: [FileTableCustomActionConfig]) => FileTableCustomActionConfig)
     >,
     default: false,
+  },
+  rowConfig: {
+    type: Object as PropType<TableProProps['rowConfig']>,
+    default: () => ({
+      keyField: 'id',
+      height: DEFAULT_LINE_HEIGTH,
+    }),
   },
   /** tafile 内部使用勿传 */
   __uploadDataSource: {

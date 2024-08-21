@@ -138,8 +138,8 @@ const unifiedTaFileData = reactive({
       // },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
-      // filterFormConfig: handleFilterFormConfig,
-      // showOperations: true,
+      filterFormConfig: handleFilterFormConfig,
+      showOperations: true,
       pagerConfig: {
         enabled: false,
       },

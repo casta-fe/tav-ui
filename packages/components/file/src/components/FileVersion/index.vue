@@ -105,7 +105,19 @@ async function useModeFetchDataSource() {
   await handleApi(options)
 
   if (ApiResult.value.length > 0) {
-    dataSource.value = JSON.parse(JSON.stringify(ApiResult.value ?? []))
+    const data = JSON.parse(JSON.stringify(ApiResult.value ?? []))
+    // 继承当前行的权限判断数据
+    const _data = data.map((d: FileActionUploadApiResponseRecord) => ({
+      ...d,
+      ...(mergedProps.value.file.hyperlink
+        ? {
+            hyperlink: mergedProps.value.file.hyperlink,
+            watermarkFileDownload: mergedProps.value.file.watermarkFileDownload,
+            sourceFileDownload: mergedProps.value.file.sourceFileDownload,
+          }
+        : {}),
+    }))
+    dataSource.value = _data
   }
 }
 

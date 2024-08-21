@@ -1,4 +1,5 @@
 import { type FileActionUploadProps } from '../components/FileActionUpload/types'
+import { type FileActionUploadApiResponseRecord } from '../typings'
 
 // 文件名是否通过空白字符校验
 export function validateUploadFileEmptyName(name: string) {
@@ -61,4 +62,9 @@ export function validateUploadFileTypeCode(
   typeCode: FileActionUploadProps['apiParams']['typeCode']
 ) {
   return typeCode ? true : false
+}
+
+// 判断文件是本地(上传/自己造的dataSource)还是来源于接口
+export function validateFileFromLocal(row?: FileActionUploadApiResponseRecord) {
+  return row && !row.businessId && !row.businessKey
 }

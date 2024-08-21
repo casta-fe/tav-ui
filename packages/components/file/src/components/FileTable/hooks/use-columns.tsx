@@ -37,7 +37,7 @@ export function defaultColumnsBuilder(
       fixed: 'left',
       minWidth: 220,
       editRender: {
-        enabled: enabledRowEdit,
+        enabled: mode !== 'read' && enabledRowEdit,
       },
       slots: {
         edit: ({ row: _row }: Record<string, any>) => {

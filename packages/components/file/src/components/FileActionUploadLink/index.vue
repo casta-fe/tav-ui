@@ -140,11 +140,7 @@ const {
 watch(
   () => JSON.stringify(apiResult.value),
   async (curapiResult, preapiResult) => {
-    if (
-      curapiResult &&
-      curapiResult !== preapiResult
-      // && !curapiResult.includes('__id') // manual fixed vxetable bug
-    ) {
+    if (curapiResult && curapiResult !== preapiResult) {
       emits('uploadedChange', JSON.parse(JSON.stringify(apiResult.value)))
 
       if (!apiError.value) {

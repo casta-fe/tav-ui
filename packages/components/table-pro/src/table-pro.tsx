@@ -47,6 +47,8 @@ export default defineComponent({
     // 获取实例
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
+    const wrapperRef = ref<HTMLElement | null>(null)
+    const operationRef = ref<HTMLDivElement | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
     const cacheActionWidths = ref<Record<string, any>>({})
     // const columnsForAction = ref<TableProColumn[]>([])
@@ -147,7 +149,7 @@ export default defineComponent({
     // )
 
     // 执行dom监听的处理
-    useWatchDom(tableRef, customActionRef, tableEmitter)
+    useWatchDom(tableRef, operationRef, customActionRef, tableEmitter)
 
     const { calcContent, clearCalcContentCanvas } = useCanvasCalcContent()
     // 统计 action 渲染数据，动态设置宽度
@@ -230,7 +232,7 @@ export default defineComponent({
     )
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
-    const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
+    const { getHeight, setHeight } = useHeight(wrapperRef, operationRef)
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter, getProps)
 
     // 注入数据

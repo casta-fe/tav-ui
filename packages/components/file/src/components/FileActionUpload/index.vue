@@ -103,11 +103,7 @@ const {
 watch(
   () => JSON.stringify(apiResult.value),
   (curapiResult, preapiResult) => {
-    if (
-      curapiResult &&
-      curapiResult !== preapiResult
-      // && !curapiResult.includes('__id') // manual fixed vxetable bug
-    ) {
+    if (curapiResult && curapiResult !== preapiResult) {
       emits('uploadedChange', JSON.parse(JSON.stringify(apiResult.value)))
     }
   }

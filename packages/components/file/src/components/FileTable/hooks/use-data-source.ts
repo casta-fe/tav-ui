@@ -112,15 +112,7 @@ export function useDataSource(options: {
     watch(
       () => JSON.stringify(mergedProps.value.dataSource),
       async (curdatasource, predatasource) => {
-        if (
-          curdatasource &&
-          curdatasource !== predatasource
-          // &&
-          // // 因为使用 datasource 时 datasource 传入 vxetable 被自动转为双向绑定数据然后其内部会为每条数据附带 __id 字段这样会再次触发 watch
-          // // 为了优化所以判断当 curdatasource 包含 __id 时再执行，!curdatasource.includes('__id') && predatasource === undefined 是为了在初始化时触发一次，将 fileactualids 数据传出去
-          // ((!curdatasource.includes('__id') && predatasource === undefined) ||
-          //   curdatasource.includes('__id'))
-        ) {
+        if (curdatasource && curdatasource !== predatasource) {
           const rows = JSON.parse(
             JSON.stringify([...(mergedProps.value.dataSource ?? [])])
           ) as FileActionUploadApiResponseRecord[]
