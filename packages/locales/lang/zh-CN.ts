@@ -44,6 +44,7 @@ export default {
     greater: '大于',
     less: '小于',
     httpError: '请求出错，请联系管理员',
+    notAuthorised: '用户未获得授权',
   },
   countButton: {
     text1: '获取验证码',

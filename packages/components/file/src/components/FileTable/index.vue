@@ -11,6 +11,8 @@ import {
 } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_APIPARAMS, DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
   VersionCaches,
@@ -21,7 +23,7 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord } from '../../typings'
-import { type ArgumentsOf, fileSingleDownload, isOwnerOrAdmin } from '../../utils'
+import { type ArgumentsOf, fileSingleDownload, isFullNameColEdit } from '../../utils'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
@@ -47,6 +49,8 @@ import {
   useMode,
   useTableActions,
 } from './hooks'
+
+const { createMessage } = useMessage()
 
 /**
  * 1. Table 数据源来源于 api：queryfile/queryfilelist 与 datasource（__uploadDataSource、__uploadLinkDataSource 为内部使用的上传文件、超链接数据源）
@@ -399,7 +403,7 @@ const columns = useColumns({
   actions,
   handleCellEditClick,
   hanldeVersionClick,
-  globalConfigUserInfo,
+  // globalConfigUserInfo,
 })
 
 // 筛选项
@@ -418,13 +422,27 @@ const customActionConfig = useCustomActionConfig({
 
 // 行编辑配置
 const editConfig = computed<any>(() =>
-  mergedProps.value.enabledRowEdit &&
-  (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
+  mergedProps.value.enabledRowEdit
     ? {
         // trigger: 'manual',
         trigger: 'click',
         mode: 'cell',
         autoClear: true,
+        beforeEditMethod: ({ row: _row }: Record<string, any>) => {
+          const row = _row as FileActionUploadApiResponseRecord
+          const isEdit = isFullNameColEdit(
+            mergedProps.value.enabledRowEdit,
+            mergedProps.value.mode,
+            mergedProps.value.enabledOwner,
+            globalConfigUserInfo.value,
+            row.owner
+          )
+
+          if (!isEdit) {
+            createMessage.warn(`${tavI18n('Tav.common.notAuthorised')}`)
+          }
+          return isEdit
+        },
       }
     : undefined
 )

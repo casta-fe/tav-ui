@@ -15,22 +15,20 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { isFullNameColEdit, isModuleFullNameColVisible, isVersionColVisible } from '../../../utils'
+import { isModuleFullNameColVisible, isVersionColVisible } from '../../../utils'
 import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
 
 export function defaultColumnsBuilder(
   mode: FileTableProps['mode'],
   enabledRowEdit: FileTableProps['enabledRowEdit'],
   enabledVersion: FileTableProps['enabledVersion'],
-  enabledOwner: FileTableProps['enabledOwner'],
   clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
   handleCellEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>,
-  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
-  globalConfigUserInfo: Ref<Record<string, any>>
+  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const DEFAULT_COLUMNS: FileTableColumn[] = [
     {
@@ -38,13 +36,12 @@ export function defaultColumnsBuilder(
       field: 'fullName',
       fixed: 'left',
       minWidth: 220,
-      ...(isFullNameColEdit(enabledRowEdit, mode, enabledOwner, globalConfigUserInfo.value)
-        ? { editRender: {} }
-        : {}),
+      editRender: {
+        enabled: enabledRowEdit,
+      },
       slots: {
         edit: ({ row: _row }: Record<string, any>) => {
           const row = _row as FileActionUploadApiResponseRecord
-
           return [
             <FileTableRowEditor
               row={row}
@@ -62,7 +59,7 @@ export function defaultColumnsBuilder(
         },
         default: ({ row: _row }: Record<string, any>) => {
           const row = _row as FileActionUploadApiResponseRecord
-          const res =
+          const defaultContent =
             row.hyperlink != 1
               ? [
                   // 普通文件
@@ -98,7 +95,7 @@ export function defaultColumnsBuilder(
                   </Cell>,
                 ]
 
-          return res
+          return defaultContent
         },
       },
     },
@@ -188,16 +185,8 @@ export function useColumns(options: {
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
-  globalConfigUserInfo: Ref<Record<string, any>>
 }) {
-  const {
-    mergedProps,
-    tableProRef,
-    actions,
-    handleCellEditClick,
-    hanldeVersionClick,
-    globalConfigUserInfo,
-  } = options
+  const { mergedProps, tableProRef, actions, handleCellEditClick, hanldeVersionClick } = options
 
   return computed(() => {
     const columns = mergedProps.value.columns
@@ -205,18 +194,15 @@ export function useColumns(options: {
     const mode = mergedProps.value.mode
     const enabledRowEdit = mergedProps.value.enabledRowEdit
     const enabledVersion = mergedProps.value.enabledVersion
-    const enabledOwner = mergedProps.value.enabledOwner
 
     let result = defaultColumnsBuilder(
       mode,
       enabledRowEdit,
       enabledVersion,
-      enabledOwner,
       clearEdit,
       actions,
       handleCellEditClick,
-      hanldeVersionClick,
-      globalConfigUserInfo
+      hanldeVersionClick
     )
 
     if (columns && isFunction(columns)) {
