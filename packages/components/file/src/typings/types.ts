@@ -10,6 +10,7 @@ import {
   type FileActionUploadProps,
 } from '../components/FileActionUpload'
 import {
+  type FileActualIds,
   type FileTableEmits,
   type FileTableInstance,
   type FileTableProps,
@@ -112,6 +113,7 @@ export interface ApiParams {
    * 1. api/file/queryHistoryFileByFileActualIds
    * 2. api/file/deleteFileByActualIds
    * 3. api/file/getFileLogModuleList
+   * 4. api/file/queryFileByFileActualIds
    */
   actualIds: string[]
   /**
@@ -201,7 +203,7 @@ export const fileProps = {
   /** fileactions */
   fileActionsVisible: { type: Boolean, default: true },
   /** 文件真实id(v-model双向绑定) */
-  fileActualIds: { type: Array as PropType<string[]> },
+  fileActualIds: { type: Array as PropType<FileActualIds> },
 
   // GlobalConfigFileProps[子组件] 只放子组件用到的 api，各 api 都有 before/after 劫持函数，在子组件中单独定义、使用
   /** FileTypeSelect Props */

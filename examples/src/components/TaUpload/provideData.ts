@@ -624,6 +624,14 @@ export const queryFileLog = async (params: any) => {
   return response
 }
 
+export const queryFileByFileActualIds = async (params: any) => {
+  const response = await __post(
+    `/api/TIANTA-FILE/api/file/queryFileByFileActualIds`,
+    params.fileActualIds
+  )
+  return response
+}
+
 export async function UserListApi(data, url = '/api/TIANTA-SYSTEM/sys/user/listExcludeDel') {
   // 复制 ai at rd cookie：guid
   // await __get('/api/TIANTA-SYSTEM/test.html')

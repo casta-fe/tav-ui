@@ -44,6 +44,12 @@ const emits = defineEmits(fileEmits)
 const slots = useSlots()
 // const attrs = useAttrs()
 
+if (JSON.stringify(props.fileActualIds) && JSON.stringify(props.fileActualIds) !== '[]') {
+  console.error(
+    '[tavui TaFile] not pass value to "fileActualIds", "fileActualIds" only accpet "[]" to get actualIds'
+  )
+}
+
 // 对 file 组件的 apiparams 进行 computed 方便属性下发
 // const _fileApiParams = ref(props.apiParams)
 // const fileApiParams = computed({

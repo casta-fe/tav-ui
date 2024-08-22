@@ -18,6 +18,7 @@ import {
   UserListApi,
   previewFile,
   previewWPSFile,
+  queryFileByFileActualIds,
   queryFileLog,
   queryFilterFormFileType,
 } from './components/TaUpload/provideData'
@@ -68,6 +69,7 @@ export default defineComponent({
         TaFileTable: {
           apiQueryFile: taUploadProvideData.queryFile,
           apiQueryFileList: taUploadProvideData.queryFileList,
+          apiQueryFileByActualIds: queryFileByFileActualIds,
           apiQueryFilterFormFileType: queryFilterFormFileType,
           apiQueryFileHistory: taUploadProvideData.queryFileHistory,
           apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,

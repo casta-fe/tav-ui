@@ -17,6 +17,7 @@ import {
   type ApiDeleteFileParams,
   type ApiDownloadFileParams,
   type ApiDownloadWaterMarkerFileParams,
+  type ApiQueryFileByActualIds,
   type ApiQueryFileListParams,
   type ApiQueryFileParams,
   type ApiQueryFilterFormFileTypeParams,
@@ -93,6 +94,10 @@ export const globalConfigFileProps = {
     /** 查询文件接口，传入 queryfilelist 不分页 */
     apiQueryFileList: {
       type: Function as PropType<(params: ApiQueryFileListParams) => Promise<any>>,
+    },
+    /** 查询文件接口 */
+    apiQueryFileByActualIds: {
+      type: Function as PropType<(params: ApiQueryFileByActualIds) => Promise<any>>,
     },
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {

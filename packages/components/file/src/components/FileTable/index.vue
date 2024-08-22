@@ -46,6 +46,7 @@ import {
   useCustomActionConfig,
   useDataSource,
   useFilterFormConfig,
+  useHandleDataSource,
   useMode,
   useTableActions,
 } from './hooks'
@@ -92,6 +93,8 @@ const loading = computed({
   },
 })
 
+const { dataSource, handleDataSource } = useHandleDataSource({ mergedProps, loading })
+
 // 针对业务抽象不同模式进行数据处理
 const {
   useModeConfigTable,
@@ -103,7 +106,13 @@ const {
     deleteApiOptions,
   },
   dataActions: { reloadRows, editRow, updateRow, deleteRow },
-} = useMode({ mergedProps, tableProRef, emits, VersionCachesController })
+} = useMode({
+  mergedProps,
+  tableProRef,
+  emits,
+  VersionCachesController,
+  dataSource,
+})
 
 const configTable = useModeConfigTable()
 
@@ -114,13 +123,14 @@ const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = use
   loading,
 })
 
-useDataSource({
+const { handleDataSourceChangeEmit } = useDataSource({
   mergedProps,
   tableCreateRows,
   tableReadRows,
   emits,
   VersionCachesController,
   refreshTableDataApiAction,
+  dataSource,
 })
 
 // 使用 api 处理数据
@@ -168,7 +178,20 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
       watermarkFileDownload: row.watermarkFileDownload,
       sourceFileDownload: row.sourceFileDownload,
     }))
-    return [...(VersionCachesController.createFileCaches(row, _data) ?? [])]
+    const result = [...(VersionCachesController.createFileCaches(row, _data) ?? [])]
+
+    // 请求 history 接口后需要重新更新 actualids
+    const dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
+    if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+      emits('actualidsChange', VersionCachesController.getCaches())
+    } else {
+      emits(
+        'actualidsChange',
+        dataSource.map((file: any) => file.actualId)
+      )
+    }
+
+    return result
   }
 
   loading.value.value = false
@@ -472,7 +495,18 @@ async function cleanup() {
 }
 
 onMounted(async () => {
-  await handleFilterFormFileType()
+  if (mergedProps.value.dataSource) {
+    await handleDataSource(mergedProps.value.dataSource)
+  }
+
+  if (
+    (typeof mergedProps.value.filterFormConfig === 'boolean' &&
+      mergedProps.value.filterFormConfig) ||
+    (typeof mergedProps.value.filterFormConfig === 'object' &&
+      (mergedProps.value.filterFormConfig as any).enabled)
+  ) {
+    await handleFilterFormFileType()
+  }
 })
 
 // mode 变化置空状态

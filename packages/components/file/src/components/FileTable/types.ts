@@ -75,6 +75,11 @@ export interface ApiQueryFileListParams {
 }
 
 // 按照 swagger 编写
+export interface ApiQueryFileByActualIds {
+  fileActualIds: ApiParams['actualIds']
+}
+
+// 按照 swagger 编写
 export interface ApiQueryFilterFormFileTypeParams {
   appId: ApiParams['appId']
   moduleCode?: ApiParams['moduleCode']
@@ -112,6 +117,7 @@ export interface FileTableApiParams
   extends Omit<ApiUploadFileParams, 'moduleCode'>,
     ApiQueryFileParams,
     ApiQueryFileListParams,
+    ApiQueryFileByActualIds,
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
@@ -130,7 +136,7 @@ export const fileTableProps = {
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
   dataSource: {
-    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
+    type: Array as PropType<FileActionUploadApiResponseRecord[] | FileActualIds>,
   },
   loading: { type: Boolean, default: false },
   checkboxConfig: {
@@ -230,6 +236,12 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   // afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 afterApiQueryFile 合并为一个函数
+  beforeApiQueryFileByActualIds: {
+    type: Function as PropType<(apiParams: ApiQueryFileByActualIds) => Promise<any>>,
+  },
+  afterApiQueryFileByActualIds: {
+    type: Function as PropType<(apiResult: any) => Promise<any>>,
+  },
   beforeApiQueryFileHistory: {
     type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
   },
@@ -262,22 +274,21 @@ export const fileTableProps = {
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
 
+export type FileActualIdsObjectArray = {
+  actualId: string
+  moduleCode: string | undefined
+  versionList: FileVersionCache[]
+}[]
+
+export type FileActualIdsStringArray = string[]
+
+export type FileActualIds = FileActualIdsObjectArray | FileActualIdsStringArray
+
 export const fileTableEmits = {
   // change: (
   //   ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
   // ) => args instanceof Object,
-  actualidsChange: (
-    ...args: [
-      (
-        | {
-            actualId: string
-            moduleCode: string | undefined
-            versionList: FileVersionCache[]
-          }
-        | string
-      )[]
-    ]
-  ) => args instanceof Object,
+  actualidsChange: (...args: [FileActualIds]) => args instanceof Object,
   rowEdit: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowUpdate: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowDelete: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,

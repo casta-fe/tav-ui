@@ -25,6 +25,7 @@ import {
   validateVersionCachesHasApiFile,
 } from '../../../utils'
 import { type UseTableActionsReturn } from './use-table-actions'
+import { type UseHandleDataSourceReturn } from './use-handle-data-source'
 
 const {
   table: {
@@ -100,8 +101,9 @@ export function useMode(options: {
   tableProRef: FileTableInstance['tableProRef']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
+  dataSource: UseHandleDataSourceReturn['dataSource']
 }) {
-  const { mergedProps, tableProRef, emits, VersionCachesController } = options
+  const { mergedProps, tableProRef, emits, VersionCachesController, dataSource } = options
 
   /**
    * 根据 props 来设置 tablepro 的参数，包括：data、api、beforeapi、afterapi、pagerconfig、immediate
@@ -181,7 +183,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -195,16 +197,16 @@ export function useMode(options: {
           }
         }
       } else if (mergedProps.value.mode === 'create') {
-        /**
-         * 新增模式，使用 datasource 数据源
-         * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
-         * 2. 分页，TODO: 组件内部后期支持，优先级低
-         * 3. reload 方法直接返回（给不执行提示）
-         */
         if (mergedProps.value.dataSource) {
+          /**
+           * 新增模式，使用 datasource 数据源
+           * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+           * 2. 分页，TODO: 组件内部后期支持，优先级低
+           * 3. reload 方法直接返回（给不执行提示）
+           */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -224,7 +226,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -250,7 +252,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
