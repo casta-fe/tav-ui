@@ -2,6 +2,7 @@ import { type ComputedRef, type SetupContext, computed, nextTick } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import { type ITableProInstance } from '@tav-ui/components/table-pro'
+import { nanoid } from '@tav-ui/utils/uuid'
 import {
   type ApiDeleteFileParams,
   type ApiQueryFilterFormFileTypeParams,
@@ -594,6 +595,7 @@ export function useMode(options: {
 
     async function action() {
       const newrow = { ...row }
+      const newrowFakeId = nanoid()
       if (changeEventPayload.name) newrow.name = changeEventPayload.name
       if (newrow.hyperlink) {
         if (changeEventPayload.address) newrow.address = changeEventPayload.address
@@ -601,8 +603,13 @@ export function useMode(options: {
         if (changeEventPayload.name) newrow.fullName = `${changeEventPayload.name}.${newrow.suffix}`
       }
       await tableUpdateRows({
-        rows: [newrow],
+        rows: [{ ...newrow, id: newrowFakeId }], // 人造id
         deleteRows: [row],
+      })
+
+      await tableUpdateRows({
+        rows: [{ ...newrow }], // 把人造id数据删除，真实id数据放进来
+        deleteRows: [{ ...newrow, id: newrowFakeId }],
       })
       return newrow
     }
