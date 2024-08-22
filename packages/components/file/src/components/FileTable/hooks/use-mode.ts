@@ -18,7 +18,12 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
-import { type ArgumentsOf, type ReturnOf, validateFileFromLocal } from '../../../utils'
+import {
+  type ArgumentsOf,
+  type ReturnOf,
+  validateFileFromLocal,
+  validateVersionCachesHasApiFile,
+} from '../../../utils'
 import { type UseTableActionsReturn } from './use-table-actions'
 
 const {
@@ -634,7 +639,8 @@ export function useMode(options: {
     } else if (mode === 'update') {
       emits('actualidsChange', VersionCachesController.getCaches())
 
-      validateFileFromLocal(row) && (await editRowApiAction(changeEventPayload))
+      !validateVersionCachesHasApiFile(VersionCachesController['caches'][row.actualId!]) &&
+        (await editRowApiAction(changeEventPayload))
     } else {
       emits('actualidsChange', VersionCachesController.getCaches())
 
@@ -679,10 +685,7 @@ export function useMode(options: {
         tableData.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      // 是否为手动上传的文件数据，而非从 api 返回的数据
-      const isManualUploadRow =
-        clickedRow?.version === 1 && !(clickedRow.businessId || clickedRow.businessKey)
-      if (isManualUploadRow) {
+      if (validateFileFromLocal(clickedRow)) {
         VersionCachesController.createFileCache(row, mode, clickedRow)
       } else {
         VersionCachesController.createFileCache(row, mode)

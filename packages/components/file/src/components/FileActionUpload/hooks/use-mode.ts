@@ -7,7 +7,7 @@ import {
 import { type FileActionUploadProps } from '../types'
 // import { type FileActionUploadHandleApiOptions } from './use-request'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
-import { validateFileFromLocal } from '../../../utils'
+import { validateVersionCachesHasApiFile } from '../../../utils'
 
 export function useMode(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileActionUploadProps>
@@ -85,7 +85,11 @@ export function useMode(options: {
   function updateApiOptions(
     apiParams: FileActionUploadProps['apiParams'],
     files: File[],
-    row: FileActionUploadApiResponseRecord | undefined,
+    row:
+      | (FileActionUploadApiResponseRecord & {
+          cache: FileActionUploadApiResponseRecord[] | undefined
+        })
+      | undefined,
     callback: () => void
   ) {
     if (!mergedProps.value.apiUpdateFile) {
@@ -125,7 +129,7 @@ export function useMode(options: {
     } else if (mergedProps.value.mode === 'create') {
       //
     } else if (mergedProps.value.mode === 'update') {
-      if (!validateFileFromLocal(row)) {
+      if (validateVersionCachesHasApiFile(row?.cache)) {
         options['transformApiParamsToFormData'] = undefined
         options['api'] = mergedProps.value.apiUpdateFile as any
         options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any

@@ -68,3 +68,10 @@ export function validateUploadFileTypeCode(
 export function validateFileFromLocal(row?: FileActionUploadApiResponseRecord) {
   return row && !row.businessId && !row.businessKey
 }
+
+// 判断 versionlist 中数据是否有从接口来的数据
+export function validateVersionCachesHasApiFile(cache?: FileActionUploadApiResponseRecord[]) {
+  if (!cache) return
+
+  return !!cache.find((c) => !validateFileFromLocal(c))
+}

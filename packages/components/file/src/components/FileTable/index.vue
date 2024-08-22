@@ -291,13 +291,16 @@ function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
 }
 
 // 更新处理
-const actionUpdateClickRow = ref<FileActionUploadApiResponseRecord>()
+const actionUpdateClickRow = ref<
+  FileActionUploadApiResponseRecord & { cache: FileActionUploadApiResponseRecord[] | undefined }
+>()
 async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
   if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
     await beforeReadFileCaches(row)
   }
 
-  actionUpdateClickRow.value = row
+  // actionUpdateClickRow.value = row
+  actionUpdateClickRow.value = { ...row, cache: VersionCachesController['caches'][row.actualId!] }
   FileActionUploadForActionUpdateBtnRef.value?.openFilePicker?.()
 
   emits('rowUpdate', row)

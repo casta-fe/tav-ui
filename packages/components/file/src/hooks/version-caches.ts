@@ -55,6 +55,11 @@ export class VersionCaches {
     public actualidCaches: Set<string> = new Set<string>()
   ) {}
 
+  /**
+   * 对数据源（全部文件数据）做缓存，filetable/fileupload/fileuploadlink
+   * @param files
+   * @param mode
+   */
   createAllFileCaches(files: FileActionUploadApiResponseRecord[], mode?: FileMode) {
     if (mode === 'update' || mode === 'updateInstantly') {
       files.forEach((_file) => {
@@ -64,6 +69,12 @@ export class VersionCaches {
     }
   }
 
+  /**
+   * 对单一文件做缓存
+   * @param _file
+   * @param _histories
+   * @returns
+   */
   createFileCaches(
     _file: FileActionUploadApiResponseRecord,
     _histories: FileActionUploadApiResponseRecord[]
@@ -79,6 +90,7 @@ export class VersionCaches {
   }
 
   /**
+   * 为单一文件新增一条缓存数据
    * 这里需要注意的是编辑模式下更新文件（接口返回的数据）版本只加一次
    * 立即更新模式下不论是本地上传还是接口返回的文件数据每次更新版本都会加一次
    * @param updatedFile
@@ -117,6 +129,11 @@ export class VersionCaches {
     }))
   }
 
+  /**
+   * 更新单一文件全部缓存
+   * @param updatedFile
+   * @returns
+   */
   updateFileCaches(updatedFile: FileActionUploadApiResponseRecord) {
     const fileCaches = this.readFileCaches(updatedFile.actualId!)
     if (!fileCaches) return

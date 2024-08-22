@@ -62,7 +62,11 @@ export const fileActionUploadProps = {
 
   visible: { type: Boolean, default: true },
   /** 更新状态下需要传入要被更新的文件数据 */
-  updateFile: { type: Object as PropType<FileActionUploadApiResponseRecord> },
+  updateFile: {
+    type: Object as PropType<
+      FileActionUploadApiResponseRecord & { cache: FileActionUploadApiResponseRecord[] | undefined }
+    >,
+  },
   /** apiUploadFile 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
