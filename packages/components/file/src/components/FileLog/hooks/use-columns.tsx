@@ -2,7 +2,7 @@ import { type ComputedRef, computed } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
 import { type FileLogProps, type FileLogTableColumn } from '../types'
-import { type GlobalConfigFileProps } from '../../../typings'
+import { type FileLogApiResponseRecord, type GlobalConfigFileProps } from '../../../typings'
 
 export function defaultColumnsBuilder(
   mergedProps: ComputedRef<GlobalConfigFileProps & FileLogProps>
@@ -11,22 +11,37 @@ export function defaultColumnsBuilder(
     {
       title: tavI18n('Tav.file.columns.15'),
       field: 'createTime',
+      fixed: 'left',
       width: 200,
-    },
-    {
-      title: tavI18n('Tav.file.columns.14'),
-      field: 'createByName',
-      width: 150,
     },
     {
       title: tavI18n('Tav.file.columns.11'),
       field: 'operationName',
-      width: 150,
+      width: 120,
+    },
+    {
+      title: tavI18n('Tav.file.columns.1'),
+      field: 'fileName',
+      minWidth: 220,
+      customRender: ({ row: _row }: Record<string, any>) => {
+        const row = _row as FileLogApiResponseRecord
+
+        return (
+          <>
+            v{row.version} {row.fileName}
+          </>
+        )
+      },
+    },
+    {
+      title: tavI18n('Tav.file.columns.14'),
+      field: 'createByName',
+      width: 120,
     },
     {
       title: tavI18n('Tav.file.columns.12'),
       field: 'appName',
-      width: 200,
+      width: 120,
     },
     {
       title: tavI18n('Tav.file.columns.13'),
