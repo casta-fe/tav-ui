@@ -20,7 +20,7 @@ export type FileLogTableAction = TableProActionItem & { field: string }
 // 按照 swagger 编写
 export interface ApiQueryFileLogParams {
   actualIds: ApiParams['actualIds']
-  appId: ApiParams['appId']
+  // appId: ApiParams['appId']
   createBy?: number[]
   endCreateDate?: string
   startCreateDate?: string

@@ -105,16 +105,13 @@ watch(
           from: 'desktop',
         }
 
+        const params = []
+        for (const [k, v] of Object.entries(options)) {
+          params.push(`${k}=${v}`)
+        }
+
         currentFilePath.value = `${pageUrl}/wps-file-view/?${encodeURIComponent(
-          (new URLSearchParams({ ...options }) as unknown as string)
-            .replace('%', '%25')
-            .replace(' ', '%20')
-            .replace('#', '%23')
-            .replace('&', '%26')
-            .replace('+', '%2B')
-            .replace('/', '%2F')
-            .replace('=', '%3D')
-            .replace('?', '%3F')
+          params.join('&').replace(' ', '%20').replace('+', '%2B')
         )}`
       } else {
         currentFilePath.value = curview.onlineUrl
