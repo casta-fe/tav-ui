@@ -106,7 +106,15 @@ watch(
         }
 
         currentFilePath.value = `${pageUrl}/wps-file-view/?${encodeURIComponent(
-          new URLSearchParams({ ...options }) as unknown as string
+          (new URLSearchParams({ ...options }) as unknown as string)
+            .replace('%', '%25')
+            .replace(' ', '%20')
+            .replace('#', '%23')
+            .replace('&', '%26')
+            .replace('+', '%2B')
+            .replace('/', '%2F')
+            .replace('=', '%3D')
+            .replace('?', '%3F')
         )}`
       } else {
         currentFilePath.value = curview.onlineUrl

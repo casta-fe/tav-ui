@@ -261,6 +261,7 @@ export default defineComponent({
             showColumnsModa: () => {
               customActionRef.value?.showColumnsModa()
             },
+            clearCellTooltip,
           },
           filterRef
         )

@@ -1,4 +1,5 @@
 import { type FileActionUploadProps } from '../components/FileActionUpload/types'
+import { type FileTableProps } from '../components/FileTable'
 import { type FileActionUploadApiResponseRecord } from '../typings'
 
 // 文件名是否通过空白字符校验
@@ -74,4 +75,35 @@ export function validateVersionCachesHasApiFile(cache?: FileActionUploadApiRespo
   if (!cache) return
 
   return !!cache.find((c) => !validateFileFromLocal(c))
+}
+
+// 判断 datasource 是否为 actualids 字符串数组
+export function validateDataSourceIsStringArray(dataSource: FileTableProps['dataSource']) {
+  return (
+    dataSource && Array.isArray(dataSource) && dataSource[0] && typeof dataSource[0] === 'string'
+  )
+}
+
+// 判断 datasource 是否为 actualids 对象数组
+export function validateDataSourceIsObjectArray(
+  dataSource: FileTableProps['dataSource'],
+  key = 'versionList'
+) {
+  return (
+    dataSource &&
+    Array.isArray(dataSource) &&
+    dataSource[0] &&
+    typeof dataSource[0] !== 'string' &&
+    Reflect.has(dataSource[0], key)
+  )
+}
+
+// 判断 datasource 是否为 actualids 数据结构
+export function validateDataSourceIsActualIdsData(
+  dataSource: FileTableProps['dataSource'],
+  key = 'versionList'
+) {
+  return (
+    validateDataSourceIsStringArray(dataSource) || validateDataSourceIsObjectArray(dataSource, key)
+  )
 }

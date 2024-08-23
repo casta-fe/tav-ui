@@ -131,6 +131,7 @@ type OuterExtendApis = {
   resizeTableHeight: () => void
   showExportModal: () => void
   showColumnsModa: () => void
+  clearCellTooltip: () => void
 }
 export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 

@@ -10,7 +10,11 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
-import { type ReturnOf } from '../../../utils'
+import {
+  type ReturnOf,
+  validateDataSourceIsObjectArray,
+  validateDataSourceIsStringArray,
+} from '../../../utils'
 
 export function useHandleDataSource(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>
@@ -53,31 +57,30 @@ export function useHandleDataSource(options: {
   const dataSourceRef = ref<FileActionUploadApiResponseRecord[]>([])
   async function handleDataSource(rows: FileTableProps['dataSource'] = []) {
     loading.value.value = true
-    if (rows[0]) {
-      if (typeof rows[0] === 'string') {
-        // 字符串数组，需要查接口处理数据格式
-        const options = apiQueryFileByActualIdsOptions({ actualIds: rows as string[] })
-        if (!options) {
-          loading.value.value = false
-          dataSourceRef.value = []
-        }
-        const { success, data } = await mergedProps.value.apiQueryFileByActualIds!(
-          options!.apiParams
-        )
-        if (success === true && data) {
-          loading.value.value = false
-          dataSourceRef.value = [...data]
-        }
-        return
-      } else if (Reflect.has(rows[0], 'versionList')) {
-        // 对象数组，需要处理数据格式
-        dataSourceRef.value = (rows as FileActualIdsObjectArray)
-          .map((row) => row.versionList.at(-1))
-          .filter(Boolean) as FileActionUploadApiResponseRecord[]
 
+    if (validateDataSourceIsStringArray(rows)) {
+      // 字符串数组，需要查接口处理数据格式
+      const options = apiQueryFileByActualIdsOptions({ actualIds: rows as string[] })
+      if (!options) {
         loading.value.value = false
-        return
+        dataSourceRef.value = []
       }
+      const { success, data } = await mergedProps.value.apiQueryFileByActualIds!(options!.apiParams)
+      if (success === true && data) {
+        loading.value.value = false
+        dataSourceRef.value = [...data]
+      }
+      return
+    }
+
+    if (validateDataSourceIsObjectArray(rows)) {
+      // 对象数组，需要处理数据格式
+      dataSourceRef.value = (rows as FileActualIdsObjectArray)
+        .map((row) => row.versionList.at(-1))
+        .filter(Boolean) as FileActionUploadApiResponseRecord[]
+
+      loading.value.value = false
+      return
     }
 
     dataSourceRef.value = [...(rows as FileActionUploadApiResponseRecord[])]

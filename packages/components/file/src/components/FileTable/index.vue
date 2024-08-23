@@ -123,7 +123,7 @@ const { tableCreateRows, tableReadRows, tableUpdateRows, tableDeleteRows } = use
   loading,
 })
 
-const { handleDataSourceChangeEmit } = useDataSource({
+useDataSource({
   mergedProps,
   tableCreateRows,
   tableReadRows,
@@ -480,6 +480,33 @@ const editConfig = computed<any>(() =>
     : undefined
 )
 
+async function retriggerHandleDataSource() {
+  if (mergedProps.value.dataSource) {
+    await handleDataSource(mergedProps.value.dataSource)
+  }
+}
+
+async function retriggerHandleFilterFormFileType(curApiParams = '', preApiParams = '') {
+  if (
+    (typeof mergedProps.value.filterFormConfig === 'boolean' &&
+      mergedProps.value.filterFormConfig) ||
+    (typeof mergedProps.value.filterFormConfig === 'object' &&
+      (mergedProps.value.filterFormConfig as any).enabled)
+  ) {
+    if (curApiParams && curApiParams !== preApiParams) {
+      const curoptions = apiQueryFilterFormFileTypeOptions(mergedProps.value.apiParams)
+      if (!curoptions) return
+      const preoptions = apiQueryFilterFormFileTypeOptions(JSON.parse(preApiParams))
+      if (!preoptions) return
+      if (JSON.stringify(curoptions.apiParams) !== JSON.stringify(preoptions.apiParams)) {
+        await handleFilterFormFileType()
+      }
+    } else {
+      await handleFilterFormFileType()
+    }
+  }
+}
+
 // 清空状态
 async function cleanup() {
   VersionCachesController.deleteAllFileCaches()
@@ -495,18 +522,8 @@ async function cleanup() {
 }
 
 onMounted(async () => {
-  if (mergedProps.value.dataSource) {
-    await handleDataSource(mergedProps.value.dataSource)
-  }
-
-  if (
-    (typeof mergedProps.value.filterFormConfig === 'boolean' &&
-      mergedProps.value.filterFormConfig) ||
-    (typeof mergedProps.value.filterFormConfig === 'object' &&
-      (mergedProps.value.filterFormConfig as any).enabled)
-  ) {
-    await handleFilterFormFileType()
-  }
+  await retriggerHandleDataSource()
+  await retriggerHandleFilterFormFileType()
 })
 
 // mode 变化置空状态
@@ -534,16 +551,17 @@ watch(
           }
         }
 
-        if (mergedProps.value.filterFormConfig) {
-          const curoptions = apiQueryFilterFormFileTypeOptions(mergedProps.value.apiParams)
-          if (!curoptions) return
-          const preoptions = apiQueryFilterFormFileTypeOptions(JSON.parse(preApiParams))
-          if (!preoptions) return
-          if (JSON.stringify(curoptions.apiParams) !== JSON.stringify(preoptions.apiParams)) {
-            await handleFilterFormFileType()
-          }
-        }
+        await retriggerHandleFilterFormFileType(curApiParams, preApiParams)
       }
+    }
+  }
+)
+// datasource 变化
+watch(
+  () => JSON.stringify(mergedProps.value.dataSource),
+  async (curdatasource, predatasource) => {
+    if (curdatasource && curdatasource !== predatasource) {
+      await retriggerHandleDataSource()
     }
   }
 )

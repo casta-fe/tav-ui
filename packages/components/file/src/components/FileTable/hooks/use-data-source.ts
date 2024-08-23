@@ -3,7 +3,13 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { type FileTableEmits, type FileTableProps, type FileTableReloadApiParams } from '../types'
+import { validateDataSourceIsObjectArray } from '../../../utils'
+import {
+  type FileActualIdsObjectArray,
+  type FileTableEmits,
+  type FileTableProps,
+  type FileTableReloadApiParams,
+} from '../types'
 import { type VersionCaches } from './../../../hooks'
 import { type UseTableActionsReturn } from './use-table-actions'
 
@@ -125,12 +131,9 @@ export function useDataSource(options: {
             VersionCachesController.createAllFileCaches(rows, mergedProps.value.mode)
 
             // 如果传进来的 datasource 为对象数组这里需要将 versionlist 写入缓存
-            if (
-              mergedProps.value.dataSource &&
-              typeof mergedProps.value.dataSource[0] !== 'string' &&
-              Reflect.has(mergedProps.value.dataSource[0], 'versionList')
-            ) {
-              mergedProps.value.dataSource.forEach((data: any) => {
+            if (validateDataSourceIsObjectArray(mergedProps.value.dataSource)) {
+              const _dataSource = mergedProps.value.dataSource as FileActualIdsObjectArray
+              _dataSource.forEach((data: any) => {
                 const row = rows.find((r) => r.actualId === data.actualId)
                 const versionList = data.versionList
                 if (row && versionList) VersionCachesController.createFileCaches(row, versionList)

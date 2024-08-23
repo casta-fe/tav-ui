@@ -23,6 +23,7 @@ export function defaultColumnsBuilder(
   enabledRowEdit: FileTableProps['enabledRowEdit'],
   enabledVersion: FileTableProps['enabledVersion'],
   clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
+  clearCellTooltip: (() => void) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
   handleCellEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
@@ -50,9 +51,12 @@ export function defaultColumnsBuilder(
                   setTimeout(() => {
                     clearEdit()
                   }, 16)
+
+                clearCellTooltip?.()
               }}
               onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
                 await handleCellEditClick(payload, row)
+                clearCellTooltip?.()
               }}
             />,
           ]
@@ -191,6 +195,7 @@ export function useColumns(options: {
   return computed(() => {
     const columns = mergedProps.value.columns
     const clearEdit = tableProRef.value?.instance?.clearEdit ?? undefined
+    const clearCellTooltip = tableProRef.value?.instance?.clearCellTooltip ?? undefined
     const mode = mergedProps.value.mode
     const enabledRowEdit = mergedProps.value.enabledRowEdit
     const enabledVersion = mergedProps.value.enabledVersion
@@ -200,6 +205,7 @@ export function useColumns(options: {
       enabledRowEdit,
       enabledVersion,
       clearEdit,
+      clearCellTooltip,
       actions,
       handleCellEditClick,
       hanldeVersionClick

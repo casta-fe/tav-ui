@@ -199,16 +199,16 @@ const unifiedTaFileData = reactive({
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
     mode: 'updateInstantly',
     apiParams: {
-      moduleCode: 'tg_invest',
+      moduleCode: 'tg_fund_major_events_root',
       appId: 10001,
-      businessCheck: true,
-      businessKey: 'GSWU19972MMNPWLF7',
-      businessId: 'GSWU19972MMNPWLF7',
-      businessIds: ['GSWU19972MMNPWLF7'],
-      businessParamsJson: JSON.stringify({
-        investCompanyCode: 'test1',
-        investInvProjectNumber: 'test1',
-      }),
+      businessCheck: false,
+      businessKey: '8ee151a72b8c4fcc8b59f3c9d3951acc',
+      // businessId: 'GSWU19972MMNPWLF7',
+      // businessIds: ['GSWU19972MMNPWLF7'],
+      // businessParamsJson: JSON.stringify({
+      //   investCompanyCode: 'test1',
+      //   investInvProjectNumber: 'test1',
+      // }),
     },
     fileActualIds: [],
     fileTypeSelect: {
@@ -348,7 +348,7 @@ setTimeout(() => {
   // }, 5000)
   // unifiedTaFileData.create.mode = 'update'
   // unifiedTaFileData.create.fileTable.dataSource[0].fullName = 'xxxxx.qqq'
-  // unifiedTaFileData.updateInstantly.fileTable.dataSource.push({
+  // unifiedTaFileData.update.fileTable.dataSource = [{
   //   id: 78147,
   //   appId: 10001,
   //   actualId: '433de6d5e44a4d2998726af6519b64b7',
@@ -385,7 +385,7 @@ setTimeout(() => {
   //   staging: 0,
   //   businessDisplayItemValue: null,
   //   businessDisplayItemText: null,
-  // })
+  // }]
   // console.log(
   //   fileRef.value?.fileTableUpdateRows({
   //     rows: [{ ...unifiedTaFileData.updateInstantly.fileTable.dataSource[0], fullName: 'i7eo' }],
