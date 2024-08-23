@@ -105,7 +105,7 @@ watch(
           from: 'desktop',
         }
 
-        const params = []
+        const params = [] as string[]
         for (const [k, v] of Object.entries(options)) {
           params.push(`${k}=${v}`)
         }
