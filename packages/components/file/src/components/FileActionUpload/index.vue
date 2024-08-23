@@ -211,19 +211,18 @@ function beforeHandleApiAction2(...args: ArgumentsOf<AUploadProps['beforeUpload'
  * @param _
  */
 async function beforeHandleApiAction3() {
-  if (
-    !(
-      handleFilesValidate(fileList.value) &&
-      fileList.value.length > 0 &&
-      !canUploadUnifiedFileList.value
-    )
-  ) {
+  // 未选中文件或有正在上传文件则返回
+  if (fileList.value.length === 0 || canUploadUnifiedFileList.value) {
+    return
+  }
+
+  if (!handleFilesValidate(fileList.value)) {
     resetFileList()
     emits('validateFailureChange', fileList.value)
     return
   }
-  emits('validateSuccessChange', fileList.value)
 
+  emits('validateSuccessChange', fileList.value)
   canUploadUnifiedFileList.value = true
 
   if (mergedProps.value.beforeUpload) {
@@ -233,6 +232,7 @@ async function beforeHandleApiAction3() {
     )
     if (!beforeUploadResult) {
       resetFileList()
+      emits('validateFailureChange', fileList.value)
       return
     }
   }
@@ -254,7 +254,9 @@ async function beforeHandleApiAction3() {
     resetFileList()
     return
   }
+
   await handleApi(options)
+  resetFileList()
 }
 
 function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {

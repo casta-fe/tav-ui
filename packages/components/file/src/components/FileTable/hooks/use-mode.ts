@@ -719,8 +719,7 @@ export function useMode(options: {
     }
 
     async function getTableData() {
-      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
-      return _tableData.length > 0 ? _tableData : [clickedRow]
+      return JSON.parse(JSON.stringify(await tableReadRows()))
     }
 
     if (mode === 'read') {
