@@ -36,7 +36,7 @@ export function defaultColumnsBuilder(
       title: tavI18n('Tav.file.columns.1'),
       field: 'fullName',
       fixed: 'left',
-      minWidth: 220,
+      minWidth: 180,
       editRender: {
         enabled: mode !== 'read' && enabledRowEdit,
       },

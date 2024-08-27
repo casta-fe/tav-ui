@@ -16,8 +16,8 @@ const unifiedTaFileData = reactive({
     fileActualIds: [],
     fileTable: {
       modeQueryApiType: 'list',
-      showOperations: true,
       filterFormConfig: true,
+      showOperations: true,
       customActionConfig: true,
       pagerConfig: {
         enabled: true,
@@ -419,8 +419,8 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.update"
-      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
+      v-bind="unifiedTaFileData.read"
+      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

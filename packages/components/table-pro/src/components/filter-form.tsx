@@ -298,9 +298,9 @@ export default defineComponent({
     }
 
     watch(
-      () => props.config,
+      () => JSON.stringify(props.config),
       (config, prevConfig) => {
-        if (config && JSON.stringify(config) !== JSON.stringify(prevConfig)) {
+        if (config && config !== prevConfig) {
           // input/pannel 都有可能是异步赋值所以这里需要判断rendered
           nextTick(() => {
             tableEmitter.emit('table-pro:filter-form-rendered')
