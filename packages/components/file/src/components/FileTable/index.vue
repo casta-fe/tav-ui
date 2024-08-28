@@ -590,7 +590,7 @@ defineExpose({
     >
       <TaTablePro
         ref="tableProRef"
-        :min-height="300"
+        :min-height="mergedProps.minHeight"
         :loading="loading.value"
         :checkbox-config="mergedProps.checkboxConfig"
         :fill-inner="mergedProps.fillInner"

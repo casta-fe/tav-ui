@@ -164,6 +164,10 @@ export const fileTableProps = {
     type: Boolean,
     default: true,
   },
+  minHeight: {
+    type: [String, Number],
+    default: 240,
+  },
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
