@@ -11,7 +11,7 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord } from '../../typings'
-import { fileSingleDownload } from '../../utils'
+import { extendCurrentRowActionsAuth, fileSingleDownload } from '../../utils'
 import { TaFilePreview } from '../FilePreview'
 import { type FileVersionProps, fileVersionEmits, fileVersionProps } from './types'
 import { useActions, useColumns, useMode } from './hooks'
@@ -106,18 +106,9 @@ async function useModeFetchDataSource() {
 
   if (ApiResult.value.length > 0) {
     const data = JSON.parse(JSON.stringify(ApiResult.value ?? []))
-    // 继承当前行的权限判断数据
-    const _data = data.map((d: FileActionUploadApiResponseRecord) => ({
-      ...d,
-      ...(mergedProps.value.file.hyperlink
-        ? {
-            hyperlink: mergedProps.value.file.hyperlink,
-            watermarkFileDownload: mergedProps.value.file.watermarkFileDownload,
-            sourceFileDownload: mergedProps.value.file.sourceFileDownload,
-          }
-        : {}),
-    }))
-    dataSource.value = _data
+    dataSource.value = mergedProps.value.file
+      ? extendCurrentRowActionsAuth(mergedProps.value.file, data)
+      : data
   }
 }
 

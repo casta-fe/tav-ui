@@ -11,23 +11,28 @@ import {
   isDownloadWatermarkBtnVisible,
   isViewBtnVisible,
 } from '../../../utils'
+import { type FileTableProps } from '../../FileTable'
 
 export function defaultActionsBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileVersionProps>,
+  enabledPreview: FileTableProps['enabledPreview'],
   row: FileActionUploadApiResponseRecord,
   handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => any,
   handleDownloadWatermarkBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
   const DEFAULT_ACTIONS: FileVersionTableAction[] = [
-    {
-      field: 'view',
-      label: tavI18n('Tav.file.actions.1'),
-      enabled: isViewBtnVisible(row.hyperlink!),
-      onClick() {
-        handleViewBtnClick(row)
-      },
-    },
+    ...(enabledPreview
+      ? [
+          {
+            field: 'view',
+            label: tavI18n('Tav.file.actions.1'),
+            enabled: isViewBtnVisible(row.hyperlink!),
+            onClick() {
+              handleViewBtnClick(row)
+            },
+          },
+        ]
+      : []),
     {
       field: 'downloadWatermark',
       label: tavI18n('Tav.file.actions.4'),
@@ -64,9 +69,10 @@ export function useActions(options: {
 
   return computed(() => (row: FileActionUploadApiResponseRecord) => {
     const actions = mergedProps.value.actions
+    const enabledPreview = mergedProps.value.enabledPreview
 
     let result = defaultActionsBuilder(
-      mergedProps,
+      enabledPreview,
       row,
       handleViewBtnClick,
       handleDownloadWatermarkBtnClick,

@@ -23,7 +23,12 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord } from '../../typings'
-import { type ArgumentsOf, fileSingleDownload, isFullNameColEdit } from '../../utils'
+import {
+  type ArgumentsOf,
+  extendCurrentRowActionsAuth,
+  fileSingleDownload,
+  isFullNameColEdit,
+} from '../../utils'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
@@ -159,7 +164,7 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   ) {
     loading.value.value = false
     if (row.version === VersionCachesController.readFileCaches(row.actualId!)!.length)
-      return VersionCachesController.readFileCaches(row.actualId!)
+      return extendCurrentRowActionsAuth(row, VersionCachesController.readFileCaches(row.actualId!))
   }
 
   const options = historyApiOptions(mergedProps.value.apiParams, row)
@@ -171,14 +176,10 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   const { success, data } = await mergedProps.value.apiQueryFileHistory!(options.apiParams)
   if (success === true && data) {
     loading.value.value = false
-    // 继承当前行的权限判断数据
-    const _data = data.map((d: FileActionUploadApiResponseRecord) => ({
-      ...d,
-      hyperlink: row.hyperlink,
-      watermarkFileDownload: row.watermarkFileDownload,
-      sourceFileDownload: row.sourceFileDownload,
-    }))
-    const result = [...(VersionCachesController.createFileCaches(row, _data) ?? [])]
+    const result = [
+      ...(VersionCachesController.createFileCaches(row, extendCurrentRowActionsAuth(row, data)) ??
+        []),
+    ]
 
     // 请求 history 接口后需要重新更新 actualids
     const dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
@@ -480,6 +481,23 @@ const editConfig = computed<any>(() =>
     : undefined
 )
 
+// /**
+//  * 因为继承了当前行的 actions 权限数据，这里直接使用 filetable 的 actions 构造最新的 filetable actions 把 enabled 数据下发
+//  * 需要时开启
+//  * @param fileVersionTableActions
+//  * @param info
+//  */
+// function handleFileVersionActions(
+//   fileVersionTableActions: FileVersionTableAction[],
+//   info: { row: FileActionUploadApiResponseRecord }
+// ) {
+//   return fileVersionTableActions.filter((fileVersionTableAction) =>
+//     actions
+//       .value(info.row)
+//       .find((action) => action.field === fileVersionTableAction.field && action.enabled)
+//   )
+// }
+
 async function retriggerHandleDataSource() {
   if (mergedProps.value.dataSource) {
     await handleDataSource(mergedProps.value.dataSource)
@@ -620,7 +638,9 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :file="fileVersionFile"
         :data-source="fileVersionDataSource"
+        :enabled-preview="mergedProps.enabledPreview"
       />
+      <!-- :actions="handleFileVersionActions" 需要时再开启 -->
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"
         :mode="mergedProps.mode"
