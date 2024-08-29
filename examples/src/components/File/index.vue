@@ -419,8 +419,8 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.read"
-      v-model:fileActualIds="unifiedTaFileData.read.fileActualIds"
+      v-bind="unifiedTaFileData.update"
+      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

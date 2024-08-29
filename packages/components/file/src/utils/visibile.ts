@@ -1,4 +1,5 @@
 import { type FileMode } from '../typings'
+import { validateFileFromLocal } from './validate'
 
 export function isReadMode(mode: FileMode) {
   return mode === 'read'
@@ -64,6 +65,8 @@ export function isUpdateBtnVisible(
   mode: FileMode,
   rowHyperlink: number,
   rowAuto: number,
+  rowBusinessId: string | undefined,
+  rowBusinessKey: string | undefined,
   enabledOwner: boolean,
   globalConfigUserInfo: Record<string, any>,
   owner?: string
@@ -71,6 +74,7 @@ export function isUpdateBtnVisible(
   return (
     !isReadMode(mode) &&
     enabledUpdate &&
+    !validateFileFromLocal({ businessId: rowBusinessId, businessKey: rowBusinessKey } as any) &&
     !(isHyperlinkRow(rowHyperlink) || isAutoRow(rowAuto)) &&
     (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
   )

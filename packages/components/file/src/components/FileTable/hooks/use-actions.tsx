@@ -58,6 +58,8 @@ export function defaultActionsBuilder(
       mode,
       row.hyperlink!,
       row.auto!,
+      row.businessId!,
+      row.businessKey!,
       enabledOwner,
       globalConfigUserInfo.value,
       row.owner
@@ -71,6 +73,8 @@ export function defaultActionsBuilder(
               mode,
               row.hyperlink!,
               row.auto!,
+              row.businessId!,
+              row.businessKey!,
               enabledOwner,
               globalConfigUserInfo.value,
               row.owner

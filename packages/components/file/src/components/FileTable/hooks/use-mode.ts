@@ -680,10 +680,14 @@ export function useMode(options: {
         tableData.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      if (validateFileFromLocal(clickedRow)) {
-        VersionCachesController.createFileCache(row, mode, clickedRow)
-      } else {
+      if (validateVersionCachesHasApiFile(clickedRow?.cache)) {
         VersionCachesController.createFileCache(row, mode)
+      } else {
+        if (validateFileFromLocal(clickedRow)) {
+          VersionCachesController.createFileCache(row, mode, clickedRow)
+        } else {
+          VersionCachesController.createFileCache(row, mode)
+        }
       }
       const latestVersionFileCache = VersionCachesController.readFileCacheLatestVersion(
         row.actualId!
