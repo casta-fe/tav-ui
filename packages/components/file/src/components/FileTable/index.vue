@@ -324,7 +324,7 @@ async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
   }
 
   // actionUpdateClickRow.value = row
-  actionUpdateClickRow.value = { ...row, cache: VersionCachesController['caches'][row.actualId!] }
+  actionUpdateClickRow.value = { ...row, cache: VersionCachesController['caches'][row.actualId!] } // 因为不想把 VersionCachesController 当作 fileupload props 传过去所以这里把 cache 挂在 row 上
   FileActionUploadForActionUpdateBtnRef.value?.openFilePicker?.()
 
   emits('rowUpdate', row)
@@ -428,6 +428,7 @@ const actions = useActions({
   handleDeleteBtnClick,
   handleLogBtnClick,
   globalConfigUserInfo,
+  VersionCachesController,
 })
 
 // 处理表格列

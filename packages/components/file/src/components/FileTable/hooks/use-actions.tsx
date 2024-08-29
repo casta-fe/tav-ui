@@ -13,7 +13,9 @@ import {
   isLogBtnVisible,
   isUpdateBtnVisible,
   isViewBtnVisible,
+  validateVersionCachesHasApiFile,
 } from '../../../utils'
+import { type VersionCaches } from '../../../hooks'
 
 export function defaultActionsBuilder(
   mode: FileTableProps['mode'],
@@ -27,7 +29,8 @@ export function defaultActionsBuilder(
   handleDownloadBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
   handleLogBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
-  globalConfigUserInfo: Ref<Record<string, any>>
+  globalConfigUserInfo: Ref<Record<string, any>>,
+  VersionCachesController: VersionCaches
 ) {
   const DEFAULT_ACTIONS: FileTableAction[] = [
     ...(enabledPreview
@@ -58,8 +61,6 @@ export function defaultActionsBuilder(
       mode,
       row.hyperlink!,
       row.auto!,
-      row.businessId!,
-      row.businessKey!,
       enabledOwner,
       globalConfigUserInfo.value,
       row.owner
@@ -73,11 +74,12 @@ export function defaultActionsBuilder(
               mode,
               row.hyperlink!,
               row.auto!,
-              row.businessId!,
-              row.businessKey!,
               enabledOwner,
               globalConfigUserInfo.value,
               row.owner
+            ),
+            disabled: !validateVersionCachesHasApiFile(
+              VersionCachesController['caches'][row.actualId!]
             ),
             onClick: async () => {
               await handleUpdateBtnClick(row)
@@ -123,6 +125,7 @@ export function useActions(options: {
   handleDeleteBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
   handleLogBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
   globalConfigUserInfo: Ref<Record<string, any>>
+  VersionCachesController: VersionCaches
 }) {
   const {
     mergedProps,
@@ -133,6 +136,7 @@ export function useActions(options: {
     handleDeleteBtnClick,
     handleLogBtnClick,
     globalConfigUserInfo,
+    VersionCachesController,
   } = options
 
   return computed(() => (row: FileActionUploadApiResponseRecord) => {
@@ -154,7 +158,8 @@ export function useActions(options: {
       handleDownloadBtnClick,
       handleDeleteBtnClick,
       handleLogBtnClick,
-      globalConfigUserInfo
+      globalConfigUserInfo,
+      VersionCachesController
     )
 
     if (actions && isFunction(actions)) {
