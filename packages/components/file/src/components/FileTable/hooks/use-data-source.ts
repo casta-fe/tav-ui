@@ -3,7 +3,11 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { validateDataSourceIsObjectArray } from '../../../utils'
+import {
+  validateDataSourceIsObjectArray,
+  validateVersionCachesHasApiFile,
+  validateVersionCachesHasLocalFile,
+} from '../../../utils'
 import {
   type FileActualIdsObjectArray,
   type FileTableEmits,
@@ -136,7 +140,18 @@ export function useDataSource(options: {
               _dataSource.forEach((data: any) => {
                 const row = rows.find((r) => r.actualId === data.actualId)
                 const versionList = data.versionList
-                if (row && versionList) VersionCachesController.createFileCaches(row, versionList)
+                if (row && versionList) {
+                  VersionCachesController.createFileCaches(row, versionList)
+                }
+
+                if (
+                  mergedProps.value.mode === 'update' && // datasource 为对象数组的模式只有 update、updateinstantly，而只有 update 模式下会对更新操作做控制需要设置 actualidCaches
+                  validateVersionCachesHasApiFile(VersionCachesController.caches[data.actualId]) && // 确定当前数据非本地上传数据，因为本地上传数据无论如何更新 bizid、bizkey均为空
+                  validateVersionCachesHasLocalFile(VersionCachesController.caches[data.actualId]) // 通过改判断可确定该接口数据是否被更新过，因为更新后的数据 bizid、bizkey均为空
+                ) {
+                  // 标识当前数据是否被更新过，如果被更新过则需要在初始化时将 actualId 重置回 actualidCaches 数组，主要用于更新模式
+                  VersionCachesController.actualidCaches.add(data.actualId)
+                }
               })
             }
 

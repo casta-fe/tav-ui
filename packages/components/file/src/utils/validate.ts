@@ -77,6 +77,13 @@ export function validateVersionCachesHasApiFile(cache?: FileActionUploadApiRespo
   return !!cache.find((c) => !validateFileFromLocal(c))
 }
 
+// 判断 versionlist 中数据是否有从本地上传的数据
+export function validateVersionCachesHasLocalFile(cache?: FileActionUploadApiResponseRecord[]) {
+  if (!cache) return
+
+  return !!cache.find((c) => validateFileFromLocal(c))
+}
+
 // 判断 datasource 是否为 actualids 字符串数组
 export function validateDataSourceIsStringArray(dataSource: FileTableProps['dataSource']) {
   return (

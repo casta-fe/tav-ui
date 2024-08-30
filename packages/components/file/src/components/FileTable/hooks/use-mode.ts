@@ -17,12 +17,7 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
-import {
-  type ArgumentsOf,
-  type ReturnOf,
-  validateFileFromLocal,
-  validateVersionCachesHasApiFile,
-} from '../../../utils'
+import { type ArgumentsOf, type ReturnOf, validateVersionCachesHasApiFile } from '../../../utils'
 import { type UseTableActionsReturn } from './use-table-actions'
 import { type UseHandleDataSourceReturn } from './use-handle-data-source'
 
@@ -680,15 +675,7 @@ export function useMode(options: {
         tableData.map((file: any) => file.actualId)
       )
     } else if (mode === 'update') {
-      if (validateVersionCachesHasApiFile(clickedRow?.cache)) {
-        VersionCachesController.createFileCache(row, mode)
-      } else {
-        if (validateFileFromLocal(clickedRow)) {
-          VersionCachesController.createFileCache(row, mode, clickedRow)
-        } else {
-          VersionCachesController.createFileCache(row, mode)
-        }
-      }
+      VersionCachesController.createFileCache(row, mode)
       const latestVersionFileCache = VersionCachesController.readFileCacheLatestVersion(
         row.actualId!
       )

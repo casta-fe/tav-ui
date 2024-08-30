@@ -1,5 +1,5 @@
 import { type FileActionUploadApiResponseRecord, type FileMode } from '../typings'
-import { type Keys } from '../utils'
+import { type Keys, validateVersionCachesHasApiFile } from '../utils'
 
 export type FileVersionStrategy = 'latest' | 'all'
 export type FileVersionCache = FileActionUploadApiResponseRecord
@@ -96,24 +96,19 @@ export class VersionCaches {
    * @param updatedFile
    * @returns
    */
-  createFileCache(
-    updatedFile: FileActionUploadApiResponseRecord,
-    mode: FileMode,
-    file?: FileActionUploadApiResponseRecord
-  ) {
+  createFileCache(updatedFile: FileActionUploadApiResponseRecord, mode: FileMode) {
     const _updatedFile = this.serialize(updatedFile)
-    if (mode !== 'updateInstantly' && this.actualidCaches.has(_updatedFile.actualId!)) {
+    const isApiFileUpdatedOrIsLocalFile =
+      mode !== 'updateInstantly' &&
+      (this.actualidCaches.has(_updatedFile.actualId!) || // 非立即更新模式下更新文件（接口返回的数据）版本只加一次控制
+        !validateVersionCachesHasApiFile(this.caches[_updatedFile.actualId!])) // 非立即更新模式本地上传文件不增加版本号控制
+    if (isApiFileUpdatedOrIsLocalFile) {
       this.updateFileCaches(updatedFile)
       return
     }
 
-    if (file) {
-      if (this.actualidCaches.has(file.actualId!)) {
-        this.actualidCaches.delete(file.actualId!)
-      }
-    }
     this.actualidCaches.add(_updatedFile.actualId!)
-    this.updateFileCacheVersion(_updatedFile, file)
+    this.updateFileCacheVersion(_updatedFile)
   }
 
   readFileCaches(actualId: string) {
@@ -187,25 +182,16 @@ export class VersionCaches {
    * @param updatedFile
    * @returns
    */
-  updateFileCacheVersion(
-    updatedFile: FileActionUploadApiResponseRecord,
-    file?: FileActionUploadApiResponseRecord
-  ) {
-    if (file) {
-      Reflect.deleteProperty(this.caches, file.actualId!)
-      const cacheFile = this.buildCache(updatedFile)
-      this.caches[updatedFile.actualId!] = [cacheFile]
-    } else {
-      const latestVersionFileCache = this.readFileCacheLatestVersion(updatedFile.actualId!)
-      if (!latestVersionFileCache) return
+  updateFileCacheVersion(updatedFile: FileActionUploadApiResponseRecord) {
+    const latestVersionFileCache = this.readFileCacheLatestVersion(updatedFile.actualId!)
+    if (!latestVersionFileCache) return
 
-      const cacheFile = this.buildCache(updatedFile)
-      if (this.caches[updatedFile.actualId!]) {
-        cacheFile.version = latestVersionFileCache.version + 1
-        this.caches[updatedFile.actualId!] = [...this.caches[updatedFile.actualId!]!, cacheFile]
-      } else {
-        this.caches[updatedFile.actualId!] = [cacheFile]
-      }
+    const cacheFile = this.buildCache(updatedFile)
+    if (this.caches[updatedFile.actualId!]) {
+      cacheFile.version = latestVersionFileCache.version + 1
+      this.caches[updatedFile.actualId!] = [...this.caches[updatedFile.actualId!]!, cacheFile]
+    } else {
+      this.caches[updatedFile.actualId!] = [cacheFile]
     }
   }
 
