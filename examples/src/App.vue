@@ -18,6 +18,7 @@ import {
   UserListApi,
   previewFile,
   previewWPSFile,
+  queryFileByFileActualIds,
   queryFileLog,
   queryFilterFormFileType,
 } from './components/TaUpload/provideData'
@@ -37,10 +38,15 @@ export default defineComponent({
       appId: '10001',
       userInfo: {
         userId: 1,
-        username: 'admin',
         isAdmin: true,
-        phone: '13999999999',
+        username: 'admin',
         realName: '系统管理员',
+        phone: '13999999999',
+        // userId: 108,
+        // isAdmin: false,
+        // username: '靳熙',
+        // realName: '靳熙',
+        // phone: '15029309050',
       },
       i18nFun: {
         t,
@@ -63,6 +69,7 @@ export default defineComponent({
         TaFileTable: {
           apiQueryFile: taUploadProvideData.queryFile,
           apiQueryFileList: taUploadProvideData.queryFileList,
+          apiQueryFileByActualIds: queryFileByFileActualIds,
           apiQueryFilterFormFileType: queryFilterFormFileType,
           apiQueryFileHistory: taUploadProvideData.queryFileHistory,
           apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,

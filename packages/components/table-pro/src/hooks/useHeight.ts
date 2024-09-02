@@ -9,14 +9,13 @@ import type { Emitter } from '@tav-ui/utils/mitt'
  * 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
  * @returns
  */
-export function useHeight(): {
-  wrapperRef: any
+export function useHeight(
+  wrapperRef: any,
   operationRef: any
+): {
   getHeight: ComputedRef<string>
   setHeight: () => void
 } {
-  const wrapperRef = ref<HTMLElement | null>(null)
-  const operationRef = ref<HTMLElement | null>(null)
   const height = ref('100%')
 
   const getHeight = computed(() => unref(height))
@@ -33,8 +32,6 @@ export function useHeight(): {
   }
 
   return {
-    wrapperRef,
-    operationRef,
     getHeight,
     setHeight,
   }
@@ -42,7 +39,7 @@ export function useHeight(): {
 
 export function useFixHeight(
   tableRef: Ref<TableProInstance | null>,
-  wrapperRef: Ref<HTMLElement | null>,
+  wrapperRef: any,
   setHeight: () => void,
   tableEmitter: Emitter,
   tablePropsRef: ComputedRef<TableProProps>

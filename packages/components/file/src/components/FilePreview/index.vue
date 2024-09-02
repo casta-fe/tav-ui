@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  type UnwrapRef,
   computed,
   onBeforeUnmount,
   ref,
@@ -27,19 +26,14 @@ import {
   useRequest,
 } from '../../hooks'
 import { useMode } from './hooks'
-import {
-  type FilePreviewInstance,
-  type FilePreviewProps,
-  filePreviewEmits,
-  filePreviewProps,
-} from './types'
+import { type FilePreviewProps, filePreviewEmits, filePreviewProps } from './types'
 
 defineOptions({
   name: 'TaFilePreview',
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FilePreviewInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const modalRef = ref<ReturnInnerMethods>()
 const props = defineProps(filePreviewProps)
 const emits = defineEmits(filePreviewEmits)
@@ -111,8 +105,13 @@ watch(
           from: 'desktop',
         }
 
+        const params = [] as string[]
+        for (const [k, v] of Object.entries(options)) {
+          params.push(`${k}=${v}`)
+        }
+
         currentFilePath.value = `${pageUrl}/wps-file-view/?${encodeURIComponent(
-          new URLSearchParams({ ...options }) as unknown as string
+          params.join('&').replace(' ', '%20').replace('+', '%2B')
         )}`
       } else {
         currentFilePath.value = curview.onlineUrl
@@ -235,7 +234,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   open,
   close,
   cleanup,

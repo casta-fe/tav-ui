@@ -4,6 +4,10 @@ export function isReadMode(mode: FileMode) {
   return mode === 'read'
 }
 
+export function isUpdateMode(mode: FileMode) {
+  return mode === 'update' || mode === 'updateInstantly'
+}
+
 export function isHyperlinkRow(rowHyperlink?: number) {
   return rowHyperlink === 1
 }
@@ -24,6 +28,18 @@ export function isWatermarkFileDownloadRow(rowWatermarkFileDownload?: number) {
 /** 是否有下载水印权限，后端判断通过该字段体现 */
 export function isSourceFileDownloadRow(rowSourceFileDownload?: number) {
   return !!rowSourceFileDownload
+}
+
+export function isFullNameColEdit(
+  enabledRowEdit: boolean,
+  mode: FileMode,
+  enabledOwner: boolean,
+  globalConfigUserInfo: Record<string, any>,
+  owner?: string
+) {
+  return !isReadMode(mode)
+    ? enabledRowEdit && (enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo, owner) : true)
+    : false
 }
 
 export function isVersionColVisible(

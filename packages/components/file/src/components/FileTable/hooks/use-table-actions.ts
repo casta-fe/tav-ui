@@ -1,5 +1,6 @@
 import { type ComputedRef, type Ref, type WritableComputedRef, toRaw } from 'vue'
 import { type ITableProInstance } from '@tav-ui/components/table-pro'
+import { nanoid } from '@tav-ui/utils/uuid'
 import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
@@ -61,13 +62,11 @@ export function useTableActions(options: {
     let promiseAll
     if (Array.isArray(position)) {
       promiseAll = toRaw(rows).map(async (row, idx) => {
-        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
         const result = await tableProInstance?.insertAt(row, position[idx])
         return result
       })
     } else {
       promiseAll = toRaw(rows).map(async (row) => {
-        Reflect.deleteProperty(row, '__id') // 删掉 vxetable 自动生成的 id
         const result = await tableProInstance?.insertAt(row, position)
         return result
       })
@@ -93,14 +92,28 @@ export function useTableActions(options: {
   }
 
   async function tableUpdateRows(_options: TableUpdateRowsOptions) {
-    const { rows, deleteRows, useLoading } = _options
+    const { rows: _rows, deleteRows, useLoading } = _options
 
     if (useLoading !== undefined && useLoading) loading.value.value = true
-    await tableCreateRows({
-      rows,
-      position: deleteRows,
+    const rows = _rows.map((row) => {
+      const fakeId = nanoid()
+      return {
+        ...row,
+        id: fakeId,
+      }
     })
-    await tableDeleteRows({ rows: deleteRows })
+    // 通过人造id将新数据插入
+    await tableCreateRows({
+      rows: JSON.parse(JSON.stringify(rows)),
+      position: JSON.parse(JSON.stringify(deleteRows)),
+    })
+    await tableDeleteRows({ rows: JSON.parse(JSON.stringify(deleteRows)) })
+    // 将人造id数据删除，并且恢复原id
+    await tableCreateRows({
+      rows: JSON.parse(JSON.stringify(_rows)),
+      position: JSON.parse(JSON.stringify(rows)),
+    })
+    await tableDeleteRows({ rows: JSON.parse(JSON.stringify(rows)) })
     if (useLoading !== undefined && useLoading) loading.value.value = false
   }
 

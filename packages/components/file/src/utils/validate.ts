@@ -1,5 +1,9 @@
 import { type FileActionUploadProps } from '../components/FileActionUpload/types'
-import { type FileTypeSelectApiResponseRecord } from '../typings'
+import { type FileTableProps } from '../components/FileTable'
+import {
+  type FileActionUploadApiResponseRecord,
+  type FileTypeSelectApiResponseRecord,
+} from '../typings'
 
 // 文件名是否通过空白字符校验
 export function validateUploadFileEmptyName(name: string) {
@@ -64,11 +68,52 @@ export function validateUploadFileTypeCode(
   return typeCode ? true : false
 }
 
-export function validateTypeCodesEqual(
-  typeCodes: string[],
-  apiRes: FileTypeSelectApiResponseRecord[]
-) {
-  const apiResTypeCodes = apiRes.map((res) => res.code)
+// 判断文件是本地(上传/自己造的dataSource)还是来源于接口
+export function validateFileFromLocal(row?: FileActionUploadApiResponseRecord) {
+  return row && !row.businessId && !row.businessKey
+}
 
-  return JSON.stringify(typeCodes) === JSON.stringify(apiResTypeCodes)
+// 判断 versionlist 中数据是否有从接口来的数据
+export function validateVersionCachesHasApiFile(cache?: FileActionUploadApiResponseRecord[]) {
+  if (!cache) return
+
+  return !!cache.find((c) => !validateFileFromLocal(c))
+}
+
+// 判断 versionlist 中数据是否有从本地上传的数据
+export function validateVersionCachesHasLocalFile(cache?: FileActionUploadApiResponseRecord[]) {
+  if (!cache) return
+
+  return !!cache.find((c) => validateFileFromLocal(c))
+}
+
+// 判断 datasource 是否为 actualids 字符串数组
+export function validateDataSourceIsStringArray(dataSource: FileTableProps['dataSource']) {
+  return (
+    dataSource && Array.isArray(dataSource) && dataSource[0] && typeof dataSource[0] === 'string'
+  )
+}
+
+// 判断 datasource 是否为 actualids 对象数组
+export function validateDataSourceIsObjectArray(
+  dataSource: FileTableProps['dataSource'],
+  key = 'versionList'
+) {
+  return (
+    dataSource &&
+    Array.isArray(dataSource) &&
+    dataSource[0] &&
+    typeof dataSource[0] !== 'string' &&
+    Reflect.has(dataSource[0], key)
+  )
+}
+
+// 判断 datasource 是否为 actualids 数据结构
+export function validateDataSourceIsActualIdsData(
+  dataSource: FileTableProps['dataSource'],
+  key = 'versionList'
+) {
+  return (
+    validateDataSourceIsStringArray(dataSource) || validateDataSourceIsObjectArray(dataSource, key)
+  )
 }

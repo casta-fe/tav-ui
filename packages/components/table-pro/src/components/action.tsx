@@ -77,7 +77,8 @@ export default defineComponent({
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-    const ActionLabelLimit = unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit || 3
+    const ActionLabelLimit =
+      unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit || MAX_ACTION_NUMBER
 
     // 根据 enabled 控制显隐
     function isEnabled(action: TableProActionItem): boolean {
@@ -118,7 +119,7 @@ export default defineComponent({
       })
     }
 
-    // 根据 MAX_ACTION_NUMBER 控制 action 列显示数，多余的改为省略号
+    // 根据 ActionLabelLimit 控制 action 列显示数，多余的改为省略号
     let restActions: TableProActionItem[] = []
 
     function getActions() {
@@ -126,7 +127,7 @@ export default defineComponent({
 
       const Actions = computed(() => {
         const actions = unref(permissonFilterActions)
-        if (actions.length <= MAX_ACTION_NUMBER) {
+        if (actions.length <= ActionLabelLimit) {
           restActions = []
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
@@ -152,8 +153,8 @@ export default defineComponent({
             return actions
           }
         } else {
-          const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
-          restActions = actions.slice(MAX_ACTION_NUMBER - 1)
+          const _actions = actions.slice(0, ActionLabelLimit - 1)
+          restActions = actions.slice(ActionLabelLimit - 1)
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
             const handleActions = limitActionLabel(_actions, ActionLabelLimit)

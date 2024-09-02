@@ -11,6 +11,8 @@ import {
 } from 'vue'
 import { TaTablePro } from '@tav-ui/components/table-pro'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { tavI18n } from '@tav-ui/locales'
+import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_APIPARAMS, DEFAULT_FILETABLE_CLASSNAME, DEFAULT_FILETABLE_ID } from '../../consts'
 import {
   VersionCaches,
@@ -21,13 +23,18 @@ import {
   useRequest,
 } from '../../hooks'
 import { type FileActionUploadApiResponseRecord } from '../../typings'
-import { type ArgumentsOf, fileSingleDownload, isOwnerOrAdmin } from '../../utils'
+import {
+  type ArgumentsOf,
+  extendCurrentRowActionsAuth,
+  fileSingleDownload,
+  isFullNameColEdit,
+} from '../../utils'
 import {
   type FileActionUploadEmits,
   type FileActionUploadInstance,
   TaFileActionUpload as TaFileActionUploadForActionUpdateBtn,
 } from '../FileActionUpload'
-import { type FileVersionTableAction, TaFileVersion } from '../FileVersion'
+import { TaFileVersion } from '../FileVersion'
 import { TaFileLog } from '../FileLog'
 import { TaFilePreview } from '../FilePreview'
 import {
@@ -41,11 +48,15 @@ import {
 import {
   useActions,
   useColumns,
+  useCustomActionConfig,
   useDataSource,
   useFilterFormConfig,
+  useHandleDataSource,
   useMode,
   useTableActions,
 } from './hooks'
+
+const { createMessage } = useMessage()
 
 /**
  * 1. Table 数据源来源于 api：queryfile/queryfilelist 与 datasource（__uploadDataSource、__uploadLinkDataSource 为内部使用的上传文件、超链接数据源）
@@ -60,7 +71,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileTableInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const tableProRef = ref<UnwrapRef<FileTableInstance['tableProRef']>>()
 const props = defineProps(fileTableProps)
 const emits = defineEmits(fileTableEmits)
@@ -87,6 +98,8 @@ const loading = computed({
   },
 })
 
+const { dataSource, handleDataSource } = useHandleDataSource({ mergedProps, loading })
+
 // 针对业务抽象不同模式进行数据处理
 const {
   useModeConfigTable,
@@ -98,7 +111,13 @@ const {
     deleteApiOptions,
   },
   dataActions: { reloadRows, editRow, updateRow, deleteRow },
-} = useMode({ mergedProps, tableProRef, emits, VersionCachesController })
+} = useMode({
+  mergedProps,
+  tableProRef,
+  emits,
+  VersionCachesController,
+  dataSource,
+})
 
 const configTable = useModeConfigTable()
 
@@ -116,6 +135,7 @@ useDataSource({
   emits,
   VersionCachesController,
   refreshTableDataApiAction,
+  dataSource,
 })
 
 // 使用 api 处理数据
@@ -144,7 +164,7 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   ) {
     loading.value.value = false
     if (row.version === VersionCachesController.readFileCaches(row.actualId!)!.length)
-      return VersionCachesController.readFileCaches(row.actualId!)
+      return extendCurrentRowActionsAuth(row, VersionCachesController.readFileCaches(row.actualId!))
   }
 
   const options = historyApiOptions(mergedProps.value.apiParams, row)
@@ -156,7 +176,23 @@ async function beforeReadFileCaches(row: FileActionUploadApiResponseRecord) {
   const { success, data } = await mergedProps.value.apiQueryFileHistory!(options.apiParams)
   if (success === true && data) {
     loading.value.value = false
-    return [...(VersionCachesController.createFileCaches(row, data) ?? [])]
+    const result = [
+      ...(VersionCachesController.createFileCaches(row, extendCurrentRowActionsAuth(row, data)) ??
+        []),
+    ]
+
+    // 请求 history 接口后需要重新更新 actualids
+    const dataSource = JSON.parse(JSON.stringify(await tableReadRows()))
+    if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
+      emits('actualidsChange', VersionCachesController.getCaches())
+    } else {
+      emits(
+        'actualidsChange',
+        dataSource.map((file: any) => file.actualId)
+      )
+    }
+
+    return result
   }
 
   loading.value.value = false
@@ -172,6 +208,7 @@ async function refreshTableDataApiAction(params?: FileTableReloadApiParams) {
 
 // 获取筛选框 filetype 数据
 const filterFormFileTypeData = ref()
+const filterFormFileTypeAllTypeCodesData = ref<string[]>([])
 async function handleFilterFormFileType() {
   if (!mergedProps.value.filterFormConfig) return
 
@@ -199,6 +236,7 @@ async function handleFilterFormFileType() {
         data.class = data.class
           ? `${data.class} child--type-normal-node`
           : 'child--type-normal-node'
+        filterFormFileTypeAllTypeCodesData.value.push(data.code)
       }
 
       if (data.children && data.children.length) {
@@ -277,13 +315,16 @@ function handleViewBtnClick(row: FileActionUploadApiResponseRecord) {
 }
 
 // 更新处理
-const actionUpdateClickRow = ref<FileActionUploadApiResponseRecord>()
+const actionUpdateClickRow = ref<
+  FileActionUploadApiResponseRecord & { cache: FileActionUploadApiResponseRecord[] | undefined }
+>()
 async function handleUpdateBtnClick(row: FileActionUploadApiResponseRecord) {
   if (mergedProps.value.mode === 'update' || mergedProps.value.mode === 'updateInstantly') {
     await beforeReadFileCaches(row)
   }
 
-  actionUpdateClickRow.value = row
+  // actionUpdateClickRow.value = row
+  actionUpdateClickRow.value = { ...row, cache: VersionCachesController['caches'][row.actualId!] } // 因为不想把 VersionCachesController 当作 fileupload props 传过去所以这里把 cache 挂在 row 上
   FileActionUploadForActionUpdateBtnRef.value?.openFilePicker?.()
 
   emits('rowUpdate', row)
@@ -387,6 +428,7 @@ const actions = useActions({
   handleDeleteBtnClick,
   handleLogBtnClick,
   globalConfigUserInfo,
+  VersionCachesController,
 })
 
 // 处理表格列
@@ -396,7 +438,7 @@ const columns = useColumns({
   actions,
   handleCellEditClick,
   hanldeVersionClick,
-  globalConfigUserInfo,
+  // globalConfigUserInfo,
 })
 
 // 筛选项
@@ -404,43 +446,84 @@ const filterFormConfig = useFilterFormConfig({
   mergedProps,
   tableProRef,
   filterFormFileTypeData,
+  filterFormFileTypeAllTypeCodesData,
+})
+
+// custom action
+const customActionConfig = useCustomActionConfig({
+  mergedProps,
+  tableProRef,
 })
 
 // 行编辑配置
 const editConfig = computed<any>(() =>
-  mergedProps.value.enabledRowEdit &&
-  (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
+  mergedProps.value.enabledRowEdit
     ? {
         // trigger: 'manual',
         trigger: 'click',
         mode: 'cell',
         autoClear: true,
+        beforeEditMethod: ({ row: _row }: Record<string, any>) => {
+          const row = _row as FileActionUploadApiResponseRecord
+          const isEdit = isFullNameColEdit(
+            mergedProps.value.enabledRowEdit,
+            mergedProps.value.mode,
+            mergedProps.value.enabledOwner,
+            globalConfigUserInfo.value,
+            row.owner
+          )
+
+          if (!isEdit) {
+            createMessage.warn(`${tavI18n('Tav.common.notAuthorised')}`)
+          }
+          return isEdit
+        },
       }
     : undefined
 )
 
-// fileversion actions 继承 filetable actions 权限
-function handleFileVersionActions(
-  ...args: [FileVersionTableAction[], { row: FileActionUploadApiResponseRecord }]
-) {
-  const [fileVersionActions, { row }] = args
-  const useFileVersionRowGenerateFileTableActions = actions.value(row)
-  return fileVersionActions.map((action) => {
-    const existedFileTableAction = useFileVersionRowGenerateFileTableActions.find(
-      (_action) => _action.field === action.field
-    )
-    if (existedFileTableAction) {
-      const { enabled, permission, permissionCode } = action
-      return {
-        ...action,
-        enabled,
-        permission,
-        permissionCode,
-      }
-    }
+// /**
+//  * 因为继承了当前行的 actions 权限数据，这里直接使用 filetable 的 actions 构造最新的 filetable actions 把 enabled 数据下发
+//  * 需要时开启
+//  * @param fileVersionTableActions
+//  * @param info
+//  */
+// function handleFileVersionActions(
+//   fileVersionTableActions: FileVersionTableAction[],
+//   info: { row: FileActionUploadApiResponseRecord }
+// ) {
+//   return fileVersionTableActions.filter((fileVersionTableAction) =>
+//     actions
+//       .value(info.row)
+//       .find((action) => action.field === fileVersionTableAction.field && action.enabled)
+//   )
+// }
 
-    return action
-  })
+async function retriggerHandleDataSource() {
+  if (mergedProps.value.dataSource) {
+    await handleDataSource(mergedProps.value.dataSource)
+  }
+}
+
+async function retriggerHandleFilterFormFileType(curApiParams = '', preApiParams = '') {
+  if (
+    (typeof mergedProps.value.filterFormConfig === 'boolean' &&
+      mergedProps.value.filterFormConfig) ||
+    (typeof mergedProps.value.filterFormConfig === 'object' &&
+      (mergedProps.value.filterFormConfig as any).enabled)
+  ) {
+    if (curApiParams && curApiParams !== preApiParams) {
+      const curoptions = apiQueryFilterFormFileTypeOptions(mergedProps.value.apiParams)
+      if (!curoptions) return
+      const preoptions = apiQueryFilterFormFileTypeOptions(JSON.parse(preApiParams))
+      if (!preoptions) return
+      if (JSON.stringify(curoptions.apiParams) !== JSON.stringify(preoptions.apiParams)) {
+        await handleFilterFormFileType()
+      }
+    } else {
+      await handleFilterFormFileType()
+    }
+  }
 }
 
 // 清空状态
@@ -449,10 +532,17 @@ async function cleanup() {
   await tableDeleteRows({
     useLoading: true,
   })
+  const tableProInstance = (tableProRef.value as any)?.instance as any
+  const tableFilterParams = tableProInstance?.filterRef?.filterParams
+  if (tableFilterParams && tableFilterParams !== '{}') {
+    await tableProInstance.filterRef?.resetFilterInput?.(false)
+    await tableProInstance.filterRef?.resetFilterPannel?.(false)
+  }
 }
 
 onMounted(async () => {
-  await handleFilterFormFileType()
+  await retriggerHandleDataSource()
+  await retriggerHandleFilterFormFileType()
 })
 
 // mode 变化置空状态
@@ -479,7 +569,18 @@ watch(
             loading.value.value = false
           }
         }
+
+        await retriggerHandleFilterFormFileType(curApiParams, preApiParams)
       }
+    }
+  }
+)
+// datasource 变化
+watch(
+  () => JSON.stringify(mergedProps.value.dataSource),
+  async (curdatasource, predatasource) => {
+    if (curdatasource && curdatasource !== predatasource) {
+      await retriggerHandleDataSource()
     }
   }
 )
@@ -489,7 +590,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   tableProRef,
   cleanup,
   reload: refreshTableDataApiAction,
@@ -509,14 +609,18 @@ defineExpose({
     >
       <TaTablePro
         ref="tableProRef"
+        :min-height="mergedProps.minHeight"
         :loading="loading.value"
         :checkbox-config="mergedProps.checkboxConfig"
-        :show-operations="mergedProps.showOperations"
         :fill-inner="mergedProps.fillInner"
+        :show-operations="mergedProps.showOperations"
+        :filter-exclusion="mergedProps.filterExclusion"
         :columns="columns"
         :edit-config="editConfig"
         :immediate="mergedProps.immediate"
         :filter-form-config="filterFormConfig"
+        :custom-action-config="customActionConfig"
+        :row-config="mergedProps.rowConfig"
         v-bind="configTable"
       />
       <TaFileActionUploadForActionUpdateBtn
@@ -536,8 +640,9 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :file="fileVersionFile"
         :data-source="fileVersionDataSource"
-        :actions="handleFileVersionActions"
+        :enabled-preview="mergedProps.enabledPreview"
       />
+      <!-- :actions="handleFileVersionActions" 需要时再开启 -->
       <TaFilePreview
         v-model:visible="filePreviewModalVisible"
         :mode="mergedProps.mode"

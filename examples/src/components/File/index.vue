@@ -16,45 +16,46 @@ const unifiedTaFileData = reactive({
     fileActualIds: [],
     fileTable: {
       modeQueryApiType: 'list',
-      showOperations: true,
       filterFormConfig: true,
+      showOperations: true,
+      customActionConfig: true,
       pagerConfig: {
         enabled: true,
       },
-      dataSource: [
-        {
-          id: 73086,
-          appId: 10001,
-          actualId: '5d8e721a997348c19c46041178348834',
-          moduleId: 9,
-          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
-          businessId: 'TG-20240607000003-0',
-          type: 9,
-          deleted: 0,
-          version: 1,
-          name: '10',
-          suffix: 'png',
-          fullName: '10.png',
-          size: 45113,
-          address: '/20240607/17177485273641322.png',
-          runtime: null,
-          hyperlink: 0,
-          sourceFileDownload: 1,
-          watermarkFileDownload: 2,
-          fileSize: '44KB',
-          createBy: '1',
-          createByName: '系统管理员',
-          expand: null,
-          dataType: null,
-          toPdf: 0,
-          errorMsg: null,
-          moduleCode: 'tg_company',
-          moduleName: '评估立项',
-          typeCode: 'INVEST_FOUND_BFJY',
-          typeName: '拜访纪要',
-          createTime: '2024-06-07 16:22:07',
-        },
-      ],
+      // dataSource: [
+      //   {
+      //     id: 73086,
+      //     appId: 10001,
+      //     actualId: '5d8e721a997348c19c46041178348834',
+      //     moduleId: 9,
+      //     businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+      //     businessId: 'TG-20240607000003-0',
+      //     type: 9,
+      //     deleted: 0,
+      //     version: 1,
+      //     name: '10',
+      //     suffix: 'png',
+      //     fullName: '10.png',
+      //     size: 45113,
+      //     address: '/20240607/17177485273641322.png',
+      //     runtime: null,
+      //     hyperlink: 0,
+      //     sourceFileDownload: 1,
+      //     watermarkFileDownload: 2,
+      //     fileSize: '44KB',
+      //     createBy: '1',
+      //     createByName: '系统管理员',
+      //     expand: null,
+      //     dataType: null,
+      //     toPdf: 0,
+      //     errorMsg: null,
+      //     moduleCode: 'tg_company',
+      //     moduleName: '评估立项',
+      //     typeCode: 'INVEST_FOUND_BFJY',
+      //     typeName: '拜访纪要',
+      //     createTime: '2024-06-07 16:22:07',
+      //   },
+      // ],
     },
   },
   create: {
@@ -78,54 +79,54 @@ const unifiedTaFileData = reactive({
     fileTable: {
       modeQueryApiType: 'pager',
       // showOperations: true,
-      dataSource: [
-        {
-          id: 73086,
-          appId: 10001,
-          actualId: '5d8e721a997348c19c46041178348834',
-          moduleId: 9,
-          businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
-          businessId: 'TG-20240607000003-0',
-          type: 9,
-          deleted: 0,
-          version: 1,
-          name: '10',
-          suffix: 'png',
-          fullName: '10.png',
-          size: 45113,
-          address: '/20240607/17177485273641322.png',
-          runtime: null,
-          hyperlink: 0,
-          sourceFileDownload: 1,
-          watermarkFileDownload: 2,
-          fileSize: '44KB',
-          createBy: '1',
-          createByName: '系统管理员',
-          expand: null,
-          dataType: null,
-          toPdf: 0,
-          errorMsg: null,
-          moduleCode: 'tg_company',
-          moduleName: '评估立项',
-          typeCode: 'INVEST_FOUND_BFJY',
-          typeName: '拜访纪要',
-          createTime: '2024-06-07 16:22:07',
-        },
-      ],
-      pagerConfig: {
-        enabled: true,
-      },
+      // dataSource: [
+      //   {
+      //     id: 73086,
+      //     appId: 10001,
+      //     actualId: '5d8e721a997348c19c46041178348834',
+      //     moduleId: 9,
+      //     businessKey: '91320583MA20NTY87Y-tg_invest-TG-20240607000003',
+      //     businessId: 'TG-20240607000003-0',
+      //     type: 9,
+      //     deleted: 0,
+      //     version: 1,
+      //     name: '10',
+      //     suffix: 'png',
+      //     fullName: '10.png',
+      //     size: 45113,
+      //     address: '/20240607/17177485273641322.png',
+      //     runtime: null,
+      //     hyperlink: 0,
+      //     sourceFileDownload: 1,
+      //     watermarkFileDownload: 2,
+      //     fileSize: '44KB',
+      //     createBy: '1',
+      //     createByName: '系统管理员',
+      //     expand: null,
+      //     dataType: null,
+      //     toPdf: 0,
+      //     errorMsg: null,
+      //     moduleCode: 'tg_company',
+      //     moduleName: '评估立项',
+      //     typeCode: 'INVEST_FOUND_BFJY',
+      //     typeName: '拜访纪要',
+      //     createTime: '2024-06-07 16:22:07',
+      //   },
+      // ],
+      // pagerConfig: {
+      //   enabled: true,
+      // },
     },
   },
   update: {
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
     mode: 'update',
     apiParams: {
-      moduleCode: 'tg_company',
+      moduleCode: 'tg_fund_operations_manage_fee',
       // appId: 10002,
-      businessKey: 'GSWU19972MMNPWLF7',
-      businessIds: ['GSWU19972MMNPWLF7'],
-      businessId: 'GSWU19972MMNPWLF7',
+      businessKey: '15edb70925eb4933b127d104fa5c8f94',
+      businessIds: ['195'],
+      businessId: '195',
     },
     fileActualIds: [],
     fileActionUploadLink: {
@@ -137,12 +138,59 @@ const unifiedTaFileData = reactive({
       // },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
-      // filterFormConfig: handleFilterFormConfig,
-      // showOperations: true,
+      filterFormConfig: handleFilterFormConfig,
+      showOperations: true,
       pagerConfig: {
         enabled: false,
       },
       actions: handleFileTableActions,
+      // dataSource: [
+      //   {
+      //     actualId: '965970f1d5b046febab9c0ae27d8e679',
+      //     moduleCode: 'tg_fund_operations_manage_fee',
+      //     versionList: [
+      //       {
+      //         id: 82996,
+      //         appId: 10001,
+      //         actualId: '965970f1d5b046febab9c0ae27d8e679',
+      //         moduleId: 102,
+      //         businessKey: '15edb70925eb4933b127d104fa5c8f94',
+      //         businessId: '195',
+      //         type: 428,
+      //         deleted: 0,
+      //         version: 1,
+      //         name: 'test-20240719144033',
+      //         suffix: 'gif',
+      //         fullName: 'test-20240719144033.gif',
+      //         size: 29203,
+      //         address: '/20240822/17243248000316910.gif',
+      //         hyperlink: 0,
+      //         auto: 0,
+      //         sourceFileDownload: 1,
+      //         watermarkFileDownload: 1,
+      //         fileSize: '28KB',
+      //         createBy: '1',
+      //         owner: '1',
+      //         createByName: '系统管理员',
+      //         ownerName: '系统管理员',
+      //         expand: null,
+      //         workflowCopy: 0,
+      //         toPdf: 0,
+      //         errorMsg: null,
+      //         createTime: '2024-08-22 19:06:40',
+      //         updateTime: '2024-08-22 19:06:40',
+      //         moduleCode: 'tg_fund_operations_manage_fee',
+      //         moduleFullName: '自有基金-基金运营-管理费',
+      //         typeCode: 'FUND_GLF_FILE',
+      //         typeName: '附件',
+      //         staging: 1,
+      //         businessDisplayItemValue: null,
+      //         businessDisplayItemText: null,
+      //       },
+      //     ],
+      //   },
+      // ],
+      dataSource: ['965970f1d5b046febab9c0ae27d8e679'],
     },
   },
   updateInstantly: {
@@ -151,10 +199,10 @@ const unifiedTaFileData = reactive({
     // 要么在这里统一分发，要么在各个组件中各传一个 apiparams 单独控制
     mode: 'updateInstantly',
     apiParams: {
-      moduleCode: 'tg_invest',
+      moduleCode: 'tg_fund_major_events_root',
       appId: 10001,
-      businessCheck: true,
-      // businessKey: 'GSWU19972MMNPWLF7',
+      businessCheck: false,
+      businessKey: '8ee151a72b8c4fcc8b59f3c9d3951acc',
       // businessId: 'GSWU19972MMNPWLF7',
       // businessIds: ['GSWU19972MMNPWLF7'],
       // businessParamsJson: JSON.stringify({
@@ -195,15 +243,18 @@ const unifiedTaFileData = reactive({
       visible: true,
     },
     fileTable: {
-      apiParams: {
-        // moduleCode: 'tg_invest',
-        // businessKey: 'GSWU19972MMNPWLF7',
-        // businessIds: ['GSWU19972MMNPWLF7'],
-        businessCheck: false,
-      },
+      // apiParams: {
+      //   // moduleCode: 'tg_invest',
+      //   // businessKey: 'GSWU19972MMNPWLF7',
+      //   // businessIds: ['GSWU19972MMNPWLF7'],
+      //   businessCheck: false,
+      // },
       enabledRowEdit: true,
       modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
+      showOperations: true,
+      filterFormConfig: true,
+      customActionConfig: true,
       // dataSource: [
       //   {
       //     id: 78144,
@@ -282,8 +333,6 @@ const unifiedTaFileData = reactive({
       //     businessDisplayItemText: null,
       //   },
       // ],
-      showOperations: true,
-      filterFormConfig: true,
       // pagerConfig: {
       //   enabled: true,
       // },
@@ -299,7 +348,7 @@ setTimeout(() => {
   // }, 5000)
   // unifiedTaFileData.create.mode = 'update'
   // unifiedTaFileData.create.fileTable.dataSource[0].fullName = 'xxxxx.qqq'
-  // unifiedTaFileData.updateInstantly.fileTable.dataSource.push({
+  // unifiedTaFileData.update.fileTable.dataSource = [{
   //   id: 78147,
   //   appId: 10001,
   //   actualId: '433de6d5e44a4d2998726af6519b64b7',
@@ -336,7 +385,7 @@ setTimeout(() => {
   //   staging: 0,
   //   businessDisplayItemValue: null,
   //   businessDisplayItemText: null,
-  // })
+  // }]
   // console.log(
   //   fileRef.value?.fileTableUpdateRows({
   //     rows: [{ ...unifiedTaFileData.updateInstantly.fileTable.dataSource[0], fullName: 'i7eo' }],
@@ -346,7 +395,7 @@ setTimeout(() => {
 }, 5000)
 
 watch(
-  () => unifiedTaFileData.updateInstantly.fileActualIds,
+  () => unifiedTaFileData.update.fileActualIds,
   (cur) => {
     console.log('fileActualIds: ', cur)
   },
@@ -366,12 +415,12 @@ function handleFilterFormConfig(args: any) {
 </script>
 
 <template>
-  <section class="ta-file-test" style="width: 800px; height: 60%; margin: 0 auto">
+  <section class="ta-file-test" style="width: 800px; height: 500px; margin: 0 auto">
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.updateInstantly"
-      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
+      v-bind="unifiedTaFileData.update"
+      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

@@ -174,11 +174,11 @@ export default defineComponent({
 
     const fixPannelFormModalPos = () => {
       const dom: HTMLDivElement | null = pannelContainerRef.value
-      const actionDom: HTMLDivElement | null = customerActionRef.value
-      if (dom && actionDom) {
-        const { bottom = 0 } = actionDom.getBoundingClientRect()
+      const operationDom: HTMLDivElement | null = operationRef.value
+      if (dom && operationDom) {
+        const { bottom = 0 } = operationDom.getBoundingClientRect()
         const { width = 0, left = 0 } = dom.getBoundingClientRect()
-        state.dialogStyle.top = `${bottom + 16}px`
+        state.dialogStyle.top = `${bottom}px`
         state.dialogStyle.left = `${left}px`
         state.dialogStyle.width = `${width}px`
         state.dialogStyle.margin = `${0}px`
@@ -190,9 +190,11 @@ export default defineComponent({
     useWindowSizeFn(debounceFixPannelFormModalPos)
 
     const pannelContainerRef = ref<any>(null)
+    const operationRef = ref<any>(null)
     const customerActionRef = ref<any>(null)
-    tableEmitter.on('table-pro:dom-ready', async ({ table, action }) => {
+    tableEmitter.on('table-pro:dom-ready', async ({ table, operation, action }) => {
       pannelContainerRef.value = table
+      operationRef.value = operation
       customerActionRef.value = action
     })
 
@@ -224,21 +226,26 @@ export default defineComponent({
       const res = JSON.parse(JSON.stringify(_res))
       state.visible = false
       state.pannelForm = res
-      state.choosedNum = Object.keys(res).reduce((result, cur) => {
-        if (
-          !isNullOrUnDef(res[cur]) &&
-          JSON.stringify(res[cur]) !== '[]' &&
-          JSON.stringify(res[cur]) !== '["",""]' &&
-          JSON.stringify(res[cur]) !== '[null,""]' &&
-          JSON.stringify(res[cur]) !== '["",null]' &&
-          JSON.stringify(res[cur]) !== '{}' &&
-          res[cur] !== '' &&
-          JSON.stringify(res[cur])
-        ) {
-          result++
-        }
-        return result
-      }, 0)
+      const filterWithoutShowSchemas = pannelFormSchema.value.filter(
+        (s) => typeof s.show === 'undefined'
+      )
+      state.choosedNum = Object.keys(res)
+        .filter((field) => !!filterWithoutShowSchemas.find((s: FormSchema) => s.field === field))
+        .reduce((result, cur) => {
+          if (
+            !isNullOrUnDef(res[cur]) &&
+            JSON.stringify(res[cur]) !== '[]' &&
+            JSON.stringify(res[cur]) !== '["",""]' &&
+            JSON.stringify(res[cur]) !== '[null,""]' &&
+            JSON.stringify(res[cur]) !== '["",null]' &&
+            JSON.stringify(res[cur]) !== '{}' &&
+            res[cur] !== '' &&
+            JSON.stringify(res[cur])
+          ) {
+            result++
+          }
+          return result
+        }, 0)
       if (props.filterExclusion) {
         state.currentFilter = {}
         state.currentFilter = state.pannelForm
@@ -259,36 +266,41 @@ export default defineComponent({
       closePannelFormModal()
     }
 
-    async function handleInputFormResetFields() {
+    async function handleInputFormResetFields(withRequest = true) {
       await inputFormResetFields()
       await nextTick()
       state.inputForm = inputFormGetFieldsValue()
       state.currentFilter = { ...state.inputForm, ...state.pannelForm }
-      unref(props.tableRef)?.commitProxy('query', {
-        filter: { ...state.currentFilter },
-        model: { page: 1 },
-      })
+      if (withRequest) {
+        unref(props.tableRef)?.commitProxy('query', {
+          filter: { ...state.currentFilter },
+          model: { page: 1 },
+        })
+      }
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
 
-    function handlePannelFormResetFields() {
-      pannelFormResetFields()
+    async function handlePannelFormResetFields(withRequest = true) {
+      await pannelFormResetFields()
+      await nextTick()
       state.visible = false
       state.choosedNum = 0
       state.pannelForm = {}
       state.currentFilter = { ...state.inputForm }
-      unref(props.tableRef)?.commitProxy('query', {
-        filter: { ...state.currentFilter },
-        model: { page: 1 },
-      })
+      if (withRequest) {
+        unref(props.tableRef)?.commitProxy('query', {
+          filter: { ...state.currentFilter },
+          model: { page: 1 },
+        })
+      }
       closePannelFormModal()
       tableEmitter.emit('table-pro:filter-form-submit', { filter: { ...state.currentFilter } })
     }
 
     watch(
-      () => props.config,
+      () => JSON.stringify(props.config),
       (config, prevConfig) => {
-        if (config && JSON.stringify(config) !== JSON.stringify(prevConfig)) {
+        if (config && config !== prevConfig) {
           // input/pannel 都有可能是异步赋值所以这里需要判断rendered
           nextTick(() => {
             tableEmitter.emit('table-pro:filter-form-rendered')
@@ -298,7 +310,11 @@ export default defineComponent({
       { immediate: true }
     )
 
-    expose({ resetFilterInput: handleInputFormResetFields })
+    expose({
+      filterParams: tableFilterParams,
+      resetFilterInput: handleInputFormResetFields,
+      resetFilterPannel: handlePannelFormResetFields,
+    })
 
     return () => {
       return unref(isFilterFormShow) ? (

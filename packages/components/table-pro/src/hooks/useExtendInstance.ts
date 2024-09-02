@@ -131,6 +131,7 @@ type OuterExtendApis = {
   resizeTableHeight: () => void
   showExportModal: () => void
   showColumnsModa: () => void
+  clearCellTooltip: () => void
 }
 export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 
@@ -163,6 +164,7 @@ export function useExtendInstance(
         Object.keys(outerExtendApis).forEach((name) => {
           state.instance![name] = outerExtendApis[name]
         })
+        state.instance!['filterRef'] = filterRef.value
       }
     }
   )

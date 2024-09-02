@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import {
   type TableProActionItem,
   type TableProColumn,
@@ -52,8 +52,16 @@ export const fileVersionProps = {
     type: Object as PropType<TableProProps['pagerConfig']>,
     default: () => ({ enabled: false }),
   },
-  showOperations: { type: Boolean, default: false },
-  fillInner: { type: Boolean, default: false },
+  /** 给table填充颜色，将table和filterform区分开 */
+  fillInner: {
+    type: Boolean,
+    default: false,
+  },
+  /** 控制 filterform & customaction 整体显示与隐藏 */
+  showOperations: {
+    type: Boolean,
+    default: false,
+  },
   // modal props
   width: {
     type: [String, Number] as PropType<ModalProps['width']>,
@@ -99,6 +107,8 @@ export const fileVersionProps = {
     default: () => ({} as FileActionUploadApiResponseRecord),
     required: true,
   },
+  // 控制操作列查看按钮有无
+  enabledPreview: { type: Boolean, default: true },
   /** apiQueryFileHistory 已从 ...globalConfigFileProps['fileVersion'] 取到 */
   beforeApiQueryFileHistory: {
     type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
@@ -129,7 +139,6 @@ export const fileVersionEmits = {
 export type FileVersionEmits = typeof fileVersionEmits
 
 export interface FileVersionInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
   cleanup(): void

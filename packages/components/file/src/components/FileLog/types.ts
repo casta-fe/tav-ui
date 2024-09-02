@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import {
   type TableProActionItem,
   type TableProColumn,
@@ -20,7 +20,7 @@ export type FileLogTableAction = TableProActionItem & { field: string }
 // 按照 swagger 编写
 export interface ApiQueryFileLogParams {
   actualIds: ApiParams['actualIds']
-  appId: ApiParams['appId']
+  // appId: ApiParams['appId']
   createBy?: number[]
   endCreateDate?: string
   startCreateDate?: string
@@ -114,7 +114,6 @@ export const fileLogEmits = {
 export type FileLogEmits = typeof fileLogEmits
 
 export interface FileLogInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   open: () => any
   close: () => any
   cleanup(): void

@@ -44,6 +44,12 @@ const emits = defineEmits(fileEmits)
 const slots = useSlots()
 // const attrs = useAttrs()
 
+if (JSON.stringify(props.fileActualIds) && JSON.stringify(props.fileActualIds) !== '[]') {
+  console.error(
+    '[tavui TaFile] not pass value to "fileActualIds", "fileActualIds" only accpet "[]" to get actualIds'
+  )
+}
+
 // 对 file 组件的 apiparams 进行 computed 方便属性下发
 // const _fileApiParams = ref(props.apiParams)
 // const fileApiParams = computed({
@@ -163,7 +169,7 @@ const fileTableProps = computed(() => {
       endTime: fileApiParams.value.endTime,
       finalTypeCodes: fileApiParams.value.finalTypeCodes,
       id: fileApiParams.value.id,
-      includeStaging: fileApiParams.value.includeStaging ?? DEFAULT_APIPARAMS.includeStaging, // 合并默认值
+      // excludeStaging: fileApiParams.value.excludeStaging ?? DEFAULT_APIPARAMS.excludeStaging, // 合并默认值
       moduleCode: fileApiParams.value.moduleCode,
       permissionControl:
         fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值

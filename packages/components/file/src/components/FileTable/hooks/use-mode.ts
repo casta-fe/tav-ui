@@ -1,6 +1,7 @@
 import { type ComputedRef, type SetupContext, computed, nextTick } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
+import { type ITableProInstance } from '@tav-ui/components/table-pro'
 import {
   type ApiDeleteFileParams,
   type ApiQueryFilterFormFileTypeParams,
@@ -16,8 +17,9 @@ import {
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions, type VersionCaches } from '../../../hooks'
-import { type ArgumentsOf, type ReturnOf } from '../../../utils'
+import { type ArgumentsOf, type ReturnOf, validateVersionCachesHasApiFile } from '../../../utils'
 import { type UseTableActionsReturn } from './use-table-actions'
+import { type UseHandleDataSourceReturn } from './use-handle-data-source'
 
 const {
   table: {
@@ -52,8 +54,8 @@ function createQueryApiOptionsWithPagerConfig(
     }
   } else {
     return {
-      filter: { ...filter, ...(apiParams?.filter ?? {}) },
-      model: { ...model, ...(apiParams?.model ?? {}) },
+      filter: { ...(apiParams?.filter ?? {}), ...filter },
+      model: { ...(apiParams?.model ?? {}), ...model },
     }
   }
 }
@@ -93,8 +95,9 @@ export function useMode(options: {
   tableProRef: FileTableInstance['tableProRef']
   emits: SetupContext<FileTableEmits>['emit']
   VersionCachesController: VersionCaches
+  dataSource: UseHandleDataSourceReturn['dataSource']
 }) {
-  const { mergedProps, tableProRef, emits, VersionCachesController } = options
+  const { mergedProps, tableProRef, emits, VersionCachesController, dataSource } = options
 
   /**
    * 根据 props 来设置 tablepro 的参数，包括：data、api、beforeapi、afterapi、pagerconfig、immediate
@@ -174,7 +177,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -188,16 +191,16 @@ export function useMode(options: {
           }
         }
       } else if (mergedProps.value.mode === 'create') {
-        /**
-         * 新增模式，使用 datasource 数据源
-         * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
-         * 2. 分页，TODO: 组件内部后期支持，优先级低
-         * 3. reload 方法直接返回（给不执行提示）
-         */
         if (mergedProps.value.dataSource) {
+          /**
+           * 新增模式，使用 datasource 数据源
+           * 1. 筛选在外部自己实现，筛选后更新 datasource 即可
+           * 2. 分页，TODO: 组件内部后期支持，优先级低
+           * 3. reload 方法直接返回（给不执行提示）
+           */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -217,7 +220,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -243,7 +246,7 @@ export function useMode(options: {
            */
           dataOrApiConfig = {
             ...dataOrApiConfigWithNull,
-            data: mergedProps.value.dataSource,
+            data: dataSource.value,
           }
         } else {
           /**
@@ -293,6 +296,7 @@ export function useMode(options: {
         filter: {
           appId: apiParams.appId,
           moduleCode: apiParams.moduleCode,
+          ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
           businessKey: apiParams.businessKey,
           ...(apiParams.businessIds
             ? {
@@ -331,6 +335,7 @@ export function useMode(options: {
       apiParams: {
         appId: apiParams.appId,
         moduleCode: apiParams.moduleCode,
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
         businessKey: apiParams.businessKey,
         ...(apiParams.businessIds
           ? {
@@ -526,8 +531,21 @@ export function useMode(options: {
     await nextTick()
 
     const handleReload = async () => {
-      const tableProInstance = (tableProRef.value as any)?.instance as any
+      const tableProInstance = (tableProRef.value as any)?.instance as ITableProInstance['instance']
       await tableProInstance.reload(params)
+
+      // reload 后需清空缓存重新载入数据
+      VersionCachesController.deleteAllFileCaches()
+      const { fullData } = (await tableProInstance?.getTableData()) || {
+        fullData: [],
+        tableData: [],
+      }
+      handleAfterApiEmit({
+        mergedProps,
+        emits,
+        VersionCachesController,
+        apiResult: fullData,
+      })
     }
 
     if (mergedProps.value.mode === 'read') {
@@ -600,25 +618,25 @@ export function useMode(options: {
     VersionCachesController.updateFileCaches(newrow)
 
     if (mode === 'read') {
-      const tableData = await getTableData()
-      emits(
-        'actualidsChange',
-        JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
-      )
+      //
     } else if (mode === 'create') {
       const tableData = await getTableData()
       emits(
         'actualidsChange',
-        JSON.parse(JSON.stringify([...(tableData.value ?? [])])).map((file: any) => file.actualId)
+        tableData.map((file: any) => file.actualId)
       )
+      await editRowApiAction(changeEventPayload)
     } else if (mode === 'update') {
       emits('actualidsChange', VersionCachesController.getCaches())
+
+      !validateVersionCachesHasApiFile(VersionCachesController['caches'][row.actualId!]) &&
+        (await editRowApiAction(changeEventPayload))
     } else {
       emits('actualidsChange', VersionCachesController.getCaches())
 
+      await editRowApiAction(changeEventPayload)
       if (!mergedProps.value.dataSource) {
         // 无外部传入的 datasource 才操作
-        await editRowApiAction(changeEventPayload)
         await refreshTableDataApiAction()
       }
     }
@@ -652,7 +670,6 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits(
         'actualidsChange',
         tableData.map((file: any) => file.actualId)
@@ -663,14 +680,10 @@ export function useMode(options: {
         row.actualId!
       )
       await action(latestVersionFileCache)
-      // const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.createFileCache(row, mode)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [row], tableData, 'update')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       if (!mergedProps.value.dataSource) {
@@ -697,8 +710,7 @@ export function useMode(options: {
     }
 
     async function getTableData() {
-      const _tableData = JSON.parse(JSON.stringify(await tableReadRows()))
-      return _tableData.length > 0 ? _tableData : [clickedRow]
+      return JSON.parse(JSON.stringify(await tableReadRows()))
     }
 
     if (mode === 'read') {
@@ -706,7 +718,6 @@ export function useMode(options: {
     } else if (mode === 'create') {
       await action()
       const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits(
         'actualidsChange',
         tableData.map((file: any) => file.actualId)
@@ -714,14 +725,10 @@ export function useMode(options: {
     } else if (mode === 'update') {
       VersionCachesController.deleteFileCaches(clickedRow.actualId!)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
     } else {
       VersionCachesController.deleteFileCaches(clickedRow.actualId!)
       await action()
-      // const tableData = await getTableData()
-      // emits('change', [clickedRow], tableData, 'delete')
       emits('actualidsChange', VersionCachesController.getCaches())
 
       if (!mergedProps.value.dataSource) {

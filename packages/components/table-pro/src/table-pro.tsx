@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, toRefs, unref, watch } from 'vue'
+import { computed, defineComponent, nextTick, ref, toRaw, toRefs, unref, watch } from 'vue'
 import { mitt } from '@tav-ui/utils/mitt'
 import { useHideTooltips } from '@tav-ui/hooks/web/useTooltip'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -44,9 +44,13 @@ export default defineComponent({
   props: tableProProps,
   emits: tableProEmits,
   setup(props, { slots, attrs, expose, emit }) {
+    const tableId = buildTableId()
+    const tableColumns = ref<TableProProps['columns']>(props.columns)
     // 获取实例
     const tableRef = ref<TableProInstance | null>(null)
     const filterRef = ref<ComputedRef | null>(null)
+    const wrapperRef = ref<HTMLElement | null>(null)
+    const operationRef = ref<HTMLDivElement | null>(null)
     const customActionRef = ref<CustomActionRef | null>(null)
     const cacheActionWidths = ref<Record<string, any>>({})
     // const columnsForAction = ref<TableProColumn[]>([])
@@ -65,17 +69,33 @@ export default defineComponent({
 
     // 表格 props
     const _getProps = computed(() => {
-      return { ...props, id: props.id ?? buildTableId() } as TableProProps
+      // return { ...props, id: props.id ?? buildTableId() } as TableProProps
+      return { ...props } as TableProProps
     })
 
     // 根据 default 生成默认属性并与传入的 props 合并
     const getProps = useProps(tableProProps, _getProps, tableRef, emit)
 
+    watch(
+      () => props.columns,
+      async (curcolumns, precolumns) => {
+        if (JSON.stringify(curcolumns) !== JSON.stringify(precolumns)) {
+          tableColumns.value = curcolumns
+          await nextTick()
+          maxWidthForAction.value = 0
+          await handleNotPersistentColumnActionWidth()
+        }
+      },
+      {
+        deep: true,
+      }
+    )
+
     // 扩展 columns
     const getColumns = computed(() => {
       // const columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
       const columns: TableProColumn[] = useColumns(
-        unref(getProps).columns,
+        tableColumns.value,
         unref(getProps).checkboxConfig,
         unref(getProps).radioConfig,
         tableRef,
@@ -87,7 +107,7 @@ export default defineComponent({
     // 列持久化处理
     // const columnApiOptions = useColumnApi(getProps, useGlobalConfig(), tableEmitter)
     const columnApiOptions = useColumnApi(
-      unref(getProps).id,
+      unref(getProps).id ?? tableId,
       unref(getProps).customActionConfig.column,
       useGlobalConfig(),
       tableEmitter
@@ -118,7 +138,7 @@ export default defineComponent({
     // 手动处理单元格 tooltip
     const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(getProps, emit)
     // const { onCellMouseenter, onCellMouseleave, instances } = useCellHover(
-    //   unref(getProps).id,
+    //   unref(getProps).id ?? tableId,
     //   unref(getProps).showTooltip,
     //   emit
     // )
@@ -147,7 +167,7 @@ export default defineComponent({
     // )
 
     // 执行dom监听的处理
-    useWatchDom(tableRef, customActionRef, tableEmitter)
+    useWatchDom(tableRef, operationRef, customActionRef, tableEmitter)
 
     const { calcContent, clearCalcContentCanvas } = useCanvasCalcContent()
     // 统计 action 渲染数据，动态设置宽度
@@ -156,30 +176,12 @@ export default defineComponent({
         cacheActionWidths.value[key] = value
       }
     }
-    function handleNotPersistentColumnActionWidth() {
+    async function handleNotPersistentColumnActionWidth() {
       const tableData = unref(tableRef)?.getTableData().tableData
       const maxWidth = Math.max(...Object.values(unref(cacheActionWidths)))
-      if (tableData && maxWidth > unref(maxWidthForAction)) {
-        // const currentColumns = unref(getColumns).columns
-        const currentColumns = unref(tableRef)?.getTableColumn().collectColumn
-        // const columns = currentColumns!.map((column) => {
-        //   if (column.field && ACTION_COLUMNS.includes(column.field)) {
-        //     column.width = Math.ceil(maxWidth)
-        //     column.minWidth = Math.ceil(maxWidth)
-        //     // if (column.width) {
-        //     //   //@ts-ignore
-        //     //   column.width = undefined
-        //     // }
-        //     // if (column.maxWidth) {
-        //     //   //@ts-ignore
-        //     //   column.maxWidth = undefined
-        //     // }
-        //     return column
-        //   }
-        //   return column
-        // })
+      if (tableData && isFinite(maxWidth) && maxWidth !== unref(maxWidthForAction)) {
+        const currentColumns = toRaw(tableColumns.value ?? []).map((d) => toRaw(d))
         const isSomeColumnSetWidth = currentColumns!.some((column) => !!column.width)
-        const columns = [] as any[]
         let actionPrevColumnHandled = false
         for (let i = currentColumns!.length - 1; i >= 0; i--) {
           const _column = currentColumns![i]
@@ -203,34 +205,33 @@ export default defineComponent({
               actionPrevColumnHandled = true
             }
           }
-          columns.unshift(_column)
         }
-        // columnsForAction.value = columns
-        unref(tableRef)?.loadColumn(columns)
-        unref(tableRef)?.recalculate()
+
         maxWidthForAction.value = maxWidth
+        tableColumns.value = currentColumns
+        await unref(tableRef)?.recalculate(true)
       }
     }
     if (columnApiOptions && unref(getBindValues).customActionConfig.column) {
       // 开启了列持久化
-      tableEmitter.on('table-pro:column-covered', () => {
-        handleNotPersistentColumnActionWidth()
+      tableEmitter.on('table-pro:column-covered', async () => {
+        await handleNotPersistentColumnActionWidth()
       })
 
       // 开启了列持久化但是无持久化数据
-      tableEmitter.on('table-pro:column-covered-no-data', () => {
-        handleNotPersistentColumnActionWidth()
+      tableEmitter.on('table-pro:column-covered-no-data', async () => {
+        await handleNotPersistentColumnActionWidth()
       })
     }
     watch(
       () => JSON.stringify(cacheActionWidths.value),
-      () => {
-        handleNotPersistentColumnActionWidth()
+      async () => {
+        await handleNotPersistentColumnActionWidth()
       }
     )
 
     // 表格高度，height设置百分比会跳动，设置auto后需要手动把剩余空间的高度计算后赋值
-    const { wrapperRef, operationRef, getHeight, setHeight } = useHeight()
+    const { getHeight, setHeight } = useHeight(wrapperRef, operationRef)
     useFixHeight(tableRef, wrapperRef, setHeight, tableEmitter, getProps)
 
     // 注入数据
@@ -259,6 +260,7 @@ export default defineComponent({
             showColumnsModa: () => {
               customActionRef.value?.showColumnsModa()
             },
+            clearCellTooltip,
           },
           filterRef
         )
@@ -341,9 +343,14 @@ export default defineComponent({
                   ? entry.contentBoxSize[0]
                   : entry.contentBoxSize
 
-                // console.log('start', el, parentEl.parentElement.id, contentBoxSize)
-                if (contentBoxSize.inlineSize > 0 && contentBoxSize.blockSize > 0 && calcNum <= 3) {
-                  // console.log('end', el, parentEl.parentElement.id, contentBoxSize)
+                // console.log('start', el, parentEl.parentElement.id ?? tableId, contentBoxSize)
+                if (
+                  contentBoxSize.inlineSize > 0 &&
+                  contentBoxSize.blockSize > 0 &&
+                  unref(tableRef)?.recalculate &&
+                  calcNum <= 3
+                ) {
+                  // console.log('end', el, parentEl.parentElement.id ?? tableId, contentBoxSize)
                   requestAnimationFrame(() => {
                     unref(tableRef)
                       ?.recalculate(true)
@@ -377,6 +384,16 @@ export default defineComponent({
     const { createElementResizeObserver, clearElementResizeObserver } =
       elementResizeObserverHandler()
 
+    watch(
+      () => getHeight.value,
+      async (curheight, preheight) => {
+        if (curheight && curheight !== preheight) {
+          await nextTick()
+          unref(tableRef)?.recalculate?.(true)
+        }
+      }
+    )
+
     onMountedOrActivated(() => {
       createElementResizeObserver()
       handleNotPersistentColumnActionWidth()
@@ -403,7 +420,11 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={unref(getWrapperClass)} ref={wrapperRef} id={unref(getBindValues).id}>
+        <div
+          class={unref(getWrapperClass)}
+          ref={wrapperRef}
+          id={unref(getBindValues).id ?? tableId}
+        >
           {createOperation()}
           <div class={ComponentPrefixCls} style={{ height: unref(getHeight), overflow: 'hidden' }}>
             <Grid

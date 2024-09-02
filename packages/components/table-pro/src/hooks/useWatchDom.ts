@@ -9,6 +9,7 @@ import type { TableProInstance } from '../types'
  */
 export function useWatchDom(
   tableRef: Ref<TableProInstance | null>,
+  operationRef: Ref<any | null>,
   customActionRef: Ref<any | null>,
   tableEmitter: Emitter
 ) {
@@ -17,6 +18,7 @@ export function useWatchDom(
       // vxeGrid dom挂载完毕事件
       tableEmitter.emit('table-pro:dom-ready', {
         table: unref(tableRef.value)?.$el,
+        operation: operationRef.value,
         action: unref(customActionRef.value)?.actionRef,
       })
     }

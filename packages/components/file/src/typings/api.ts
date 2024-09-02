@@ -314,4 +314,6 @@ export interface FileLogApiResponseRecord {
   operation?: string
   /** @description 文件类型名称 */
   typeName?: string
+  /** @description 文件版本 */
+  version?: number
 }

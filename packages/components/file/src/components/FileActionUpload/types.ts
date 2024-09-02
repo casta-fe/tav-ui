@@ -1,4 +1,4 @@
-import { type PropType, type Ref } from 'vue'
+import { type PropType } from 'vue'
 import { type ButtonProps as AButtonProps, type UploadProps as AUploadProps } from 'ant-design-vue'
 import {
   type ApiParams,
@@ -70,12 +70,17 @@ export const fileActionUploadProps = {
     default: true,
   },
   /** 更新状态下需要传入要被更新的文件数据 */
-  updateFile: { type: Object as PropType<FileActionUploadApiResponseRecord> },
+  updateFile: {
+    type: Object as PropType<
+      FileActionUploadApiResponseRecord & { cache: FileActionUploadApiResponseRecord[] | undefined }
+    >,
+  },
   /** apiUploadFile 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  catchApiUploadFileError: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiUpdateFile: {
     type: Function as PropType<(apiParams: ApiUpdateFileParams) => Promise<any>>,
   },
@@ -99,7 +104,6 @@ export const fileActionUploadEmits = {
 export type FileActionUploadEmits = typeof fileActionUploadEmits
 
 export interface FileActionUploadInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   openFilePicker: () => Promise<void>
   cleanup(): void
 }

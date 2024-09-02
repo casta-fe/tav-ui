@@ -25,10 +25,11 @@
       border-radius: @primary-border-radius;
       background-color: #fff;
     }
-    .vxe-grid--pager-wrapper {
-      .vxe-pager--wrapper {
-        margin-top: 10px;
-      }
+  }
+
+  .vxe-grid--pager-wrapper {
+    .vxe-pager--wrapper {
+      margin-top: 6px;
     }
   }
 
@@ -173,6 +174,23 @@
           width: 1px;
           height: 40%;
           background-color: transparent;
+        }
+      }
+    }
+  }
+
+  .vxe-table {
+    .vxe-table--main-wrapper .vxe-table--body-wrapper {
+      &::-webkit-scrollbar {
+        height: 6px !important;
+      }
+    }
+
+    &.is--scroll-x {
+      .vxe-table--fixed-left-wrapper,
+      .vxe-table--fixed-right-wrapper {
+        .vxe-table--body {
+          padding-bottom: 6px;
         }
       }
     }

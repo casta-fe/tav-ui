@@ -30,7 +30,7 @@ export function useMode(options: {
       beforeApi: mergedProps.value.beforeApiQueryFileLog,
       afterApi: mergedProps.value.afterApiQueryFileLog,
       apiParams: {
-        appId: apiParams.appId,
+        // appId: apiParams.appId,
         actualIds: [file.actualId!],
       } as any,
       failureMessage: () => {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
+import { computed, onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type ITableProInstance, TaModal, TaTablePro } from '@tav-ui/components'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 import { DEFAULT_FILELOG_CLASSNAME, DEFAULT_FILELOG_ID } from '../../consts'
 import { useGlobalConfigProps, useMergedProps } from '../../hooks'
-import { type FileLogInstance, type FileLogProps, fileLogEmits, fileLogProps } from './types'
+import { type FileLogProps, fileLogEmits, fileLogProps } from './types'
 import { useColumns, useMode } from './hooks'
 
 const {
@@ -24,7 +24,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileLogInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const fileLogTableProRef = ref<ITableProInstance>()
 const props = defineProps(fileLogProps)
 const emits = defineEmits(fileLogEmits)
@@ -182,7 +182,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   open,
   close,
   cleanup,

@@ -6,6 +6,7 @@ import {
   type TableProColumn,
   type TableProProps,
 } from '@tav-ui/components/table-pro'
+import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
 import {
   type ApiParams,
   type FileActionUploadApiResponseRecord,
@@ -34,6 +35,7 @@ import { type ApiPreviewFileParams } from './../FilePreview/types'
 export type FileTableColumn = TableProColumn
 export type FileTableAction = TableProActionItem & { field: string }
 export type FileTableFilterFormConfig = TableProProps['filterFormConfig']
+export type FileTableCustomActionConfig = TableProProps['customActionConfig']
 export type FileTableReloadApiParams = TableProApiParams
 
 // 按照 swagger 编写
@@ -45,7 +47,7 @@ export interface ApiQueryFileParams {
   endTime?: ApiParams['endTime']
   finalTypeCodes?: ApiParams['finalTypeCodes']
   id?: ApiParams['id']
-  includeStaging?: ApiParams['includeStaging']
+  excludeStaging?: ApiParams['excludeStaging']
   moduleCode?: ApiParams['moduleCode']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
@@ -63,13 +65,18 @@ export interface ApiQueryFileListParams {
   endTime?: ApiParams['endTime']
   finalTypeCodes?: ApiParams['finalTypeCodes']
   id?: ApiParams['id']
-  includeStaging?: ApiParams['includeStaging']
+  excludeStaging?: ApiParams['excludeStaging']
   moduleCode?: ApiParams['moduleCode']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
   startTime?: ApiParams['startTime']
   suffix?: ApiParams['suffix']
   typeCodes?: ApiParams['typeCodes']
+}
+
+// 按照 swagger 编写
+export interface ApiQueryFileByActualIds {
+  fileActualIds: ApiParams['actualIds']
 }
 
 // 按照 swagger 编写
@@ -110,6 +117,7 @@ export interface FileTableApiParams
   extends Omit<ApiUploadFileParams, 'moduleCode'>,
     ApiQueryFileParams,
     ApiQueryFileListParams,
+    ApiQueryFileByActualIds,
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
@@ -128,7 +136,7 @@ export const fileTableProps = {
   mode: { type: String as PropType<FileMode>, default: DEFAULT_FILE_MODE },
   // table-pro props
   dataSource: {
-    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
+    type: Array as PropType<FileActionUploadApiResponseRecord[] | FileActualIds>,
   },
   loading: { type: Boolean, default: false },
   checkboxConfig: {
@@ -139,8 +147,27 @@ export const fileTableProps = {
     type: Object as PropType<TableProProps['pagerConfig']>,
     default: () => ({ enabled: false }),
   },
-  showOperations: { type: Boolean, default: false },
-  fillInner: { type: Boolean, default: false },
+  /** 给table填充颜色，将table和filterform区分开 */
+  fillInner: {
+    type: Boolean,
+    default: false,
+  },
+  /** 控制 filterform & customaction 整体显示与隐藏 */
+  showOperations: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * 筛选是否互斥
+   */
+  filterExclusion: {
+    type: Boolean,
+    default: true,
+  },
+  minHeight: {
+    type: [String, Number],
+    default: 240,
+  },
   //:============================== extend props ==============================://
 
   visible: { type: Boolean, default: true },
@@ -166,6 +193,19 @@ export const fileTableProps = {
     >,
     default: false,
   },
+  customActionConfig: {
+    type: [Boolean, Function] as PropType<
+      boolean | ((...args: [FileTableCustomActionConfig]) => FileTableCustomActionConfig)
+    >,
+    default: false,
+  },
+  rowConfig: {
+    type: Object as PropType<TableProProps['rowConfig']>,
+    default: () => ({
+      keyField: 'id',
+      height: DEFAULT_LINE_HEIGTH,
+    }),
+  },
   /** tafile 内部使用勿传 */
   __uploadDataSource: {
     type: Array as PropType<FileActionUploadApiResponseRecord[]>,
@@ -177,7 +217,7 @@ export const fileTableProps = {
   /** 主要用来控制只读/立即更新模式下的query接口使用分页还是不分页，新增/编辑模式下query接口默认使用不分页 */
   modeQueryApiType: { type: String as PropType<'pager' | 'list'>, default: 'list' },
   // 控制行编辑，默认只能编辑 filename 以及 hyperlinkaddress，想编辑其他字段需自行处理
-  enabledRowEdit: { type: Boolean, default: false },
+  enabledRowEdit: { type: Boolean, default: true },
   // 控制 version 列
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
@@ -200,6 +240,12 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   // afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 afterApiQueryFile 合并为一个函数
+  beforeApiQueryFileByActualIds: {
+    type: Function as PropType<(apiParams: ApiQueryFileByActualIds) => Promise<any>>,
+  },
+  afterApiQueryFileByActualIds: {
+    type: Function as PropType<(apiResult: any) => Promise<any>>,
+  },
   beforeApiQueryFileHistory: {
     type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
   },
@@ -232,22 +278,21 @@ export const fileTableProps = {
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
 
+export type FileActualIdsObjectArray = {
+  actualId: string
+  moduleCode: string | undefined
+  versionList: FileVersionCache[]
+}[]
+
+export type FileActualIdsStringArray = string[]
+
+export type FileActualIds = FileActualIdsObjectArray | FileActualIdsStringArray
+
 export const fileTableEmits = {
   // change: (
   //   ...args: [FileActionUploadApiResponseRecord[], FileActionUploadApiResponseRecord[], string]
   // ) => args instanceof Object,
-  actualidsChange: (
-    ...args: [
-      (
-        | {
-            actualId: string
-            moduleCode: string | undefined
-            versionList: FileVersionCache[]
-          }
-        | string
-      )[]
-    ]
-  ) => args instanceof Object,
+  actualidsChange: (...args: [FileActualIds]) => args instanceof Object,
   rowEdit: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowUpdate: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowDelete: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
@@ -256,7 +301,6 @@ export const fileTableEmits = {
 export type FileTableEmits = typeof fileTableEmits
 
 export interface FileTableInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   tableProRef: Ref<ITableProInstance | undefined>
   cleanup: () => Promise<void>
   reload: (params?: FileTableReloadApiParams) => Promise<void>

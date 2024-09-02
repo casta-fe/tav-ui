@@ -15,53 +15,55 @@ import {
   type FileActionUploadApiResponseRecord,
   type GlobalConfigFileProps,
 } from '../../../typings'
-import { isModuleFullNameColVisible, isOwnerOrAdmin, isVersionColVisible } from '../../../utils'
+import { isModuleFullNameColVisible, isVersionColVisible } from '../../../utils'
 import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
 
 export function defaultColumnsBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileTableProps>,
-  tableProRef: Ref<FileTableInstance['tableProRef']['value']>,
+  mode: FileTableProps['mode'],
+  enabledRowEdit: FileTableProps['enabledRowEdit'],
+  enabledVersion: FileTableProps['enabledVersion'],
+  clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
+  clearCellTooltip: (() => void) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileTableAction[]>,
   handleCellEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>,
-  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
-  globalConfigUserInfo: Ref<Record<string, any>>
+  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
-  const clearEdit = tableProRef.value?.instance?.clearEdit
-  const mode = mergedProps.value.mode
-  const enabledVersion = mergedProps.value.enabledVersion
-  const enabledRowEdit =
-    mergedProps.value.enabledRowEdit &&
-    (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
-
   const DEFAULT_COLUMNS: FileTableColumn[] = [
     {
       title: tavI18n('Tav.file.columns.1'),
       field: 'fullName',
       fixed: 'left',
-      minWidth: 220,
-      ...(enabledRowEdit ? { editRender: {} } : {}),
+      minWidth: 180,
+      editRender: {
+        enabled: mode !== 'read' && enabledRowEdit,
+      },
       slots: {
         edit: ({ row: _row }: Record<string, any>) => {
           const row = _row as FileActionUploadApiResponseRecord
-
           return [
             <FileTableRowEditor
               row={row}
               onEnter={() => {
-                clearEdit?.()
+                clearEdit &&
+                  setTimeout(() => {
+                    clearEdit()
+                  }, 16)
+
+                clearCellTooltip?.()
               }}
               onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
                 await handleCellEditClick(payload, row)
+                clearCellTooltip?.()
               }}
             />,
           ]
         },
         default: ({ row: _row }: Record<string, any>) => {
           const row = _row as FileActionUploadApiResponseRecord
-          const res =
+          const defaultContent =
             row.hyperlink != 1
               ? [
                   // 普通文件
@@ -73,9 +75,14 @@ export function defaultColumnsBuilder(
                   <Cell column={{ field: 'fullName' }} type="body">
                     {/* // 超链接 */}
                     {/* eslint-disable-next-line no-irregular-whitespace */}
-                    <span>{row.name}</span>　
-                    <br />
+                    <div style={{ display: 'inline-block', lineHeight: 1 }}>{row.name}</div>　
                     <a
+                      style={{
+                        display: 'block',
+                        lineHeight: 1,
+                        fontSize: '12px',
+                        marginBottom: '6px',
+                      }}
                       onClick={() => {
                         window
                           .open(row.address.includes('//') ? row.address : `//${row.address}`)
@@ -92,7 +99,7 @@ export function defaultColumnsBuilder(
                   </Cell>,
                 ]
 
-          return res
+          return defaultContent
         },
       },
     },
@@ -158,18 +165,14 @@ export function defaultColumnsBuilder(
       minWidth: 120,
     },
     {
-      title: tavI18n('Tav.common.actions'),
+      title: tavI18n('Tav.common.action'),
       field: 'action',
       fixed: 'right',
-      width: 150,
+      // width: 150,
       align: 'center',
       customRender: ({ row: _row }: Record<string, any>) => {
         const row = _row as FileActionUploadApiResponseRecord
-        return (
-          <>
-            <TaTableProAction actions={actions.value(row)} />
-          </>
-        )
+        return <TaTableProAction key={row.id} actions={actions.value(row)} />
       },
     },
   ]
@@ -186,27 +189,26 @@ export function useColumns(options: {
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
-  globalConfigUserInfo: Ref<Record<string, any>>
 }) {
-  const {
-    mergedProps,
-    tableProRef,
-    actions,
-    handleCellEditClick,
-    hanldeVersionClick,
-    globalConfigUserInfo,
-  } = options
+  const { mergedProps, tableProRef, actions, handleCellEditClick, hanldeVersionClick } = options
 
   return computed(() => {
     const columns = mergedProps.value.columns
+    const clearEdit = tableProRef.value?.instance?.clearEdit ?? undefined
+    const clearCellTooltip = tableProRef.value?.instance?.clearCellTooltip ?? undefined
+    const mode = mergedProps.value.mode
+    const enabledRowEdit = mergedProps.value.enabledRowEdit
+    const enabledVersion = mergedProps.value.enabledVersion
 
     let result = defaultColumnsBuilder(
-      mergedProps,
-      tableProRef,
+      mode,
+      enabledRowEdit,
+      enabledVersion,
+      clearEdit,
+      clearCellTooltip,
       actions,
       handleCellEditClick,
-      hanldeVersionClick,
-      globalConfigUserInfo
+      hanldeVersionClick
     )
 
     if (columns && isFunction(columns)) {

@@ -83,12 +83,15 @@ export const tableProProps = {
    */
   height: {
     type: [String, Number] as PropType<VxeTablePropTypes.Height>,
-    default: '100%',
-    // default: 'auto',
+    // default: '100%',
+    default: 'auto',
   },
   /** 表格最大高度（超出自动出现 y轴 滚动条） */
   maxHeight: {
     type: [String, Number] as PropType<VxeTablePropTypes.MaxHeight>,
+  },
+  minHeight: {
+    type: [String, Number] as PropType<VxeTablePropTypes.MinHeight>,
   },
   /**
    * 表格数据（数据为响应式，在使用时建议每次变化直接赋值，与 loadData 行为一致，更新数据是不会重置状态）
@@ -247,19 +250,19 @@ export const tableProProps = {
   showOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 设置表头所有内容过长时显示为省略号 */
   showHeaderOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowHeaderOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 设置表尾所有内容过长时显示为省略号 */
   showFooterOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowFooterOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 保持原始值的状态，被某些功能所依赖，比如编辑状态、还原数据等（开启后影响性能，具体取决于数据量） */
   keepSource: {
@@ -286,9 +289,10 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.ScrollX>,
     default: () => ({
       enabled: true,
-      gt: 30,
+      gt: 20,
       /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
-      oSize: 0,
+      oSize: 10,
+      // scrollToLeftOnChange: true
     }),
   },
   /** 纵向虚拟滚动配置（不支持展开行） */
@@ -299,8 +303,8 @@ export const tableProProps = {
       mode: 'default',
       gt: 50,
       /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
-      oSize: 0,
-      scrollToTopOnChange: true,
+      oSize: 10,
+      // scrollToTopOnChange: true,
     }),
   },
   //:==================================================: 全局设置 :==================================================://

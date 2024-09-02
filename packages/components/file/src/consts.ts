@@ -86,13 +86,13 @@ export const DEFAULT_APIPARAM_PERMISSIONCONTROL = {
 export const DEFAULT_APIPARAM_BUSINESSCHECK = {
   businessCheck: true,
 }
-/** apiparams 默认的 includeStaging */
-export const DEFAULT_APIPARAM_INCLUDESTAGING = {
-  includeStaging: false,
+/** apiparams 默认的 excludeStaging */
+export const DEFAULT_APIPARAM_EXCLUDESTAGING = {
+  excludeStaging: false,
 }
 export const DEFAULT_APIPARAMS = {
   ...DEFAULT_APIPARAM_BUSINESSPARAMSJSON,
   ...DEFAULT_APIPARAM_PERMISSIONCONTROL,
   ...DEFAULT_APIPARAM_BUSINESSCHECK,
-  ...DEFAULT_APIPARAM_INCLUDESTAGING,
+  // ...DEFAULT_APIPARAM_EXCLUDESTAGING,
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, nextTick, onBeforeUnmount, ref, useSlots /* useAttrs*/, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref, watch, useSlots /* useAttrs*/ } from 'vue'
 import { Upload as AUpload, type UploadProps as AUploadProps } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -30,7 +30,6 @@ import {
 import { useFileList, useMode } from './hooks'
 import {
   type FileActionUploadEmits,
-  type FileActionUploadInstance,
   type FileActionUploadProps,
   fileActionUploadEmits,
   fileActionUploadProps,
@@ -43,7 +42,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileActionUploadInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const props = defineProps(fileActionUploadProps)
 const emits = defineEmits(fileActionUploadEmits)
 const slots = useSlots()
@@ -94,11 +93,7 @@ const {
 watch(
   () => JSON.stringify(apiResult.value),
   (curapiResult, preapiResult) => {
-    if (
-      curapiResult &&
-      curapiResult !== preapiResult
-      // && !curapiResult.includes('__id') // manual fixed vxetable bug
-    ) {
+    if (curapiResult && curapiResult !== preapiResult) {
       emits('uploadedChange', JSON.parse(JSON.stringify(apiResult.value)))
     }
   }
@@ -206,19 +201,18 @@ function beforeHandleApiAction2(...args: ArgumentsOf<AUploadProps['beforeUpload'
  * @param _
  */
 async function beforeHandleApiAction3() {
-  if (
-    !(
-      handleFilesValidate(fileList.value) &&
-      fileList.value.length > 0 &&
-      !canUploadUnifiedFileList.value
-    )
-  ) {
+  // 未选中文件或有正在上传文件则返回
+  if (fileList.value.length === 0 || canUploadUnifiedFileList.value) {
+    return
+  }
+
+  if (!handleFilesValidate(fileList.value)) {
     resetFileList()
     emits('validateFailureChange', fileList.value)
     return
   }
-  emits('validateSuccessChange', fileList.value)
 
+  emits('validateSuccessChange', fileList.value)
   canUploadUnifiedFileList.value = true
 
   if (mergedProps.value.beforeUpload) {
@@ -228,6 +222,7 @@ async function beforeHandleApiAction3() {
     )
     if (!beforeUploadResult) {
       resetFileList()
+      emits('validateFailureChange', fileList.value)
       return
     }
   }
@@ -249,7 +244,9 @@ async function beforeHandleApiAction3() {
     resetFileList()
     return
   }
+
   await handleApi(options)
+  resetFileList()
 }
 
 function handleChange(...args: ArgumentsOf<FileActionUploadEmits['change']>) {
@@ -283,7 +280,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   openFilePicker,
   cleanup,
 })
@@ -300,7 +296,7 @@ defineExpose({
       <AUpload
         ref="AUploadRef"
         :file-list="[]"
-        :accpet="mergedProps.accept"
+        :accept="mergedProps.accept"
         :multiple="mergedProps.updateFile ? false : mergedProps.multiple"
         :max-count="mergedProps.maxCount"
         :show-upload-list="false"

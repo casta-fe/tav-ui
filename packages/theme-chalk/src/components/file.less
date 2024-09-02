@@ -40,7 +40,12 @@
   &-file-actions {
     section + section {
       .ant-btn {
-        border-left: 0;
+        border-left: 1px solid transparent;
+
+        &:hover, &:focus {
+          border-left: 1px solid #4f8dff;
+          z-index: 1;
+        }
       }
     }
   }
@@ -60,6 +65,10 @@
     // .vxe-grid {
     //   height: 100%;
     // }
+
+    .vxe-header--column .vxe-cell--edit-icon, .vxe-header--column .vxe-cell-title-prefix-icon, .vxe-header--column .vxe-cell-title-suffix-icon {
+      margin-top: .1em;
+    }
 
     .ta-file-action-upload {
       position: absolute;
@@ -128,6 +137,10 @@
 
       .scroll-container {
         padding-bottom: 32px !important;
+      }
+
+      .ant-modal-title {
+        width: calc(100% - 50px);
       }
 
       &-body {
@@ -354,6 +367,10 @@
     &-modal {
       .scrollbar__view > div {
         position: relative;
+      }
+
+      .ant-modal-title {
+        width: calc(100% - 50px);
       }
 
       &-body {

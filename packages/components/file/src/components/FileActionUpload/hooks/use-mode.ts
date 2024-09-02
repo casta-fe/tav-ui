@@ -1,4 +1,4 @@
-import { type ComponentInternalInstance, type ComputedRef, unref } from 'vue'
+import { type ComputedRef, unref } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
 import {
   type FileActionUploadApiResponseRecord,
@@ -7,6 +7,7 @@ import {
 import { type FileActionUploadProps } from '../types'
 // import { type FileActionUploadHandleApiOptions } from './use-request'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
+import { validateVersionCachesHasApiFile } from '../../../utils'
 
 export function useMode(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileActionUploadProps>
@@ -31,6 +32,7 @@ export function useMode(options: {
       api: mergedProps.value.apiUploadFile,
       beforeApi: mergedProps.value.beforeApiUploadFile,
       afterApi: mergedProps.value.afterApiUploadFile,
+      catchError: mergedProps.value.catchApiUploadFileError,
       apiParams: {
         appId: apiParams.appId,
         files: unref(files),
@@ -83,7 +85,11 @@ export function useMode(options: {
   function updateApiOptions(
     apiParams: FileActionUploadProps['apiParams'],
     files: File[],
-    row: FileActionUploadApiResponseRecord | undefined,
+    row:
+      | (FileActionUploadApiResponseRecord & {
+          cache: FileActionUploadApiResponseRecord[] | undefined
+        })
+      | undefined,
     callback: () => void
   ) {
     if (!mergedProps.value.apiUpdateFile) {
@@ -101,8 +107,8 @@ export function useMode(options: {
       apiParams: {
         appId: apiParams.appId,
         files: unref(files),
-        moduleCode: apiParams.moduleCode,
-        typeCode: apiParams.typeCode,
+        moduleCode: row?.moduleCode ?? apiParams.moduleCode,
+        typeCode: row?.typeCode ?? apiParams.typeCode,
         businessParamsJson: apiParams.businessParamsJson,
       },
       transformApiParamsToFormData: {
@@ -117,15 +123,13 @@ export function useMode(options: {
       },
       callback,
     }
-    // 是否为手动上传的文件数据，而非从 api 返回的数据
-    const isManualUploadRow = row?.version === 1 && !(row.businessId || row.businessKey)
 
     if (mergedProps.value.mode === 'read') {
       //
     } else if (mergedProps.value.mode === 'create') {
       //
     } else if (mergedProps.value.mode === 'update') {
-      if (!isManualUploadRow) {
+      if (validateVersionCachesHasApiFile(row?.cache)) {
         options['transformApiParamsToFormData'] = undefined
         options['api'] = mergedProps.value.apiUpdateFile as any
         options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
@@ -160,24 +164,10 @@ export function useMode(options: {
   }
   //:========================================: api actions :========================================://
 
-  //:========================================: validate actions :========================================://
-  function withValidateTypeCode(instance: ComponentInternalInstance | null) {
-    const parentEl = instance?.proxy?.$el?.parentElement
-    if (parentEl && parentEl.classList.contains('ta-file-table')) {
-      // filetable 下的 actionupload 不对 typecode 校验
-      return false
-    }
-    return true
-  }
-  //:========================================: validate actions :========================================://
-
   return {
     apiActions: {
       uploadApiOptions,
       updateApiOptions,
-    },
-    validateActions: {
-      withValidateTypeCode,
     },
   }
 }

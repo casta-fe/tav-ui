@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import {
-  type UnwrapRef,
-  Teleport,
-  ref,
-  watch,
-  onMounted,
-  onBeforeUnmount /*useSlots, useAttrs*/,
-} from 'vue'
+import { onMounted, onBeforeUnmount, ref, Teleport, watch /*useSlots, useAttrs*/ } from 'vue'
+import { Tooltip } from 'ant-design-vue'
 import { TaButton } from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -31,7 +25,6 @@ import {
 import { validateUploadFileTypeCode } from '../../utils'
 import { useMode } from './hooks'
 import {
-  type FileActionUploadLinkInstance,
   type FileActionUploadLinkProps,
   fileActionUploadLinkEmits,
   fileActionUploadLinkProps,
@@ -42,7 +35,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileActionUploadLinkInstance['elRef']>>()
+const elRef = ref<HTMLDivElement>()
 const formRef = ref()
 const props = defineProps(fileActionUploadLinkProps)
 const emits = defineEmits(fileActionUploadLinkEmits)
@@ -78,7 +71,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       label: tavI18n('Tav.file.columns.1'),
       required: true,
       component: 'Input',
-      colProps: { span: 11 },
+      colProps: { span: 10 },
       componentProps: {
         maxLength: 100,
       },
@@ -87,7 +80,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       field: 'address',
       label: tavI18n('Tav.file.columns.9'),
       component: 'Input',
-      colProps: { span: 11 },
+      colProps: { span: 10 },
       rules: [
         {
           required: true,
@@ -106,7 +99,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       label: '　',
       component: 'Input',
       slot: 'submitBtn',
-      colProps: { span: 2 },
+      colProps: { span: 3 },
     },
   ],
 })
@@ -147,11 +140,7 @@ const {
 watch(
   () => JSON.stringify(apiResult.value),
   async (curapiResult, preapiResult) => {
-    if (
-      curapiResult &&
-      curapiResult !== preapiResult
-      // && !curapiResult.includes('__id') // manual fixed vxetable bug
-    ) {
+    if (curapiResult && curapiResult !== preapiResult) {
       emits('uploadedChange', JSON.parse(JSON.stringify(apiResult.value)))
 
       if (!apiError.value) {
@@ -234,7 +223,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   cleanup,
 })
 </script>
@@ -282,15 +270,37 @@ defineExpose({
               @register="formRegister"
             >
               <template #submitBtn>
-                <TaButton
-                  :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn`"
-                  :loading="loading"
-                  :disabled="disable"
-                  @click="handleFormSubmitClick"
-                >
-                  <i :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn-icon`" />
-                  {{ tavI18n('Tav.file.upload.3') }}
-                </TaButton>
+                <Tooltip placement="top">
+                  <template #title>
+                    <span>
+                      <i
+                        :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn-icon`"
+                      />
+                      {{ tavI18n('Tav.file.upload.3') }}
+                    </span>
+                  </template>
+                  <TaButton
+                    :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn`"
+                    :loading="loading"
+                    :disabled="disable"
+                    style="display: flex; align-items: center; width: 100%"
+                    @click="handleFormSubmitClick"
+                  >
+                    <span
+                      style="
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                      "
+                    >
+                      <i
+                        :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn-icon`"
+                      />
+                      {{ tavI18n('Tav.file.upload.3') }}
+                    </span>
+                  </TaButton>
+                </Tooltip>
               </template>
             </TaForm>
           </section>

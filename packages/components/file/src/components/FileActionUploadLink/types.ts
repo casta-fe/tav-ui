@@ -1,4 +1,4 @@
-import { type ExtractPropTypes, type PropType, type Ref } from 'vue'
+import { type ExtractPropTypes, type PropType } from 'vue'
 import { isBoolean } from '@tav-ui/utils'
 import { DEFAULT_APIPARAM_BUSINESSPARAMSJSON, DEFAULT_FILE_MODE } from '../../consts'
 import {
@@ -78,6 +78,5 @@ export const fileActionUploadLinkEmits = {
 export type FileActionUploadLinkEmits = typeof fileActionUploadLinkEmits
 
 export interface FileActionUploadLinkInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   cleanup(): Promise<void>
 }
