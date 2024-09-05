@@ -1,6 +1,7 @@
 import { type ComputedRef, type Ref, type SetupContext, onMounted, watch } from 'vue'
 import {
   type FileActionUploadApiResponseRecord,
+  type FileActualIdsObjectArray,
   type GlobalConfigFileProps,
 } from '../../../typings'
 import {
@@ -8,12 +9,7 @@ import {
   validateVersionCachesHasApiFile,
   validateVersionCachesHasLocalFile,
 } from '../../../utils'
-import {
-  type FileActualIdsObjectArray,
-  type FileTableEmits,
-  type FileTableProps,
-  type FileTableReloadApiParams,
-} from '../types'
+import { type FileTableEmits, type FileTableProps, type FileTableReloadApiParams } from '../types'
 import { type VersionCaches } from './../../../hooks'
 import { type UseTableActionsReturn } from './use-table-actions'
 

@@ -64,7 +64,9 @@ export class VersionCaches {
     if (mode === 'update' || mode === 'updateInstantly') {
       files.forEach((_file) => {
         const file = this.serialize(_file)
-        this.caches[file.actualId!] = [file]
+        if (!this.caches[file.actualId!]) {
+          this.caches[file.actualId!] = [file]
+        }
       })
     }
   }

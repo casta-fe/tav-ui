@@ -37,6 +37,8 @@ export const DEFAULT_ROWEDITOR_CLASSNAME = ns.b('table-row-editor')
 export const DEFAULT_ROWEDITOR_ID = createId(DEFAULT_ROWEDITOR_CLASSNAME)
 export const DEFAULT_FILECARDS_CLASSNAME = ns.b('cards')
 export const DEFAULT_FILECARDS_ID = createId(DEFAULT_FILECARDS_CLASSNAME)
+export const DEFAULT_CARD_ROWEDITOR_CLASSNAME = ns.b('card-row-editor')
+export const DEFAULT_CARD_ROWEDITOR_ID = createId(DEFAULT_CARD_ROWEDITOR_CLASSNAME)
 
 export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
 export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']

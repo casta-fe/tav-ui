@@ -99,6 +99,10 @@ export const globalConfigFileProps = {
     apiQueryFileByActualIds: {
       type: Function as PropType<(params: ApiQueryFileByActualIds) => Promise<any>>,
     },
+    /** 筛选项 */
+    apiQueryFilterFormFileType: {
+      type: Function as PropType<(params: ApiQueryFilterFormFileTypeParams) => Promise<any>>,
+    },
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {
       type: Function as PropType<(params: ApiQueryFileHistoryParams) => Promise<any>>,
@@ -121,9 +125,6 @@ export const globalConfigFileProps = {
     /** 下载水印文件接口，传入 downloadToWatermark */
     apiDownloadWaterMarkerFile: {
       type: Function as PropType<(params: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
-    },
-    apiQueryFilterFormFileType: {
-      type: Function as PropType<(params: ApiQueryFilterFormFileTypeParams) => Promise<any>>,
     },
     //:============================== FILE CRUD API ==============================://
   },
@@ -179,23 +180,28 @@ export const globalConfigFileProps = {
     apiUploadFile: {
       type: Function as PropType<(params: ApiUploadFileParams) => Promise<any>>,
     },
-    /** 查询文件接口，传入 queryfile 分页 */
-    apiQueryFile: {
-      type: Function as PropType<
-        (params: {
-          filter: ApiQueryFileParams
-          model: {
-            dir?: string
-            limit?: number
-            page?: number
-            sort?: string
-          }
-        }) => Promise<any>
-      >,
-    },
+    // 查询文件接口，apiReadFile
+    // /** 查询文件接口，传入 queryfile 分页 */
+    // apiQueryFile: {
+    //   type: Function as PropType<
+    //     (params: {
+    //       filter: ApiQueryFileParams
+    //       model: {
+    //         dir?: string
+    //         limit?: number
+    //         page?: number
+    //         sort?: string
+    //       }
+    //     }) => Promise<any>
+    //   >,
+    // },
     /** 查询文件接口，传入 queryfilelist 不分页 */
     apiQueryFileList: {
       type: Function as PropType<(params: ApiQueryFileListParams) => Promise<any>>,
+    },
+    /** 查询文件接口 */
+    apiQueryFileByActualIds: {
+      type: Function as PropType<(params: ApiQueryFileByActualIds) => Promise<any>>,
     },
     /** 查询历史文件接口，传入 queryHistoryFileByFileActualIds */
     apiQueryFileHistory: {

@@ -1,37 +1,35 @@
 <script setup lang="ts">
 import {
-  type UnwrapRef,
   computed,
   onBeforeUnmount,
   onMounted,
   ref,
+  watch,
   /*useSlots, useAttrs*/
 } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
-import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_APIPARAMS, DEFAULT_FILECARDS_CLASSNAME, DEFAULT_FILECARDS_ID } from '../consts'
 import { useDisable, useGlobalConfigProps, useLoading, useMergedProps, useRequest } from '../hooks'
 import {
   type FileActionUploadApiResponseRecord,
   type FileTypeSelectApiResponseRecord,
 } from '../typings'
-import { type FileCardInstance, type FileCardProps, TaFileCard } from '../FileCard'
 import {
-  type FileCardsInstance,
+  type FileCardEmits,
+  type FileCardInstance,
+  type FileCardProps,
+  TaFileCard,
+} from '../FileCard'
+import { type ArgumentsOf } from '../utils'
+import {
+  type FileCardsCatagory,
   type FileCardsProps,
   fileCardsEmits,
   fileCardsProps,
 } from './types'
 import { useMode } from './hooks'
 
-interface Catagory {
-  label: FileCardProps['label']
-  value: FileCardProps['value']
-  dataSource: FileCardProps['dataSource']
-}
-
-const { createMessage } = useMessage()
 const EmptyImage = Empty.PRESENTED_IMAGE_SIMPLE
 
 defineOptions({
@@ -39,7 +37,6 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileCardsInstance['elRef']>>()
 const props = defineProps(fileCardsProps)
 const emits = defineEmits(fileCardsEmits)
 // const slots = useSlots()
@@ -50,6 +47,10 @@ const globalConfigProps = useGlobalConfigProps()
 const mergedProps = useMergedProps<FileCardsProps>(globalConfigProps, props, 'TaFileCards', {
   ...DEFAULT_APIPARAMS,
 })
+
+const fileActualIdsValueMap = ref<{ [key: string]: ArgumentsOf<FileCardEmits['actualidsChange']> }>(
+  {}
+)
 
 // 统一内部 loading 状态
 const _loading = ref(mergedProps.value.loading)
@@ -79,9 +80,9 @@ const {
   loading,
 })
 
-const fileCardRefs: FileCardInstance[] = []
-function handleFileCardRefs(fileCardRef?: FileCardInstance) {
-  if (fileCardRef) fileCardRefs.push(fileCardRef)
+const fileCardRefs: { [key: string]: FileCardInstance } = {}
+function handleFileCardRefs(fileCardValue: string, fileCardRef?: FileCardInstance) {
+  if (fileCardRef) fileCardRefs[fileCardValue] = fileCardRef
 }
 
 async function useFileTypeSelectCatgory() {
@@ -114,42 +115,54 @@ async function useFileListCatgory() {
   return ApiResult.value as FileActionUploadApiResponseRecord[]
 }
 
-// TODO:
-// 1. 取出 apiparams typecodes，请求 queryfiletype
-// 2. 将传入值与响应值做匹配非只读模式下响应值与传入值长度、内容不符合直接报错
-// 3. 用响应值分类
-// 4. 带着响应值请求 queryfilelist 手动分类数据 Record<string, FileActionUploadApiResponseRecord[]>
-const catagories = ref<Catagory[]>()
+const catagories = ref<FileCardsCatagory[]>()
 /** 这里只做初始化分类，后续的更新与合并在 fileCardProps 中 */
 async function catagory() {
-  if (mergedProps.value.immediate) {
+  // 因为 filecard 的 label 和 value 必传所以这里只需要判断 datasurce 即可
+  const hasDatasources = mergedProps.value.fileCard
+    ? mergedProps.value.fileCard.filter(
+        (fileCard) => fileCard.dataSource && fileCard.dataSource.length > 0
+      ).length === mergedProps.value.fileCard.length
+    : false
+
+  function createDefaultCatagoriesValue() {
+    return (
+      mergedProps.value.fileCard?.map((fileCard) => {
+        if (fileCard.value && !fileActualIdsValueMap.value[fileCard.value]) {
+          fileActualIdsValueMap.value[fileCard.value] = [] as any
+        }
+        return {
+          label: fileCard.label,
+          value: fileCard.value,
+          dataSource: fileCard.dataSource ?? [],
+        }
+      }) ?? []
+    )
+  }
+
+  if (!hasDatasources && mergedProps.value.immediate) {
+    // 传入 immediate 时只使用接口构造数据，并且不考虑合并 datasource
     const fileTypes = await useFileTypeSelectCatgory()
     const files = await useFileListCatgory()
-
     catagories.value = fileTypes?.map((fileType) => {
+      if (fileType.code && !fileActualIdsValueMap.value[fileType.code]) {
+        fileActualIdsValueMap.value[fileType.code] = [] as any
+      }
+
       const currentTypeFiles = files?.filter((file) => file.typeCode === fileType.code) ?? []
-      // const fileCardDataSource =
-      //   mergedProps.value.fileCard?.find((fileCard) => fileCard.value === fileType.code)
-      //     ?.dataSource ?? []
       return {
         label: fileType.name,
         value: fileType.code,
-        // dataSource: [...fileCardDataSource, ...currentTypeFiles],
         dataSource: [...currentTypeFiles],
+        __dataSourceFromCards: true,
       }
     })
   } else {
-    catagories.value =
-      mergedProps.value.fileCard?.map((fileCard) => ({
-        label: fileCard.label,
-        value: fileCard.value,
-        // dataSource: fileCard.dataSource,
-        dataSource: [],
-      })) ?? []
+    catagories.value = createDefaultCatagoriesValue()
   }
 }
 
-const fileCardProps = computed(() => (_catagory: Catagory, idx: number) => {
+const fileCardProps = computed(() => (_catagory: FileCardsCatagory) => {
   // 使用分类中的 typecode 找到传入的 filecard
   const targetFileCard =
     mergedProps.value.fileCard?.find((fileCard) => fileCard.value === _catagory.value) ??
@@ -158,8 +171,21 @@ const fileCardProps = computed(() => (_catagory: Catagory, idx: number) => {
   // 对传入的 filecard 与初始化分类数据进行合并
   const mergedCatagory = {
     ..._catagory,
-    ...(mergedProps.value.fileCard?.[idx] ?? {}),
-    dataSource: [...(targetFileCard?.dataSource ?? []), ...(_catagory?.dataSource ?? [])],
+    autoValidate: mergedProps.value.autoValidate,
+    ...targetFileCard,
+    dataSource: [
+      ...(mergedProps.value.immediate
+        ? _catagory?.dataSource ?? []
+        : targetFileCard?.dataSource ?? []),
+    ],
+    fileActionUpload: {
+      ...(mergedProps.value.fileActionUpload ?? {}),
+      ...(targetFileCard.fileActionUpload ?? {}),
+    },
+    fileActionUploadLink: {
+      ...(mergedProps.value.fileActionUploadLink ?? {}),
+      ...(targetFileCard.fileActionUploadLink ?? {}),
+    },
   }
   return {
     ...mergedCatagory,
@@ -168,10 +194,26 @@ const fileCardProps = computed(() => (_catagory: Catagory, idx: number) => {
       //@ts-ignore
       typeCode: mergedCatagory.value!,
       ...mergedProps.value.apiParams,
-      ...(mergedProps.value.fileCard?.[idx]?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
+      ...(targetFileCard.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
     },
   }
 })
+
+function handleFileCardActualidsChange(...args: [FileCardProps['value'], any]) {
+  const [value, _args] = args as unknown as [
+    FileCardProps['value'],
+    ArgumentsOf<FileCardEmits['actualidsChange']>
+  ]
+  fileActualIdsValueMap.value = { ...fileActualIdsValueMap.value, [value!]: _args }
+  const fileActualIdsValue: { [key: string]: ArgumentsOf<FileCardEmits['actualidsChange']> } =
+    JSON.parse(JSON.stringify(fileActualIdsValueMap.value))
+
+  const result = [] as any[]
+  for (const fileActualIds of Object.values(fileActualIdsValue)) {
+    result.push(...fileActualIds)
+  }
+  emits('update:fileActualIds', result)
+}
 
 onMounted(async () => {
   await catagory()
@@ -179,56 +221,88 @@ onMounted(async () => {
 
 // 清空状态
 async function cleanup() {
-  const fileCardCleanupPromises = fileCardRefs.map(
+  const fileCardCleanupPromises = Object.values(fileCardRefs).map(
     // eslint-disable-next-line no-return-await
     async (fileCardRef) => await fileCardRef.cleanup()
   )
   await Promise.all(fileCardCleanupPromises)
 }
 
-// // mode 变化置空状态
-// watch(
-//   () => mergedProps.value.mode,
-//   async () => {
-//     cleanup()
-//     // if (mergedProps.value.immediate && modalVisible.value) {
-//     //   loading.value.value = true
-//     //   await useModeFetchDataSource()
-//     //   setTimeout(() => {
-//     //     loading.value.value = false
-//     //   }, 150)
-//     // }
-//   }
-// )
-// // apiparams 变化重新请求
-// watch(
-//   () => JSON.stringify(mergedProps.value.apiParams),
-//   async (curApiParams, preApiParams) => {
-//     if (curApiParams && curApiParams !== preApiParams) {
-//       // if (mergedProps.value.immediate && modalVisible.value) {
-//       //   loading.value.value = true
-//       //   await useModeFetchDataSource()
-//       //   setTimeout(() => {
-//       //     loading.value.value = false
-//       //   }, 150)
-//       // }
-//     }
-//   }
-// )
+// mode 变化
+watch(
+  () => mergedProps.value.mode,
+  async () => {
+    // if(mergedProps.value.visible) {}
+    await cleanup()
+    loading.value.value = true
+    await catagory()
+    loading.value.value = false
+  }
+)
+
+// apiparams 变化重新请求
+watch(
+  () => JSON.stringify(mergedProps.value.apiParams),
+  async (curApiParams, preApiParams) => {
+    if (curApiParams && curApiParams !== preApiParams) {
+      if (mergedProps.value.immediate) {
+        const curTSAO = typeSelectApiOptions(mergedProps.value.apiParams)
+        if (!curTSAO) return
+        const preTSAO = typeSelectApiOptions(JSON.parse(preApiParams))
+        if (!preTSAO) return
+        const curQFLO = apiQueryFileListOptions(mergedProps.value.apiParams)
+        if (!curQFLO) return
+        const preQFLO = apiQueryFileListOptions(JSON.parse(preApiParams))
+        if (!preQFLO) return
+        if (curApiParams !== preApiParams && curTSAO !== preTSAO && curQFLO !== preQFLO) {
+          loading.value.value = true
+          await catagory()
+          loading.value.value = false
+        }
+      }
+    }
+  }
+)
 
 onBeforeUnmount(async () => {
   await cleanup()
 })
 
 defineExpose({
-  elRef,
   cleanup,
+  getDataSource: (cardPropValue?: string) => {
+    if (!cardPropValue) {
+      return Object.values(fileCardRefs).map((fileCardRef) => fileCardRef.getDataSource())
+    } else {
+      return fileCardRefs[cardPropValue].getDataSource()
+    }
+  },
+  validate: async (cardPropValue?: string) => {
+    if (!cardPropValue) {
+      const promises = Object.values(fileCardRefs).map(
+        // eslint-disable-next-line no-return-await
+        async (fileCardRef) => await fileCardRef.validate()
+      )
+      // eslint-disable-next-line no-return-await
+      return await Promise.all(promises)
+    } else {
+      // eslint-disable-next-line no-return-await
+      return await fileCardRefs[cardPropValue].validate()
+    }
+  },
+  clearValidate: (cardPropValue?: string) => {
+    if (!cardPropValue) {
+      return Object.values(fileCardRefs).map((fileCardRef) => fileCardRef.clearValidate())
+    } else {
+      return fileCardRefs[cardPropValue].clearValidate()
+    }
+  },
 })
 </script>
 
 <template>
   <template v-if="mergedProps.visible">
-    <section :id="DEFAULT_FILECARDS_ID" ref="elRef" :class="DEFAULT_FILECARDS_CLASSNAME">
+    <section :id="DEFAULT_FILECARDS_ID" :class="DEFAULT_FILECARDS_CLASSNAME">
       <!-- <section :class="`${DEFAULT_FILECARDS_CLASSNAME}-header`"></section> -->
       <section :class="`${DEFAULT_FILECARDS_CLASSNAME}-main`">
         <Spin :spinning="loading.value" :tip="tavI18n('Tav.common.loadingText')">
@@ -241,8 +315,9 @@ defineExpose({
             <TaFileCard
               v-for="(item, idx) in catagories"
               :key="`${item.value}-${idx}`"
-              v-bind="fileCardProps(item, idx)"
-              :ref="handleFileCardRefs"
+              v-bind="fileCardProps(item)"
+              :ref="(instance: any) => handleFileCardRefs(item.value, instance)"
+              @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
             />
           </template>
         </Spin>

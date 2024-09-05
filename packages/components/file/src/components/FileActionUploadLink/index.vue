@@ -99,7 +99,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       label: '　',
       component: 'Input',
       slot: 'submitBtn',
-      colProps: { span: 3 },
+      colProps: { span: 4 },
     },
   ],
 })
@@ -283,7 +283,7 @@ defineExpose({
                     :class="`${DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME}-form-submit-btn`"
                     :loading="loading"
                     :disabled="disable"
-                    style="display: flex; align-items: center; width: 100%"
+                    style="display: flex; align-items: center; width: 100%; min-width: auto"
                     @click="handleFormSubmitClick"
                   >
                     <span

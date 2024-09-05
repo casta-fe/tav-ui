@@ -1,3 +1,15 @@
+import { type FileVersionCache } from '../hooks'
+
+export type FileActualIdsObjectArray = {
+  actualId: string
+  moduleCode: string | undefined
+  versionList: FileVersionCache[]
+}[]
+
+export type FileActualIdsStringArray = string[]
+
+export type FileActualIds = FileActualIdsObjectArray | FileActualIdsStringArray
+
 export interface FileActionUploadApiResponseRecord {
   /** @description 文件的实际id，根据此id和版本定位最新文件，非必传 */
   actualId?: string

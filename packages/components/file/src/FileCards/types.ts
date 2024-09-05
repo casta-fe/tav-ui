@@ -1,30 +1,36 @@
+import { type ExtractPropTypes, type PropType } from 'vue'
+import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../consts'
 import {
-  type ExtractPropTypes,
-  type PropType,
-  type Ref,
-  type SetupContext,
-  type UnwrapRef,
-} from 'vue'
-import { DEFAULT_APIPARAMS, DEFAULT_FILE_IGNORE_TYPES, DEFAULT_FILE_MODE } from '../consts'
-import {
-  type ApiParams,
   type FileActionUploadApiResponseRecord,
   type FileMode,
   type FileTypeSelectApiResponseRecord,
   type GlobalConfigFileProps,
   globalConfigFileProps,
 } from '../typings'
-import { type Arrayable } from '../utils'
+import { type ArgumentsOf } from '../utils'
 import { type ApiQueryFileTypeParams } from '../components/FileTypeSelect'
 import { type ApiQueryFileListParams } from '../components/FileTable'
-import { type FileCardContext, type FileCardPropKey, type FileCardProps } from '../FileCard'
-import type { MaybeRef } from '@vueuse/core'
+import { type FileCardEmits, type FileCardProps } from '../FileCard'
+import {
+  type FileActionUploadEmits,
+  type FileActionUploadProps,
+} from '../components/FileActionUpload'
+import {
+  type FileActionUploadLinkEmits,
+  type FileActionUploadLinkProps,
+} from '../components/FileActionUploadLink'
 
 // 组件所需的所有 api 参数
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FileCardsApiParams
   extends ApiQueryFileTypeParams,
     Omit<ApiQueryFileListParams, 'moduleCode'> {}
+
+export interface FileCardsCatagory {
+  label: FileCardProps['label']
+  value: FileCardProps['value']
+  dataSource: FileCardProps['dataSource']
+}
 
 export const fileCardsProps = {
   //:============================== extend props ==============================://
@@ -49,28 +55,20 @@ export const fileCardsProps = {
     type: Boolean,
     default: false,
   },
-  // /**
-  //  * @description Validation rules of form.
-  //  */
-  // rules: {
-  //   type: Object,
-  // },
-  /**
-   * @description Whether to show the error message.
-   */
-  showMessage: {
+  // 统一控制
+  autoValidate: {
     type: Boolean,
     default: true,
   },
-  /**
-   * @description When validation fails, scroll to the first error form entry.
-   */
-  scrollToError: Boolean,
-  /**
-   * @description When validation fails, it scrolls to the first error item based on the scrollIntoView option.
-   */
-  scrollIntoViewOptions: {
-    type: [Object, Boolean],
+  /** FileActionUpload Props */
+  fileActionUpload: {
+    type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,
+  },
+  /** FileActionUploadLink Props */
+  fileActionUploadLink: {
+    type: Object as PropType<
+      FileActionUploadLinkProps & GlobalConfigFileProps['TaFileActionUploadLink']
+    >,
   },
   /** FileCard Props */
   fileCard: {
@@ -95,26 +93,46 @@ export const fileCardsProps = {
 export type FileCardsProps = ExtractPropTypes<typeof fileCardsProps>
 
 export const fileCardsEmits = {
-  open: () => true,
-  close: () => true,
+  // change: (...args: ArgumentsOf<FileCardEmits['change']>) => args instanceof Object,
+  'update:fileActualIds': (...args: ArgumentsOf<FileCardEmits['actualidsChange']>) =>
+    args instanceof Object,
+
+  // 'fileTypeSelect:change': (...args: ArgumentsOf<FileTypeSelectEmits['change']>) =>
+  //   args instanceof Object,
+  // 'fileTypeSelect:optionsChange': (...args: ArgumentsOf<FileTypeSelectEmits['optionsChange']>) =>
+  //   args instanceof Object,
+
+  'fileActionUpload:validateSuccessChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['validateSuccessChange']>
+  ) => args instanceof Object,
+  'fileActionUpload:validateFailureChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['validateFailureChange']>
+  ) => args instanceof Object,
+  'fileActionUpload:uploadedChange': (
+    ...args: ArgumentsOf<FileActionUploadEmits['uploadedChange']>
+  ) => args instanceof Object,
+  'fileActionUploadLink:validateSuccessChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateSuccessChange']>
+  ) => args instanceof Object,
+  'fileActionUploadLink:validateFailureChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateFailureChange']>
+  ) => args instanceof Object,
+  'fileActionUploadLink:uploadedChange': (
+    ...args: ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
+  ) => args instanceof Object,
+
+  'fileCard:rowEdit': (...args: ArgumentsOf<FileCardEmits['rowEdit']>) => args instanceof Object,
+  'fileCard:rowUpdate': (...args: ArgumentsOf<FileCardEmits['rowUpdate']>) =>
+    args instanceof Object,
+  'fileCard:rowDelete': (...args: ArgumentsOf<FileCardEmits['rowDelete']>) =>
+    args instanceof Object,
 }
 
 export type FileCardsEmits = typeof fileCardsEmits
 
 export interface FileCardsInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   cleanup(): void
-}
-
-export interface FileCardsContext extends FileCardsProps {
-  emit: SetupContext<FileCardsEmits>['emit']
-  getCard: (propKey: string) => FileCardContext | undefined
-  addCard: (card: FileCardContext) => void
-  removeCard: (card: FileCardContext) => void
-  resetCards: (propKeys?: Arrayable<FileCardPropKey>) => void
-  clearValidate: (propKeys?: Arrayable<FileCardPropKey>) => void
-  validateCard: (
-    propKeys?: Arrayable<FileCardPropKey>,
-    callback?: (isValid: boolean, invalidFields?: any) => Promise<void> | void
-  ) => Promise<boolean>
+  getDataSource: (cardPropValue?: string) => FileActionUploadApiResponseRecord[]
+  validate: (cardPropValue?: string) => Promise<any>
+  clearValidate: (cardPropValue?: string) => void
 }

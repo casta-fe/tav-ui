@@ -8,7 +8,7 @@ import { type ApiUpdateFileNameAndLinkParams } from '../../components/FileTable'
 import { type FileCardListItem, type FileCardListItemAction, type FileCardProps } from '../types'
 import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
 import { /*isModuleFullNameColVisible,*/ isOwnerOrAdmin, isVersionColVisible } from '../../utils'
-// import FileTableRowEditor from '../components/FileTableRowEditor/index.vue'
+import FileCardRowEditor from '../components/FileCardRowEditor/index.vue'
 import * as fileSvgs from '../file-svg'
 import {
   DEFAULT_FILE_ACCEPT_TYPES,
@@ -18,21 +18,18 @@ import {
 import TaFileListItemAction from '../components/ListItemAction'
 
 export function defaultItemsBuilder(
-  mergedProps: ComputedRef<GlobalConfigFileProps & FileCardProps>,
+  mode: FileCardProps['mode'],
+  enabledRowEdit: FileCardProps['enabledRowEdit'],
+  enabledVersion: FileCardProps['enabledVersion'],
+  // clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
+  // clearCellTooltip: (() => void) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileCardListItemAction[]>,
-  handleCellEditClick: (
+  handleRowEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>,
-  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
-  globalConfigUserInfo: Ref<Record<string, any>>
+  hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
 ) {
-  // const mode = mergedProps.value.mode
-  const enabledVersion = mergedProps.value.enabledVersion
-  const enabledRowEdit =
-    mergedProps.value.enabledRowEdit &&
-    (mergedProps.value.enabledOwner ? isOwnerOrAdmin(globalConfigUserInfo.value) : true)
-
   const DEFAULT_COLUMNS: FileCardListItem[] = [
     {
       field: 'avator',
@@ -69,7 +66,7 @@ export function defaultItemsBuilder(
             }
           }
 
-          return <>{svg(row.suffix)}</>
+          return <>{row.hyperlink !== 1 ? svg(row.suffix) : fileSvgs.fileLinkSvg}</>
         },
       },
     },
@@ -77,68 +74,72 @@ export function defaultItemsBuilder(
       field: 'content',
       children: [
         {
-          field: 'description-1',
-          children: [
-            {
-              // title: tavI18n('Tav.file.columns.1'),
-              field: 'fullName',
-              ...(enabledRowEdit ? { editRender: {} } : {}),
-              slots: {
-                // edit: ({ row: _row }: Record<string, any>) => {
-                //   const row = _row as FileActionUploadApiResponseRecord
-
-                //   return [
-                //     <FileTableRowEditor
-                //       row={row}
-                //       // onEnter={() => {
-                //       //   clearEdit?.()
-                //       // }}
-                //       onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
-                //         await handleCellEditClick(payload, row)
-                //       }}
-                //     />,
-                //   ]
-                // },
-                default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
-                  // const res =
-                  //   row.hyperlink != 1
-                  //     ? [
-                  //         // 普通文件
-                  //         <Cell column={{ field: 'fullName' }} type="body">
-                  //           <span>{row.fullName}</span>
-                  //         </Cell>,
-                  //       ]
-                  //     : [
-                  //         <Cell column={{ field: 'fullName' }} type="body">
-                  //           {/* // 超链接 */}
-                  //           {/* eslint-disable-next-line no-irregular-whitespace */}
-                  //           <span>{row.name}</span>
-                  //           <br />
-                  //           <a
-                  //             onClick={() => {
-                  //               window
-                  //                 .open(row.address.includes('//') ? row.address : `//${row.address}`)
-                  //                 ?.focus()
-
-                  //               clearEdit &&
-                  //                 setTimeout(() => {
-                  //                   clearEdit()
-                  //                 }, 16)
-                  //             }}
-                  //           >
-                  //             {row.address}
-                  //           </a>
-                  //         </Cell>,
-                  //       ]
-
-                  return <span>{row.fullName}</span>
-                },
-              },
+          // title: tavI18n('Tav.file.columns.1'),
+          field: 'fullName',
+          editRender: {
+            enabled: mode !== 'read' && enabledRowEdit,
+          },
+          slots: {
+            edit: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
+              return (
+                <FileCardRowEditor
+                  row={row}
+                  onChange={async (payload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>) => {
+                    await handleRowEditClick(payload, row)
+                  }}
+                />
+              )
             },
+            default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
+              const defaultContent =
+                row.hyperlink !== 1 ? (
+                  <span>{row.fullName}</span>
+                ) : (
+                  <>
+                    <span style={{ display: 'inline-block', lineHeight: 1 }}>{row.name}</span>
+                    <TaButton
+                      style={{
+                        minWidth: 0,
+                        padding: 0,
+                        lineHeight: '14px',
+                        height: '14px',
+                        fontSize: '12px',
+                      }}
+                      type={'link'}
+                      size={'small'}
+                      onClick={(e: Event) => {
+                        e.stopPropagation()
+                        window
+                          .open(row.address.includes('//') ? row.address : `//${row.address}`)
+                          ?.focus()
+                      }}
+                    >
+                      {row.address}
+                    </TaButton>
+                  </>
+                )
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    minHeight: '20px',
+                  }}
+                >
+                  {defaultContent}
+                </div>
+              )
+            },
+          },
+        },
+        {
+          field: 'description',
+          children: [
             ...(isVersionColVisible(enabledVersion)
               ? [
                   {
-                    // title: tavI18n('Tav.file.columns.4'),
+                    title: tavI18n('Tav.file.columns.4'),
                     field: 'version',
                     slots: {
                       default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
@@ -156,7 +157,7 @@ export function defaultItemsBuilder(
                                   style={{
                                     minWidth: 0,
                                     padding: 0,
-                                    lineHeight: 1.5,
+                                    lineHeight: 1,
                                     height: 'auto',
                                   }}
                                   type={'link'}
@@ -166,7 +167,7 @@ export function defaultItemsBuilder(
                                 </TaButton>
                               </>
                             ) : (
-                              ''
+                              '-'
                             )}
                           </>
                         )
@@ -175,11 +176,6 @@ export function defaultItemsBuilder(
                   },
                 ]
               : []),
-          ],
-        },
-        {
-          field: 'description-2',
-          children: [
             {
               title: tavI18n('Tav.file.columns.5'),
               field: 'createByName',
@@ -209,25 +205,27 @@ export function defaultItemsBuilder(
 export function useItems(options: {
   mergedProps: ComputedRef<GlobalConfigFileProps & FileCardProps>
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileCardListItemAction[]>
-  handleCellEditClick: (
+  handleRowEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
     row: FileActionUploadApiResponseRecord
   ) => Promise<void>
   hanldeVersionClick: (row: FileActionUploadApiResponseRecord) => Promise<void>
-  globalConfigUserInfo: Ref<Record<string, any>>
 }) {
-  const { mergedProps, actions, handleCellEditClick, hanldeVersionClick, globalConfigUserInfo } =
-    options
+  const { mergedProps, actions, handleRowEditClick, hanldeVersionClick } = options
 
   return computed(() => {
     const items = mergedProps.value.items
+    const mode = mergedProps.value.mode
+    const enabledRowEdit = mergedProps.value.enabledRowEdit
+    const enabledVersion = mergedProps.value.enabledVersion
 
     let result = defaultItemsBuilder(
-      mergedProps,
+      mode,
+      enabledRowEdit,
+      enabledVersion,
       actions,
-      handleCellEditClick,
-      hanldeVersionClick,
-      globalConfigUserInfo
+      handleRowEditClick,
+      hanldeVersionClick
     )
 
     if (items && isFunction(items)) {

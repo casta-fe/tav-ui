@@ -1,5 +1,5 @@
 import { type ExtractPropTypes, type PropType, type Ref, type VNode } from 'vue'
-import { type TableProActionItem } from '@tav-ui/components/table-pro'
+import { type TableProActionItem, type TableProApiParams } from '@tav-ui/components/table-pro'
 import {
   type ApiUploadFileParams,
   type FileActionUploadEmits,
@@ -15,6 +15,7 @@ import {
   type ApiDeleteFileParams,
   type ApiDownloadFileParams,
   type ApiDownloadWaterMarkerFileParams,
+  type ApiQueryFileByActualIds,
   type ApiQueryFileListParams,
   type ApiQueryFileParams,
   type ApiUpdateFileNameAndLinkParams,
@@ -22,17 +23,30 @@ import {
 import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../consts'
 import {
   type FileActionUploadApiResponseRecord,
+  type FileActualIds,
   type FileMode,
   type GlobalConfigFileProps,
   globalConfigFileProps,
 } from '../typings'
-import { type ArgumentsOf, type Arrayable } from '../utils'
+import { type ArgumentsOf } from '../utils'
 import { type ApiQueryFileHistoryParams } from '../components/FileVersion'
 import { type ApiPreviewFileParams } from '../components/FilePreview'
+import { type UseCardActionsReturn } from './hooks'
+import type { RuleItem, ValidateError, ValidateFieldsError, Values } from 'async-validator'
+
+export {
+  ApiDeleteFileParams,
+  ApiDownloadFileParams,
+  ApiDownloadWaterMarkerFileParams,
+  ApiQueryFileByActualIds,
+  ApiQueryFileListParams,
+  // ApiQueryFileParams,
+  ApiUpdateFileNameAndLinkParams,
+}
 
 export interface FileCardListItem {
   title?: string
-  field?: string
+  field: string
   editRender?: Record<string, any>
   slots?: {
     edit?: string | ((params: { row: FileActionUploadApiResponseRecord }) => VNode | VNode[]) | null
@@ -44,13 +58,15 @@ export interface FileCardListItem {
   children?: FileCardListItem[]
 }
 export type FileCardListItemAction = TableProActionItem & { field: string }
+export type FileCardReloadApiParams = TableProApiParams
 
 // 组件所需的所有 api 参数
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FileCardApiParams
   extends Omit<ApiUploadFileParams, 'moduleCode'>,
-    ApiQueryFileParams,
+    // ApiQueryFileParams,
     ApiQueryFileListParams,
+    ApiQueryFileByActualIds,
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
@@ -91,10 +107,17 @@ export const fileCardProps = {
     type: String,
     required: true,
   },
-  required: { type: Boolean, default: true },
-  rules: { type: Object },
-  error: String,
-  messageMode: { type: String as PropType<'inline | modal'> },
+  rules: {
+    type: Array as PropType<(RuleItem & { trigger: string })[]>,
+    default: () => {
+      // return [{ required: true, message: 'test', trigger: 'change' }]
+      return [{ required: true, trigger: 'change' }]
+    },
+  },
+  errorMessageMode: {
+    type: String as PropType<'inline | message'>,
+    default: 'inline',
+  },
   /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
   items: {
     type: Function as PropType<(...args: [FileCardListItem[]]) => FileCardListItem[]>,
@@ -106,12 +129,20 @@ export const fileCardProps = {
       ) => FileCardListItemAction[]
     >,
   },
-  /** filelist 数据源都由 datasource 控制，不论是外部传入或内部接口最终都会放入 datasource */
+  maxHeight: {
+    type: Number,
+  },
+  /** filecard 数据源都由 datasource 控制，不论是外部传入或内部接口最终都会放入 datasource */
   dataSource: {
-    type: Array as PropType<FileActionUploadApiResponseRecord[]>,
+    type: Array as PropType<FileActionUploadApiResponseRecord[] | FileActualIds>,
+  },
+  /** 内部使用，标识数据源是否来自 cards */
+  __dataSourceFromCards: {
+    type: Boolean,
+    default: false,
   },
   // 控制行编辑，默认只能编辑 filename 以及 hyperlinkaddress，想编辑其他字段需自行处理
-  enabledRowEdit: { type: Boolean, default: false },
+  enabledRowEdit: { type: Boolean, default: true },
   // 控制 version 列
   enabledVersion: { type: Boolean, default: true },
   // 控制操作列查看按钮有无
@@ -120,19 +151,38 @@ export const fileCardProps = {
   enabledUpdate: { type: Boolean, default: true },
   // 开启角色控制
   enabledOwner: { type: Boolean, default: true },
-  /** apiUploadFile 已从 ...globalConfigFileProps['fileList'] 取到 */
+  autoValidate: {
+    type: Boolean,
+    default: true,
+  },
+  /** FileActionUpload Props */
+  fileActionUpload: {
+    type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,
+  },
+  /** FileActionUploadLink Props */
+  fileActionUploadLink: {
+    type: Object as PropType<
+      FileActionUploadLinkProps & GlobalConfigFileProps['TaFileActionUploadLink']
+    >,
+  },
   beforeApiUploadFile: {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
-  beforeApiQueryFile: {
-    type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
-  },
-  afterApiQueryFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  // beforeApiQueryFile: {
+  //   type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
+  // },
+  // afterApiQueryFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiQueryFileList: {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
-  // afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 afterApiQueryFile 合并为一个函数
+  afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  beforeApiQueryFileByActualIds: {
+    type: Function as PropType<(apiParams: ApiQueryFileByActualIds) => Promise<any>>,
+  },
+  afterApiQueryFileByActualIds: {
+    type: Function as PropType<(apiResult: any) => Promise<any>>,
+  },
   beforeApiQueryFileHistory: {
     type: Function as PropType<(apiParams: ApiQueryFileHistoryParams) => Promise<any>>,
   },
@@ -157,20 +207,9 @@ export const fileCardProps = {
     type: Function as PropType<(apiParams: ApiDownloadWaterMarkerFileParams) => Promise<any>>,
   },
   afterApiDownloadWaterMarkerFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
-  /** FileActionUpload Props */
-  fileActionUpload: {
-    type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,
-  },
-  /** FileActionUploadLink Props */
-  fileActionUploadLink: {
-    type: Object as PropType<
-      FileActionUploadLinkProps & GlobalConfigFileProps['TaFileActionUploadLink']
-    >,
-  },
 }
 
 export type FileCardProps = ExtractPropTypes<typeof fileCardProps>
-export type FileCardPropKey = Arrayable<string>
 
 export const fileCardEmits = {
   'fileActionUpload:validateSuccessChange': (
@@ -192,6 +231,7 @@ export const fileCardEmits = {
     ...args: ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
   ) => args instanceof Object,
 
+  actualidsChange: (...args: [FileActualIds]) => args instanceof Object,
   rowEdit: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowUpdate: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
   rowDelete: (...args: [FileActionUploadApiResponseRecord]) => args instanceof Object,
@@ -200,23 +240,25 @@ export const fileCardEmits = {
 export type FileCardEmits = typeof fileCardEmits
 
 export interface FileCardInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
   fileActionUploadLinkRef: Ref<FileActionUploadLinkInstance | undefined>
   cleanup(): void
+  reload: (params?: ApiQueryFileListParams) => Promise<void>
+  createRows: UseCardActionsReturn['cardCreateRows']
+  readRows: UseCardActionsReturn['cardReadRows']
+  updateRows: UseCardActionsReturn['cardUpdateRows']
+  deleteRows: UseCardActionsReturn['cardDeleteRows']
+  getDataSource: () => FileActionUploadApiResponseRecord[]
+  validate: (callback?: CardValidateCallback) => Promise<boolean>
+  clearValidate: () => void
 }
 
-export const fileCardValidateStates = ['', 'error', 'validating', 'success'] as const
-export type FileCardValidateState = typeof fileCardValidateStates[number]
-
-export interface FileCardContext extends FileCardProps {
-  $el: HTMLDivElement | undefined
-  validateState: FileCardValidateState
-  cardValue: any
-  validate: (
-    trigger: string,
-    callback?: (isValid: boolean, invalidFields?: any) => Promise<void> | void
-  ) => Promise<boolean>
-  resetField(): void
-  clearValidate(): void
+export type CardValidationResult = Promise<boolean>
+export type CardValidateCallback = (
+  isValid: boolean,
+  invalidFields?: ValidateFieldsError
+) => Promise<void> | void
+export interface CardValidateFailure {
+  errors: ValidateError[] | null
+  fields: Values | ValidateFieldsError
 }

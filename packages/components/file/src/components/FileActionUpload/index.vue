@@ -147,11 +147,11 @@ function handleFilesValidate(files: Record<string, any>[]) {
   }
 
   const validateUploadFileMaxCountResult = validateUploadFileMaxCount(
-    fileList.value.length + apiResult.value.length,
+    fileList.value.length,
     mergedProps.value.maxCount
   )
   if (!validateUploadFileMaxCountResult) {
-    createMessage.warn(`${tavI18n('Tav.file.message.4')} ${mergedProps.value.maxCount}`)
+    createMessage.warn(`${tavI18n('Tav.file.message.4')}: ${mergedProps.value.maxCount}`)
 
     resetFileList()
     return false

@@ -5,26 +5,26 @@ import { Input as VxeInput } from 'vxe-table'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { tavI18n } from '@tav-ui/locales'
 import {
+  DEFAULT_CARD_ROWEDITOR_CLASSNAME,
+  DEFAULT_CARD_ROWEDITOR_ID,
   DEFAULT_FILE_LINK_REGEXP_STRING,
-  DEFAULT_ROWEDITOR_CLASSNAME,
-  DEFAULT_ROWEDITOR_ID,
-} from '../../../../consts'
-import { type FileActionUploadApiResponseRecord } from '../../../../typings'
+} from '../../../consts'
+import { type FileActionUploadApiResponseRecord } from '../../../typings'
 import {
-  type FileTableRowEditorInstance,
-  // fileTableRowEditorEmits,
-  fileTableRowEditorProps,
-  // type FileTableRowEditorProps,
+  type FileCardRowEditorInstance,
+  // fileCardRowEditorEmits,
+  fileCardRowEditorProps,
+  // type FileCardRowEditorProps,
 } from './types'
 
 defineOptions({
-  name: 'TaFileTableRowEditor',
+  name: 'TaFileCardRowEditor',
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileTableRowEditorInstance['elRef']>>()
-const props = defineProps(fileTableRowEditorProps)
-// const emits = defineEmits(fileTableRowEditorEmits)
+const elRef = ref<UnwrapRef<FileCardRowEditorInstance['elRef']>>()
+const props = defineProps(fileCardRowEditorProps)
+// const emits = defineEmits(fileCardRowEditorEmits)
 // const slots = useSlots()
 // const attrs = useAttrs()
 
@@ -107,7 +107,7 @@ defineExpose({
 </script>
 
 <template>
-  <section :id="DEFAULT_ROWEDITOR_ID" ref="elRef" :class="DEFAULT_ROWEDITOR_CLASSNAME">
+  <section :id="DEFAULT_CARD_ROWEDITOR_ID" ref="elRef" :class="DEFAULT_CARD_ROWEDITOR_CLASSNAME">
     <template v-if="props.row?.hyperlink !== 1">
       <VxeInput
         :model-value="state.name"
@@ -130,7 +130,7 @@ defineExpose({
     </template>
     <template v-else>
       <TaForm
-        :class="`${DEFAULT_ROWEDITOR_CLASSNAME}-form`"
+        :class="`${DEFAULT_CARD_ROWEDITOR_CLASSNAME}-form`"
         :style="{
           width: '100%',
         }"

@@ -78,9 +78,9 @@ export function defaultActionsBuilder(
               globalConfigUserInfo.value,
               row.owner
             ),
-            disabled: !validateVersionCachesHasApiFile(
-              VersionCachesController['caches'][row.actualId!]
-            ),
+            disabled:
+              mode === 'create' &&
+              !validateVersionCachesHasApiFile(VersionCachesController['caches'][row.actualId!]),
             onClick: async () => {
               await handleUpdateBtnClick(row)
             },

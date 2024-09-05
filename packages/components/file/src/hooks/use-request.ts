@@ -3,6 +3,7 @@ import { isBoolean, isFunction, isObject } from 'lodash-es'
 import { tavI18n } from '@tav-ui/locales'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { DEFAULT_HTTP_ERROR_TIP } from '../consts'
+import { type ReturnOf } from '../utils'
 import { type UseDisableReturn, type UseLoadingReturn } from './'
 
 const { createMessage } = useMessage()
@@ -193,3 +194,5 @@ export function useRequest(options: {
     handleApi,
   }
 }
+
+export type UseRequestReturn = ReturnOf<typeof useRequest>

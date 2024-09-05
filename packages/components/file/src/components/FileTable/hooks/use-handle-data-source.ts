@@ -1,12 +1,9 @@
 import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref, unref } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import {
-  type ApiQueryFileByActualIds,
-  type FileActualIdsObjectArray,
-  type FileTableProps,
-} from '../types'
+import { type ApiQueryFileByActualIds, type FileTableProps } from '../types'
 import {
   type FileActionUploadApiResponseRecord,
+  type FileActualIdsObjectArray,
   type GlobalConfigFileProps,
 } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'

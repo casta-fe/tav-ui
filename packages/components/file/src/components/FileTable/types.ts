@@ -10,11 +10,11 @@ import { DEFAULT_LINE_HEIGTH } from '@tav-ui/components/table-pro/src/const'
 import {
   type ApiParams,
   type FileActionUploadApiResponseRecord,
+  type FileActualIds,
   type FileMode,
   globalConfigFileProps,
 } from '../../typings'
 import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../../consts'
-import { type FileVersionCache } from '../../hooks'
 import { type UseTableActionsReturn } from './hooks/use-table-actions'
 import { type ApiUploadFileParams } from './../FileActionUpload/types'
 import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
@@ -118,11 +118,11 @@ export interface FileTableApiParams
     ApiQueryFileParams,
     ApiQueryFileListParams,
     ApiQueryFileByActualIds,
+    ApiQueryFilterFormFileTypeParams,
     ApiQueryFileHistoryParams,
     ApiUpdateFileNameAndLinkParams,
     ApiDeleteFileParams,
-    Partial<ApiDownloadFileParams>,
-    ApiQueryFilterFormFileTypeParams {}
+    Partial<ApiDownloadFileParams> {}
 
 export const fileTableProps = {
   //:============================== extend props ==============================://
@@ -277,16 +277,6 @@ export const fileTableProps = {
 }
 
 export type FileTableProps = ExtractPropTypes<typeof fileTableProps>
-
-export type FileActualIdsObjectArray = {
-  actualId: string
-  moduleCode: string | undefined
-  versionList: FileVersionCache[]
-}[]
-
-export type FileActualIdsStringArray = string[]
-
-export type FileActualIds = FileActualIdsObjectArray | FileActualIdsStringArray
 
 export const fileTableEmits = {
   // change: (

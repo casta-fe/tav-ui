@@ -95,7 +95,9 @@ export default defineComponent({
           apiQueryFileList: taUploadProvideData.queryFileList,
         },
         TaFileCard: {
+          apiQueryFile: taUploadProvideData.queryFile,
           apiQueryFileList: taUploadProvideData.queryFileList,
+          apiQueryFileByActualIds: queryFileByFileActualIds,
           apiQueryFileHistory: taUploadProvideData.queryFileHistory,
           apiUpdateFileNameAndLink: taUploadProvideData.updateFileNameAndAddress,
           apiDeleteFile: taUploadProvideData.removeFile,

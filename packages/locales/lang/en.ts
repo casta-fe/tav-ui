@@ -45,6 +45,7 @@ export default {
     less: 'Less',
     httpError: 'Http has some error, please contact system admin',
     notAuthorised: 'User not be authorised',
+    required: 'required',
   },
   countButton: {
     text1: 'Send verification code',

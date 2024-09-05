@@ -10,7 +10,6 @@ import {
   type FileActionUploadProps,
 } from '../components/FileActionUpload'
 import {
-  type FileActualIds,
   type FileTableEmits,
   type FileTableInstance,
   type FileTableProps,
@@ -25,6 +24,7 @@ import {
   type FileActionUploadLinkProps,
 } from '../components/FileActionUploadLink'
 import { type GlobalConfigFileProps } from './global-config'
+import { type FileActualIds } from './api'
 
 /** 单纯定义参数类型，方便统一管理、使用 */
 export interface ApiParams {
