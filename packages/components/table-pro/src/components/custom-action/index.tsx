@@ -647,15 +647,14 @@ export default defineComponent({
         ])
         await nextTick()
         console.log(props.config)
-        const defaultFileName = isBoolean(props.config?.export)
-          ? ''
-          : props.config?.export?.fileName
-        // exportModalFormSetFieldsValue
+        const exportConfig = isBoolean(props.config?.export) ? null : props.config?.export
+        const defaultValue = exportConfig ? exportConfig.defaultValue : {}
         await exportModalFormSetFieldsValue(
           {
-            fileName: defaultFileName || '',
+            fileName: exportConfig ? exportConfig.fileName : '',
             fileContainFields: selectedKeys,
             fileDataType: _fileDataTypeDefaultValue,
+            ...defaultValue,
           },
           false
         )

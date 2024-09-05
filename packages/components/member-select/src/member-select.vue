@@ -32,8 +32,16 @@
                 {{ item.label }}
                 <template v-if="item.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
               </span>
-              <span :title="item.userOrgs[0]?.organizationName">
-                {{ item.userOrgs[0]?.organizationName || '-' }}
+              <span>
+                <template v-if="item.userOrgs && item.userOrgs.length > 0">
+                  <Tooltip>
+                    <template #title>
+                      <span>{{ item.userOrgs.map((v) => v.organizationName).join('、') }}</span>
+                    </template>
+                    {{ item.userOrgs[0]?.organizationName }}
+                  </Tooltip>
+                </template>
+                <template v-else> - </template>
               </span>
               <span :title="item.phone">{{ item.phone }}</span>
             </div>
@@ -102,7 +110,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
-import { Select, Tag, TreeSelect } from 'ant-design-vue'
+import { Select, Tag, Tooltip, TreeSelect } from 'ant-design-vue'
 import { isEqual, pull } from 'lodash-es'
 import pinyin from 'js-pinyin'
 import Button from '@tav-ui/components/button'
@@ -120,6 +128,7 @@ export default defineComponent({
     VNodes: (_, { attrs }) => {
       return attrs.vnodes
     },
+    Tooltip,
     Tag,
     BasicModal,
     MemberModal,
