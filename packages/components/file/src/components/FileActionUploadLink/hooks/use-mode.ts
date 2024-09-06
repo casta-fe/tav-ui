@@ -38,6 +38,16 @@ export function useMode(options: {
         moduleCode: apiParams.moduleCode,
         name: payload.name ?? apiParams.name,
         typeCode: apiParams.typeCode,
+        ...(apiParams.businessId
+          ? {
+              businessId: apiParams.businessId,
+            }
+          : {}),
+        ...(apiParams.businessKey
+          ? {
+              businessKey: apiParams.businessKey,
+            }
+          : {}),
         businessParamsJson: apiParams.businessParamsJson,
       },
       failureMessage: () => {

@@ -67,14 +67,16 @@ export interface ApiParams {
   /**
    * 业务 businessKey，用于：
    * 1. api/file/upload（非必传）
-   * 2. api/file/queryFile（非必传）
-   * 3. api/file/queryFileList（非必传）
-   * 4. api/file/getFileLogModuleList（非必传）
+   * 2. api/file/uploadHyperlink（非必传）
+   * 3. api/file/queryFile（非必传）
+   * 4. api/file/queryFileList（非必传）
+   * 5. api/file/getFileLogModuleList（非必传）
    */
   businessKey: string
   /**
    * 业务 businessId，用于：
    * 1. api/file/upload（非必传）
+   * 2. api/file/uploadHyperlink（非必传）
    */
   businessId: string
   /**
