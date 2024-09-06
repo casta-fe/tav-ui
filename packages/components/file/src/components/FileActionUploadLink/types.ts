@@ -1,4 +1,5 @@
 import { type ExtractPropTypes, type PropType } from 'vue'
+import { type ButtonProps as AButtonProps } from 'ant-design-vue'
 import { isBoolean } from '@tav-ui/utils'
 import { DEFAULT_APIPARAM_BUSINESSPARAMSJSON, DEFAULT_FILE_MODE } from '../../consts'
 import {
@@ -36,6 +37,14 @@ export const fileActionUploadLinkProps = {
   icon: { type: String, default: 'ant-design:link-outlined' },
   //:============================== extend props ==============================://
   visible: { type: Boolean, default: false },
+  buttonType: {
+    type: String as PropType<AButtonProps['type']>,
+    default: 'default',
+  },
+  buttonSize: {
+    type: String as PropType<AButtonProps['size']>,
+    default: 'middle',
+  },
   validateTypeCode: {
     type: Boolean,
     default: true,

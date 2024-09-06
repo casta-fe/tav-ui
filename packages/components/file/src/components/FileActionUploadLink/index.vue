@@ -234,7 +234,12 @@ defineExpose({
       ref="elRef"
       :class="DEFAULT_FILEACTIONUPLOADLINK_CLASSNAME"
     >
-      <TaButton :disabled="disable" @click="() => (formVisible ? close() : open())">
+      <TaButton
+        :type="mergedProps.buttonType"
+        :size="mergedProps.buttonSize"
+        :disabled="disable"
+        @click="() => (formVisible ? close() : open())"
+      >
         <template v-if="loading">
           <span class="ant-btn-loading-icon" style="">
             <span role="img" aria-label="loading" class="anticon anticon-loading">

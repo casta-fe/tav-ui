@@ -1,13 +1,12 @@
-import { type ComputedRef, type Ref, computed } from 'vue'
+import { type ComputedRef, computed } from 'vue'
+import { Tooltip as ATooltip } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
 import { TaButton } from '@tav-ui/components/button'
-// import { TaTableProAction } from '@tav-ui/components/table-pro'
-// import { Cell } from '../../../../../table-pro/src/components/cell'
 import { type ApiUpdateFileNameAndLinkParams } from '../../components/FileTable'
 import { type FileCardListItem, type FileCardListItemAction, type FileCardProps } from '../types'
 import { type FileActionUploadApiResponseRecord, type GlobalConfigFileProps } from '../../typings'
-import { /*isModuleFullNameColVisible,*/ isOwnerOrAdmin, isVersionColVisible } from '../../utils'
+import { isVersionColVisible } from '../../utils'
 import FileCardRowEditor from '../components/FileCardRowEditor/index.vue'
 import * as fileSvgs from '../file-svg'
 import {
@@ -21,8 +20,6 @@ export function defaultItemsBuilder(
   mode: FileCardProps['mode'],
   enabledRowEdit: FileCardProps['enabledRowEdit'],
   enabledVersion: FileCardProps['enabledVersion'],
-  // clearEdit: ((evnt?: Event | undefined) => Promise<any>) | undefined,
-  // clearCellTooltip: (() => void) | undefined,
   actions: ComputedRef<(row: FileActionUploadApiResponseRecord) => FileCardListItemAction[]>,
   handleRowEditClick: (
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>,
@@ -93,7 +90,24 @@ export function defaultItemsBuilder(
             default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
               const defaultContent =
                 row.hyperlink !== 1 ? (
-                  <span>{row.fullName}</span>
+                  <ATooltip placement="top" destroyTooltipOnHide={true}>
+                    {{
+                      title: () => <span>{row.fullName}</span>,
+                      default: () => (
+                        <span
+                          //@ts-ignore
+                          style={{
+                            display: 'inline-block',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {row.fullName}
+                        </span>
+                      ),
+                    }}
+                  </ATooltip>
                 ) : (
                   <>
                     <span style={{ display: 'inline-block', lineHeight: 1 }}>{row.name}</span>

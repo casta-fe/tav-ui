@@ -117,6 +117,7 @@ const fileActionUploadProps = computed(() => {
       ...(props.fileActionUpload?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
     },
     buttonType: 'primary',
+    buttonSize: 'small',
   }
 })
 
@@ -136,6 +137,7 @@ const fileActionUploadLinkProps = computed(() => {
       ...(props.fileActionUploadLink?.apiParams ?? {}), // 以子组件中的 apiparams 为准，这里最后覆盖
     },
     getFormContainer: () => headerExtraElRef.value,
+    buttonSize: 'small',
   }
 })
 

@@ -317,6 +317,7 @@ defineExpose({
         <template v-else>
           <TaButton
             :type="mergedProps.buttonType"
+            :size="mergedProps.buttonSize"
             :disabled="disable"
             @click="beforeHandleApiAction1"
           >
