@@ -42,36 +42,44 @@ export type FileTableReloadApiParams = TableProApiParams
 export interface ApiQueryFileParams {
   appId: ApiParams['appId']
   businessCheck: ApiParams['businessCheck']
+  businessDisplayItem?: ApiParams['businessDisplayItem']
   businessIds?: ApiParams['businessIds']
   businessKey?: ApiParams['businessKey']
+  businessSearchItems?: ApiParams['businessSearchItems']
   endTime?: ApiParams['endTime']
-  finalTypeCodes?: ApiParams['finalTypeCodes']
-  id?: ApiParams['id']
+  excludeDeleted?: ApiParams['excludeDeleted']
   excludeStaging?: ApiParams['excludeStaging']
+  id?: ApiParams['id']
   moduleCode?: ApiParams['moduleCode']
+  owners?: ApiParams['owners']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
   startTime?: ApiParams['startTime']
   suffix?: ApiParams['suffix']
   typeCodes?: ApiParams['typeCodes']
+  visibleSubModules?: ApiParams['visibleSubModules']
 }
 
 // 按照 swagger 编写
 export interface ApiQueryFileListParams {
   appId: ApiParams['appId']
   businessCheck: ApiParams['businessCheck']
+  businessDisplayItem?: ApiParams['businessDisplayItem']
   businessIds?: ApiParams['businessIds']
   businessKey?: ApiParams['businessKey']
+  businessSearchItems?: ApiParams['businessSearchItems']
   endTime?: ApiParams['endTime']
-  finalTypeCodes?: ApiParams['finalTypeCodes']
-  id?: ApiParams['id']
+  excludeDeleted?: ApiParams['excludeDeleted']
   excludeStaging?: ApiParams['excludeStaging']
+  id?: ApiParams['id']
   moduleCode?: ApiParams['moduleCode']
+  owners?: ApiParams['owners']
   permissionControl?: ApiParams['permissionControl']
   searchValue?: ApiParams['searchValue']
   startTime?: ApiParams['startTime']
   suffix?: ApiParams['suffix']
   typeCodes?: ApiParams['typeCodes']
+  visibleSubModules?: ApiParams['visibleSubModules']
 }
 
 // 按照 swagger 编写

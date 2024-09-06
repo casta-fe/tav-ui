@@ -174,12 +174,38 @@ export interface ApiParams {
    * 1. api/file/queryFile（非必传）
    * 2. api/file/queryFileList（非必传）
    */
-  finalTypeCodes: string[]
+  suffix: string
   /**
+   * 查询 modulecode 下级，如果该字段有值那么 modulecode 一定也有值
+   * 1. api/file/queryFileType（非必传）
+   * 2. api/file/queryFile（非必传）
+   * 3. api/file/queryFileList（非必传）
+   */
+  visibleSubModules: string[]
+  /**
+   * 业务属性查询后，用哪个属性回显
    * 1. api/file/queryFile（非必传）
    * 2. api/file/queryFileList（非必传）
    */
-  suffix: string
+  businessDisplayItem: string
+  /**
+   * 业务属性查询
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  businessSearchItems: { name: string; values: string[] }[]
+  /**
+   * 排除暂存，默认 true，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  excludeDeleted: boolean
+  /**
+   * 负责人List
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  owners: string[]
 }
 
 /** 只读/新增/编辑（更新）/立即更新，默认只读 */

@@ -15,6 +15,7 @@ export interface ApiQueryFileTypeParams {
   moduleCode: ApiParams['moduleCode']
   typeCodes?: ApiParams['typeCodes']
   permissionControl?: ApiParams['permissionControl']
+  visibleSubModules?: ApiParams['visibleSubModules']
 }
 
 // 组件所需的所有 api 参数

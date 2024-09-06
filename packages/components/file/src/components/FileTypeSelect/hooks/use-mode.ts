@@ -15,6 +15,12 @@ export function useMode(options: {
       console.warn('[tavui TaFileTypeSelect] apiQueryFileType is undefined')
       return
     }
+    if (apiParams.visibleSubModules && !apiParams.moduleCode) {
+      console.warn(
+        '[tavui TaFileTypeSelect] apiQueryFileType visibleSubModules & moduleCode has error'
+      )
+      return
+    }
 
     const options: UseRequestHandleApiDefaultOptions<
       FileTypeSelectProps['apiParams'],
@@ -28,6 +34,7 @@ export function useMode(options: {
         moduleCode: apiParams.moduleCode,
         typeCodes: apiParams.typeCodes,
         permissionControl: apiParams.permissionControl,
+        ...(apiParams.visibleSubModules ? { visibleSubModules: apiParams.visibleSubModules } : {}),
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')

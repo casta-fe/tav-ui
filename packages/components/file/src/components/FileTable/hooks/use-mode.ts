@@ -277,6 +277,11 @@ export function useMode(options: {
       return
     }
 
+    if (apiParams.visibleSubModules && !apiParams.moduleCode) {
+      console.warn('[tavui TaFileTable] apiQueryFile visibleSubModules & moduleCode has error')
+      return
+    }
+
     const modeQueryApiTypePagerConfig: any = {
       api: mergedProps.value.apiQueryFile,
       beforeApi: mergedProps.value.beforeApiQueryFile,
@@ -295,16 +300,41 @@ export function useMode(options: {
       apiParams: {
         filter: {
           appId: apiParams.appId,
-          moduleCode: apiParams.moduleCode,
-          ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
-          businessKey: apiParams.businessKey,
+          businessCheck: apiParams.businessCheck,
+          ...(apiParams.businessDisplayItem
+            ? {
+                businessDisplayItem: apiParams.businessDisplayItem,
+              }
+            : {}),
           ...(apiParams.businessIds
             ? {
                 businessIds: apiParams.businessIds,
               }
             : {}),
-          businessCheck: apiParams.businessCheck,
+          businessKey: apiParams.businessKey,
+          ...(apiParams.businessSearchItems
+            ? {
+                businessSearchItems: apiParams.businessSearchItems,
+              }
+            : {}),
+          endTime: apiParams.endTime,
+          ...(typeof apiParams.excludeDeleted !== 'undefined'
+            ? { excludeDeleted: apiParams.excludeDeleted }
+            : {}),
+          ...(typeof apiParams.excludeStaging !== 'undefined'
+            ? { excludeStaging: apiParams.excludeStaging }
+            : {}),
+          ...(apiParams.id ? { id: apiParams.id } : {}),
+          moduleCode: apiParams.moduleCode,
+          owners: apiParams.owners,
           permissionControl: apiParams.permissionControl,
+          ...(apiParams.searchValue ? { searchValue: apiParams.searchValue } : {}),
+          ...(apiParams.startTime ? { startTime: apiParams.startTime } : {}),
+          ...(apiParams.suffix ? { suffix: apiParams.suffix } : {}),
+          ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
+          ...(apiParams.visibleSubModules
+            ? { visibleSubModules: apiParams.visibleSubModules }
+            : {}),
         },
         model: { page: 1, limit: 50 },
       },
@@ -334,16 +364,39 @@ export function useMode(options: {
       },
       apiParams: {
         appId: apiParams.appId,
-        moduleCode: apiParams.moduleCode,
-        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
-        businessKey: apiParams.businessKey,
+        businessCheck: apiParams.businessCheck,
+        ...(apiParams.businessDisplayItem
+          ? {
+              businessDisplayItem: apiParams.businessDisplayItem,
+            }
+          : {}),
         ...(apiParams.businessIds
           ? {
               businessIds: apiParams.businessIds,
             }
           : {}),
-        businessCheck: apiParams.businessCheck,
+        businessKey: apiParams.businessKey,
+        ...(apiParams.businessSearchItems
+          ? {
+              businessSearchItems: apiParams.businessSearchItems,
+            }
+          : {}),
+        endTime: apiParams.endTime,
+        ...(typeof apiParams.excludeDeleted !== 'undefined'
+          ? { excludeDeleted: apiParams.excludeDeleted }
+          : {}),
+        ...(typeof apiParams.excludeStaging !== 'undefined'
+          ? { excludeStaging: apiParams.excludeStaging }
+          : {}),
+        ...(apiParams.id ? { id: apiParams.id } : {}),
+        moduleCode: apiParams.moduleCode,
+        owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,
+        ...(apiParams.searchValue ? { searchValue: apiParams.searchValue } : {}),
+        ...(apiParams.startTime ? { startTime: apiParams.startTime } : {}),
+        ...(apiParams.suffix ? { suffix: apiParams.suffix } : {}),
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
+        ...(apiParams.visibleSubModules ? { visibleSubModules: apiParams.visibleSubModules } : {}),
       },
     }
 

@@ -122,7 +122,7 @@ const fileCardsProps = reactive({
 // }, 5000)
 
 watch(
-  () => fileCardsProps.create.fileActualIds,
+  () => fileCardsProps.updateInstantly.fileActualIds,
   async (cur) => {
     console.log('fileActualIds: ', cur)
     // console.log('🚀 ~ fileCardsRef:', fileCardsRef.value.getDataSource())
@@ -145,8 +145,8 @@ watch(
     <!-- <h2>TaFile 测试</h2> -->
     <TaFileCards
       ref="fileCardsRef"
-      v-bind="fileCardsProps.create"
-      v-model:fileActualIds="fileCardsProps.create.fileActualIds"
+      v-bind="fileCardsProps.updateInstantly"
+      v-model:fileActualIds="fileCardsProps.updateInstantly.fileActualIds"
     />
   </section>
 </template>

@@ -166,17 +166,20 @@ const fileTableProps = computed(() => {
       businessCheck: fileApiParams.value.businessCheck ?? DEFAULT_APIPARAMS.businessCheck, // 合并默认值
       businessIds: fileApiParams.value.businessIds,
       businessKey: fileApiParams.value.businessKey,
+      businessSearchItems: fileApiParams.value.businessSearchItems,
       endTime: fileApiParams.value.endTime,
-      finalTypeCodes: fileApiParams.value.finalTypeCodes,
+      excludeDeleted: fileApiParams.value.excludeDeleted, // ?? DEFAULT_APIPARAMS.excludeDeleted, // 合并默认值
+      excludeStaging: fileApiParams.value.excludeStaging, // ?? DEFAULT_APIPARAMS.excludeStaging, // 合并默认值
       id: fileApiParams.value.id,
-      // excludeStaging: fileApiParams.value.excludeStaging ?? DEFAULT_APIPARAMS.excludeStaging, // 合并默认值
       moduleCode: fileApiParams.value.moduleCode,
+      owners: fileApiParams.value.owners,
       permissionControl:
         fileApiParams.value.permissionControl ?? DEFAULT_APIPARAMS.permissionControl, // 合并默认值
       searchValue: fileApiParams.value.searchValue,
       startTime: fileApiParams.value.startTime,
       suffix: fileApiParams.value.suffix,
       typeCodes: fileApiParams.value.typeCodes,
+      visibleSubModules: fileApiParams.value.visibleSubModules,
 
       file: fileApiParams.value.file,
       fileActualId: fileApiParams.value.fileActualId,

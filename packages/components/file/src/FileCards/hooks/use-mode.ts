@@ -30,6 +30,7 @@ export function useMode(options: { mergedProps: ComputedRef<FileCardsProps> }) {
         moduleCode: apiParams.moduleCode,
         typeCodes: apiParams.typeCodes,
         permissionControl: apiParams.permissionControl,
+        ...(apiParams.visibleSubModules ? { visibleSubModules: apiParams.visibleSubModules } : {}),
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')
@@ -59,20 +60,39 @@ export function useMode(options: { mergedProps: ComputedRef<FileCardsProps> }) {
       afterApi: mergedProps.value.afterApiQueryFileList,
       apiParams: {
         appId: apiParams.appId,
-        moduleCode: apiParams.moduleCode,
-        businessKey: apiParams.businessKey,
+        businessCheck: apiParams.businessCheck,
+        ...(apiParams.businessDisplayItem
+          ? {
+              businessDisplayItem: apiParams.businessDisplayItem,
+            }
+          : {}),
         ...(apiParams.businessIds
           ? {
               businessIds: apiParams.businessIds,
             }
           : {}),
-        ...(apiParams.typeCodes
+        businessKey: apiParams.businessKey,
+        ...(apiParams.businessSearchItems
           ? {
-              typeCodes: apiParams.typeCodes,
+              businessSearchItems: apiParams.businessSearchItems,
             }
           : {}),
-        businessCheck: apiParams.businessCheck,
+        endTime: apiParams.endTime,
+        ...(typeof apiParams.excludeDeleted !== 'undefined'
+          ? { excludeDeleted: apiParams.excludeDeleted }
+          : {}),
+        ...(typeof apiParams.excludeStaging !== 'undefined'
+          ? { excludeStaging: apiParams.excludeStaging }
+          : {}),
+        ...(apiParams.id ? { id: apiParams.id } : {}),
+        moduleCode: apiParams.moduleCode,
+        owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,
+        ...(apiParams.searchValue ? { searchValue: apiParams.searchValue } : {}),
+        ...(apiParams.startTime ? { startTime: apiParams.startTime } : {}),
+        ...(apiParams.suffix ? { suffix: apiParams.suffix } : {}),
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
+        ...(apiParams.visibleSubModules ? { visibleSubModules: apiParams.visibleSubModules } : {}),
       },
       failureMessage: () => {
         return tavI18n('Tav.common.httpError')

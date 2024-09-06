@@ -204,7 +204,7 @@ async function validate(trigger: string, callback?: CardValidateCallback) {
 
   const validator = new AsyncValidator({ [mergedProps.value.value!]: rules })
   return validator
-    .validate({ [mergedProps.value.value!]: dataSource.value })
+    .validate({ [mergedProps.value.value!]: dataSource.value }, { firstFields: true })
     .then(() => {
       callback?.(true)
       return true

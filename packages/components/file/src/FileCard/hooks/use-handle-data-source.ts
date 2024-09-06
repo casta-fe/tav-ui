@@ -40,16 +40,39 @@ export function useHandleDataSource(options: {
       afterApi: mergedProps.value.afterApiQueryFileList,
       apiParams: {
         appId: apiParams.appId,
-        moduleCode: apiParams.moduleCode,
-        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
-        businessKey: apiParams.businessKey,
+        businessCheck: apiParams.businessCheck,
+        ...(apiParams.businessDisplayItem
+          ? {
+              businessDisplayItem: apiParams.businessDisplayItem,
+            }
+          : {}),
         ...(apiParams.businessIds
           ? {
               businessIds: apiParams.businessIds,
             }
           : {}),
-        businessCheck: apiParams.businessCheck,
+        businessKey: apiParams.businessKey,
+        ...(apiParams.businessSearchItems
+          ? {
+              businessSearchItems: apiParams.businessSearchItems,
+            }
+          : {}),
+        endTime: apiParams.endTime,
+        ...(typeof apiParams.excludeDeleted !== 'undefined'
+          ? { excludeDeleted: apiParams.excludeDeleted }
+          : {}),
+        ...(typeof apiParams.excludeStaging !== 'undefined'
+          ? { excludeStaging: apiParams.excludeStaging }
+          : {}),
+        ...(apiParams.id ? { id: apiParams.id } : {}),
+        moduleCode: apiParams.moduleCode,
+        owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,
+        ...(apiParams.searchValue ? { searchValue: apiParams.searchValue } : {}),
+        ...(apiParams.startTime ? { startTime: apiParams.startTime } : {}),
+        ...(apiParams.suffix ? { suffix: apiParams.suffix } : {}),
+        ...(apiParams.typeCodes ? { typeCodes: apiParams.typeCodes } : {}),
+        ...(apiParams.visibleSubModules ? { visibleSubModules: apiParams.visibleSubModules } : {}),
       },
     }
 
