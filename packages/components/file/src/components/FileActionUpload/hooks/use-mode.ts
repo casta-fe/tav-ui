@@ -38,16 +38,6 @@ export function useMode(options: {
         files: unref(files),
         moduleCode: apiParams.moduleCode,
         typeCode: apiParams.typeCode,
-        ...(apiParams.businessId
-          ? {
-              businessId: apiParams.businessId,
-            }
-          : {}),
-        ...(apiParams.businessKey
-          ? {
-              businessKey: apiParams.businessKey,
-            }
-          : {}),
         businessParamsJson: apiParams.businessParamsJson,
         ...(apiParams.fileName
           ? {
