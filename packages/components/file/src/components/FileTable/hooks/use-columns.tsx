@@ -103,15 +103,21 @@ export function defaultColumnsBuilder(
         },
       },
     },
-    ...(isModuleFullNameColVisible(mode)
-      ? [
-          {
-            title: tavI18n('Tav.file.columns.10'),
-            field: 'moduleFullName',
-            minWidth: 180,
-          },
-        ]
-      : []),
+    // ...(isModuleFullNameColVisible(mode)
+    //   ? [
+    //       {
+    //         title: tavI18n('Tav.file.columns.10'),
+    //         field: 'moduleFullName',
+    //         minWidth: 180,
+    //       },
+    //     ]
+    //   : []),
+    {
+      title: tavI18n('Tav.file.columns.10'),
+      field: 'moduleFullName',
+      minWidth: 180,
+      visible: false,
+    },
     // typeName 不允许改变
     {
       title: tavI18n('Tav.file.columns.2'),
