@@ -45,6 +45,10 @@ export const fileActionUploadLinkProps = {
     type: String as PropType<AButtonProps['size']>,
     default: 'middle',
   },
+  buttonIcon: {
+    type: Boolean,
+    default: true,
+  },
   validateTypeCode: {
     type: Boolean,
     default: true,

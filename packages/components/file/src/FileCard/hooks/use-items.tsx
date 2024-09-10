@@ -1,6 +1,6 @@
 import { type ComputedRef, computed } from 'vue'
 import { Tooltip as ATooltip } from 'ant-design-vue'
-import { tavI18n } from '@tav-ui/locales'
+// import { tavI18n } from '@tav-ui/locales'
 import { isFunction } from '@tav-ui/utils'
 import { TaButton } from '@tav-ui/components/button'
 import { type ApiUpdateFileNameAndLinkParams } from '../../components/FileTable'
@@ -88,6 +88,9 @@ export function defaultItemsBuilder(
               )
             },
             default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
+              const renderVersion = isVersionColVisible(enabledVersion, row.hyperlink, row.auto)
+              const versionContent = renderVersion ? <>{`【v${row.version}】`}</> : null
+
               const defaultContent =
                 row.hyperlink !== 1 ? (
                   <ATooltip placement="top" destroyTooltipOnHide={true}>
@@ -104,6 +107,7 @@ export function defaultItemsBuilder(
                           }}
                         >
                           {row.fullName}
+                          {versionContent}
                         </span>
                       ),
                     }}
@@ -150,52 +154,53 @@ export function defaultItemsBuilder(
         {
           field: 'description',
           children: [
-            ...(isVersionColVisible(enabledVersion)
-              ? [
-                  {
-                    title: tavI18n('Tav.file.columns.4'),
-                    field: 'version',
-                    slots: {
-                      default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
-                        const renderVersion = isVersionColVisible(
-                          enabledVersion,
-                          row.hyperlink,
-                          row.auto
-                        )
+            // ...(isVersionColVisible(enabledVersion)
+            //   ? [
+            //       {
+            //         title: tavI18n('Tav.file.columns.4'),
+            //         field: 'version',
+            //         slots: {
+            //           default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
+            //             const renderVersion = isVersionColVisible(
+            //               enabledVersion,
+            //               row.hyperlink,
+            //               row.auto
+            //             )
 
-                        return (
-                          <>
-                            {renderVersion ? (
-                              <>
-                                <TaButton
-                                  style={{
-                                    minWidth: 0,
-                                    padding: 0,
-                                    lineHeight: 1,
-                                    height: 'auto',
-                                  }}
-                                  type={'link'}
-                                  onClick={async () => hanldeVersionClick(row)}
-                                >
-                                  v{row.version}
-                                </TaButton>
-                              </>
-                            ) : (
-                              '-'
-                            )}
-                          </>
-                        )
-                      },
-                    },
-                  },
-                ]
-              : []),
+            //             return (
+            //               <>
+            //                 {renderVersion ? (
+            //                   <>
+            //                     <TaButton
+            //                       style={{
+            //                         minWidth: 0,
+            //                         padding: 0,
+            //                         lineHeight: 1,
+            //                         height: 'auto',
+            //                         fontSize: '12px',
+            //                       }}
+            //                       type={'link'}
+            //                       onClick={async () => hanldeVersionClick(row)}
+            //                     >
+            //                       v{row.version}
+            //                     </TaButton>
+            //                   </>
+            //                 ) : (
+            //                   '-'
+            //                 )}
+            //               </>
+            //             )
+            //           },
+            //         },
+            //       },
+            //     ]
+            //   : []),
             {
-              title: tavI18n('Tav.file.columns.5'),
+              // title: tavI18n('Tav.file.columns.5'),
               field: 'createByName',
             },
             {
-              title: tavI18n('Tav.file.columns.8'),
+              // title: tavI18n('Tav.file.columns.8'),
               field: 'updateTime',
             },
           ],
@@ -207,7 +212,13 @@ export function defaultItemsBuilder(
       field: 'action',
       slots: {
         default: ({ row }: { row: FileActionUploadApiResponseRecord }) => {
-          return <TaFileListItemAction actions={actions.value(row)} />
+          return (
+            <TaFileListItemAction
+              actions={actions.value(row)}
+              hideInlineLabel={true}
+              hideDropdownIcon={true}
+            />
+          )
         },
       },
     },

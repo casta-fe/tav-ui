@@ -9,6 +9,7 @@ import {
   isDownloadWatermarkBtnVisible,
   isLogBtnVisible,
   isUpdateBtnVisible,
+  isVersionColVisible,
   isViewBtnVisible,
   validateVersionCachesHasApiFile,
 } from '../../utils'
@@ -19,6 +20,7 @@ export function defaultActionsBuilder(
   enabledPreview: FileCardProps['enabledPreview'],
   enabledUpdate: FileCardProps['enabledUpdate'],
   enabledOwner: FileCardProps['enabledOwner'],
+  enabledVersion: FileCardProps['enabledVersion'],
   row: FileActionUploadApiResponseRecord,
   handleViewBtnClick: (row: FileActionUploadApiResponseRecord) => void,
   handleUpdateBtnClick: (row: FileActionUploadApiResponseRecord) => Promise<void>,
@@ -36,6 +38,7 @@ export function defaultActionsBuilder(
             field: 'view',
             label: tavI18n('Tav.file.actions.1'),
             enabled: isViewBtnVisible(row.hyperlink!),
+            icon: 'ant-design:eye-outlined',
             onClick: () => {
               handleViewBtnClick(row)
             },
@@ -46,6 +49,7 @@ export function defaultActionsBuilder(
       field: 'delete',
       label: tavI18n('Tav.file.actions.6'),
       enabled: isDeleteBtnVisible(mode, enabledOwner, globalConfigUserInfo.value, row.owner),
+      icon: 'ant-design:delete-outlined',
       popConfirm: {
         title: tavI18n('Tav.file.message.9'),
         confirm: async () => {
@@ -84,6 +88,7 @@ export function defaultActionsBuilder(
             disabled:
               mode === 'create' &&
               !validateVersionCachesHasApiFile(VersionCachesController['caches'][row.actualId!]),
+            icon: 'ant-design:upload-outlined',
             onClick: async () => {
               await handleUpdateBtnClick(row)
             },
@@ -94,6 +99,7 @@ export function defaultActionsBuilder(
       field: 'downloadWatermark',
       label: tavI18n('Tav.file.actions.4'),
       enabled: isDownloadWatermarkBtnVisible(row.hyperlink!, row.watermarkFileDownload!),
+      icon: 'ant-design:cloud-download-outlined',
       onClick: async () => {
         await handleDownloadWatermarkBtnClick(row)
       },
@@ -102,6 +108,7 @@ export function defaultActionsBuilder(
       field: 'download',
       label: tavI18n('Tav.file.actions.3'),
       enabled: isDownloadBtnVisible(row.hyperlink!, row.sourceFileDownload!),
+      icon: 'ant-design:download-outlined',
       onClick: async () => {
         await handleDownloadBtnClick(row)
       },
@@ -110,6 +117,16 @@ export function defaultActionsBuilder(
       field: 'log',
       label: tavI18n('Tav.file.actions.7'),
       enabled: isLogBtnVisible(enabledOwner, globalConfigUserInfo.value, row.owner),
+      icon: 'ant-design:file-text-outlined',
+      onClick: async () => {
+        await handleLogBtnClick(row)
+      },
+    },
+    {
+      field: 'version',
+      label: tavI18n('Tav.file.columns.4'),
+      enabled: isVersionColVisible(enabledVersion, row.hyperlink, row.auto),
+      icon: 'ant-design:interaction-outlined',
       onClick: async () => {
         await handleLogBtnClick(row)
       },
@@ -148,12 +165,14 @@ export function useActions(options: {
     const enabledPreview = mergedProps.value.enabledPreview
     const enabledUpdate = mergedProps.value.enabledUpdate
     const enabledOwner = mergedProps.value.enabledOwner
+    const enabledVersion = mergedProps.value.enabledVersion
 
     let result = defaultActionsBuilder(
       mode,
       enabledPreview,
       enabledUpdate,
       enabledOwner,
+      enabledVersion,
       row,
       handleViewBtnClick,
       handleUpdateBtnClick,

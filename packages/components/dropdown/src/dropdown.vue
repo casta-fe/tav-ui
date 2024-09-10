@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown :trigger="trigger" v-bind="$attrs">
+  <a-dropdown :trigger="trigger" v-bind="$attrs" :overlay-class-name="props.overlayClassName">
     <span style="position: relative">
       <slot />
     </span>
@@ -32,14 +32,24 @@
               </template>
               <div>
                 <Icon v-if="item.icon" :icon="item.icon" />
-                <span class="ml-1 ant-btn ant-btn-link ant-btn-sm" style="font-size: 12px">
+                <span
+                  :class="`ml-1 ant-btn ant-btn-${item.type ?? 'link'} ant-btn-sm ${
+                    item.className ?? ''
+                  }`"
+                  style="font-size: 12px"
+                >
                   {{ item.text }}
                 </span>
               </div>
             </ModalButton>
             <template v-else>
               <Icon v-if="item.icon" :icon="item.icon" />
-              <span class="ml-1 ant-btn ant-btn-link ant-btn-sm" style="font-size: 12px">
+              <span
+                :class="`ml-1 ant-btn ant-btn-${item.type ?? 'link'} ant-btn-sm ${
+                  item.className ?? ''
+                }`"
+                style="font-size: 12px"
+              >
                 {{ item.text }}
               </span>
               <!-- <span class="ml-1">{{ item.text }}</span> -->

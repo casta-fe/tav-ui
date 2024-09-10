@@ -111,6 +111,11 @@ const fileCardsProps = reactive({
     fileCard: [
       {
         value: 'INVEST_YSH_YSHSHPPT',
+        rules: (rules: any[]) => {
+          return rules.map((rule) =>
+            rule.key === 'required' ? { ...rule, required: false } : rule
+          )
+        },
       },
     ],
   },

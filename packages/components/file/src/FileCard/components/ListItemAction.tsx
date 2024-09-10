@@ -29,6 +29,14 @@ const props = {
     type: Boolean,
     default: true,
   },
+  hideInlineLabel: {
+    type: Boolean,
+    default: false,
+  },
+  hideDropdownIcon: {
+    type: Boolean,
+    default: false,
+  },
 }
 
 /**
@@ -117,7 +125,11 @@ export default defineComponent({
           return actions
         } else {
           const _actions = actions.slice(0, ActionLabelLimit - 1)
-          restActions = actions.slice(ActionLabelLimit - 1)
+          restActions = actions.slice(ActionLabelLimit - 1).map((ra) => ({
+            ...ra,
+            ...(props.hideDropdownIcon ? { icon: undefined } : {}),
+            className: 'ta-file-card-list-item-action-dropdown-list-item',
+          }))
           return _actions
         }
       })
@@ -134,13 +146,20 @@ export default defineComponent({
 
       if (unref(Actions).length) {
         return unref(Actions).map((action, index) => {
+          const _icon = action.icon
+          if (action.icon) {
+            Reflect.deleteProperty(action, 'icon')
+          }
+          if (props.hideInlineLabel) {
+            action.tooltip = action.label
+          }
           const modalButton = () => (
-            <ModalButton {...action} type="link" size="small">
+            <ModalButton {...action} type="text" size="small">
               {{
                 default: () => (
                   <>
-                    {action.icon ? <Icon icon={action.icon} /> : null}
-                    {action.label}
+                    {_icon ? <Icon icon={_icon} /> : null}
+                    {props.hideInlineLabel ? null : action.label}
                   </>
                 ),
               }}
@@ -188,11 +207,12 @@ export default defineComponent({
             dropMenuList={unref(DropdownList)}
             placement="bottomLeft"
             popconfirm
+            overlayClassName="ta-file-card-list-item-action-dropdown"
           >
             {{
               default: () =>
                 !slots.more ? (
-                  <Button type="link" size="small">
+                  <Button type="text" size="small">
                     <MoreOutlined class="icon-more" />
                   </Button>
                 ) : (

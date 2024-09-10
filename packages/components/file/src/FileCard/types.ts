@@ -59,6 +59,7 @@ export interface FileCardListItem {
 }
 export type FileCardListItemAction = TableProActionItem & { field: string }
 export type FileCardReloadApiParams = TableProApiParams
+export type FileCardRuleItem = RuleItem & { key: string; trigger: string }
 
 // 组件所需的所有 api 参数
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -107,18 +108,15 @@ export const fileCardProps = {
     type: String,
     required: true,
   },
+  /** 覆盖 filecard rules 配置，这里改为函数，函数参数为默认的 rules，可以根据 key 来找到制定 rule 进行操作 */
   rules: {
-    type: Array as PropType<(RuleItem & { trigger: string })[]>,
-    default: () => {
-      // return [{ required: true, message: 'test', trigger: 'change' }]
-      return [{ required: true, trigger: 'change' }]
-    },
+    type: Function as PropType<(...args: [FileCardRuleItem[]]) => FileCardRuleItem[]>,
   },
   errorMessageMode: {
     type: String as PropType<'inline | message'>,
     default: 'inline',
   },
-  /** 覆盖 tablepro columns 配置，这里改为函数，函数参数为默认的 column */
+  /** 覆盖 filecard columns 配置，这里改为函数，函数参数为默认的 column */
   items: {
     type: Function as PropType<(...args: [FileCardListItem[]]) => FileCardListItem[]>,
   },

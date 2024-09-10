@@ -8,6 +8,7 @@ import {
   /*useAttrs*/
   watch,
   onMounted,
+  toRaw,
 } from 'vue'
 import { List as AList, ButtonGroup, Divider } from 'ant-design-vue'
 import AsyncValidator from 'async-validator'
@@ -63,6 +64,7 @@ import {
   useHandleDataSource,
   useItems,
   useMode,
+  useRules,
 } from './hooks'
 import ListItem from './components/ListItem'
 
@@ -118,6 +120,7 @@ const fileActionUploadProps = computed(() => {
     },
     buttonType: 'primary',
     buttonSize: 'small',
+    buttonIcon: false,
   }
 })
 
@@ -138,6 +141,7 @@ const fileActionUploadLinkProps = computed(() => {
     },
     getFormContainer: () => headerExtraElRef.value,
     buttonSize: 'small',
+    buttonIcon: false,
   }
 })
 
@@ -172,54 +176,6 @@ const hasEmptyDataSource = computed(() => {
     !mergedProps.value.dataSource
   )
 })
-
-const isRequired = computed(() => !!mergedProps.value.rules?.find((rule) => rule.required))
-
-function getRuleByTriggerName(trigger: string) {
-  const rules = mergedProps.value.rules
-
-  return (rules ?? [])
-    .filter((rule) => {
-      if (!rule.trigger || trigger === '') return true
-      if (Array.isArray(rule.trigger)) {
-        return rule.trigger.indexOf(trigger) > -1
-      } else {
-        return rule.trigger === trigger
-      }
-    })
-    .map((rule) => ({ ...rule }))
-}
-
-const validateMessage = ref('')
-async function validate(trigger: string, callback?: CardValidateCallback) {
-  const rules = getRuleByTriggerName(trigger)
-  if (rules.length === 0) {
-    callback?.(true)
-    return true
-  }
-
-  if (rules && rules.length > 0) {
-    rules.forEach((rule) => {
-      Reflect.deleteProperty(rule, 'trigger')
-    })
-  }
-
-  const validator = new AsyncValidator({ [mergedProps.value.value!]: rules })
-  return validator
-    .validate({ [mergedProps.value.value!]: dataSource.value }, { firstFields: true })
-    .then(() => {
-      callback?.(true)
-      return true
-    })
-    .catch((err: CardValidateFailure) => {
-      const { fields, errors } = err
-      validateMessage.value = errors
-        ? errors[0].message ?? `${mergedProps.value.value!} ${tavI18n('Tav.common.required')}`
-        : ''
-      callback?.(false, fields)
-      return callback ? false : Promise.reject(fields)
-    })
-}
 
 const {
   apiActions: { apiQueryFileOptions },
@@ -543,6 +499,56 @@ const editConfig = computed<any>(() =>
 //       .find((action) => action.field === fileVersionTableAction.field && action.enabled)
 //   )
 // }
+
+// 处理 rules
+const rules = useRules({
+  mergedProps,
+})
+
+const isRequired = computed(() => !!rules.value.find((rule) => rule.required))
+
+function getRuleByTriggerName(trigger: string) {
+  return (toRaw(rules).value ?? [])
+    .filter((rule) => {
+      if (!rule.trigger || trigger === '') return true
+      if (Array.isArray(rule.trigger)) {
+        return rule.trigger.indexOf(trigger) > -1
+      } else {
+        return rule.trigger === trigger
+      }
+    })
+    .map((rule) => ({ ...rule }))
+}
+
+const validateMessage = ref('')
+async function validate(trigger: string, callback?: CardValidateCallback) {
+  const _rules = getRuleByTriggerName(trigger)
+  if (_rules.length === 0) {
+    callback?.(true)
+    return true
+  }
+
+  if (_rules && _rules.length > 0) {
+    _rules.forEach((rule) => {
+      Reflect.deleteProperty(rule, 'trigger')
+      Reflect.deleteProperty(rule, 'key')
+    })
+  }
+
+  const validator = new AsyncValidator({ [mergedProps.value.value!]: _rules })
+  return validator
+    .validate({ [mergedProps.value.value!]: dataSource.value }, { firstFields: true })
+    .then(() => {
+      callback?.(true)
+      return true
+    })
+    .catch((err: CardValidateFailure) => {
+      const { fields, errors } = err
+      validateMessage.value = errors ? errors[0].message ?? '' : ''
+      callback?.(false, fields)
+      return callback ? false : Promise.reject(fields)
+    })
+}
 
 async function retriggerHandleDataSource() {
   if (mergedProps.value.dataSource || mergedProps.value.immediate) {
