@@ -197,8 +197,8 @@ export default {
     },
     upload: {
       '1': 'Upload file',
-      '2': 'Hide hyperlink upload',
-      '3': 'Upload hyperlink',
+      '2': 'Cancel upload',
+      '3': 'Upload link',
       '4': 'Too large',
       '5': 'File name contains illegal char: ',
       '6': 'Not support file type',

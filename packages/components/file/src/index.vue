@@ -164,6 +164,7 @@ const fileTableProps = computed(() => {
 
       appId: fileApiParams.value.appId,
       businessCheck: fileApiParams.value.businessCheck ?? DEFAULT_APIPARAMS.businessCheck, // 合并默认值
+      businessDisplayItem: fileApiParams.value.businessDisplayItem,
       businessIds: fileApiParams.value.businessIds,
       businessKey: fileApiParams.value.businessKey,
       businessSearchItems: fileApiParams.value.businessSearchItems,

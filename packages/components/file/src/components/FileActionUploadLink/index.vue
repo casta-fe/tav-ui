@@ -71,7 +71,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       label: tavI18n('Tav.file.columns.1'),
       required: true,
       component: 'Input',
-      colProps: { span: 10 },
+      colProps: { span: 9 },
       componentProps: {
         maxLength: 100,
       },
@@ -80,7 +80,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       field: 'address',
       label: tavI18n('Tav.file.columns.9'),
       component: 'Input',
-      colProps: { span: 10 },
+      colProps: { span: 9 },
       rules: [
         {
           required: true,
@@ -99,7 +99,7 @@ const [formRegister, { validate, getFieldsValue, resetFields }] = useForm({
       label: '　',
       component: 'Input',
       slot: 'submitBtn',
-      colProps: { span: 4 },
+      colProps: { span: 6 },
     },
   ],
 })

@@ -14,6 +14,7 @@ import { useDisable, useGlobalConfigProps, useLoading, useMergedProps, useReques
 import {
   type FileActionUploadApiResponseRecord,
   type FileTypeSelectApiResponseRecord,
+  type GlobalConfigFileProps,
 } from '../typings'
 import {
   type FileCardEmits,
@@ -23,6 +24,7 @@ import {
 } from '../FileCard'
 import { type ArgumentsOf } from '../utils'
 import {
+  type FileCardMultiple,
   type FileCardsCatagory,
   type FileCardsProps,
   fileCardsEmits,
@@ -115,19 +117,27 @@ async function useFileListCatgory() {
   return ApiResult.value as FileActionUploadApiResponseRecord[]
 }
 
+function isFileCardHasDataSource(fileCard: FileCardsProps['fileCard']) {
+  if (!fileCard) return false
+
+  if (!Array.isArray(fileCard)) {
+    return false
+  } else {
+    return (
+      fileCard.filter((fileCard) => fileCard.dataSource && Array.isArray(fileCard.dataSource))
+        .length === fileCard.length
+    )
+  }
+}
+
 const catagories = ref<FileCardsCatagory[]>()
 /** 这里只做初始化分类，后续的更新与合并在 fileCardProps 中 */
 async function catagory() {
-  // 因为 filecard 的 label 和 value 必传所以这里只需要判断 datasurce 即可
-  const hasDatasources = mergedProps.value.fileCard
-    ? mergedProps.value.fileCard.filter(
-        (fileCard) => fileCard.dataSource && fileCard.dataSource.length > 0
-      ).length === mergedProps.value.fileCard.length
-    : false
+  const hasDatasources = isFileCardHasDataSource(mergedProps.value.fileCard)
 
-  function createDefaultCatagoriesValue() {
+  function useFileCardArrayObjectCreateCatagoriesValue() {
     return (
-      mergedProps.value.fileCard?.map((fileCard) => {
+      (mergedProps.value.fileCard as FileCardMultiple | undefined)?.map((fileCard) => {
         if (fileCard.value && !fileActualIdsValueMap.value[fileCard.value]) {
           fileActualIdsValueMap.value[fileCard.value] = [] as any
         }
@@ -140,33 +150,61 @@ async function catagory() {
     )
   }
 
-  if (!hasDatasources && mergedProps.value.immediate) {
+  function useFileCardObjectCreateCatagoriesValue() {
+    return [] as any[]
+  }
+
+  async function useApiCreateCatagoriesValue() {
     // 传入 immediate 时只使用接口构造数据，并且不考虑合并 datasource
     const fileTypes = await useFileTypeSelectCatgory()
     const files = await useFileListCatgory()
-    catagories.value = fileTypes?.map((fileType) => {
-      if (fileType.code && !fileActualIdsValueMap.value[fileType.code]) {
-        fileActualIdsValueMap.value[fileType.code] = [] as any
-      }
+    return (
+      fileTypes?.map((fileType) => {
+        if (fileType.code && !fileActualIdsValueMap.value[fileType.code]) {
+          fileActualIdsValueMap.value[fileType.code] = [] as any
+        }
 
-      const currentTypeFiles = files?.filter((file) => file.typeCode === fileType.code) ?? []
-      return {
-        label: fileType.name,
-        value: fileType.code,
-        dataSource: [...currentTypeFiles],
-        __dataSourceFromCards: true,
-      }
-    })
+        const currentTypeFiles = files?.filter((file) => file.typeCode === fileType.code) ?? []
+        return {
+          label: fileType.name,
+          value: fileType.code,
+          dataSource: [...currentTypeFiles],
+          __dataSourceFromCards: true,
+        }
+      }) ?? []
+    )
+  }
+
+  if (mergedProps.value.immediate) {
+    if (hasDatasources) {
+      catagories.value = useFileCardArrayObjectCreateCatagoriesValue()
+    } else {
+      // 没有 datasource 只有俩中情况
+      // 1. filecard 没传，使用 api 构造
+      // 2. filecard 传了对象（不包含 label/value/datasource），使用 api 构造并且将 filecard 统一配置合并
+      catagories.value = await useApiCreateCatagoriesValue()
+    }
   } else {
-    catagories.value = createDefaultCatagoriesValue()
+    if (hasDatasources) {
+      catagories.value = useFileCardArrayObjectCreateCatagoriesValue()
+    } else {
+      // 没有 datasource 只有俩中情况
+      // 1. filecard 没传，使用 api 构造
+      // 2. filecard 传了对象（不包含 label/value/datasource）
+      catagories.value = useFileCardObjectCreateCatagoriesValue()
+    }
   }
 }
 
 const fileCardProps = computed(() => (_catagory: FileCardsCatagory) => {
-  // 使用分类中的 typecode 找到传入的 filecard
-  const targetFileCard =
-    mergedProps.value.fileCard?.find((fileCard) => fileCard.value === _catagory.value) ??
-    ({} as any)
+  // 1. filecard 为对象数组时，使用分类中的 typecode 找到传入的 filecard
+  // 2. filecard 为对象时（不包含 label/value/datasource）只做统一配置
+  const targetFileCard = mergedProps.value.fileCard
+    ? Array.isArray(mergedProps.value.fileCard)
+      ? mergedProps.value.fileCard.find((fileCard) => fileCard.value === _catagory.value) ??
+        ({} as any)
+      : mergedProps.value.fileCard
+    : ({} as any)
 
   // 对传入的 filecard 与初始化分类数据进行合并
   const mergedCatagory = {

@@ -28,7 +28,7 @@ export function useMode(options: {
     changeEventPayload: Omit<ApiUpdateFileNameAndLinkParams, 'appId'>
   ) {
     if (!mergedProps.value.apiUpdateFileNameAndLink) {
-      console.warn('[tavui TaFileTable] apiUpdateFileNameAndLink is undefined')
+      console.warn('[tavui TaFileCard] apiUpdateFileNameAndLink is undefined')
       return
     }
 
@@ -63,7 +63,7 @@ export function useMode(options: {
     file: FileActionUploadApiResponseRecord
   ) {
     if (!mergedProps.value.apiQueryFileHistory) {
-      console.warn('[tavui TaFileTable] apiQueryFileHistory is undefined')
+      console.warn('[tavui TaFileCard] apiQueryFileHistory is undefined')
       return
     }
 
@@ -98,7 +98,7 @@ export function useMode(options: {
     row: FileActionUploadApiResponseRecord
   ) {
     if (!mergedProps.value.apiDeleteFile) {
-      console.warn('[tavui TaFileTable] apiDeleteFile is undefined')
+      console.warn('[tavui TaFileCard] apiDeleteFile is undefined')
       return
     }
 

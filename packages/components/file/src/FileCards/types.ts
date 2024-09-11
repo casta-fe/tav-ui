@@ -32,6 +32,14 @@ export interface FileCardsCatagory {
   dataSource: FileCardProps['dataSource']
 }
 
+/** 统一配置 filecard */
+export type FileCardSingle = Omit<
+  FileCardProps & GlobalConfigFileProps['TaFileCard'],
+  'label' | 'value' | 'dataSource'
+>
+/** 单独配置 filecard */
+export type FileCardMultiple = (FileCardProps & GlobalConfigFileProps['TaFileCard'])[]
+
 export const fileCardsProps = {
   //:============================== extend props ==============================://
   ...globalConfigFileProps['TaFileCards'],
@@ -70,9 +78,9 @@ export const fileCardsProps = {
       FileActionUploadLinkProps & GlobalConfigFileProps['TaFileActionUploadLink']
     >,
   },
-  /** FileCard Props */
+  /** FileCard Props，传对象的话相当于同一配置，传对象数组相当于单独配置。组件内部不做合并处理，单独配置优先 */
   fileCard: {
-    type: Object as PropType<(FileCardProps & GlobalConfigFileProps['TaFileCard'])[]>,
+    type: Object as PropType<FileCardSingle | FileCardMultiple>,
   },
   /** apiQueryFileType 已从 ...globalConfigFileProps['fileTypeSelect'] 取到 */
   beforeApiQueryFileType: {

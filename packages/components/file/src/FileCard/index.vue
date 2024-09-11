@@ -10,7 +10,7 @@ import {
   onMounted,
   toRaw,
 } from 'vue'
-import { List as AList, ButtonGroup, Divider } from 'ant-design-vue'
+import { List as AList, ButtonGroup, Divider, Tooltip } from 'ant-design-vue'
 import AsyncValidator from 'async-validator'
 import { tavI18n } from '@tav-ui/locales'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
@@ -706,9 +706,17 @@ defineExpose({
     >
       <section v-if="mergedProps.headerVisible" :class="`${DEFAULT_FILECARD_CLASSNAME}-header`">
         <div v-if="mergedProps.labelVisible" :class="`${DEFAULT_FILECARD_CLASSNAME}-meta`">
-          <label :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label`">
-            {{ mergedProps.label }}
-          </label>
+          <Tooltip placement="top" :destroy-tooltip-on-hide="true">
+            <template #title>
+              <span>
+                {{ mergedProps.label }}
+              </span>
+            </template>
+            <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label`">
+              {{ mergedProps.label }}
+            </span>
+          </Tooltip>
+          <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label-required`">*</span>
           <Divider type="vertical" />
           <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__upload-status`">
             {{

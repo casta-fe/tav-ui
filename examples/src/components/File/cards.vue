@@ -51,11 +51,6 @@ const fileCardsProps = reactive({
       visible: true,
     },
     autoValidate: false,
-    fileCard: [
-      {
-        value: 'INVEST_YSH_YSHSHPPT',
-      },
-    ],
   },
   update: {
     mode: 'update',
@@ -77,11 +72,9 @@ const fileCardsProps = reactive({
     fileActionUploadLink: {
       visible: true,
     },
-    fileCard: [
-      {
-        value: 'INVEST_YSH_YSHSHPPT',
-      },
-    ],
+    fileCard: {
+      items: (rows) => rows.filter((row) => row.field !== 'action'),
+    },
   },
   updateInstantly: {
     mode: 'updateInstantly',
@@ -145,7 +138,7 @@ watch(
 <template>
   <section
     class="ta-file-test"
-    style="width: 750px; height: 100%; margin: 0 auto; background-color: #fff; padding: 20px"
+    style="width: 450px; height: 100%; margin: 0 auto; background-color: #fff; padding: 20px 0"
   >
     <!-- <h2>TaFile 测试</h2> -->
     <TaFileCards

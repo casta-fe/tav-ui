@@ -93,28 +93,50 @@ export function defaultItemsBuilder(
 
               const defaultContent =
                 row.hyperlink !== 1 ? (
-                  <ATooltip placement="top" destroyTooltipOnHide={true}>
-                    {{
-                      title: () => <span>{row.fullName}</span>,
-                      default: () => (
-                        <span
-                          //@ts-ignore
-                          style={{
-                            display: 'inline-block',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {row.fullName}
-                          {versionContent}
-                        </span>
-                      ),
-                    }}
-                  </ATooltip>
+                  <>
+                    <ATooltip placement="top" destroyTooltipOnHide={true}>
+                      {{
+                        title: () => <span>{row.fullName}</span>,
+                        default: () => (
+                          <span
+                            //@ts-ignore
+                            style={{
+                              display: 'inline-block',
+                              overflow: 'hidden',
+                              whiteSpace: 'nowrap',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '220px',
+                            }}
+                          >
+                            {row.fullName}
+                          </span>
+                        ),
+                      }}
+                    </ATooltip>
+                    <span>{versionContent}</span>
+                  </>
                 ) : (
                   <>
-                    <span style={{ display: 'inline-block', lineHeight: 1 }}>{row.name}</span>
+                    <ATooltip placement="top" destroyTooltipOnHide={true}>
+                      {{
+                        title: () => <span>{row.name}</span>,
+                        default: () => (
+                          <span
+                            //@ts-ignore
+                            style={{
+                              display: 'inline-block',
+                              overflow: 'hidden',
+                              whiteSpace: 'nowrap',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '145px',
+                              marginRight: '4px',
+                            }}
+                          >
+                            {row.name}
+                          </span>
+                        ),
+                      }}
+                    </ATooltip>
                     <TaButton
                       style={{
                         minWidth: 0,
@@ -132,7 +154,25 @@ export function defaultItemsBuilder(
                           ?.focus()
                       }}
                     >
-                      {row.address}
+                      <ATooltip placement="top" destroyTooltipOnHide={true}>
+                        {{
+                          title: () => <span>{row.address}</span>,
+                          default: () => (
+                            <span
+                              //@ts-ignore
+                              style={{
+                                display: 'inline-block',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                maxWidth: '120px',
+                              }}
+                            >
+                              {row.address}
+                            </span>
+                          ),
+                        }}
+                      </ATooltip>
                     </TaButton>
                   </>
                 )
@@ -141,7 +181,6 @@ export function defaultItemsBuilder(
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px',
                     minHeight: '20px',
                   }}
                 >
@@ -198,10 +237,47 @@ export function defaultItemsBuilder(
             {
               // title: tavI18n('Tav.file.columns.5'),
               field: 'createByName',
+              slots: {
+                default: ({ row }: { row: FileActionUploadApiResponseRecord }) => (
+                  <ATooltip placement="top" destroyTooltipOnHide={true}>
+                    {{
+                      title: () => <span>{row.createByName}</span>,
+                      default: () => (
+                        <span
+                          //@ts-ignore
+                          style={{
+                            display: 'inline-block',
+                            lineHeight: '1',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '120px',
+                          }}
+                        >
+                          {row.createByName}
+                        </span>
+                      ),
+                    }}
+                  </ATooltip>
+                ),
+              },
             },
             {
               // title: tavI18n('Tav.file.columns.8'),
               field: 'updateTime',
+              slots: {
+                default: ({ row }: { row: FileActionUploadApiResponseRecord }) => (
+                  <span
+                    //@ts-ignore
+                    style={{
+                      display: 'inline-block',
+                      lineHeight: '1',
+                    }}
+                  >
+                    {row.updateTime}
+                  </span>
+                ),
+              },
             },
           ],
         },
