@@ -454,16 +454,17 @@
       .@{namespace} {
         &-file-card {
           &-meta {
-            // &__label {
-            //   &::after {
-            //     content: '*';
-            //     display: inline-block;
-            //     margin-left: 2px;
-            //     color: #ff4d4f;
-            //     font-size: 14px;
-            //     line-height: 1;
-            //   }
-            // }
+            &__label-required {
+              display: inline-block;
+              position: absolute;
+              top: 4px;
+              left: -12px;
+              display: inline-block;
+              margin-left: 2px;
+              color: #ff4d4f;
+              font-size: 14px;
+              line-height: 1;
+            }
           }
         }
       }
@@ -537,14 +538,7 @@
       }
 
       &__label-required {
-        position: absolute;
-        top: 4px;
-        left: -12px;
-        display: inline-block;
-        margin-left: 2px;
-        color: #ff4d4f;
-        font-size: 14px;
-        line-height: 1;
+        display: none;
       }
 
       // .ant-divider {
