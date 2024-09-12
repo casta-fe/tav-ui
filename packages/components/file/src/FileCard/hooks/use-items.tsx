@@ -94,69 +94,10 @@ export function defaultItemsBuilder(
               const defaultContent =
                 row.hyperlink !== 1 ? (
                   <>
-                    <ATooltip placement="top" destroyTooltipOnHide={true}>
-                      {{
-                        title: () => <span>{row.fullName}</span>,
-                        default: () => (
-                          <span
-                            //@ts-ignore
-                            style={{
-                              display: 'inline-block',
-                              overflow: 'hidden',
-                              whiteSpace: 'nowrap',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '220px',
-                            }}
-                          >
-                            {row.fullName}
-                          </span>
-                        ),
-                      }}
-                    </ATooltip>
-                    <span>{versionContent}</span>
-                  </>
-                ) : (
-                  <>
-                    <ATooltip placement="top" destroyTooltipOnHide={true}>
-                      {{
-                        title: () => <span>{row.name}</span>,
-                        default: () => (
-                          <span
-                            //@ts-ignore
-                            style={{
-                              display: 'inline-block',
-                              overflow: 'hidden',
-                              whiteSpace: 'nowrap',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '145px',
-                              marginRight: '4px',
-                            }}
-                          >
-                            {row.name}
-                          </span>
-                        ),
-                      }}
-                    </ATooltip>
-                    <TaButton
-                      style={{
-                        minWidth: 0,
-                        padding: 0,
-                        lineHeight: '14px',
-                        height: '14px',
-                        fontSize: '12px',
-                      }}
-                      type={'link'}
-                      size={'small'}
-                      onClick={(e: Event) => {
-                        e.stopPropagation()
-                        window
-                          .open(row.address.includes('//') ? row.address : `//${row.address}`)
-                          ?.focus()
-                      }}
-                    >
+                    <div style="max-width: calc(100% - 70px - 10px)">
                       <ATooltip placement="top" destroyTooltipOnHide={true}>
                         {{
-                          title: () => <span>{row.address}</span>,
+                          title: () => <span>{row.fullName}</span>,
                           default: () => (
                             <span
                               //@ts-ignore
@@ -165,28 +106,93 @@ export function defaultItemsBuilder(
                                 overflow: 'hidden',
                                 whiteSpace: 'nowrap',
                                 textOverflow: 'ellipsis',
-                                maxWidth: '120px',
+                                width: '100%',
                               }}
                             >
-                              {row.address}
+                              {row.fullName}
                             </span>
                           ),
                         }}
                       </ATooltip>
-                    </TaButton>
+                    </div>
+                    <div style="max-width: 70px">
+                      <span
+                        //@ts-ignore
+                        style={{
+                          display: 'inline-block',
+                          width: '100%',
+                        }}
+                      >
+                        {versionContent}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style="max-width: calc(50% - 10px)">
+                      <ATooltip placement="top" destroyTooltipOnHide={true}>
+                        {{
+                          title: () => <span>{row.name}</span>,
+                          default: () => (
+                            <span
+                              //@ts-ignore
+                              style={{
+                                display: 'inline-block',
+                                lineHeight: '1',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                width: '100%',
+                              }}
+                            >
+                              {row.name}
+                            </span>
+                          ),
+                        }}
+                      </ATooltip>
+                    </div>
+                    <div style="max-width: calc(50% - 10px)">
+                      <TaButton
+                        style={{
+                          minWidth: 0,
+                          padding: 0,
+                          lineHeight: '14px',
+                          height: '14px',
+                          fontSize: '12px',
+                        }}
+                        type={'link'}
+                        size={'small'}
+                        onClick={(e: Event) => {
+                          e.stopPropagation()
+                          window
+                            .open(row.address.includes('//') ? row.address : `//${row.address}`)
+                            ?.focus()
+                        }}
+                      >
+                        <ATooltip placement="top" destroyTooltipOnHide={true}>
+                          {{
+                            title: () => <span>{row.address}</span>,
+                            default: () => (
+                              <span
+                                //@ts-ignore
+                                style={{
+                                  display: 'inline-block',
+                                  overflow: 'hidden',
+                                  whiteSpace: 'nowrap',
+                                  textOverflow: 'ellipsis',
+                                  width: '100%',
+                                }}
+                              >
+                                {row.address}
+                              </span>
+                            ),
+                          }}
+                        </ATooltip>
+                      </TaButton>
+                    </div>
                   </>
                 )
-              return (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    minHeight: '20px',
-                  }}
-                >
-                  {defaultContent}
-                </div>
-              )
+              return defaultContent
             },
           },
         },
@@ -251,7 +257,7 @@ export function defaultItemsBuilder(
                             overflow: 'hidden',
                             whiteSpace: 'nowrap',
                             textOverflow: 'ellipsis',
-                            maxWidth: '120px',
+                            width: '100%',
                           }}
                         >
                           {row.createByName}
@@ -267,15 +273,26 @@ export function defaultItemsBuilder(
               field: 'updateTime',
               slots: {
                 default: ({ row }: { row: FileActionUploadApiResponseRecord }) => (
-                  <span
-                    //@ts-ignore
-                    style={{
-                      display: 'inline-block',
-                      lineHeight: '1',
+                  <ATooltip placement="top" destroyTooltipOnHide={true}>
+                    {{
+                      title: () => <span>{row.updateTime}</span>,
+                      default: () => (
+                        <span
+                          //@ts-ignore
+                          style={{
+                            display: 'inline-block',
+                            lineHeight: '1',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis',
+                            width: '100%',
+                          }}
+                        >
+                          {row.updateTime}
+                        </span>
+                      ),
                     }}
-                  >
-                    {row.updateTime}
-                  </span>
+                  </ATooltip>
                 ),
               },
             },

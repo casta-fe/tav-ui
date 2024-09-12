@@ -1,20 +1,28 @@
 <script setup lang="ts">
 import {
+  type CSSProperties,
   computed,
+  nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
   watch,
-  /*useSlots, useAttrs*/
+  /*useSlots,*/
+  useAttrs,
 } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
+import waterfall from 'masonry-layout'
 import { tavI18n } from '@tav-ui/locales'
-import { DEFAULT_APIPARAMS, DEFAULT_FILECARDS_CLASSNAME, DEFAULT_FILECARDS_ID } from '../consts'
+import {
+  DEFAULT_APIPARAMS,
+  DEFAULT_FILECARDS_CLASSNAME,
+  DEFAULT_FILECARDS_ID,
+  DEFAULT_FILECARD_CLASSNAME,
+} from '../consts'
 import { useDisable, useGlobalConfigProps, useLoading, useMergedProps, useRequest } from '../hooks'
 import {
   type FileActionUploadApiResponseRecord,
   type FileTypeSelectApiResponseRecord,
-  type GlobalConfigFileProps,
 } from '../typings'
 import {
   type FileCardEmits,
@@ -42,7 +50,7 @@ defineOptions({
 const props = defineProps(fileCardsProps)
 const emits = defineEmits(fileCardsEmits)
 // const slots = useSlots()
-// const attrs = useAttrs()
+const attrs = useAttrs()
 
 // 将 globalconfig 与 fileactionupload props 结合，同名 props 已 fileactionupload props 为主
 const globalConfigProps = useGlobalConfigProps()
@@ -50,6 +58,7 @@ const mergedProps = useMergedProps<FileCardsProps>(globalConfigProps, props, 'Ta
   ...DEFAULT_APIPARAMS,
 })
 
+const fileCardsElRef = ref<HTMLDivElement>()
 const fileActualIdsValueMap = ref<{ [key: string]: ArgumentsOf<FileCardEmits['actualidsChange']> }>(
   {}
 )
@@ -196,19 +205,19 @@ async function catagory() {
   }
 }
 
-const fileCardProps = computed(() => (_catagory: FileCardsCatagory) => {
+const fileCardProps = computed(() => (_catagory: FileCardsCatagory | undefined) => {
   // 1. filecard 为对象数组时，使用分类中的 typecode 找到传入的 filecard
   // 2. filecard 为对象时（不包含 label/value/datasource）只做统一配置
   const targetFileCard = mergedProps.value.fileCard
     ? Array.isArray(mergedProps.value.fileCard)
-      ? mergedProps.value.fileCard.find((fileCard) => fileCard.value === _catagory.value) ??
+      ? mergedProps.value.fileCard.find((fileCard) => fileCard.value === _catagory?.value) ??
         ({} as any)
       : mergedProps.value.fileCard
     : ({} as any)
 
   // 对传入的 filecard 与初始化分类数据进行合并
   const mergedCatagory = {
-    ..._catagory,
+    ...(_catagory ?? {}),
     autoValidate: mergedProps.value.autoValidate,
     ...targetFileCard,
     dataSource: [
@@ -237,7 +246,7 @@ const fileCardProps = computed(() => (_catagory: FileCardsCatagory) => {
   }
 })
 
-function handleFileCardActualidsChange(...args: [FileCardProps['value'], any]) {
+async function handleFileCardActualidsChange(...args: [FileCardProps['value'], any]) {
   const [value, _args] = args as unknown as [
     FileCardProps['value'],
     ArgumentsOf<FileCardEmits['actualidsChange']>
@@ -251,10 +260,35 @@ function handleFileCardActualidsChange(...args: [FileCardProps['value'], any]) {
     result.push(...fileActualIds)
   }
   emits('update:fileActualIds', result)
+
+  await retriggerWaterfall()
+}
+
+const fileCardWaterfallStyle = ref<CSSProperties>()
+async function retriggerWaterfall() {
+  if (!mergedProps.value.waterfallConfig.enabled) return
+
+  await nextTick()
+  if (fileCardsElRef.value) {
+    const wrapperEl = fileCardsElRef.value.querySelector(
+      `.${DEFAULT_FILECARDS_CLASSNAME}-main--waterfall`
+    )
+    if (wrapperEl) {
+      const columnWidth = mergedProps.value.waterfallConfig.width ?? 400
+      fileCardWaterfallStyle.value = { ...fileCardWaterfallStyle.value, width: `${columnWidth}px` }
+      new waterfall(`.${DEFAULT_FILECARDS_CLASSNAME}-main--waterfall`, {
+        itemSelector: `.${DEFAULT_FILECARD_CLASSNAME}`,
+        columnWidth,
+        gutter: 20,
+      })
+    }
+  }
 }
 
 onMounted(async () => {
   await catagory()
+
+  await retriggerWaterfall()
 })
 
 // 清空状态
@@ -275,6 +309,8 @@ watch(
     loading.value.value = true
     await catagory()
     loading.value.value = false
+
+    await retriggerWaterfall()
   }
 )
 
@@ -296,6 +332,8 @@ watch(
           loading.value.value = true
           await catagory()
           loading.value.value = false
+
+          retriggerWaterfall()
         }
       }
     }
@@ -340,7 +378,11 @@ defineExpose({
 
 <template>
   <template v-if="mergedProps.visible">
-    <section :id="DEFAULT_FILECARDS_ID" :class="DEFAULT_FILECARDS_CLASSNAME">
+    <section
+      :id="DEFAULT_FILECARDS_ID"
+      ref="fileCardsElRef"
+      :class="`${DEFAULT_FILECARDS_CLASSNAME} ${attrs.class ? attrs.class : ''}`"
+    >
       <!-- <section :class="`${DEFAULT_FILECARDS_CLASSNAME}-header`"></section> -->
       <section :class="`${DEFAULT_FILECARDS_CLASSNAME}-main`">
         <Spin :spinning="loading.value" :tip="tavI18n('Tav.common.loadingText')">
@@ -350,13 +392,27 @@ defineExpose({
             <Empty :image="EmptyImage" />
           </template>
           <template v-else>
-            <TaFileCard
-              v-for="(item, idx) in catagories"
-              :key="`${item.value}-${idx}`"
-              v-bind="fileCardProps(item)"
-              :ref="(instance: any) => handleFileCardRefs(item.value, instance)"
-              @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
-            />
+            <template v-if="mergedProps.waterfallConfig.enabled">
+              <div :class="`${DEFAULT_FILECARDS_CLASSNAME}-main--waterfall`">
+                <TaFileCard
+                  v-for="item in catagories"
+                  :key="`${item.value}`"
+                  :ref="(instance: any) => handleFileCardRefs(item.value, instance)"
+                  v-bind="fileCardProps(item)"
+                  :style="fileCardWaterfallStyle"
+                  @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
+                />
+              </div>
+            </template>
+            <template v-else>
+              <TaFileCard
+                v-for="item in catagories"
+                :key="`${item.value}`"
+                :ref="(instance: any) => handleFileCardRefs(item.value, instance)"
+                v-bind="fileCardProps(item)"
+                @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
+              />
+            </template>
           </template>
         </Spin>
       </section>

@@ -98,6 +98,9 @@ const fileCardsProps = reactive({
       }),
     },
     fileActualIds: [],
+    // waterfallConfig: {
+    //   enabled: true,
+    // },
     fileActionUploadLink: {
       visible: true,
     },
@@ -138,7 +141,7 @@ watch(
 <template>
   <section
     class="ta-file-test"
-    style="width: 450px; height: 100%; margin: 0 auto; background-color: #fff; padding: 20px 0"
+    style="width: 100%; height: 100%; margin: 0 auto; background-color: #fff"
   >
     <!-- <h2>TaFile 测试</h2> -->
     <TaFileCards

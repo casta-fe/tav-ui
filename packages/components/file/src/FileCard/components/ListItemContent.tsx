@@ -112,6 +112,7 @@ export default defineComponent({
               props.render!.field
             }--editting`}
             onKeydown={handleItemContentEditKeydown}
+            style="width: 100%"
           >
             <>{createItemContentEditVNode(props.row!, props.render!)}</>
           </div>

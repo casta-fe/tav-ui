@@ -116,12 +116,12 @@ defineExpose({
           width: '100%',
         }"
         @change="
-          ({ value }) => {
+          ({ value }: any) => {
             state.name = value
           }
         "
         @keydown="
-          ({ $event: { code } }) => {
+          ({ $event: { code } }: any) => {
             'Enter' === code && props.onEnter?.()
           }
         "

@@ -3,12 +3,12 @@ import {
   type Ref,
   computed,
   onBeforeUnmount,
-  ref,
-  useSlots,
-  /*useAttrs*/
-  watch,
   onMounted,
+  ref,
   toRaw,
+  useAttrs,
+  useSlots,
+  watch,
 } from 'vue'
 import { List as AList, ButtonGroup, Divider, Tooltip } from 'ant-design-vue'
 import AsyncValidator from 'async-validator'
@@ -41,7 +41,7 @@ import {
   fileSingleDownload,
   isFullNameColEdit,
 } from '../utils'
-import { DEFAULT_APIPARAMS, ns } from '../consts'
+import { DEFAULT_APIPARAMS, DEFAULT_FILECARD_CLASSNAME } from '../consts'
 import { type FileActionUploadApiResponseRecord } from '../typings'
 import { TaFileVersion } from '../components/FileVersion'
 import { TaFileLog } from '../components/FileLog'
@@ -68,7 +68,6 @@ import {
 } from './hooks'
 import ListItem from './components/ListItem'
 
-const DEFAULT_FILECARD_CLASSNAME = ns.b('card')
 const DEFAULT_FILECARD_ID = createId(DEFAULT_FILECARD_CLASSNAME)
 const { createMessage } = useMessage()
 
@@ -81,7 +80,7 @@ const headerExtraElRef = ref<HTMLElement>()
 const props = defineProps(fileCardProps)
 const emits = defineEmits(fileCardEmits)
 const slots = useSlots()
-// const attrs = useAttrs()
+const attrs = useAttrs()
 
 const FileActionUploadForActionUpdateBtnRef = ref<FileActionUploadInstance>()
 const VersionCachesController = new VersionCaches()
@@ -703,28 +702,30 @@ defineExpose({
         [`${DEFAULT_FILECARD_CLASSNAME}--required`]: isRequired,
         [`${DEFAULT_FILECARD_CLASSNAME}--validated-error`]: !!validateMessage,
       }"
+      :style="attrs.style"
     >
       <section v-if="mergedProps.headerVisible" :class="`${DEFAULT_FILECARD_CLASSNAME}-header`">
         <div v-if="mergedProps.labelVisible" :class="`${DEFAULT_FILECARD_CLASSNAME}-meta`">
-          <Tooltip placement="top" :destroy-tooltip-on-hide="true">
-            <template #title>
-              <span>
+          <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label-required`">*</span>
+          <div :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label-wrapper`">
+            <Tooltip placement="top" :destroy-tooltip-on-hide="true">
+              <template #title>
+                <span>
+                  {{ mergedProps.label }}
+                </span>
+              </template>
+              <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label`">
                 {{ mergedProps.label }}
               </span>
-            </template>
-            <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label`">
-              {{ mergedProps.label }}
-            </span>
-          </Tooltip>
-          <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__label-required`">*</span>
-          <Divider type="vertical" />
-          <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__upload-status`">
-            {{
-              dataSource && dataSource.length > 0
-                ? tavI18n('Tav.file.cards.2')
-                : tavI18n('Tav.file.cards.1')
-            }}
-          </span>
+            </Tooltip>
+            <!-- <span :class="`${DEFAULT_FILECARD_CLASSNAME}-meta__upload-status`">
+              {{
+                dataSource && dataSource.length > 0
+                  ? tavI18n('Tav.file.cards.2')
+                  : tavI18n('Tav.file.cards.1')
+              }}
+            </span> -->
+          </div>
         </div>
         <div
           v-if="mergedProps.headerActionsVisible && mergedProps.mode !== 'read'"

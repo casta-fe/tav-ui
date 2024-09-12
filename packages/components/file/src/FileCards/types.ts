@@ -68,6 +68,16 @@ export const fileCardsProps = {
     type: Boolean,
     default: true,
   },
+  /** 默认 filecard 纵向平铺显示，开启后使用瀑布流布局 */
+  waterfallConfig: {
+    type: Object as PropType<{
+      enabled: boolean // 如果开启 width 默认400
+      width?: number
+    }>,
+    default: () => ({
+      enabled: false,
+    }),
+  },
   /** FileActionUpload Props */
   fileActionUpload: {
     type: Object as PropType<FileActionUploadProps & GlobalConfigFileProps['TaFileActionUpload']>,

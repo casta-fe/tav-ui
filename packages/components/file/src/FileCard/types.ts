@@ -47,6 +47,7 @@ export {
 export interface FileCardListItem {
   title?: string
   field: string
+  width?: string // TODO
   editRender?: Record<string, any>
   slots?: {
     edit?: string | ((params: { row: FileActionUploadApiResponseRecord }) => VNode | VNode[]) | null
