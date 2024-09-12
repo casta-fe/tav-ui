@@ -346,6 +346,7 @@ onBeforeUnmount(async () => {
 
 defineExpose({
   cleanup,
+  getFileCardRefMap: () => fileCardRefs,
   getDataSource: (cardPropValue?: string) => {
     if (!cardPropValue) {
       return Object.values(fileCardRefs).map((fileCardRef) => fileCardRef.getDataSource())

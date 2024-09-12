@@ -538,6 +538,7 @@ async function validate(trigger: string, callback?: CardValidateCallback) {
   return validator
     .validate({ [mergedProps.value.value!]: dataSource.value }, { firstFields: true })
     .then(() => {
+      validateMessage.value = ''
       callback?.(true)
       return true
     })

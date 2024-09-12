@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import { TaFileCards } from '@tav-ui/components/file'
+import { type FileCardInstance, TaFileCards } from '@tav-ui/components/file'
 
 const fileCardsRef = ref()
 const fileCardsProps = reactive({
@@ -117,10 +117,26 @@ const fileCardsProps = reactive({
   },
 })
 
-// setTimeout(() => {
-//   unifiedTaFileData.read.apiParams['businessCheck'] = true as any
-//   fileRef.value?.fileTypeSelectReload()
-// }, 5000)
+setTimeout(async () => {
+  const fileCardRefMap = fileCardsRef.value.getFileCardRefMap() as {
+    [key: string]: FileCardInstance
+  }
+  console.log('🚀 ~ fileCardRefMap ~ fileCardRefMap:', fileCardRefMap)
+
+  for (const [fileCardValue, fileCardInstance] of Object.entries(fileCardRefMap)) {
+    const dataSource = await fileCardInstance.readRows()
+    console.log('🚀 ~ setTimeout ~ dataSource:', dataSource)
+
+    if (fileCardValue === 'INVEST_YSH_YSHGZDG') {
+      const targetRow = dataSource[0]
+      await fileCardInstance.updateRows({
+        rows: [{ ...targetRow, fullName: `test${targetRow.fullName}` }],
+        deleteRows: [targetRow],
+      })
+      console.log('🚀 ~ setTimeout ~ updateRows:', await fileCardInstance.readRows())
+    }
+  }
+}, 3000)
 
 watch(
   () => fileCardsProps.updateInstantly.fileActualIds,
