@@ -11,8 +11,9 @@ import {
   useAttrs,
 } from 'vue'
 import { Empty, Spin } from 'ant-design-vue'
-import waterfall from 'masonry-layout'
+import Masonry from 'masonry-layout'
 import { tavI18n } from '@tav-ui/locales'
+import { isObject } from '@tav-ui/utils'
 import {
   DEFAULT_APIPARAMS,
   DEFAULT_FILECARDS_CLASSNAME,
@@ -265,6 +266,7 @@ async function handleFileCardActualidsChange(...args: [FileCardProps['value'], a
 }
 
 const fileCardWaterfallStyle = ref<CSSProperties>()
+const waterfallInstance = ref<Masonry | null>(null)
 async function retriggerWaterfall() {
   if (!mergedProps.value.waterfallConfig.enabled) return
 
@@ -276,11 +278,13 @@ async function retriggerWaterfall() {
     if (wrapperEl) {
       const columnWidth = mergedProps.value.waterfallConfig.width ?? 400
       fileCardWaterfallStyle.value = { ...fileCardWaterfallStyle.value, width: `${columnWidth}px` }
-      new waterfall(`.${DEFAULT_FILECARDS_CLASSNAME}-main--waterfall`, {
+      waterfallInstance.value && waterfallInstance.value.destroy?.()
+      waterfallInstance.value = new Masonry(`.${DEFAULT_FILECARDS_CLASSNAME}-main--waterfall`, {
         itemSelector: `.${DEFAULT_FILECARD_CLASSNAME}`,
         columnWidth,
         gutter: 20,
       })
+      waterfallInstance.value && waterfallInstance.value.layout?.()
     }
   }
 }
@@ -298,6 +302,9 @@ async function cleanup() {
     async (fileCardRef) => await fileCardRef.cleanup()
   )
   await Promise.all(fileCardCleanupPromises)
+
+  waterfallInstance.value?.destroy?.()
+  waterfallInstance.value = null
 }
 
 // mode 变化
@@ -311,6 +318,21 @@ watch(
     loading.value.value = false
 
     await retriggerWaterfall()
+  }
+)
+
+// filecard 数据结构变化
+watch(
+  () => JSON.stringify(mergedProps.value.fileCard),
+  async (curfileCard, prefileCard) => {
+    if (curfileCard && curfileCard !== prefileCard) {
+      await cleanup()
+      loading.value.value = true
+      await catagory()
+      loading.value.value = false
+
+      await retriggerWaterfall()
+    }
   }
 )
 
@@ -335,6 +357,20 @@ watch(
 
           retriggerWaterfall()
         }
+      }
+    }
+  }
+)
+
+// 重新布局 waterfall
+watch(
+  () => JSON.stringify(mergedProps.value.waterfallConfig),
+  (curwaterfallConfig, prewaterfallConfig) => {
+    if (curwaterfallConfig && curwaterfallConfig !== prewaterfallConfig) {
+      const cur = JSON.parse(curwaterfallConfig)
+      const pre = JSON.parse(prewaterfallConfig)
+      if (cur.enabled && cur.width !== pre.width) {
+        retriggerWaterfall()
       }
     }
   }

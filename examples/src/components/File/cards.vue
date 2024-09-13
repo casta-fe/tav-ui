@@ -98,9 +98,9 @@ const fileCardsProps = reactive({
       }),
     },
     fileActualIds: [],
-    // waterfallConfig: {
-    //   enabled: true,
-    // },
+    waterfallConfig: {
+      enabled: true,
+    },
     fileActionUploadLink: {
       visible: true,
     },
@@ -118,24 +118,26 @@ const fileCardsProps = reactive({
 })
 
 setTimeout(async () => {
-  const fileCardRefMap = fileCardsRef.value.getFileCardRefMap() as {
-    [key: string]: FileCardInstance
-  }
-  console.log('🚀 ~ fileCardRefMap ~ fileCardRefMap:', fileCardRefMap)
-
-  for (const [fileCardValue, fileCardInstance] of Object.entries(fileCardRefMap)) {
-    const dataSource = await fileCardInstance.readRows()
-    console.log('🚀 ~ setTimeout ~ dataSource:', dataSource)
-
-    if (fileCardValue === 'INVEST_YSH_YSHGZDG') {
-      const targetRow = dataSource[0]
-      await fileCardInstance.updateRows({
-        rows: [{ ...targetRow, fullName: `test${targetRow.fullName}` }],
-        deleteRows: [targetRow],
-      })
-      console.log('🚀 ~ setTimeout ~ updateRows:', await fileCardInstance.readRows())
-    }
-  }
+  // const fileCardRefMap = fileCardsRef.value.getFileCardRefMap() as {
+  //   [key: string]: FileCardInstance
+  // }
+  // console.log('🚀 ~ fileCardRefMap ~ fileCardRefMap:', fileCardRefMap)
+  // for (const [fileCardValue, fileCardInstance] of Object.entries(fileCardRefMap)) {
+  //   const dataSource = await fileCardInstance.readRows()
+  //   console.log('🚀 ~ setTimeout ~ dataSource:', dataSource)
+  //   if (fileCardValue === 'INVEST_YSH_YSHGZDG') {
+  //     const targetRow = dataSource[0]
+  //     await fileCardInstance.updateRows({
+  //       rows: [{ ...targetRow, fullName: `test${targetRow.fullName}` }],
+  //       deleteRows: [targetRow],
+  //     })
+  //     console.log('🚀 ~ setTimeout ~ updateRows:', await fileCardInstance.readRows())
+  //   }
+  // }
+  // fileCardsProps.updateInstantly.waterfallConfig.width = 350
+  // fileCardsProps.updateInstantly.fileCard = {
+  //   items: (rows) => rows.filter((row) => row.field !== 'action'),
+  // }
 }, 3000)
 
 watch(
