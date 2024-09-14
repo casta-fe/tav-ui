@@ -657,7 +657,7 @@ export default defineComponent({
           if (itemRef.value) {
             const inputEle = itemRef.value.querySelector('input')
             if (inputEle) {
-              const inputVal = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
+              const inputVal = inputEle.value.match(/-?\d+(?![\d\s])/g)?.join('.')
               const value = inputVal ? Number(inputVal) : undefined
               setTimeout(() => {
                 canUpdatePrecision.value = true
