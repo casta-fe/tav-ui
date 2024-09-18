@@ -1,4 +1,5 @@
 import { inject, provide } from 'vue'
+import { type UseCheckboxCacheReturn } from './useCheckboxCache'
 import type { Emitter } from '@tav-ui/utils/mitt'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProEvent, TableProInstance, TableProProps } from '../types'
@@ -17,6 +18,12 @@ export interface TableProContext extends BasicTableProContext {
   columnApiOptions: TableProColumnApiOptions
   setCacheActionWidths?: (...args: any) => void
   calcContent?: (...args: any) => number
+  checkboxCaches: UseCheckboxCacheReturn['checkboxCaches']
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled']
+  checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList']
+  createAllCheckboxCache: UseCheckboxCacheReturn['createAllCheckboxCache']
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache']
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
 }
 
 export function createTableContext(context: TableProContext) {

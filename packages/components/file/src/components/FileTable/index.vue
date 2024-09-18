@@ -499,6 +499,23 @@ const editConfig = computed<any>(() =>
 //   )
 // }
 
+async function getSelectRowKeys() {
+  // eslint-disable-next-line no-return-await
+  return await (tableProRef as any)?.instance?.getSelectRowKeys()
+}
+async function clearSelectedRowByKey(key: string | number) {
+  // eslint-disable-next-line no-return-await
+  return await (tableProRef as any)?.instance?.clearSelectedRowByKey(key)
+}
+async function getSelectRows() {
+  // eslint-disable-next-line no-return-await
+  return await (tableProRef as any)?.instance?.getSelectRows()
+}
+async function clearSelectedRows() {
+  // eslint-disable-next-line no-return-await
+  return await (tableProRef as any)?.instance?.clearSelectedRows()
+}
+
 async function retriggerHandleDataSource() {
   if (mergedProps.value.dataSource) {
     await handleDataSource(mergedProps.value.dataSource)
@@ -597,6 +614,10 @@ defineExpose({
   readRows: tableReadRows,
   updateRows: tableUpdateRows,
   deleteRows: tableDeleteRows,
+  getSelectRowKeys,
+  clearSelectedRowByKey,
+  getSelectRows,
+  clearSelectedRows,
 })
 </script>
 

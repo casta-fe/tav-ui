@@ -301,7 +301,6 @@ export const fileEmits = {
 export type FileEmits = typeof fileEmits
 
 export interface FileInstance {
-  elRef: Ref<HTMLDivElement | undefined>
   fileTypeSelectRef: Ref<FileTypeSelectInstance | undefined>
   fileActionUploadRef: Ref<FileActionUploadInstance | undefined>
   fileActionUploadLinkRef: Ref<FileActionUploadLinkInstance | undefined>
@@ -311,5 +310,9 @@ export interface FileInstance {
   fileTableReadRows: FileTableInstance['readRows']
   fileTableUpdateRows: FileTableInstance['updateRows']
   fileTableDeleteRows: FileTableInstance['deleteRows']
+  getFileTableSelectRowKeys: FileTableInstance['getFileTableSelectRowKeys']
+  clearFileTableSelectedRowByKey: FileTableInstance['clearFileTableSelectedRowByKey']
+  getFileTableSelectRows: FileTableInstance['getFileTableSelectRows']
+  clearFileTableSelectedRows: FileTableInstance['clearFileTableSelectedRows']
   cleanup(): void
 }

@@ -121,22 +121,22 @@ export const fileCardsEmits = {
   //   args instanceof Object,
 
   'fileActionUpload:validateSuccessChange': (
-    ...args: ArgumentsOf<FileActionUploadEmits['validateSuccessChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadEmits['validateSuccessChange']>]
   ) => args instanceof Object,
   'fileActionUpload:validateFailureChange': (
-    ...args: ArgumentsOf<FileActionUploadEmits['validateFailureChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadEmits['validateFailureChange']>]
   ) => args instanceof Object,
   'fileActionUpload:uploadedChange': (
-    ...args: ArgumentsOf<FileActionUploadEmits['uploadedChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadEmits['uploadedChange']>]
   ) => args instanceof Object,
   'fileActionUploadLink:validateSuccessChange': (
-    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateSuccessChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadLinkEmits['validateSuccessChange']>]
   ) => args instanceof Object,
   'fileActionUploadLink:validateFailureChange': (
-    ...args: ArgumentsOf<FileActionUploadLinkEmits['validateFailureChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadLinkEmits['validateFailureChange']>]
   ) => args instanceof Object,
   'fileActionUploadLink:uploadedChange': (
-    ...args: ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>
+    ...args: [string, ArgumentsOf<FileActionUploadLinkEmits['uploadedChange']>]
   ) => args instanceof Object,
 
   'fileCard:rowEdit': (...args: ArgumentsOf<FileCardEmits['rowEdit']>) => args instanceof Object,

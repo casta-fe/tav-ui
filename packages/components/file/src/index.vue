@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type UnwrapRef, computed, ref, /*useAttrs,*/ useSlots, watch, onBeforeUnmount } from 'vue'
+import { computed, ref, /*useAttrs,*/ useSlots, watch, onBeforeUnmount } from 'vue'
 import { ButtonGroup as AButtonGroup } from 'ant-design-vue'
 import {
   type FileTypeSelectEmits,
@@ -17,7 +17,7 @@ import {
   type FileTableReloadApiParams,
   TaFileTable,
 } from './components/FileTable'
-import { type FileInstance, fileEmits, fileProps } from './typings'
+import { fileEmits, fileProps } from './typings'
 import {
   DEFAULT_APIPARAMS,
   DEFAULT_FILEACTIONS_CLASSNAME,
@@ -37,7 +37,6 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const elRef = ref<UnwrapRef<FileInstance['elRef']>>()
 const headerElRef = ref<HTMLElement>()
 const props = defineProps(fileProps)
 const emits = defineEmits(fileEmits)
@@ -305,6 +304,22 @@ async function fileTableUpdateRows(...args: ArgumentsOf<FileTableInstance['updat
 async function fileTableDeleteRows(...args: ArgumentsOf<FileTableInstance['deleteRows']>) {
   await fileTableRef.value?.deleteRows(...args)
 }
+async function getFileTableSelectRowKeys() {
+  // eslint-disable-next-line no-return-await
+  return await (fileTableRef.value?.tableProRef as any)?.instance?.getSelectRowKeys()
+}
+async function clearFileTableSelectedRowByKey(key: string | number) {
+  // eslint-disable-next-line no-return-await
+  return await (fileTableRef.value?.tableProRef as any)?.instance?.clearSelectedRowByKey(key)
+}
+async function getFileTableSelectRows() {
+  // eslint-disable-next-line no-return-await
+  return await (fileTableRef.value?.tableProRef as any)?.instance?.getSelectRows() // fileTableRef.value.tableProRef.instance
+}
+async function clearFileTableSelectedRows() {
+  // eslint-disable-next-line no-return-await
+  return await (fileTableRef.value?.tableProRef as any)?.instance?.clearSelectedRows()
+}
 
 function cleanup() {
   fileTypeSelectRef.value?.cleanup()
@@ -318,7 +333,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  elRef,
   fileTypeSelectRef,
   fileActionUploadRef,
   fileActionUploadLinkRef,
@@ -328,12 +342,16 @@ defineExpose({
   fileTableReadRows,
   fileTableUpdateRows,
   fileTableDeleteRows,
+  getFileTableSelectRowKeys,
+  clearFileTableSelectedRowByKey,
+  getFileTableSelectRows,
+  clearFileTableSelectedRows,
   cleanup,
 })
 </script>
 
 <template>
-  <section :id="DEFAULT_FILE_ID" ref="elRef" :class="DEFAULT_FILE_CLASSNAME">
+  <section :id="DEFAULT_FILE_ID" :class="DEFAULT_FILE_CLASSNAME">
     <section
       v-if="props.headerVisible"
       ref="headerElRef"

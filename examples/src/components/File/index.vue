@@ -250,11 +250,28 @@ const unifiedTaFileData = reactive({
       //   businessCheck: false,
       // },
       enabledRowEdit: true,
-      modeQueryApiType: 'pager',
+      modeQueryApiType: 'list',
       // modeQueryApiType: 'list',
       showOperations: true,
       filterFormConfig: true,
-      customActionConfig: true,
+      customActionConfig: (defaultConfig: any) => ({ ...defaultConfig, checkboxCache: true }),
+      checkboxConfig: {
+        enabled: true,
+        highlight: true,
+        cache: true,
+      },
+      // beforeApiQueryFileList(...args: any[]) {
+      //   console.log('🚀 ~ beforeApiQueryFileList ~ args:', args)
+      //   return args[0]
+      // },
+      // beforeApiQueryFile(...args: any[]) {
+      //   console.log('🚀 ~ beforeApiQueryFile ~ args:', args)
+      //   return args[0]
+      // },
+      // afterApiQueryFile(...args: any[]) {
+      //   console.log('🚀 ~ afterApiQueryFile ~ args:', args)
+      //   return false
+      // },
       // dataSource: [
       //   {
       //     id: 78144,
@@ -339,7 +356,7 @@ const unifiedTaFileData = reactive({
     },
   },
 })
-setTimeout(() => {
+setTimeout(async () => {
   // unifiedTaFileData.updateInstantly.fileTypeSelect.value = 'INVEST_FOUND_BFJY'
   // unifiedTaFileData.updateInstantly.apiParams.moduleCode = 'tg_company'
   // unifiedTaFileData.updateInstantly.apiParams.typeCodes = ['INVEST_FOUND_BFJY']
@@ -392,10 +409,38 @@ setTimeout(() => {
   //     deleteRows: [{ ...unifiedTaFileData.updateInstantly.fileTable.dataSource[0] }],
   //   })
   // )
-}, 5000)
+  // console.log(
+  //   '🚀 ~ setTimeout ~ getFileTableSelectRows:',
+  //   await fileRef.value?.getFileTableSelectRows()
+  // )
+  // console.log(
+  //   '🚀 ~ setTimeout ~ getFileTableSelectRowKeys:',
+  //   await fileRef.value?.getFileTableSelectRowKeys()
+  // )
+  // setTimeout(async () => {
+  //   await fileRef.value?.clearFileTableSelectedRows()
+  //   console.log(
+  //     '🚀 ~ setTimeout ~ getFileTableSelectRows:',
+  //     await fileRef.value?.getFileTableSelectRows()
+  //   )
+  //   console.log(
+  //     '🚀 ~ setTimeout ~ getFileTableSelectRowKeys:',
+  //     await fileRef.value?.getFileTableSelectRowKeys()
+  //   )
+  // }, 3000)
+  // fileRef.value?.fileTableReload({
+  //   filter: {
+  //     searchValue: '1-西科天使',
+  //   },
+  // })
+  // console.log(
+  //   '🚀 ~ setTimeout ~ getFileTableSelectRows:',
+  //   await fileRef.value?.getFileTableSelectRows()
+  // )
+}, 10000)
 
 watch(
-  () => unifiedTaFileData.update.fileActualIds,
+  () => unifiedTaFileData.updateInstantly.fileActualIds,
   (cur) => {
     console.log('fileActualIds: ', cur)
   },
@@ -419,8 +464,8 @@ function handleFilterFormConfig(args: any) {
     <!-- <h3>TaFile 集合测试</h3> -->
     <TaFile
       ref="fileRef"
-      v-bind="unifiedTaFileData.update"
-      v-model:fileActualIds="unifiedTaFileData.update.fileActualIds"
+      v-bind="unifiedTaFileData.updateInstantly"
+      v-model:fileActualIds="unifiedTaFileData.updateInstantly.fileActualIds"
     >
       <!-- <template #FileActionUploadButton="{ disabled, loading, validate }">
         <button :disabled="disabled" :loading="loading" @click="(e) => validate(e)">upload</button>

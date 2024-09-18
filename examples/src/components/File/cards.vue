@@ -99,7 +99,7 @@ const fileCardsProps = reactive({
     },
     fileActualIds: [],
     waterfallConfig: {
-      enabled: true,
+      enabled: false,
     },
     fileActionUploadLink: {
       visible: true,
@@ -154,6 +154,30 @@ watch(
     deep: true,
   }
 )
+
+function handleFileActionUploadChangeValidateSuccessChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChangeValidateSuccessChange ~ args:', args)
+}
+
+function handleFileActionUploadChangeValidateFailureChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChangeValidateFailureChange ~ args:', args)
+}
+
+async function handleFileActionUploadChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChange ~ args:', args)
+}
+
+function handleFileActionUploadLinkChangeValidateSuccessChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChangeValidateSuccessChange ~ args:', args)
+}
+
+function handleFileActionUploadLinkChangeValidateFailureChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChangeValidateFailureChange ~ args:', args)
+}
+
+async function handleFileActionUploadLinkChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChange ~ args:', args)
+}
 </script>
 
 <template>
@@ -166,6 +190,16 @@ watch(
       ref="fileCardsRef"
       v-bind="fileCardsProps.updateInstantly"
       v-model:fileActualIds="fileCardsProps.updateInstantly.fileActualIds"
+      @fileActionUpload:validateSuccessChange="handleFileActionUploadChangeValidateSuccessChange"
+      @fileActionUpload:validateFailureChange="handleFileActionUploadChangeValidateFailureChange"
+      @fileActionUpload:uploadedChange="handleFileActionUploadChange"
+      @fileActionUploadLink:validateSuccessChange="
+        handleFileActionUploadLinkChangeValidateSuccessChange
+      "
+      @fileActionUploadLink:validateFailureChange="
+        handleFileActionUploadLinkChangeValidateFailureChange
+      "
+      @fileActionUploadLink:uploadedChange="handleFileActionUploadLinkChange"
     />
   </section>
 </template>

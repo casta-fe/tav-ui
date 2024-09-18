@@ -25,6 +25,8 @@ import {
   type FileActionUploadApiResponseRecord,
   type FileTypeSelectApiResponseRecord,
 } from '../typings'
+import { type FileActionUploadLinkEmits } from '../components/FileActionUploadLink'
+import { type FileActionUploadEmits } from '../components/FileActionUpload'
 import {
   type FileCardEmits,
   type FileCardInstance,
@@ -35,6 +37,7 @@ import { type ArgumentsOf } from '../utils'
 import {
   type FileCardMultiple,
   type FileCardsCatagory,
+  type FileCardsEmits,
   type FileCardsProps,
   fileCardsEmits,
   fileCardsProps,
@@ -265,6 +268,52 @@ async function handleFileCardActualidsChange(...args: [FileCardProps['value'], a
   await retriggerWaterfall()
 }
 
+function handleFileActionUploadChangeValidateSuccessChange(...args: any) {
+  emits(
+    'fileActionUpload:validateSuccessChange',
+    ...(args as unknown as ArgumentsOf<FileCardsEmits['fileActionUpload:validateSuccessChange']>)
+  )
+}
+
+function handleFileActionUploadChangeValidateFailureChange(...args: any) {
+  emits(
+    'fileActionUpload:validateFailureChange',
+    ...(args as unknown as ArgumentsOf<FileCardsEmits['fileActionUpload:validateFailureChange']>)
+  )
+}
+
+async function handleFileActionUploadChange(...args: any) {
+  emits(
+    'fileActionUpload:uploadedChange',
+    ...(args as unknown as ArgumentsOf<FileCardsEmits['fileActionUpload:uploadedChange']>)
+  )
+}
+
+function handleFileActionUploadLinkChangeValidateSuccessChange(...args: any) {
+  emits(
+    'fileActionUploadLink:validateSuccessChange',
+    ...(args as unknown as ArgumentsOf<
+      FileCardsEmits['fileActionUploadLink:validateSuccessChange']
+    >)
+  )
+}
+
+function handleFileActionUploadLinkChangeValidateFailureChange(...args: any) {
+  emits(
+    'fileActionUploadLink:validateFailureChange',
+    ...(args as unknown as ArgumentsOf<
+      FileCardsEmits['fileActionUploadLink:validateFailureChange']
+    >)
+  )
+}
+
+async function handleFileActionUploadLinkChange(...args: any) {
+  emits(
+    'fileActionUploadLink:uploadedChange',
+    ...(args as unknown as ArgumentsOf<FileCardsEmits['fileActionUploadLink:uploadedChange']>)
+  )
+}
+
 const fileCardWaterfallStyle = ref<CSSProperties>()
 const waterfallInstance = ref<Masonry | null>(null)
 async function retriggerWaterfall() {
@@ -438,6 +487,20 @@ defineExpose({
                   v-bind="fileCardProps(item)"
                   :style="fileCardWaterfallStyle"
                   @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
+                  @file-action-upload:validate-success-change="
+                    (...args: any[]) => handleFileActionUploadChangeValidateSuccessChange(`${item.value}`, args)
+                  "
+                  @file-action-upload:validate-failure-change="
+                    (...args: any[]) => handleFileActionUploadChangeValidateFailureChange(`${item.value}`, args)
+                  "
+                  @file-action-upload:uploaded-change="(...args: any[]) => handleFileActionUploadChange(`${item.value}`, args)"
+                  @file-action-upload-link:validate-success-change="
+                    (...args: any[]) => handleFileActionUploadLinkChangeValidateSuccessChange(`${item.value}`, args)
+                  "
+                  @file-action-upload-link:validate-failure-change="
+                    (...args: any[]) => handleFileActionUploadLinkChangeValidateFailureChange(`${item.value}`, args)
+                  "
+                  @file-action-upload-link:uploaded-change="(...args: any[]) => handleFileActionUploadLinkChange(`${item.value}`, args)"
                 />
               </div>
             </template>
@@ -448,6 +511,20 @@ defineExpose({
                 :ref="(instance: any) => handleFileCardRefs(item.value, instance)"
                 v-bind="fileCardProps(item)"
                 @actualids-change="(args: any[]) => handleFileCardActualidsChange(item.value, args)"
+                @file-action-upload:validate-success-change="
+                    (...args: any[]) => handleFileActionUploadChangeValidateSuccessChange(`${item.value}`, args)
+                  "
+                @file-action-upload:validate-failure-change="
+                    (...args: any[]) => handleFileActionUploadChangeValidateFailureChange(`${item.value}`, args)
+                  "
+                @file-action-upload:uploaded-change="(...args: any[]) => handleFileActionUploadChange(`${item.value}`, args)"
+                @file-action-upload-link:validate-success-change="
+                    (...args: any[]) => handleFileActionUploadLinkChangeValidateSuccessChange(`${item.value}`, args)
+                  "
+                @file-action-upload-link:validate-failure-change="
+                    (...args: any[]) => handleFileActionUploadLinkChangeValidateFailureChange(`${item.value}`, args)
+                  "
+                @file-action-upload-link:uploaded-change="(...args: any[]) => handleFileActionUploadLinkChange(`${item.value}`, args)"
               />
             </template>
           </template>

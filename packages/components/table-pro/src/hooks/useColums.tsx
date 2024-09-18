@@ -1,4 +1,4 @@
-import { unref } from 'vue'
+import { toRaw, unref } from 'vue'
 import { Checkbox } from 'ant-design-vue'
 import {
   ACTION_COLUMNS,
@@ -7,6 +7,7 @@ import {
   MIN_WIDTH_SMALL,
   SELECT_COMPONENTS,
 } from '../const'
+import { type UseCheckboxCacheReturn } from './useCheckboxCache'
 import type { /*ComputedRef,*/ Ref } from 'vue'
 import type { TableProColumn, TableProGridEmit, TableProInstance, TableProProps } from '../types'
 
@@ -21,7 +22,12 @@ function autoAddChoosenElement(
   checkboxConfig: TableProProps['checkboxConfig'],
   radioConfig: TableProProps['radioConfig'],
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  createCheckboxCache: UseCheckboxCacheReturn['createCheckboxCache'],
+  createAllCheckboxCache: UseCheckboxCacheReturn['createAllCheckboxCache'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
 ) {
   // const { columns = [], checkboxConfig, radioConfig } = unref(tablePropsRef)
   // const hasCheckbox = Object.keys(checkboxConfig).length > 0
@@ -44,9 +50,21 @@ function autoAddChoosenElement(
             <Checkbox
               indeterminate={indeterminate}
               checked={checked}
-              onChange={() => {
-                unref(tableRef)?.toggleAllCheckboxRow()
-                emit('CheckboxAll', info)
+              onChange={async () => {
+                const result = { ...info, checked: !checked }
+                if (isCheckboxCacheEnabled.value) {
+                  const { fullData } = unref(tableRef)!.getTableData()
+                  if (result.checked) {
+                    await createAllCheckboxCache(toRaw(fullData))
+                  } else {
+                    await deleteAllCheckboxCache({
+                      deleteByPage: true,
+                    })
+                  }
+                } else {
+                  await unref(tableRef)?.toggleAllCheckboxRow()
+                }
+                emit('CheckboxAll', { ...result })
               }}
             />,
           ]
@@ -57,9 +75,18 @@ function autoAddChoosenElement(
             <Checkbox
               indeterminate={indeterminate}
               checked={checked}
-              onChange={() => {
-                unref(tableRef)?.toggleCheckboxRow(row)
-                emit('CheckboxChange', info)
+              onChange={async () => {
+                const result = { ...info, checked: !checked }
+                if (isCheckboxCacheEnabled.value) {
+                  if (result.checked) {
+                    await createCheckboxCache(toRaw(result.row))
+                  } else {
+                    await deleteCheckboxCache(toRaw(result.row))
+                  }
+                } else {
+                  await unref(tableRef)?.toggleCheckboxRow(row)
+                }
+                emit('CheckboxChange', { ...result })
               }}
             />,
           ]
@@ -271,7 +298,12 @@ export function useColumns(
   checkboxConfig: TableProProps['checkboxConfig'],
   radioConfig: TableProProps['radioConfig'],
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  createCheckboxCache: UseCheckboxCacheReturn['createCheckboxCache'],
+  createAllCheckboxCache: UseCheckboxCacheReturn['createAllCheckboxCache'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
 ) {
   // const autoAddChoosenElementColumns = autoAddChoosenElement(tablePropsRef, tableRef, emit)
   const autoAddChoosenElementColumns = autoAddChoosenElement(
@@ -279,7 +311,12 @@ export function useColumns(
     checkboxConfig,
     radioConfig,
     tableRef,
-    emit
+    emit,
+    isCheckboxCacheEnabled,
+    createCheckboxCache,
+    createAllCheckboxCache,
+    deleteCheckboxCache,
+    deleteAllCheckboxCache
   )
   const setColumnMinWidthColumns = setColumnMinWidth(autoAddChoosenElementColumns)
   const setFixedMultiHeaderColumns = setFixedMultiHeader(setColumnMinWidthColumns)

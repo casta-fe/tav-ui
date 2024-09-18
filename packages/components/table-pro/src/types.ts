@@ -383,11 +383,15 @@ export const tableProProps = {
    * 复选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   checkboxConfig: {
-    type: Object as PropType<VxeTablePropTypes.CheckboxConfig & { enabled?: boolean }>,
+    type: Object as PropType<
+      // reserve 无法清除跨页的行选中，使用cache即可
+      Omit<VxeTablePropTypes.CheckboxConfig, 'reserve'> & { enabled?: boolean; cache?: boolean }
+    >,
     default: () => ({
       enabled: true,
       range: true,
       highlight: true,
+      cache: false,
     }),
   },
   /**
