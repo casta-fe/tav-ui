@@ -112,6 +112,19 @@ const fileCardsProps = reactive({
             rule.key === 'required' ? { ...rule, required: false } : rule
           )
         },
+        items: (items: any[]) => {
+          console.log('🚀 ~ items:', items[1].children[1])
+          items[1].children[1].children.push({
+            field: 'example',
+            slots: {
+              default: ({ row }: { row: any }) => {
+                console.log('🚀 ~ row:', row)
+                return 'example' // 这里返回 jsx 或者组件都行，跟 table 的 render 一样
+              },
+            },
+          })
+          return items
+        },
       },
     ],
   },
