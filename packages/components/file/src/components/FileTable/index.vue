@@ -501,19 +501,19 @@ const editConfig = computed<any>(() =>
 
 async function getSelectRowKeys() {
   // eslint-disable-next-line no-return-await
-  return await (tableProRef as any)?.instance?.getSelectRowKeys()
+  return await (tableProRef.value as any)?.instance?.getSelectRowKeys()
 }
 async function clearSelectedRowByKey(key: string | number) {
   // eslint-disable-next-line no-return-await
-  return await (tableProRef as any)?.instance?.clearSelectedRowByKey(key)
+  return await (tableProRef.value as any)?.instance?.clearSelectedRowByKey(key)
 }
 async function getSelectRows() {
   // eslint-disable-next-line no-return-await
-  return await (tableProRef as any)?.instance?.getSelectRows()
+  return await (tableProRef.value as any)?.instance?.getSelectRows()
 }
 async function clearSelectedRows() {
   // eslint-disable-next-line no-return-await
-  return await (tableProRef as any)?.instance?.clearSelectedRows()
+  return await (tableProRef.value as any)?.instance?.clearSelectedRows()
 }
 
 async function retriggerHandleDataSource() {

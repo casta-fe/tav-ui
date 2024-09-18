@@ -196,7 +196,7 @@ async function handleFileActionUploadLinkChange(...args: any) {
 <template>
   <section
     class="ta-file-test"
-    style="width: 100%; height: 100%; margin: 0 auto; background-color: #fff"
+    style="width: 383px; height: 100%; margin: 0 auto; background-color: #fff"
   >
     <!-- <h2>TaFile 测试</h2> -->
     <TaFileCards

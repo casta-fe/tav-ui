@@ -250,7 +250,7 @@ const unifiedTaFileData = reactive({
       //   businessCheck: false,
       // },
       enabledRowEdit: true,
-      modeQueryApiType: 'list',
+      modeQueryApiType: 'pager',
       // modeQueryApiType: 'list',
       showOperations: true,
       filterFormConfig: true,
@@ -433,10 +433,10 @@ setTimeout(async () => {
   //     searchValue: '1-西科天使',
   //   },
   // })
-  // console.log(
-  //   '🚀 ~ setTimeout ~ getFileTableSelectRows:',
-  //   await fileRef.value?.getFileTableSelectRows()
-  // )
+  console.log(
+    '🚀 ~ setTimeout ~ getFileTableSelectRows:',
+    await fileRef.value?.getFileTableSelectRows()
+  )
 }, 10000)
 
 watch(

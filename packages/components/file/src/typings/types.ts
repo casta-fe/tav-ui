@@ -310,9 +310,9 @@ export interface FileInstance {
   fileTableReadRows: FileTableInstance['readRows']
   fileTableUpdateRows: FileTableInstance['updateRows']
   fileTableDeleteRows: FileTableInstance['deleteRows']
-  getFileTableSelectRowKeys: FileTableInstance['getFileTableSelectRowKeys']
-  clearFileTableSelectedRowByKey: FileTableInstance['clearFileTableSelectedRowByKey']
-  getFileTableSelectRows: FileTableInstance['getFileTableSelectRows']
-  clearFileTableSelectedRows: FileTableInstance['clearFileTableSelectedRows']
+  getFileTableSelectRowKeys: FileTableInstance['getSelectRowKeys']
+  clearFileTableSelectedRowByKey: FileTableInstance['clearSelectedRowByKey']
+  getFileTableSelectRows: FileTableInstance['getSelectRows']
+  clearFileTableSelectedRows: FileTableInstance['clearSelectedRows']
   cleanup(): void
 }
