@@ -135,7 +135,6 @@ export default defineComponent({
       //   ...state.components.TaFile.fileActionUpload,
       //   accpet: '*',
       // }
-      // console.log(state)
     }, 3000)
 
     onMounted(() => {
