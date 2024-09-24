@@ -162,7 +162,7 @@ export function defaultColumnsBuilder(
       : []),
     {
       title: tavI18n('Tav.file.columns.5'),
-      field: 'createByName',
+      field: 'ownerName',
       width: 100,
     },
     {

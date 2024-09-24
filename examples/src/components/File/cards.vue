@@ -99,7 +99,7 @@ const fileCardsProps = reactive({
     },
     fileActualIds: [],
     waterfallConfig: {
-      enabled: true,
+      enabled: false,
     },
     fileActionUploadLink: {
       visible: true,
@@ -111,6 +111,19 @@ const fileCardsProps = reactive({
           return rules.map((rule) =>
             rule.key === 'required' ? { ...rule, required: false } : rule
           )
+        },
+        items: (items: any[]) => {
+          console.log('🚀 ~ items:', items[1].children[1])
+          items[1].children[1].children.push({
+            field: 'example',
+            slots: {
+              default: ({ row }: { row: any }) => {
+                console.log('🚀 ~ row:', row)
+                return 'example' // 这里返回 jsx 或者组件都行，跟 table 的 render 一样
+              },
+            },
+          })
+          return items
         },
       },
     ],
@@ -154,18 +167,52 @@ watch(
     deep: true,
   }
 )
+
+function handleFileActionUploadChangeValidateSuccessChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChangeValidateSuccessChange ~ args:', args)
+}
+
+function handleFileActionUploadChangeValidateFailureChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChangeValidateFailureChange ~ args:', args)
+}
+
+async function handleFileActionUploadChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadChange ~ args:', args)
+}
+
+function handleFileActionUploadLinkChangeValidateSuccessChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChangeValidateSuccessChange ~ args:', args)
+}
+
+function handleFileActionUploadLinkChangeValidateFailureChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChangeValidateFailureChange ~ args:', args)
+}
+
+async function handleFileActionUploadLinkChange(...args: any) {
+  console.log('🚀 ~ handleFileActionUploadLinkChange ~ args:', args)
+}
 </script>
 
 <template>
   <section
     class="ta-file-test"
-    style="width: 100%; height: 100%; margin: 0 auto; background-color: #fff"
+    style="width: 383px; height: 100%; margin: 0 auto; background-color: #fff"
   >
     <!-- <h2>TaFile 测试</h2> -->
     <TaFileCards
       ref="fileCardsRef"
       v-bind="fileCardsProps.updateInstantly"
       v-model:fileActualIds="fileCardsProps.updateInstantly.fileActualIds"
+      @fileActionUpload:validateSuccessChange="handleFileActionUploadChangeValidateSuccessChange"
+      @fileActionUpload:validateFailureChange="handleFileActionUploadChangeValidateFailureChange"
+      @fileActionUpload:uploadedChange="handleFileActionUploadChange"
+      @fileActionUploadLink:validateSuccessChange="
+        handleFileActionUploadLinkChangeValidateSuccessChange
+      "
+      @fileActionUploadLink:validateFailureChange="
+        handleFileActionUploadLinkChangeValidateFailureChange
+      "
+      @fileActionUploadLink:uploadedChange="handleFileActionUploadLinkChange"
     />
   </section>
 </template>

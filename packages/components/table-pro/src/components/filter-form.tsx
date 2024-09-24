@@ -39,7 +39,7 @@ export default defineComponent({
   name: ComponentFilterFormName,
   props,
   setup(props, { expose }) {
-    const { tableEmitter } = useTableContext()
+    const { tableEmitter, deleteAllCheckboxCache } = useTableContext()
 
     const state = reactive({
       visible: false,
@@ -54,6 +54,19 @@ export default defineComponent({
       currentFilter: {},
       choosedNum: 0,
     })
+
+    /** 筛选条件变化 */
+    watch(
+      () => JSON.stringify(state.currentFilter),
+      async (curcurrentFilter, precurrentFilter) => {
+        if (curcurrentFilter !== precurrentFilter) {
+          await deleteAllCheckboxCache({
+            deleteByPage: false,
+          })
+          await nextTick()
+        }
+      }
+    )
 
     // unref 中使用 ?? 会进入死循环，对象型 prop 一定要赋值兜底
     const defaultInputFormSchema: FormSchema = {

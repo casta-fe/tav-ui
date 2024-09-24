@@ -25,7 +25,9 @@ export function useDataSource(
     Reflect.deleteProperty(params.model, 'page')
     Reflect.deleteProperty(params.model, 'limit')
   } else {
+    //@ts-ignore
     params.model['page'] = 1
+    //@ts-ignore
     params.model['limit'] = PAGE_SIZE
   }
 

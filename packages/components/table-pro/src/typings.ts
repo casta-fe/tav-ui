@@ -73,6 +73,7 @@ export interface TableProCustomActionConfig {
   refresh?: CustomAction | boolean
   column?: CustomAction | boolean
   statistical?: CustomAction | boolean
+  checkboxCache?: CustomAction | boolean
 }
 
 export type VxeQueryParams = VxeGridPropTypes.ProxyAjaxQueryParams

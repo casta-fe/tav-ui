@@ -1,5 +1,6 @@
-import { reactive, unref, watch } from 'vue'
+import { nextTick, reactive, unref, watch } from 'vue'
 import { ROW_KEY } from '../const'
+import { type UseCheckboxCacheReturn } from './useCheckboxCache'
 import type { ComputedRef, Ref } from 'vue'
 import type { ITableProInstance, TableProInstance, TableProProps } from '../types'
 import type { TableProApiParams } from '../typings'
@@ -7,42 +8,67 @@ import type { TableProApiParams } from '../typings'
 function createExendApis(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
-  filterRef
+  filterRef: any,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
 ) {
   function getSelectRowKeys(): string[] {
     const {
       rowConfig: { keyField = ROW_KEY },
     } = unref(tablePropsRef)
-    return unref(tableRef)!
-      .getCheckboxRecords()
-      .map((record) => `${record[keyField]}`)
+
+    if (isCheckboxCacheEnabled.value) {
+      return checkboxCacheList.value.map((cache) => `${cache[keyField]}`)
+    } else {
+      return unref(tableRef)!
+        .getCheckboxRecords()
+        .map((record) => `${record[keyField]}`)
+    }
   }
 
-  function clearSelectedRowByKey(keyField: string | number) {
+  async function clearSelectedRowByKey(keyField: string | number) {
     const rowKey = `${keyField}`
     const {
       rowConfig: { keyField: _keyField = ROW_KEY },
     } = unref(tablePropsRef)
+
     const selectedRow = unref(tableRef)!
       .getCheckboxRecords()
       .find((record) => {
         const recordRowKey = `${record[_keyField]}`
         return recordRowKey === rowKey
       })
-    unref(tableRef)!.toggleCheckboxRow(selectedRow)
+
+    if (isCheckboxCacheEnabled.value) {
+      await deleteCheckboxCache(selectedRow)
+    } else {
+      await unref(tableRef)!.toggleCheckboxRow(selectedRow)
+    }
   }
 
   function getSelectRows(): any[] {
-    return unref(tableRef)!.getCheckboxRecords()
+    if (isCheckboxCacheEnabled.value) {
+      return checkboxCacheList.value
+    } else {
+      return unref(tableRef)!.getCheckboxRecords()
+    }
   }
 
-  function clearSelectedRows() {
+  async function clearSelectedRows() {
     const { checkboxConfig = {}, radioConfig = {} } = unref(tablePropsRef)
 
-    const hasCheckbox = Object.keys(checkboxConfig).length > 0
-    const hasRadioConfig = Object.keys(radioConfig).length > 0
-    if (hasCheckbox) unref(tableRef)!.clearCheckboxRow()
-    if (hasRadioConfig) unref(tableRef)!.clearRadioRow()
+    if (isCheckboxCacheEnabled.value) {
+      await deleteAllCheckboxCache({
+        deleteByPage: false,
+      })
+    } else {
+      const hasCheckbox = Object.keys(checkboxConfig).length > 0
+      const hasRadioConfig = Object.keys(radioConfig).length > 0
+      if (hasCheckbox) await unref(tableRef)!.clearCheckboxRow()
+      if (hasRadioConfig) await unref(tableRef)!.clearRadioRow()
+    }
   }
 
   function insertRow(records: Record<string, any> | Record<string, any>[]) {
@@ -87,7 +113,7 @@ function createExendApis(
     unref(tableRef)!.remove(_records)
   }
 
-  function reload(options?: TableProApiParams) {
+  async function reload(options?: TableProApiParams) {
     const tableFilterSearchParams = filterRef.value
       ? JSON.parse(filterRef.value.$el.dataset.filterParams)
       : {}
@@ -104,10 +130,22 @@ function createExendApis(
       if (options.filter) {
         apiParams.filter = { ...apiParams.filter, ...(options.filter ?? {}) }
       }
-      if (options.page && options.page > 0) {
-        apiParams.model = { ...(options.model ?? {}), page: options.page }
+      apiParams.model = {
+        ...(options.model ?? {}),
+        ...(options.page && options.page > 0 ? { page: options.page } : {}),
       }
     }
+
+    if (
+      options?.filter &&
+      Object.keys(options?.filter).length > 0 &&
+      JSON.stringify(options?.filter) !== JSON.stringify(tableFilterSearchParams)
+    ) {
+      await deleteAllCheckboxCache({
+        deleteByPage: false,
+      })
+    }
+    await nextTick()
 
     unref(tableRef)!.commitProxy('query', { ...apiParams })
   }
@@ -144,7 +182,11 @@ export function useExtendInstance(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
   outerExtendApis: OuterExtendApis,
-  filterRef: Ref<ComputedRef | null>
+  filterRef: Ref<ComputedRef | null>,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
 ) {
   const state = reactive<{
     instance: TableProInstance | null
@@ -157,13 +199,24 @@ export function useExtendInstance(
     (curTableRef, preTableRef) => {
       if (curTableRef && curTableRef !== preTableRef) {
         state.instance = curTableRef
-        const extendApis = createExendApis(tableRef, tablePropsRef, filterRef)
+        const extendApis = createExendApis(
+          tableRef,
+          tablePropsRef,
+          filterRef,
+          isCheckboxCacheEnabled,
+          checkboxCacheList,
+          deleteCheckboxCache,
+          deleteAllCheckboxCache
+        )
         Object.keys(extendApis).forEach((name) => {
+          //@ts-ignore
           state.instance![name] = extendApis[name]
         })
         Object.keys(outerExtendApis).forEach((name) => {
+          //@ts-ignore
           state.instance![name] = outerExtendApis[name]
         })
+        //@ts-ignore
         state.instance!['filterRef'] = filterRef.value
       }
     }

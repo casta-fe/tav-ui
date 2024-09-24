@@ -450,6 +450,10 @@
     background: #ffffff;
     box-shadow: 0px 0px 1px 1px #e5e6e8;
 
+    & + & {
+      margin-top: 20px;
+    }
+
     &--required {
       .@{namespace} {
         &-file-card {
@@ -596,10 +600,10 @@
     // }
 
     &-list {
-      padding-bottom: 10px;
+      padding-bottom: 10px !important;
 
       &-item {
-        padding: 10px 20px;
+        padding: 10px 20px !important;
         border-bottom: none !important;
 
         &:first-child {
@@ -608,6 +612,12 @@
 
         &:hover {
           background: #f7f8fa;
+        }
+
+        &-actions {
+          display: flex;
+          align-items: center;
+          width: 100%;
         }
 
         &-avator {
@@ -623,7 +633,7 @@
           display: flex;
           flex-direction: column;
           gap: 4px;
-          width: calc(100% - 46px - 84px); // 36 + 10 = 46; 74 + 10 = 84
+          width: calc(100% - 46px - 90px); // 36 + 10 = 46; 80 + 10 = 90
         }
 
         // &-description-1 {
@@ -657,7 +667,7 @@
         &-action {
           display: flex;
           align-items: center;
-          width: 74px;
+          width: 80px;
           margin-left: 10px;
 
           .action-divider {
@@ -672,10 +682,6 @@
               // top: 6px !important;
               display: none !important;
             }
-          }
-
-          .ant-dropdown-trigger {
-            margin-left: 10px;
           }
 
           &.left {
@@ -745,6 +751,8 @@
           }
 
           .icon-more {
+            width: 16px;
+            height: 16px;
             transform: rotate(90deg);
 
             svg {

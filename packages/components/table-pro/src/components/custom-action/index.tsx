@@ -176,7 +176,7 @@ export default defineComponent({
       state.filter = filter
     })
 
-    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
+    const getPermission = (data: any) => (isObject(data) ? data?.permission : undefined)
 
     // 统计按钮配置
     const handleStatistical = (e: Event) => {

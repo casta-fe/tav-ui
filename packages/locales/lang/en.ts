@@ -46,6 +46,8 @@ export default {
     httpError: 'Http has some error, please contact system admin',
     notAuthorised: 'User not be authorised',
     required: 'required',
+    clear: 'Clear',
+    clearAll: 'Clear all',
   },
   countButton: {
     text1: 'Send verification code',
@@ -122,6 +124,7 @@ export default {
       '4': 'Selection status',
       '5': 'Export settings',
       '6': 'Statistics',
+      '7': 'Checked data',
     },
     export: {
       '1': 'File name',
@@ -148,6 +151,7 @@ export default {
       '2': 'Table save failed, please refresh and try again！',
       '3': 'Do not allow dragging into fixed columns.',
       '4': 'Do not allow merging columns.',
+      '5': 'row(s) selected',
     },
   },
   form: {

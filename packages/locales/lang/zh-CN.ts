@@ -46,6 +46,8 @@ export default {
     httpError: '请求出错，请联系管理员',
     notAuthorised: '用户未获得授权',
     required: '必传',
+    clear: '清除',
+    clearAll: '全部清除',
   },
   countButton: {
     text1: '获取验证码',
@@ -121,6 +123,7 @@ export default {
       '4': '选中状态',
       '5': '导出设置',
       '6': '统计',
+      '7': '选中数据',
     },
     export: {
       '1': '文件名',
@@ -147,6 +150,7 @@ export default {
       '2': '表格列保存失败，请刷新重试！',
       '3': '不允许拖入固定列',
       '4': '不允许合并列',
+      '5': '条数据被选中',
     },
   },
   form: {

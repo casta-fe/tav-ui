@@ -29,6 +29,7 @@ import { useWatchDom } from './hooks/useWatchDom'
 import { setupVxeTable } from './setup'
 import { tableProEmits, tableProProps } from './types'
 import { useCanvasCalcContent } from './hooks/useColumnAutoWidth'
+import { useCheckboxCache } from './hooks/useCheckboxCache'
 import type { ComputedRef } from 'vue'
 import type { TableProColumn, TableProEvent, TableProInstance, TableProProps } from './types'
 import type { CustomActionRef } from './typings'
@@ -55,6 +56,7 @@ export default defineComponent({
     const cacheActionWidths = ref<Record<string, any>>({})
     // const columnsForAction = ref<TableProColumn[]>([])
     const maxWidthForAction = ref<number>(0)
+    const currentPage = ref<number>(1)
 
     // 注册 tablepro emitter
     const tableEmitter = mitt()
@@ -91,6 +93,17 @@ export default defineComponent({
       }
     )
 
+    // 翻页选择
+    const {
+      checkboxCaches,
+      isCheckboxCacheEnabled,
+      checkboxCacheList,
+      createCheckboxCache,
+      createAllCheckboxCache,
+      deleteCheckboxCache,
+      deleteAllCheckboxCache,
+    } = useCheckboxCache(tableRef, getProps, currentPage)
+
     // 扩展 columns
     const getColumns = computed(() => {
       // const columns: TableProColumn[] = useColumns(getProps, tableRef, emit)
@@ -99,7 +112,12 @@ export default defineComponent({
         unref(getProps).checkboxConfig,
         unref(getProps).radioConfig,
         tableRef,
-        emit
+        emit,
+        isCheckboxCacheEnabled,
+        createCheckboxCache,
+        createAllCheckboxCache,
+        deleteCheckboxCache,
+        deleteAllCheckboxCache
       )
       return { columns }
     })
@@ -242,6 +260,12 @@ export default defineComponent({
       columnApiOptions,
       setCacheActionWidths,
       calcContent,
+      checkboxCaches,
+      isCheckboxCacheEnabled,
+      checkboxCacheList,
+      createAllCheckboxCache,
+      deleteCheckboxCache,
+      deleteAllCheckboxCache,
     })
 
     // 抛出实例
@@ -262,7 +286,11 @@ export default defineComponent({
             },
             clearCellTooltip,
           },
-          filterRef
+          filterRef,
+          isCheckboxCacheEnabled,
+          checkboxCacheList,
+          deleteCheckboxCache,
+          deleteAllCheckboxCache
         )
       ),
     })
@@ -412,10 +440,13 @@ export default defineComponent({
       clearCalcContentCanvas()
     }
 
-    onUnmountedOrOnDeactivated(() => {
+    onUnmountedOrOnDeactivated(async () => {
       clearCellTooltip()
       clearColumnAutoWidth()
       clearElementResizeObserver()
+      await deleteAllCheckboxCache({
+        deleteByPage: false,
+      })
     })
 
     return () => {
@@ -426,12 +457,16 @@ export default defineComponent({
           id={unref(getBindValues).id ?? tableId}
         >
           {createOperation()}
-          <div class={ComponentPrefixCls} style={{ height: unref(getHeight), overflow: 'hidden' }}>
+          <div
+            class={`${ComponentPrefixCls}`}
+            style={{ height: unref(getHeight), overflow: 'hidden' }}
+          >
             <Grid
               ref={tableRef}
               {...unref(getBindValues)}
               onPageChange={(...args) => {
                 unref(getBindValues).onPageChange?.(...args)
+                currentPage.value = args[0].currentPage ?? currentPage.value
                 clearCellTooltip()
                 // clearColumnAutoWidth()
               }}

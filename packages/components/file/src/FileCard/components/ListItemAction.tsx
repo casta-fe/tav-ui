@@ -65,7 +65,7 @@ export default defineComponent({
   name: 'TaFileListItemAction',
   props,
   setup(props, { slots }) {
-    const DEFAULT_FILELISTITEMACTION_CLASSNAME = ns.b('card-list-item-action')
+    const DEFAULT_FILELISTITEMACTION_CLASSNAME = ns.b('card-list-item-actions')
     const DEFAULT_FILELISTITEMACTION_ID = createId(DEFAULT_FILELISTITEMACTION_CLASSNAME)
 
     // 获取全局注入的 permissions
@@ -202,24 +202,27 @@ export default defineComponent({
 
       if (unref(DropdownList).length || props.dropDownActions?.length) {
         return (
-          <Dropdown
-            trigger={['hover']}
-            dropMenuList={unref(DropdownList)}
-            placement="bottomLeft"
-            popconfirm
-            overlayClassName="ta-file-card-list-item-action-dropdown"
-          >
-            {{
-              default: () =>
-                !slots.more ? (
-                  <Button type="text" size="small">
-                    <MoreOutlined class="icon-more" />
-                  </Button>
-                ) : (
-                  slots.more?.()
-                ),
-            }}
-          </Dropdown>
+          <>
+            <Divider class={`${DEFAULT_FILELISTITEMACTION_CLASSNAME}-divider`} type={'vertical'} />
+            <Dropdown
+              trigger={['hover']}
+              dropMenuList={unref(DropdownList)}
+              placement="bottomLeft"
+              popconfirm
+              overlayClassName="ta-file-card-list-item-action-dropdown"
+            >
+              {{
+                default: () =>
+                  !slots.more ? (
+                    <Button type="text" size="small">
+                      <MoreOutlined class="icon-more" />
+                    </Button>
+                  ) : (
+                    slots.more?.()
+                  ),
+              }}
+            </Dropdown>
+          </>
         )
       } else {
         return null

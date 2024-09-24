@@ -306,4 +306,8 @@ export interface FileTableInstance {
   readRows: UseTableActionsReturn['tableReadRows']
   updateRows: UseTableActionsReturn['tableUpdateRows']
   deleteRows: UseTableActionsReturn['tableDeleteRows']
+  getSelectRowKeys: ITableProInstance['instance']['getSelectRowKeys']
+  clearSelectedRowByKey: (key: string | number) => Promise<void | undefined>
+  getSelectRows: ITableProInstance['instance']['getSelectRows']
+  clearSelectedRows: () => Promise<any[] | undefined>
 }
