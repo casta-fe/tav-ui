@@ -101,6 +101,7 @@ const fileCardsProps = reactive({
     waterfallConfig: {
       enabled: false,
     },
+    autoValidate: false,
     fileActionUploadLink: {
       visible: true,
     },
@@ -126,31 +127,59 @@ const fileCardsProps = reactive({
           return items
         },
       },
+      {
+        value: 'INVEST_YSH_YSHGZDG',
+        items: (items: any[]) => {
+          console.log('🚀 ~ items:', items[1].children[1])
+          items[1].children[1].children.push({
+            field: 'example',
+            slots: {
+              default: ({ row }: { row: any }) => {
+                console.log('🚀 ~ row:', row)
+                return 'example' // 这里返回 jsx 或者组件都行，跟 table 的 render 一样
+              },
+            },
+          })
+          return items
+        },
+      },
     ],
   },
 })
 
 setTimeout(async () => {
-  // const fileCardRefMap = fileCardsRef.value.getFileCardRefMap() as {
-  //   [key: string]: FileCardInstance
-  // }
-  // console.log('🚀 ~ fileCardRefMap ~ fileCardRefMap:', fileCardRefMap)
-  // for (const [fileCardValue, fileCardInstance] of Object.entries(fileCardRefMap)) {
-  //   const dataSource = await fileCardInstance.readRows()
-  //   console.log('🚀 ~ setTimeout ~ dataSource:', dataSource)
-  //   if (fileCardValue === 'INVEST_YSH_YSHGZDG') {
-  //     const targetRow = dataSource[0]
-  //     await fileCardInstance.updateRows({
-  //       rows: [{ ...targetRow, fullName: `test${targetRow.fullName}` }],
-  //       deleteRows: [targetRow],
-  //     })
-  //     console.log('🚀 ~ setTimeout ~ updateRows:', await fileCardInstance.readRows())
-  //   }
-  // }
+  const fileCardRefMap = fileCardsRef.value.getFileCardRefMap() as {
+    [key: string]: FileCardInstance
+  }
+  console.log('🚀 ~ fileCardRefMap ~ fileCardRefMap:', fileCardRefMap)
+  for (const [fileCardValue, fileCardInstance] of Object.entries(fileCardRefMap)) {
+    const dataSource = await fileCardInstance.readRows()
+    console.log('🚀 ~ setTimeout ~ dataSource:', dataSource)
+    if (fileCardValue === 'INVEST_YSH_YSHGZDG') {
+      const targetRow = dataSource[0]
+      await fileCardInstance.updateRows({
+        rows: [{ ...targetRow, fullName: `test${targetRow.fullName}` }],
+        deleteRows: [targetRow],
+      })
+      console.log('🚀 ~ setTimeout ~ updateRows:', await fileCardInstance.readRows())
+      setTimeout(async () => {
+        console.log('🚀 ~ update setTimeout ~ updateRows:', await fileCardInstance.readRows())
+        // console.log('🚀 ~ delete setTimeout:', await fileCardInstance.readRows())
+      }, 10000)
+    }
+  }
   // fileCardsProps.updateInstantly.waterfallConfig.width = 350
   // fileCardsProps.updateInstantly.fileCard = {
   //   items: (rows) => rows.filter((row) => row.field !== 'action'),
   // }
+  // setTimeout(async () => {
+  //   try {
+  //     const result = await fileCardsRef.value.validate()
+  //     console.log('🚀 ~ setTimeout ~ result:', result)
+  //   } catch (error) {
+  //     console.log('🚀 ~ setTimeout ~ error:', error)
+  //   }
+  // }, 5000)
 }, 3000)
 
 watch(
@@ -159,9 +188,6 @@ watch(
     console.log('fileActualIds: ', cur)
     // console.log('🚀 ~ fileCardsRef:', fileCardsRef.value.getDataSource())
     // console.log('🚀 ~ fileCardsRef:', fileCardsRef.value.getDataSource('INVEST_YSH_YSHSHPPT'))
-    // setTimeout(async () => {
-    //   await fileCardsRef.value.validate()
-    // }, 20000)
   },
   {
     deep: true,

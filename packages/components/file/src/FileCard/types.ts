@@ -176,6 +176,7 @@ export const fileCardProps = {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  catchApiQueryFileListError: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiQueryFileByActualIds: {
     type: Function as PropType<(apiParams: ApiQueryFileByActualIds) => Promise<any>>,
   },

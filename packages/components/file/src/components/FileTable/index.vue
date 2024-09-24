@@ -650,6 +650,7 @@ defineExpose({
         :api-params="mergedProps.apiParams"
         :validate-type-code="false"
         :update-file="actionUpdateClickRow"
+        :catch-api-upload-file-error="mergedProps.catchApiUploadFileError"
         @uploaded-change="handleFileActionUploadForActionUpdateBtnChange"
       />
       <TaFileVersion

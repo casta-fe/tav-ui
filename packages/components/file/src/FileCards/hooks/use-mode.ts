@@ -58,6 +58,7 @@ export function useMode(options: { mergedProps: ComputedRef<FileCardsProps> }) {
       api: mergedProps.value.apiQueryFileList,
       beforeApi: mergedProps.value.beforeApiQueryFileList,
       afterApi: mergedProps.value.afterApiQueryFileList,
+      catchError: mergedProps.value.catchApiQueryFileListError,
       apiParams: {
         appId: apiParams.appId,
         businessCheck: apiParams.businessCheck,
@@ -84,7 +85,7 @@ export function useMode(options: { mergedProps: ComputedRef<FileCardsProps> }) {
         ...(typeof apiParams.excludeStaging !== 'undefined'
           ? { excludeStaging: apiParams.excludeStaging }
           : {}),
-        ...(apiParams.id ? { id: apiParams.id } : {}),
+        ...(apiParams.ids ? { ids: apiParams.ids } : {}),
         moduleCode: apiParams.moduleCode,
         owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,

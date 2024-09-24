@@ -544,7 +544,9 @@ async function validate(trigger: string, callback?: CardValidateCallback) {
     })
     .catch((err: CardValidateFailure) => {
       const { fields, errors } = err
-      validateMessage.value = errors ? errors[0].message ?? '' : ''
+      if (mergedProps.value.autoValidate) {
+        validateMessage.value = errors ? errors[0].message ?? '' : ''
+      }
       callback?.(false, fields)
       return callback ? false : Promise.reject(fields)
     })

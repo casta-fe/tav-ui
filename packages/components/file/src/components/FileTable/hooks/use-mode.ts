@@ -297,6 +297,7 @@ export function useMode(options: {
 
         return _apiResult
       },
+      catchError: mergedProps.value.catchApiQueryFileError,
       apiParams: {
         filter: {
           appId: apiParams.appId,
@@ -324,7 +325,7 @@ export function useMode(options: {
           ...(typeof apiParams.excludeStaging !== 'undefined'
             ? { excludeStaging: apiParams.excludeStaging }
             : {}),
-          ...(apiParams.id ? { id: apiParams.id } : {}),
+          ...(apiParams.ids ? { ids: apiParams.ids } : {}),
           moduleCode: apiParams.moduleCode,
           owners: apiParams.owners,
           permissionControl: apiParams.permissionControl,
@@ -362,6 +363,7 @@ export function useMode(options: {
           },
         }
       },
+      catchError: mergedProps.value.catchApiQueryFileError,
       apiParams: {
         appId: apiParams.appId,
         businessCheck: apiParams.businessCheck,
@@ -388,7 +390,7 @@ export function useMode(options: {
         ...(typeof apiParams.excludeStaging !== 'undefined'
           ? { excludeStaging: apiParams.excludeStaging }
           : {}),
-        ...(apiParams.id ? { id: apiParams.id } : {}),
+        ...(apiParams.ids ? { ids: apiParams.ids } : {}),
         moduleCode: apiParams.moduleCode,
         owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,
