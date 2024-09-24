@@ -16,7 +16,7 @@ import {
 } from '../../typings'
 import { DEFAULT_APIPARAMS, DEFAULT_FILE_MODE } from '../../consts'
 import { type UseTableActionsReturn } from './hooks/use-table-actions'
-import { type ApiUploadFileParams } from './../FileActionUpload/types'
+import { type ApiUploadFileParams, type FileActionUploadProps } from './../FileActionUpload/types'
 import { type ApiQueryFileHistoryParams } from './../FileVersion/types'
 import { type ApiPreviewFileParams } from './../FilePreview/types'
 
@@ -49,7 +49,7 @@ export interface ApiQueryFileParams {
   endTime?: ApiParams['endTime']
   excludeDeleted?: ApiParams['excludeDeleted']
   excludeStaging?: ApiParams['excludeStaging']
-  id?: ApiParams['id']
+  ids?: ApiParams['ids']
   moduleCode?: ApiParams['moduleCode']
   owners?: ApiParams['owners']
   permissionControl?: ApiParams['permissionControl']
@@ -71,7 +71,7 @@ export interface ApiQueryFileListParams {
   endTime?: ApiParams['endTime']
   excludeDeleted?: ApiParams['excludeDeleted']
   excludeStaging?: ApiParams['excludeStaging']
-  id?: ApiParams['id']
+  ids?: ApiParams['ids']
   moduleCode?: ApiParams['moduleCode']
   owners?: ApiParams['owners']
   permissionControl?: ApiParams['permissionControl']
@@ -239,15 +239,20 @@ export const fileTableProps = {
     type: Function as PropType<(apiParams: ApiUploadFileParams) => Promise<any>>,
   },
   afterApiUploadFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  catchApiUploadFileError: {
+    type: Function as PropType<FileActionUploadProps['catchApiUploadFileError']>,
+  },
   /** apiQueryFile 已从 ...globalConfigFileProps['filetable'] 取到 */
   beforeApiQueryFile: {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   afterApiQueryFile: { type: Function as PropType<(apiResult: any) => Promise<any>> },
+  catchApiQueryFileError: { type: Function as PropType<(apiResult: any) => Promise<any>> },
   beforeApiQueryFileList: {
     type: Function as PropType<(apiParams: ApiQueryFileParams) => Promise<any>>,
   },
   // afterApiQueryFileList: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 afterApiQueryFile 合并为一个函数
+  // catchApiQueryFileListError: { type: Function as PropType<(apiResult: any) => Promise<any>> }, // 与上面 catchApiQueryFileError 合并为一个函数
   beforeApiQueryFileByActualIds: {
     type: Function as PropType<(apiParams: ApiQueryFileByActualIds) => Promise<any>>,
   },

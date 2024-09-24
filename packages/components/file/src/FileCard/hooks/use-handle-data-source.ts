@@ -64,7 +64,7 @@ export function useHandleDataSource(options: {
         ...(typeof apiParams.excludeStaging !== 'undefined'
           ? { excludeStaging: apiParams.excludeStaging }
           : {}),
-        ...(apiParams.id ? { id: apiParams.id } : {}),
+        ...(apiParams.ids ? { ids: apiParams.ids } : {}),
         moduleCode: apiParams.moduleCode,
         owners: apiParams.owners,
         permissionControl: apiParams.permissionControl,

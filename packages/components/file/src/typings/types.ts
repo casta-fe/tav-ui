@@ -125,13 +125,17 @@ export interface ApiParams {
   instantUpdate: boolean
   /**
    * 文件 id，用于：
-   * 1. api/file/queryFile（非必传）
-   * 2. api/file/queryFileList（非必传）
-   * 3. api/file/webOnline
-   * 4. api/file/fileDownload
-   * 5. api/file/downloadToWatermark
+   * 1. api/file/webOnline
+   * 2. api/file/fileDownload
+   * 3. api/file/downloadToWatermark
    */
   id: number
+  /**
+   * 文件 ids，用于：
+   * 1. api/file/queryFile（非必传）
+   * 2. api/file/queryFileList（非必传）
+   */
+  ids: number[]
   /**
    * 排除暂存，默认 false，用于：
    * 1. api/file/queryFile（非必传）

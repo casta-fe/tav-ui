@@ -106,6 +106,7 @@ export const fileCardsProps = {
   afterApiQueryFileList: {
     type: Function as PropType<(apiResult: FileActionUploadApiResponseRecord[]) => Promise<any>>,
   },
+  catchApiQueryFileListError: { type: Function as PropType<(apiResult: any) => Promise<any>> },
 }
 
 export type FileCardsProps = ExtractPropTypes<typeof fileCardsProps>

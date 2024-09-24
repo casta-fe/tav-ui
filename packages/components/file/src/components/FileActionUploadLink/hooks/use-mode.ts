@@ -32,6 +32,7 @@ export function useMode(options: {
       api: mergedProps.value.apiUploadFileLink,
       beforeApi: mergedProps.value.beforeApiUploadFileLink,
       afterApi: mergedProps.value.afterApiUploadFileLink,
+      catchError: mergedProps.value.catchApiUploadFileLinkError,
       apiParams: {
         appId: apiParams.appId,
         address: payload.address ?? apiParams.address,

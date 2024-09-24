@@ -441,15 +441,40 @@ defineExpose({
   },
   validate: async (cardPropValue?: string) => {
     if (!cardPropValue) {
-      const promises = Object.values(fileCardRefs).map(
-        // eslint-disable-next-line no-return-await
-        async (fileCardRef) => await fileCardRef.validate()
-      )
-      // eslint-disable-next-line no-return-await
-      return await Promise.all(promises)
+      const promises = Object.values(fileCardRefs).map(async (fileCardRef, idx) => {
+        const typeCodes = Object.keys(fileCardRefs)
+        const result = {
+          typeCode: typeCodes[idx],
+          success: false,
+          error: [] as any,
+        }
+        try {
+          const success = await fileCardRef.validate()
+          result.success = success
+        } catch (error: any) {
+          result.error = error
+        } finally {
+          // eslint-disable-next-line no-unsafe-finally
+          return result
+        }
+      })
+      const result = await Promise.all(promises)
+      return result
     } else {
-      // eslint-disable-next-line no-return-await
-      return await fileCardRefs[cardPropValue].validate()
+      const result = {
+        typeCode: cardPropValue,
+        success: false,
+        error: [] as any,
+      }
+      try {
+        const success = await fileCardRefs[cardPropValue].validate()
+        result.success = success
+      } catch (error: any) {
+        result.error = error
+      } finally {
+        // eslint-disable-next-line no-unsafe-finally
+        return result
+      }
     }
   },
   clearValidate: (cardPropValue?: string) => {

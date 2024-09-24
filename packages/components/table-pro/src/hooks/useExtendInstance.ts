@@ -137,6 +137,7 @@ function createExendApis(
     }
 
     if (
+      isCheckboxCacheEnabled.value &&
       options?.filter &&
       Object.keys(options?.filter).length > 0 &&
       JSON.stringify(options?.filter) !== JSON.stringify(tableFilterSearchParams)
@@ -144,8 +145,8 @@ function createExendApis(
       await deleteAllCheckboxCache({
         deleteByPage: false,
       })
+      await nextTick()
     }
-    await nextTick()
 
     unref(tableRef)!.commitProxy('query', { ...apiParams })
   }

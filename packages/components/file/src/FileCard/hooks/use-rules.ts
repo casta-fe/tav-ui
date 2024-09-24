@@ -12,7 +12,8 @@ export function defaultRulesBuilder(
       key: 'required',
       required: true,
       trigger: 'change',
-      message: () => `${mergedProps.value.value} ${tavI18n('Tav.common.required')}`,
+      message: () =>
+        `${mergedProps.value.label ?? mergedProps.value.value}${tavI18n('Tav.common.required')}`,
     },
   ]
 

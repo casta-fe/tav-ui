@@ -104,6 +104,7 @@ export function useMode(options: {
       api: mergedProps.value.apiUploadFile,
       beforeApi: mergedProps.value.beforeApiUploadFile,
       afterApi: mergedProps.value.afterApiUploadFile,
+      catchError: mergedProps.value.catchApiUpdateFileError,
       apiParams: {
         appId: apiParams.appId,
         files: unref(files),
