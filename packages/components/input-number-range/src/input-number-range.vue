@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, watch } from 'vue'
-import { FormItem, Input, InputNumber } from 'ant-design-vue'
+import { FormItem, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
@@ -14,7 +14,6 @@ export default defineComponent({
   name: 'TaInputNumberRange',
   components: {
     FormItem,
-    Input,
     InputNumber,
   },
   props: inputNumberRangeProps,
@@ -81,27 +80,24 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="ta-input-number-range">
+  <div class="ta-input-number-range" :class="{ disabled }">
     <FormItem>
       <InputNumber
         v-bind="{ ...minCompProps }"
         v-model:value="min"
         :size="size"
+        :disabled="disabled"
         :precision="precision"
         @blur="blurValueMin"
       />
     </FormItem>
-    <Input
-      style="width: 30px; border: none; pointer-events: none; background-color: #fff"
-      :placeholder="prefixCenter"
-      disabled
-      size="small"
-    />
+    <span class="ta-input-number-range-prefix">{{ prefixCenter }}</span>
     <FormItem>
       <InputNumber
         v-bind="{ ...maxCompProps }"
         v-model:value="max"
         :size="size"
+        :disabled="disabled"
         :precision="precision"
         @blur="blurValueMax"
       />
