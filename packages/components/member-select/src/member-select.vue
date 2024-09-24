@@ -9,8 +9,8 @@
           dropdown-class-name="ta-member-select-option"
           option-filter-prop="label"
           :allow-clear="allowClear"
-          :options="filterOptions"
-          :filter-option="false"
+          :options="userList"
+          :filter-option="filterHandle"
           :max-tag-count="maxTagCount"
           :max-tag-placeholder="maxTagPlaceholder"
           :disabled="disabled"
@@ -19,7 +19,6 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
-          @search="selectSearchHanle"
           @change="emitHandle"
           @blur="handleBlur"
         >
@@ -168,7 +167,6 @@ export default defineComponent({
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
     const [registerMemberModal, { openModal: openMemberModal, closeModal: closeMemberModal }] =
       useModal()
-    const filterOptions = ref<UserItem[]>([])
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
@@ -220,11 +218,9 @@ export default defineComponent({
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
-        filterOptions.value = [...state.userList]
       } else {
         userListApi(props.userListParams).then((res: any) => {
           state.userList = getTrueUserList(res.data)
-          filterOptions.value = [...state.userList]
         })
       }
       checkUserIsExist()
@@ -304,18 +300,14 @@ export default defineComponent({
         }
       }
     }
-    const selectSearchHanle = (keyword: string) => {
+    const filterHandle = (keyword: string, user: UserItem) => {
       if (!keyword) {
-        console.log('清空了')
-        setTimeout(() => {
-          filterOptions.value = [...state.userList]
-        }, 200)
+        return true
       } else {
-        filterOptions.value = state.userList.filter(
-          (user) =>
-            user.fullCharts.indexOf(keyword) > -1 ||
-            user.name.indexOf(keyword) > -1 ||
-            user.userOrgs[0]?.organizationName.indexOf(keyword) > -1
+        return (
+          user.fullCharts.indexOf(keyword) > -1 ||
+          user.name.indexOf(keyword) > -1 ||
+          user.userOrgs[0]?.organizationName.indexOf(keyword) > -1
         )
       }
     }
@@ -391,9 +383,8 @@ export default defineComponent({
       ...toRefs(state),
       userSelectRef,
       removeItem,
-      filterOptions,
+      filterHandle,
       tavI18n,
-      selectSearchHanle,
       userShowMore,
       orgVisibleChange,
       showModal,
