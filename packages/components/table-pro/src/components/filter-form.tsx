@@ -72,11 +72,21 @@ export default defineComponent({
     const defaultInputFormSchema: FormSchema = {
       field: 'searchValue',
       label: '',
-      component: 'InputSearch',
+      component: 'Input',
       componentProps: {
         allowClear: false,
         'enter-button': true,
-        onSearch: useDebounceFn(inputFormSubmit, 300),
+
+        /**
+         * 改用 keydown 以及搜索按钮实现将 search 与特定组件解耦
+         * 1. input/inputsearch 默认组件劫持回车以及按钮点击事件完成筛选
+         * 2. 其他组件，如果组件内部有自己的回车逻辑则回车事件不做劫持，只做搜索按钮的点击劫持完成筛选
+         * 3. 其他情况碰到再讨论
+         */
+        onSearch: undefined,
+        onKeyDown: undefined,
+        onInputKeyDown: undefined,
+        onKeydown: useDebounceFn(unifiedInputTrigger, 300),
       },
     }
 
@@ -84,21 +94,14 @@ export default defineComponent({
       let inputFormSchema = {}
 
       if (props.config?.inputForm) {
-        // 因为这里定死是 inputSearch，但是开发中可能是inputSearch但是会重写onSearch方法，所以这里需要merge
         if (
+          // 因为这里定死是 inputSearch，但是开发中可能是inputSearch但是会重写onSearch方法，所以这里需要merge
           // 方便投管迁移，兼容 Omit<FormSchema, "label" | "component"> 写法
           !(props.config?.inputForm as any).component ||
-          (props.config?.inputForm as any).component === 'InputSearch'
+          ['Input', 'InputSearch'].includes((props.config?.inputForm as any).component)
         ) {
           inputFormSchema = merge(defaultInputFormSchema, unref(props.config?.inputForm))
-        } else if ((props.config?.inputForm as any).component === 'DateInterval') {
-          // 兼容传入的 component 是 DateInterval
-          inputFormSchema = merge(
-            { componentProps: { onSearch: useDebounceFn(inputFormSubmit, 300) } },
-            unref(props.config?.inputForm)
-          )
         } else {
-          // 如果开发传入的 component 不是 inputseacrh，那么直接按照传入的schema生成，不merge
           inputFormSchema = unref(props.config?.inputForm)
         }
       }
@@ -131,10 +134,22 @@ export default defineComponent({
       return props.config?.enabled
     })
 
+    async function unifiedInputTrigger(event: KeyboardEvent | MouseEvent) {
+      event.stopPropagation()
+      event.preventDefault()
+
+      if (event instanceof KeyboardEvent) {
+        event.key === 'Enter' && inputFormSubmit()
+      } else {
+        inputFormSubmit()
+      }
+    }
+
     // 处理 inputForm
-    async function inputFormSubmit(value: string) {
-      if (!value) inputFormResetFields()
+    async function inputFormSubmit() {
       state.inputForm = inputFormGetFieldsValue()
+      if (!Object.keys(state.inputForm).length) return
+
       // 如果设置参数互斥那么只能用关键字搜索，否则是关键字加表单内容
       if (props.filterExclusion) {
         state.currentFilter = {}
@@ -294,6 +309,9 @@ export default defineComponent({
     }
 
     async function handlePannelFormResetFields(withRequest = true) {
+      if (!props.filterExclusion) {
+        await handleInputFormResetFields(false)
+      }
       await pannelFormResetFields()
       await nextTick()
       state.visible = false
@@ -334,11 +352,33 @@ export default defineComponent({
         <div class={ComponentPrefixCls} data-filter-params={tableFilterParams.value}>
           {/* <>filterExclusion:{props.filterExclusion ? '互斥' : '不互斥'}</> */}
           {unref(isInputFormShow) ? (
-            <BasicForm
-              ref={inputFormRef}
-              class={`${ComponentPrefixCls}-input`}
-              onRegister={inputFormRegister}
-            />
+            <div class={`${ComponentPrefixCls}-input`}>
+              <BasicForm
+                ref={inputFormRef}
+                class={`${ComponentPrefixCls}-input-inner`}
+                onRegister={inputFormRegister}
+              />
+              <button
+                class="ant-btn ant-btn-primary ant-input-search-button"
+                type="button"
+                onClick={useDebounceFn(unifiedInputTrigger, 300)}
+              >
+                <span role="img" aria-label="search" class="anticon anticon-search">
+                  <svg
+                    focusable="false"
+                    class=""
+                    data-icon="search"
+                    width="1em"
+                    height="1em"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    viewBox="64 64 896 896"
+                  >
+                    <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
           ) : null}
           {unref(isPannelFormShow) ? (
             <>
@@ -368,6 +408,7 @@ export default defineComponent({
                 maskClosable
                 onRegister={pannelFormModalRegister}
                 onVisible-change={pannelFormModalVisible}
+                destroyOnClose={true}
               >
                 {{
                   default: () => (

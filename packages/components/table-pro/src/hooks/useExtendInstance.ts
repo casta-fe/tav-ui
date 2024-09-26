@@ -148,7 +148,8 @@ function createExendApis(
       await nextTick()
     }
 
-    unref(tableRef)!.commitProxy('query', { ...apiParams })
+    // unref(tableRef)!.commitProxy('query', { ...apiParams }) 同一个表格实例下使用 query 无法重置页码，改为 reload
+    unref(tableRef)!.commitProxy('reload', { ...apiParams })
   }
 
   return {

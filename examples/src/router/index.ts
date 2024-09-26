@@ -33,6 +33,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/TablePro/test-demo.vue'),
   },
   {
+    path: '/table-pro-export',
+    name: 'TableProExport',
+    component: () => import('../components/TablePro/test'),
+  },
+  {
     path: '/upload',
     name: 'Upload',
     component: () => import('../components/TaUpload/index.vue'),

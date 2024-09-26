@@ -287,6 +287,11 @@ export default defineComponent({
     const [exportModalRegister, { openModal: exportModalOpen, closeModal: exportModalClose }] =
       useModal()
 
+    const exportModalLoading = ref(false)
+    function exportModalChangeLoading(loading: boolean) {
+      exportModalLoading.value = loading
+    }
+
     const exportModal = () => {
       const handleSubmit = async () => {
         let data: Record<string, any> = {}
@@ -304,6 +309,7 @@ export default defineComponent({
         }
       }
       const handleExport = async () => {
+        exportModalChangeLoading(true)
         const { data, errors } = await handleSubmit()
         if (errors.length === 0) {
           const _columns = props.tableRef?.value?.getTableColumn().collectColumn ?? []
@@ -362,31 +368,36 @@ export default defineComponent({
             fileStyles = props.config?.export.styles
           }
 
-          // console.log(data, _columns, columns)
-          props.tableRef?.value?.exportData({
-            filename: data.fileName,
-            sheetName: data.fileName,
-            type: data.fileType,
-            mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
-            modeType: data.fileDataType,
-            isHeader: true,
-            // isFooter: true,
-            isMerge: true,
-            isColgroup: true,
-            // message: true,
-            // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
-            // original: true,
-            columns,
-            backupColumns,
-            exportModalClose,
-            useStyle: true,
-            fileDescription,
-            fileStyles,
-            fileSeq: !!data.fileSeq,
-          } as any)
+          try {
+            await props.tableRef?.value?.exportData({
+              filename: data.fileName,
+              sheetName: data.fileName,
+              type: data.fileType,
+              mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
+              modeType: data.fileDataType,
+              isHeader: true,
+              // isFooter: true,
+              isMerge: true,
+              isColgroup: true,
+              // message: true,
+              // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
+              // original: true,
+              columns,
+              backupColumns,
+              exportModalClose,
+              useStyle: true,
+              fileDescription,
+              fileStyles,
+              fileSeq: !!data.fileSeq,
+            } as any)
 
-          // props.tableRef?.value?.loadColumn(backupColumns.value)
-          // exportModalClose()
+            // props.tableRef?.value?.loadColumn(backupColumns.value)
+            // exportModalClose()
+          } catch (error) {
+            console.warn(error)
+          } finally {
+            exportModalChangeLoading(false)
+          }
         }
       }
 
@@ -398,6 +409,8 @@ export default defineComponent({
           wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
           destroyOnClose={true}
           maskClosable={false}
+          loading={exportModalLoading.value}
+          confirmLoading={exportModalLoading.value}
           onVisible-change={(isOpen) => {
             if (!isOpen) {
               props.tableRef?.value?.loadColumn(backupColumns.value)

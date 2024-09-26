@@ -380,6 +380,7 @@ export default defineComponent({
               // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
               // fixedLineHeight={false}
               // pagerConfig={{ enabled: false }}
+              // filterExclusion={false}
             >
               {{
                 // filterForm: () => <div>123</div>,

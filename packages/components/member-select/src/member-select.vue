@@ -1,5 +1,5 @@
 <template>
-  <div class="ta-member-select">
+  <div ref="memberSelectElRef" class="ta-member-select">
     <div v-if="!noSelect">
       <template v-if="type == 'user'">
         <Select
@@ -22,6 +22,8 @@
           @change="emitHandle"
           @blur="handleBlur"
         >
+          <!-- @inputKeyDown="preventInnerKeydownTriggerOuterKeydown" -->
+
           <template #tagRender="{ label, option }">
             <Tag color="blue" closable @close.prevent="removeItem(option)"> {{ label }}</Tag>
           </template>
@@ -80,6 +82,8 @@
           show-checked-strategy="SHOW_ALL"
           @change="emitHandle"
         >
+          <!-- @inputKeyDown="preventInnerKeydownTriggerOuterKeydown" -->
+
           <!-- :treeDefaultExpandedKeys="orgExpandedKey" -->
           <!-- 自己循环得递归，暂时不这样写 -->
           <!-- <TreeSelectNode v-for="item in orgList" :key="item.id">
@@ -138,6 +142,7 @@ export default defineComponent({
   props: memberSelectProps,
   emits: ['change', 'update:value', 'blur'],
   setup(props, { emit }) {
+    const memberSelectElRef = ref<HTMLDivElement>()
     const userSelectRef = ref<any>(null)
     const state = reactive({
       modalIsShow: false,
@@ -379,8 +384,20 @@ export default defineComponent({
       }
     }
     pageInit()
+
+    /**
+     * 劫持组件内部的回车事件，暂时不用。勿删
+     * @param event
+     */
+    // function preventInnerKeydownTriggerOuterKeydown(event: KeyboardEvent) {
+    //   event.stopPropagation()
+    //   const evt = new Event('keydown')
+    //   memberSelectElRef.value?.dispatchEvent(evt)
+    // }
+
     return {
       ...toRefs(state),
+      memberSelectElRef,
       userSelectRef,
       removeItem,
       filterHandle,
@@ -394,6 +411,7 @@ export default defineComponent({
       emitHandle,
       handleBlur,
       registerMemberModal,
+      // preventInnerKeydownTriggerOuterKeydown,
     }
   },
 })

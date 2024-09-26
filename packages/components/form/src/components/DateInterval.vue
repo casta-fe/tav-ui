@@ -68,7 +68,7 @@ export default defineComponent({
     },
     autoChoose: { type: String as PropType<any | 'none'>, default: 'month' },
   },
-  emits: ['change', 'search', 'getCurDate'],
+  emits: ['change', 'getCurDate'],
   setup(props, { emit }) {
     const dateRangeRecord = getDateRangeRecord()
     type DateRangeRecordType = typeof dateRangeRecord
@@ -114,7 +114,6 @@ export default defineComponent({
       const data = (unref(currentDate) || []).map((v: Dayjs) => dayjs(v).format(props.valueFormat))
       console.log(data)
       emit('change', data)
-      emit('search', data)
     }
 
     onMounted(() => {

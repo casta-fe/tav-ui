@@ -120,6 +120,9 @@ export function defaultItemsBuilder(
                         //@ts-ignore
                         style={{
                           display: 'inline-block',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
                           width: '100%',
                         }}
                       >

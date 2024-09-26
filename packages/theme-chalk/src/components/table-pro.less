@@ -369,8 +369,22 @@
     margin-bottom: @gap16;
 
     &-input {
+      position: relative;
+      display: flex;
+      align-items: center;
       width: 380px;
-      margin-right: @gap16 !important;
+      margin-right: 16px;
+
+      &-inner {
+        width: calc(100% - 46px);
+      }
+
+      .ant-input-search-button {
+        position: absolute;
+        right: 3px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
 
       .ant-form-item {
         margin-bottom: 0 !important;
