@@ -149,7 +149,8 @@ export default defineComponent({
                 <TaScrollbar>
                   {Object.keys(checkboxCaches.value).length > 0 ? (
                     Object.keys(checkboxCaches.value).map((currentPage) => {
-                      return (
+                      return checkboxCaches.value[currentPage] &&
+                        checkboxCaches.value[currentPage].length > 0 ? (
                         <div style="display: flex; flex-direction: column;">
                           <div
                             class="ant-select-item ant-select-item-group"
@@ -159,53 +160,48 @@ export default defineComponent({
                           >
                             {`第 ${currentPage} 页`}
                           </div>
-                          {checkboxCaches.value[currentPage] &&
-                          checkboxCaches.value[currentPage].length > 0 ? (
-                            checkboxCaches.value[currentPage].map((cache) => {
-                              return (
-                                <div
-                                  class={`${ComponentPrefixCls}-popver-content-item ant-select-item ant-select-item-option ant-select-item-option-grouped`}
-                                  style={{
-                                    paddingLeft: '12px',
-                                  }}
-                                >
-                                  {/* <Checkbox
+                          {checkboxCaches.value[currentPage].map((cache) => {
+                            return (
+                              <div
+                                class={`${ComponentPrefixCls}-popver-content-item ant-select-item ant-select-item-option ant-select-item-option-grouped`}
+                                style={{
+                                  paddingLeft: '12px',
+                                }}
+                              >
+                                {/* <Checkbox
                                       checked={checked.value(cache)}
                                       onChange={(e: Event) => handleCheckboxCacheSelect(cache, e)}
                                     > */}
-                                  <div
-                                    class={`${ComponentPrefixCls}-popver-content-item ant-select-item-option-content`}
+                                <div
+                                  class={`${ComponentPrefixCls}-popver-content-item ant-select-item-option-content`}
+                                >
+                                  <span
+                                    // @ts-ignore
+                                    style={{
+                                      flex: 1,
+                                      display: 'inline-block',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      maxWidth: 'calc(100% - 24px)',
+                                    }}
                                   >
-                                    <span
-                                      // @ts-ignore
-                                      style={{
-                                        flex: 1,
-                                        display: 'inline-block',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        maxWidth: 'calc(100% - 24px)',
-                                      }}
-                                    >
-                                      {cache.fullName}
-                                    </span>
-                                    <TaButton
-                                      class={`${ComponentPrefixCls}-popver-btn checkbox-cache-clear`}
-                                      type="text"
-                                      preIcon={'material-symbols:delete-forever-outline'}
-                                      iconSize={20}
-                                      onClick={() => handleCheckboxCacheClear(cache)}
-                                    />
-                                  </div>
-                                  {/* </Checkbox> */}
+                                    {cache.fullName}
+                                  </span>
+                                  <TaButton
+                                    class={`${ComponentPrefixCls}-popver-btn checkbox-cache-clear`}
+                                    type="text"
+                                    preIcon={'material-symbols:delete-forever-outline'}
+                                    iconSize={20}
+                                    onClick={() => handleCheckboxCacheClear(cache)}
+                                  />
                                 </div>
-                              )
-                            })
-                          ) : (
-                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                          )}
+                                {/* </Checkbox> */}
+                              </div>
+                            )
+                          })}
                         </div>
-                      )
+                      ) : null
                     })
                   ) : (
                     <Empty

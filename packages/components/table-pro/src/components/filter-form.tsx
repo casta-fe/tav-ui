@@ -78,7 +78,7 @@ export default defineComponent({
         'enter-button': true,
 
         /**
-         * 改用 keydown 以及搜索按钮实现将 search 与特定组件解耦
+         * 改用 keydown 以及搜索按钮实现将其与特定组件解耦
          * 1. input/inputsearch 默认组件劫持回车以及按钮点击事件完成筛选
          * 2. 其他组件，如果组件内部有自己的回车逻辑则回车事件不做劫持，只做搜索按钮的点击劫持完成筛选
          * 3. 其他情况碰到再讨论
@@ -148,7 +148,7 @@ export default defineComponent({
     // 处理 inputForm
     async function inputFormSubmit() {
       state.inputForm = inputFormGetFieldsValue()
-      if (!Object.keys(state.inputForm).length) return
+      if (!Object.keys(state.inputForm).length) await inputFormResetFields()
 
       // 如果设置参数互斥那么只能用关键字搜索，否则是关键字加表单内容
       if (props.filterExclusion) {
@@ -167,9 +167,8 @@ export default defineComponent({
         }
         state.currentFilter = { ...state.inputForm, ...state.pannelForm }
       }
-      // console.log(state.currentFilter)
       // 发送请求
-      unref(props.tableRef)?.commitProxy('query', {
+      unref(props.tableRef)?.commitProxy('reload', {
         filter: { ...state.currentFilter },
         model: { page: 1 },
       })
@@ -286,7 +285,7 @@ export default defineComponent({
       }
       // console.log(state.currentFilter)
       // 发送请求
-      unref(props.tableRef)?.commitProxy('query', {
+      unref(props.tableRef)?.commitProxy('reload', {
         filter: { ...state.currentFilter },
         model: { page: 1 },
       })
@@ -300,7 +299,7 @@ export default defineComponent({
       state.inputForm = inputFormGetFieldsValue()
       state.currentFilter = { ...state.inputForm, ...state.pannelForm }
       if (withRequest) {
-        unref(props.tableRef)?.commitProxy('query', {
+        unref(props.tableRef)?.commitProxy('reload', {
           filter: { ...state.currentFilter },
           model: { page: 1 },
         })
@@ -319,7 +318,7 @@ export default defineComponent({
       state.pannelForm = {}
       state.currentFilter = { ...state.inputForm }
       if (withRequest) {
-        unref(props.tableRef)?.commitProxy('query', {
+        unref(props.tableRef)?.commitProxy('reload', {
           filter: { ...state.currentFilter },
           model: { page: 1 },
         })

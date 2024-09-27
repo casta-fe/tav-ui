@@ -143,6 +143,7 @@ export default {
       '4o4': 'All data by search',
       '5': 'File fields',
       '5p': 'Please select the file fields to export.',
+      '6': 'Data processing',
     },
     columns: { '1': 'No.', '2': 'Selecte' },
     page: { '1': 'Prev', '2': 'Next' },

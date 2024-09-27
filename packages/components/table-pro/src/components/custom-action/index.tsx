@@ -384,7 +384,10 @@ export default defineComponent({
               // original: true,
               columns,
               backupColumns,
-              exportModalClose,
+              exportModalClose: () => {
+                exportModalChangeLoading(false)
+                exportModalClose()
+              },
               useStyle: true,
               fileDescription,
               fileStyles,
@@ -395,7 +398,6 @@ export default defineComponent({
             // exportModalClose()
           } catch (error) {
             console.warn(error)
-          } finally {
             exportModalChangeLoading(false)
           }
         }

@@ -158,7 +158,7 @@ function handleExtendApi(
       // model 中的值已vxetable计算的为准，其他值已传入为准，reload 传入 model 后，要对vxetable的model进行合并
       params = option
         ? option.model
-          ? { ...option, ...{ model: { ...model, ...option.model } } }
+          ? { ...option, ...{ model: { ...model, ...option.model } }, ...option.model }
           : { ...option, ...{ model } }
         : { ...params, ...{ model } }
 

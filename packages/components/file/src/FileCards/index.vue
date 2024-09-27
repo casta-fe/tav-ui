@@ -222,7 +222,11 @@ const fileCardProps = computed(() => (_catagory: FileCardsCatagory | undefined) 
   // 对传入的 filecard 与初始化分类数据进行合并
   const mergedCatagory = {
     ...(_catagory ?? {}),
+    mode: mergedProps.value.mode,
+    visible: mergedProps.value.visible,
+    immediate: mergedProps.value.immediate,
     autoValidate: mergedProps.value.autoValidate,
+    loading: mergedProps.value.loading,
     ...targetFileCard,
     dataSource: [
       ...(mergedProps.value.immediate
