@@ -140,7 +140,9 @@ export default defineComponent({
 
       if (event instanceof KeyboardEvent) {
         event.key === 'Enter' && inputFormSubmit()
-      } else {
+      }
+
+      if (event instanceof MouseEvent) {
         inputFormSubmit()
       }
     }
