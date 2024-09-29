@@ -162,6 +162,7 @@ export function defaultItemsBuilder(
                           lineHeight: '14px',
                           height: '14px',
                           fontSize: '12px',
+                          width: '100%',
                         }}
                         type={'link'}
                         size={'small'}
