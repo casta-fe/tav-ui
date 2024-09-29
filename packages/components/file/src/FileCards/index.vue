@@ -244,7 +244,6 @@ const fileCardProps = computed(() => (_catagory: FileCardsCatagory | undefined) 
   }
   return {
     ...mergedCatagory,
-    mode: props.mode,
     apiParams: {
       //@ts-ignore
       typeCode: mergedCatagory.value!,
