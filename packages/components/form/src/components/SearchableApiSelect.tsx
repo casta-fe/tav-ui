@@ -227,9 +227,11 @@ export default defineComponent({
           // 必须走天眼查 -> 可自定义输入
           if (v) {
             emitValue()
-            if (state.value?.length < 2) {
-              return
-            }
+            state.options = []
+            return
+            // if (state.value?.length < 2) {
+            //   return
+            // }
           } else {
             emitValue(true)
           }
