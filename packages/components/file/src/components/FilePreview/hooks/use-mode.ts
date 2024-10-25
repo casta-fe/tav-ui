@@ -1,11 +1,7 @@
 import { type ComputedRef } from 'vue'
 import { tavI18n } from '@tav-ui/locales'
-import { type FilePreviewProps } from '../types'
-import {
-  type FileActionUploadApiResponseRecord,
-  type FilePreviewApiResponse,
-  type GlobalConfigFileProps,
-} from '../../../typings'
+import { type FilePreviewProps, type TaFilePreviewPropFile } from '../types'
+import { type FilePreviewApiResponse, type GlobalConfigFileProps } from '../../../typings'
 import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
 
 export function useMode(options: {
@@ -14,10 +10,7 @@ export function useMode(options: {
   const { mergedProps } = options
 
   //:========================================: api actions :========================================://
-  function viewApiOptions(
-    apiParams: FilePreviewProps['apiParams'],
-    file: FileActionUploadApiResponseRecord
-  ) {
+  function viewApiOptions(apiParams: FilePreviewProps['apiParams'], file: TaFilePreviewPropFile) {
     if (!mergedProps.value.apiPreviewFile) {
       console.warn('[tavui TaFilePreview] apiPreviewFile is undefined')
       return

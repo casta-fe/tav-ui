@@ -349,6 +349,7 @@ type BasicPropsType = {
  * 从App.vue注入的全局 数据/配置项/api接口
  */
 type ProvideDataType = {
+  [key: string]: any
   // 删除文件接口
   removeFile?: PromiseFn
   actionLimit?: number

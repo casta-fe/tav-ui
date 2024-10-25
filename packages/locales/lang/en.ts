@@ -207,6 +207,8 @@ export default {
       '4': 'Too large',
       '5': 'File name contains illegal char: ',
       '6': 'Not support file type',
+      '7': 'Preview file',
+      '8': 'Delete file',
     },
     message: {
       '1': 'The preview of this format is temporarily not supported.',

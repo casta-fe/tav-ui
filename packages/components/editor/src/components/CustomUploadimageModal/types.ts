@@ -1,0 +1,48 @@
+import { type ExtractPropTypes, type PropType } from 'vue'
+import { type ModalProps } from '@tav-ui/components/modal'
+import { isBoolean } from '@tav-ui/utils'
+import { globalConfigEditorProps } from '../../typings'
+
+export const editorCustomUploadimageModalProps = {
+  ...globalConfigEditorProps,
+  visible: { type: Boolean, default: false },
+  // modal props
+  width: {
+    type: [String, Number] as PropType<ModalProps['width']>,
+    default: 1000,
+  },
+  wrapClassName: {
+    type: String as PropType<ModalProps['wrapClassName']>,
+  },
+  destroyOnClose: {
+    type: Boolean as PropType<ModalProps['destroyOnClose']>,
+    default: true,
+  },
+  maskClosable: {
+    type: Boolean as PropType<ModalProps['destroyOnClose']>,
+    default: false,
+  },
+  getPopupContainer: {
+    type: Function as PropType<ModalProps['getContainer']>,
+    default: () => document.body,
+  },
+}
+
+export type EditorCustomUploadimageModalProps = ExtractPropTypes<
+  typeof editorCustomUploadimageModalProps
+>
+
+export const editorCustomUploadimageModalEmits = {
+  open: () => true,
+  close: (...args: any[]) => typeof args,
+  'update:visible': (visible: boolean) => isBoolean(visible),
+}
+
+export type EditorCustomUploadimageModalEmits = typeof editorCustomUploadimageModalEmits
+
+export interface EditorCustomUploadimageModalInstance {
+  open: () => any
+  close: (...args: any[]) => typeof args
+  getUploadimageModalTabsValue: () => Promise<Record<string, any>>
+  cleanup(): void
+}

@@ -25,6 +25,8 @@ import IconPicker from '@tav-ui/components/icon-picker'
 import { TaCountDown as CountdownInput } from '@tav-ui/components/count-down'
 import { TaInputNumberRange } from '@tav-ui/components/input-number-range'
 import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
+import TaEditor from '@tav-ui/components/editor'
+import TaFileUpload from '@tav-ui/components/file/src/components/FileUpload'
 import ApiSelect from './components/ApiSelect.vue'
 import FormTitle from './components/FormTitle.vue'
 // import ApiTreeSelect from "./components/ApiTreeSelect.vue";
@@ -82,6 +84,8 @@ add('TagSelect', TagSelect)
 add('YearPicker', YearPicker)
 add('InputNumberRange', TaInputNumberRange)
 add('CascadeProSelect', TaCascadeProSelect)
+add('Editor', TaEditor)
+add('FileUpload', TaFileUpload)
 
 export function add(compName: ComponentType, component: Component) {
   componentMap.set(compName, component)

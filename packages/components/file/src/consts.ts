@@ -40,6 +40,10 @@ export const DEFAULT_FILECARD_CLASSNAME = ns.b('card')
 export const DEFAULT_FILECARDS_ID = createId(DEFAULT_FILECARDS_CLASSNAME)
 export const DEFAULT_CARD_ROWEDITOR_CLASSNAME = ns.b('card-row-editor')
 export const DEFAULT_CARD_ROWEDITOR_ID = createId(DEFAULT_CARD_ROWEDITOR_CLASSNAME)
+export const DEFAULT_FILEUPLOAD_CLASSNAME = ns.b('upload')
+export const DEFAULT_FILEUPLOAD_ID = createId(DEFAULT_FILEUPLOAD_CLASSNAME)
+export const DEFAULT_FILEUPLOAD_PREVIEW_CLASSNAME = ns.b('upload-preview')
+export const DEFAULT_FILEUPLOAD_PREVIEW_ID = createId(DEFAULT_FILEUPLOAD_PREVIEW_CLASSNAME)
 
 export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
 export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']

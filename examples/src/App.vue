@@ -16,6 +16,7 @@ import { useI18n } from './hooks/useI18n'
 import { i18n } from './locales/setupI18n'
 import {
   UserListApi,
+  previewEditorWPSFile,
   previewFile,
   previewWPSFile,
   queryFileByFileActualIds,
@@ -105,6 +106,12 @@ export default defineComponent({
           apiDownloadFile: taUploadProvideData.download,
           apiDownloadWaterMarkerFile: taUploadProvideData.downloadWaterMarker,
         },
+        TaEditor: {
+          apiUploadVars: taUploadProvideData.uploadEditorImageVars,
+          apiUploadImage: taUploadProvideData.uploadEditorImage,
+          apiUploadFile: taUploadProvideData.uploadEditorFile,
+          apiPreviewFile: previewEditorWPSFile,
+        },
 
         TaMemberSelect: {
           orgApi,
@@ -138,7 +145,7 @@ export default defineComponent({
       // console.log(state)
     }, 3000)
 
-    onMounted(() => {
+    onMounted(async () => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
     })

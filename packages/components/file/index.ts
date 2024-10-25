@@ -11,8 +11,15 @@ export * from './src/components/FilePreview'
 export * from './src/components/FileLog'
 export * from './src/FileCards'
 export * from './src/FileCard'
+export * from './src/components/FileUpload'
+export * from './src/components/FileUploadPreview'
 export * from './src/typings/types'
-export { DEFAULT_FILE_ACCEPT_TYPES, DEFAULT_FILE_IGNORE_TYPES } from './src/consts'
+export {
+  DEFAULT_FILE_ACCEPT_TYPES,
+  DEFAULT_FILE_IMAGE_TYPES,
+  DEFAULT_FILE_OFFICE_TYPES,
+  DEFAULT_FILE_IGNORE_TYPES,
+} from './src/consts'
 
 export const TaFile = withInstall(File)
 export default TaFile

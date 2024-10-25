@@ -63,6 +63,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/File/upload.vue'),
   },
   {
+    path: '/file-normal-upload',
+    name: 'FileNormalUpload',
+    component: () => import('../components/File/normal-upload.vue'),
+  },
+  {
     path: '/file-table',
     name: 'FileTable',
     component: () => import('../components/File/table.vue'),
@@ -71,6 +76,16 @@ const routes: RouteRecordRaw[] = [
     path: '/file-cards',
     name: 'FileCards',
     component: () => import('../components/File/cards.vue'),
+  },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: () => import('../components/Editor/index.vue'),
+  },
+  {
+    path: '/editor-form',
+    name: 'EditorForm',
+    component: () => import('../components/Editor/form.vue'),
   },
 ]
 

@@ -9,7 +9,7 @@ type Recordable<T = any> = Record<string, T>
  * @description: 生成placeholder
  */
 export function createPlaceholderMessage(component: ComponentType, label = '') {
-  if (component.includes('Input') || component.includes('Complete'))
+  if (component.includes('Input') || component.includes('Complete') || component.includes('Editor'))
     return `${tavI18n('Tav.common.inputText')}${label}`
 
   if (component.includes('Picker')) return `${tavI18n('Tav.common.chooseText')}${label}`

@@ -601,6 +601,143 @@ export const taUploadProvideData: Partial<
 
     return result
   },
+  uploadEditorFile: async (payload: any): Promise<any> => {
+    const formData = payload
+    let result: any
+    try {
+      const { data } = await __post(
+        `/api/TIANTA-FILE/api/file/upload/file?_t=${new Date().getTime()}`,
+        formData,
+        true
+      ) // 走接口
+      result = {
+        data: data
+          ? data
+          : [
+              '${file.texteditor.online.url}/files/caseditorfile/20241015/pf53glyff4lo83wgnz-1728981203219.xlsx?k=${securityKey}',
+            ],
+        success: true,
+      }
+    } catch {
+      result = {
+        data: result
+          ? result
+          : [
+              '${file.texteditor.online.url}/files/caseditorfile/20241015/pf53glyff4lo83wgnz-1728981203219.xlsx?k=${securityKey}',
+            ],
+        success: true,
+      }
+    }
+
+    return new Promise((r) => setTimeout(r.bind(null, result)))
+
+    // return new Promise((r) =>
+    //   setTimeout(
+    //     r.bind(null, {
+    //       data: data
+    //         ? data
+    //         : [...(payload.getAll('files') as File[])].map((el) => ({
+    //             fullName: el.name,
+    //             typeCode: payload.get('typeCode'),
+    //             moduleCode: payload.get('moduleCode'),
+    //             fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+    //             createByName: 'mxs',
+    //             createTime: +new Date() + 1000 * 60 * 24 * 3,
+    //           })),
+    //     }),
+    //     900
+    //   )
+    // )
+  },
+  uploadEditorImage: async (payload: any): Promise<any> => {
+    const formData = payload
+    let result: any
+    try {
+      const { data } = await __post(
+        `/api/TIANTA-FILE/api/file/upload/image?_t=${new Date().getTime()}`,
+        formData,
+        true
+      ) // 走接口
+      result = {
+        data: data
+          ? data
+          : [...(payload.getAll('files') as File[])].map((el) => ({
+              fullName: el.name,
+              typeCode: payload.get('typeCode'),
+              moduleCode: payload.get('moduleCode'),
+              fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+              createByName: 'mxs',
+              createTime: +new Date() + 1000 * 60 * 24 * 3,
+            })),
+        success: true,
+      }
+    } catch {
+      result = {
+        data: result
+          ? result
+          : [...(payload.getAll('files') as File[])].map((el) => ({
+              fullName: el.name,
+              typeCode: payload.get('typeCode'),
+              moduleCode: payload.get('moduleCode'),
+              fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+              createByName: 'mxs',
+              createTime: +new Date() + 1000 * 60 * 24 * 3,
+            })),
+        success: true,
+      }
+    }
+
+    return new Promise((r) => setTimeout(r.bind(null, result)))
+
+    // return new Promise((r) =>
+    //   setTimeout(
+    //     r.bind(null, {
+    //       data: data
+    //         ? data
+    //         : [...(payload.getAll('files') as File[])].map((el) => ({
+    //             fullName: el.name,
+    //             typeCode: payload.get('typeCode'),
+    //             moduleCode: payload.get('moduleCode'),
+    //             fileSize: `${(el.size / 1024).toFixed(2)}kb`,
+    //             createByName: 'mxs',
+    //             createTime: +new Date() + 1000 * 60 * 24 * 3,
+    //           })),
+    //     }),
+    //     900
+    //   )
+    // )
+  },
+  uploadEditorImageVars: async (): Promise<any> => {
+    let result: any
+    try {
+      const { data } = await __post(`/api/TIANTA-FILE/api/file/upload/image/prop`) // 走接口
+      result = {
+        data: data
+          ? data
+          : {
+              urlPrefixProp: 'file.texteditor.online.url',
+              urlPrefix: 'http://192.168.10.48/',
+              imageKeyProp: 'image.security.key',
+              imageKey: 'c5b9cc487e194ba58a8e140deb345cee',
+            },
+        success: true,
+      }
+    } catch {
+      result = {
+        data: result
+          ? result
+          : {
+              urlPrefixProp: 'file.texteditor.online.url',
+              urlPrefix: 'http://192.168.10.48/',
+              imageKeyProp: 'image.security.key',
+              imageKey: 'c5b9cc487e194ba58a8e140deb345cee',
+            },
+        success: true,
+      }
+    }
+
+    return new Promise((r) => setTimeout(r.bind(null, result)))
+  },
 }
 
 export const previewFile = async (id: string, appId?: string) => {
@@ -611,6 +748,11 @@ export const previewFile = async (id: string, appId?: string) => {
 
 export const previewWPSFile = async (params: any, appId?: string) => {
   const response = await __post(`/api/TIANTA-FILE/api/file/webOnline/${params.id}`)
+  return response
+}
+
+export const previewEditorWPSFile = async (data: { url: string }) => {
+  const response = await __post(`/api/TIANTA-FILE/api/file/webView`, data)
   return response
 }
 

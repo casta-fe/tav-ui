@@ -119,6 +119,8 @@ export type ComponentType =
   | 'InputNumberRange'
   | 'CascadeProSelect'
   | 'DateInterval'
+  | 'Editor'
+  | 'FileUpload'
 
 export type EditableComponentType =
   | 'Input'
@@ -158,4 +160,5 @@ export type EditableComponentType =
   | 'InputNumberRange'
   | 'CascadeProSelect'
   | 'DateInterval'
-  | 'DateInterval '
+  | 'Editor'
+  | 'FileUpload'

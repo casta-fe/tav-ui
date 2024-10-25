@@ -102,6 +102,7 @@ watch(
           userName: createByName,
           time: `${new Date(createTime).getTime()}`,
           watermarker: watermark,
+          /** 前端自定义参数 from: 'desktop'|'mobile'，用来区分 pc/小程序 */
           from: 'desktop',
         }
 

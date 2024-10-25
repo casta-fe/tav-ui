@@ -9,6 +9,16 @@ import {
   globalConfigFileProps,
 } from '../../typings'
 
+export interface TaFilePreviewPropFile {
+  id: FileActionUploadApiResponseRecord['id']
+  name: FileActionUploadApiResponseRecord['name']
+  suffix: FileActionUploadApiResponseRecord['suffix']
+  fileSize: FileActionUploadApiResponseRecord['fileSize']
+  createByName: FileActionUploadApiResponseRecord['createByName']
+  createTime: FileActionUploadApiResponseRecord['createTime']
+  [key: string]: any
+}
+
 // 按照 swagger 编写
 export interface ApiPreviewFileParams {
   id: ApiParams['id']
@@ -57,10 +67,10 @@ export const filePreviewProps = {
   immediate: { type: Boolean, default: true },
   /** 预览文件 */
   file: {
-    type: Object as PropType<FileActionUploadApiResponseRecord>,
-    default: () => ({} as FileActionUploadApiResponseRecord),
+    type: Object as PropType<TaFilePreviewPropFile>,
+    default: () => ({} as TaFilePreviewPropFile),
     required: true,
-    validator(value: FileActionUploadApiResponseRecord) {
+    validator(value: TaFilePreviewPropFile) {
       return !DEFAULT_FILE_IGNORE_TYPES.includes(value.suffix)
     },
   },

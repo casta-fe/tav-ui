@@ -48,8 +48,11 @@ import {
   TaFilePreview,
   TaFileTable,
   TaFileTypeSelect,
+  TaFileUpload,
+  TaFileUploadPreview,
   TaFileVersion,
 } from '@tav-ui/components/file'
+import { TaEditor } from '@tav-ui/components/editor'
 
 import type { Plugin } from 'vue'
 
@@ -110,4 +113,7 @@ export default [
   TaFileLog,
   TaFileCards,
   TaFileCard,
+  TaFileUpload,
+  TaFileUploadPreview,
+  TaEditor,
 ] as Plugin[]
