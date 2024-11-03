@@ -4,15 +4,18 @@ import { type GlobalConfigEditorProps } from '../typings'
 
 export function useGlobalConfigProps() {
   const globalConfigAppId = (useGlobalConfig('appId') as Ref<string>).value
+  const globalConfigUploadVarsJson = useGlobalConfig('uploadVarsJson') as Ref<string>
   const globalConfigEditor = useGlobalConfig('components') as Ref<Record<string, any>>
 
   return computed(
     () =>
       ({
         appId: globalConfigAppId || '',
+        uploadVarsJson: globalConfigUploadVarsJson.value || '{}',
         ...(globalConfigEditor?.value?.TaEditor || {}),
       } as unknown as GlobalConfigEditorProps & {
         appId: string | number
+        uploadVarsJson: string
       })
   )
 }

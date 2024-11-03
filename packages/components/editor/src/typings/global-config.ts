@@ -20,9 +20,9 @@ export const globalConfigEditorProps = {
   sizeRange: { type: Array as PropType<(number | null)[]>, default: DEFAULT_FILE_SIZE_RANGE },
   /** 文件名非法字符校验 */
   nameRegExp: { type: Object as PropType<RegExp>, default: DEFAULT_FILE_NAME_REGEXP },
-  /** 编辑器上传图片接口变量 */
-  apiUploadVars: {
-    type: Function as PropType<(...args: any[]) => Promise<any>>,
+  /** 全局注入的 uploadvars */
+  uploadVarsJson: {
+    type: String,
   },
   /** 编辑器上传图片接口 */
   apiUploadImage: {

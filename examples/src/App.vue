@@ -53,6 +53,7 @@ export default defineComponent({
         t,
         i18n,
       },
+      uploadVarsJson: '{}',
       permissions: {},
       components: {
         TaUpload: taUploadProvideData,
@@ -145,9 +146,22 @@ export default defineComponent({
       // console.log(state)
     }, 3000)
 
+    async function fetchUploadVars() {
+      const { data, success } = await taUploadProvideData.uploadEditorImageVars()
+      if (data && success) {
+        state.uploadVarsJson = JSON.stringify(data)
+      } else {
+        state.uploadVarsJson = '{}'
+      }
+    }
+
+    fetchUploadVars()
     onMounted(async () => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
+      setInterval(() => {
+        fetchUploadVars()
+      }, 1000 * 30)
     })
 
     return {
@@ -165,6 +179,7 @@ export default defineComponent({
     :permissions="state.permissions"
     :components="state.components"
     :i18n-fun="state.i18nFun"
+    :upload-vars-json="state.uploadVarsJson"
   >
     <ConfigProvider :locale="zhCN">
       <router-view v-slot="{ Component }">

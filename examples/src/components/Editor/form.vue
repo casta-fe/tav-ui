@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { type FormActionType, type FormSchema, TaForm, useForm } from '@tav-ui/components/form'
-import { replaceEditorUrlValueToVars, replaceEditorUrlVarsToValue } from '@tav-ui/components/editor'
+import { replaceFileUrlVarsToValue } from '@tav-ui/components/editor'
 import {
   DEFAULT_FILE_IMAGE_TYPES,
   transformUrlToFileUploadPreviewPropFile,
@@ -82,7 +82,7 @@ const formSchemas: FormSchema[] = [
             let handledUrlUploadedFile: Record<string, any> = {}
             for (const [k, v] of Object.entries(uploadedFile)) {
               if (v && typeof v === 'string') {
-                handledUrlUploadedFile[k] = replaceEditorUrlVarsToValue(v, uploadImageVars)
+                handledUrlUploadedFile[k] = replaceFileUrlVarsToValue(v, uploadImageVars)
               } else {
                 handledUrlUploadedFile[k] = v
               }
@@ -139,7 +139,7 @@ async function handleClick() {
     const result = await formActions.validate()
     console.log('🚀 ~ handleClick ~ result:', {
       ...result,
-      richtext: replaceEditorUrlVarsToValue(result.richtext, props.uploadImageVars),
+      richtext: replaceFileUrlVarsToValue(result.richtext, props.uploadImageVars),
     })
   } catch (error: any) {
     console.warn(JSON.stringify(error))

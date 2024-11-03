@@ -1,6 +1,5 @@
 import { type ExtractPropTypes } from 'vue'
 import { type Editor as TEditor, type TinyMCE } from 'tinymce/tinymce'
-import { omit } from 'lodash-es'
 import { globalConfigEditorProps } from './global-config'
 
 export type Editor = TEditor
@@ -11,7 +10,7 @@ export type EditorPluginImageUploadHandler = Exclude<
 >
 
 export const editorProps = {
-  ...omit(globalConfigEditorProps, 'apiUploadImage'),
+  ...globalConfigEditorProps,
 
   /** 编辑器内容（双向绑定） */
   value: {
