@@ -87,6 +87,7 @@ function close() {
   modalVisible.value = false
   emits('close')
   emits('update:visible', modalVisible.value)
+  props.close?.()
 }
 
 function handleOnVisibleChange(isOpen: boolean) {

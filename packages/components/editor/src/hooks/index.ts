@@ -1,5 +1,6 @@
 export * from './use-api'
 export * from './use-editor-custom-toolbar-button'
+export * from './use-editor-iframe-communication'
 export * from './use-editor-menubar'
 export * from './use-editor-plugin'
 export * from './use-editor-statusbar'

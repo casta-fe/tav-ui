@@ -30,6 +30,9 @@ export const fileUploadPreviewProps = {
     default: () => ({} as FileUploadApiResponseRecord),
     required: true,
   },
+  close: {
+    type: Function as PropType<(...args: any[]) => any>,
+  },
 }
 
 export type FileUploadPreviewProps = ExtractPropTypes<typeof fileUploadPreviewProps>

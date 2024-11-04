@@ -28,6 +28,10 @@ export const configProviderProps = {
     type: Object as PropType<{ t: I18nGlobalTranslation; locale?: string }>,
     defult: () => ({}),
   },
+  uploadVarsJson: {
+    type: String,
+    default: '{}',
+  },
 }
 
 export type ConfigProviderProps = ExtractPropTypes<typeof configProviderProps>

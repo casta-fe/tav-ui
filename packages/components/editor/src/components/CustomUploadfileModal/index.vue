@@ -3,7 +3,7 @@ import { onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
 import { TaButton, TaModal } from '@tav-ui/components'
 import { tavI18n } from '@tav-ui/locales'
 import { TaFileUpload, transformUrlToFileUploadPreviewPropFile } from '@tav-ui/components/file'
-import { replaceEditorUrlVarsToValue } from '../../utils'
+import { refreshUploadVars, replaceFileUrlVarsToValue } from '../../utils'
 import {
   DEFAULT_EDITOR_CUSTOM_UPLOADFILE_MODAL_CLASSNAME,
   DEFAULT_EDITOR_CUSTOM_UPLOADFILE_MODAL_ID,
@@ -34,29 +34,54 @@ const mergedProps = useMergedProps<EditorCustomUploadfileModalProps>(globalConfi
 const tabsActive = ref('0')
 
 const fileUploadModelValue = ref<any[]>([])
+watch(
+  () => mergedProps.value.uploadVarsJson,
+  (curuploadVarsJson, preuploadVarsJson) => {
+    if (
+      modalVisible.value &&
+      curuploadVarsJson &&
+      preuploadVarsJson &&
+      preuploadVarsJson !== '{}' &&
+      curuploadVarsJson !== preuploadVarsJson
+    ) {
+      if (fileUploadModelValue.value.length > 0) {
+        fileUploadModelValue.value = fileUploadModelValue.value.map((v) => ({
+          ...v,
+          uploadVarsJson: curuploadVarsJson,
+          url: refreshUploadVars(
+            v.url,
+            JSON.parse(curuploadVarsJson),
+            JSON.parse(preuploadVarsJson)
+          ),
+        }))
+      }
+    }
+  }
+)
 async function handleFileUploadAfterApi(apiData: any) {
-  if (!mergedProps.value.apiUploadVars)
-    return Promise.reject('[tavui TaEditor] apiUploadVars is undefined')
+  if (!(mergedProps.value.uploadVarsJson && mergedProps.value.uploadVarsJson !== '{}'))
+    return Promise.reject('[tavui TaEditor] uploadVarsJson is empty')
 
-  const { data: uploadImageVars, success } = await mergedProps.value.apiUploadVars()
-  if (uploadImageVars && success) {
+  const uploadImageVars = JSON.parse(mergedProps.value.uploadVarsJson)
+  if (uploadImageVars) {
     return apiData.map((uploadedFile: string) => {
       let handledUrlUploadedFile: Record<string, any> = {
-        url: replaceEditorUrlVarsToValue(uploadedFile, uploadImageVars),
+        url: replaceFileUrlVarsToValue(uploadedFile, uploadImageVars),
       }
 
       handledUrlUploadedFile = {
         ...handledUrlUploadedFile,
         ...transformUrlToFileUploadPreviewPropFile(
-          handledUrlUploadedFile['url'],
+          decodeURIComponent(handledUrlUploadedFile['url']),
           DEFAULT_FILE_OFFICE_TYPES
         ),
+        uploadVarsJson: JSON.stringify(uploadImageVars),
       }
 
       return handledUrlUploadedFile
     })
   }
-  return Promise.reject('[tavui TaEditor] apiUploadVars has error')
+  return Promise.reject('[tavui TaEditor] handleFileUploadAfterApi has error')
 }
 
 async function getUploadfileModalValue() {

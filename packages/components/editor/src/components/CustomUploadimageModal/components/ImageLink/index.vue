@@ -155,6 +155,7 @@ defineExpose({
       uploadedFile.value = {
         ...uploadedFile.value,
         ...result,
+        uploadVarsJson: '{}', // 非本地上传的媒体资源这里给空对象
       }
       values = [uploadedFile.value]
     } catch (error: any) {
