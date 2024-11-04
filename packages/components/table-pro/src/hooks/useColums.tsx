@@ -241,53 +241,35 @@ function setFixedMultiHeader(columns: TableProColumn[]) {
 }
 
 /**
- * 抹平多级表头的 visible 差异，比如二级表头有 visible 但是一级没有
+ * 抹平多级表头的 visible 差异，比如二级表头有 visible 但是一级没有，
  * @param columns
  * @returns
  */
 function setVisibleMultiHeader(columns: TableProColumn[]) {
-  let visible: any[] = []
+  const handler = (column: TableProColumn, parentVisible: boolean | undefined) => {
+    // If the parent is not visible, the child should not be visible
+    if (parentVisible === false) {
+      column.visible = false
+    } else if (parentVisible === true && column.visible === undefined) {
+      // If the parent is visible and the child's visibility is undefined, set it to true
+      column.visible = true
+    }
 
-  const handler = (column: TableProColumn, idx?: number, parentColumn?: TableProColumn) => {
-    // 如果传入父级表头那么进行处理，没传入则不用处理
-    if (parentColumn) {
-      // 父级表头如果有 visible 那么依次赋值给子级
-      if (Reflect.has(parentColumn, 'visible')) {
-        column.visible = parentColumn.visible
-      } else {
-        // 父级表头没有 visible 那么依次将子级的 visible 缓存
-        visible.push(column.visible)
-      }
+    // If the column has children, process them recursively
+    if (column.children && column.children.length) {
+      column.children.forEach((childColumn) => handler(childColumn, column.visible))
 
-      // 当循环来到最后一个子级时，将缓存的 visible 过滤取值，如果有值则说明父级没有 visible，则取出第一个给父级赋值，第一个如果没值那么说明子级也没有 visible，那么赋值 undefined 即可
-      if (idx === parentColumn.children!.length - 1 && visible.length) {
-        const visibleResult = visible.filter((val) => val !== undefined)
-        parentColumn.visible = visibleResult.length ? visibleResult[0] : undefined
-        // 回溯当前父级下的所有子级
-        parentColumn.children!.forEach(
-          (childColumn) => (childColumn.visible = parentColumn.visible)
-        )
+      // After processing children, if all children are false, set the parent to false
+      if (column.children.every((child) => child.visible === false)) {
+        column.visible = false
       }
     }
+
     return column
   }
 
-  return columns.length
-    ? columns?.map((column: TableProColumn) => {
-        const { children } = column
-        if (children && children.length) {
-          visible = []
-          column.children = children.map((_column: TableProColumn, idx) =>
-            handler(_column, idx, column)
-          )
-          return handler(column)
-        } else {
-          return handler(column)
-        }
-      })
-    : columns
+  return columns.length ? columns.map((column) => handler(column, column.visible)) : columns
 }
-
 /**
  * 操作列数据，设置最小宽度，自动注入checkbox等
  * @param propsRef
