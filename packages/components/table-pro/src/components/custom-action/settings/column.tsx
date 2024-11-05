@@ -174,11 +174,7 @@ export default defineComponent({
         options
           .map((option) => {
             if (option.children && option.children.length) {
-              if (option.visible) {
-                return [option.key, ...getCheckedList(option.children)]
-              } else {
-                return [...getCheckedList(option.children)]
-              }
+              return [...getCheckedList(option.children)]
             } else {
               if (option.visible) {
                 return option.key
