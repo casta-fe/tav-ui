@@ -197,7 +197,7 @@ const editorOptions = computed(() => {
      * 注入到 iframe 中的样式
      * 第一块：自定义 iframe 样式
      * 第二块：为了保证富文本内容在页面上显示正常无差异，该样式取自 antd，必须与组件库中的 normailizecss 一致
-     * 第三块：来自 tinymce/skins/content/default/content.min.css，外面包了层类名方便控制，针对于富文本内容的样式，theme-chalk/editor 下也放了相同的一份
+     * 第三块：来自 tinymce/skins/content/default/content.min.css，外面包了层类名方便控制，针对于富文本内容的样式，theme-chalk/editor 下也放了相同的一份，需手动向小程序同步
      * 第四块：来自 tinymce/skins/ui/oxide/content.min.css 组件相关
      */
     content_style: `
@@ -376,7 +376,7 @@ function handleEditorCustomUploadimageModalClose(...args: any[]) {
       v.forEach((uploadedImage: FileUploadApiResponseRecord & { [key: string]: any }) => {
         editorInstanceRef?.undoManager?.transact?.(() =>
           editorInstanceRef?.insertContent(
-            `<p><span class="file file-image" data-uploadvarsjson='${uploadedImage.uploadVarsJson}'><img class="file-content" src="${uploadedImage.url}" width="${uploadedImage.originalWidth}" height="${uploadedImage.originalHeight}" /></span></p>`
+            `<p><span class="file file-image" data-uploadvarsjson='${uploadedImage.uploadVarsJson}'><img class="file-content file-image__content" src="${uploadedImage.url}" width="${uploadedImage.originalWidth}" height="${uploadedImage.originalHeight}" /></span></p>`
           )
         )
       })
@@ -439,9 +439,11 @@ function handleEditorCustomUploadfileModalClose(...args: any[]) {
               uploadedFile.uploadVarsJson
             }' data-previewjson='${JSON.stringify({ name, suffix, url })}' title="${
               uploadedFile.name
-            }"><i class="file-icon file-icon--${
+            }"><i class="file-icon file-office__icon file-icon--${
               uploadedFile.suffix
-            }"></i><span class="file-content">${uploadedFile.name}</span></span></p>`
+            }"></i><span class="file-content file-office__content">${
+              uploadedFile.name
+            }</span></span></p>`
           )
         )
       })
