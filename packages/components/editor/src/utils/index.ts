@@ -134,8 +134,8 @@ export function replaceEditorMediaFileUrlValueToVars(
     el.classList.add('ta-editor-content')
     el.innerHTML = content
     const medias = [
-      ...Array.from(el.querySelectorAll('img.file-image')),
-      ...Array.from(el.querySelectorAll('span.file-office')),
+      ...Array.from(el.querySelectorAll('.file.file-image')),
+      ...Array.from(el.querySelectorAll('.file.file-office')),
     ]
     medias.forEach((media: any) => {
       const uploadVars = JSON.parse(media.dataset.uploadvarsjson)
