@@ -437,7 +437,6 @@ export function useEditorPlugin(options: {
     'insertdatetime',
     'legacyoutput',
     'media',
-    'noneditable',
     'print',
     'spellchecker',
     'tabfocus',

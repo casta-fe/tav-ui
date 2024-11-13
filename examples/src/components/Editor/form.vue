@@ -73,6 +73,9 @@ const formSchemas: FormSchema[] = [
         scaleWidth: 240,
         scaleHeight: 240,
       },
+      keepImageOriginalAspectRatio: false,
+      imageWidth: 320,
+      imageAspectRatio: '4-3',
       previewApi: previewEditorWPSFile,
       api: taUploadProvideData.uploadEditorImage,
       afterApi: async (apiData: any) => {

@@ -161,7 +161,7 @@ export default defineComponent({
       // setWatermark('系统管理员9999')
       setInterval(() => {
         fetchUploadVars()
-      }, 1000 * 30)
+      }, 1000 * 60 * 5)
     })
 
     return {

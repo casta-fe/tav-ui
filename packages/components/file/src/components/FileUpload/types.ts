@@ -55,6 +55,23 @@ export const fileUploadProps = {
     type: Boolean,
     default: false,
   },
+  /** 控制上传成功后的小图是 cover 还是 contain */
+  keepImageOriginalAspectRatio: {
+    type: Boolean,
+    default: true,
+  },
+  /** 控制上传成功后的小图宽度 */
+  imageWidth: {
+    type: Number,
+  },
+  /** 控制上传成功后的小图的比例 */
+  imageAspectRatio: {
+    type: String as PropType<'1-1' | '4-3' | '3-4' | '16-9'>,
+  },
+  /** 控制上传成功后预览图的比例 */
+  previewImageAspectRatio: {
+    type: String as PropType<'1-1' | '4-3' | '3-4' | '16-9'>,
+  },
   beforeApi: {
     type: Function as PropType<(apiParams: Record<string, any>) => Promise<any>>,
   },

@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, shallowRef /*useSlots, useAttrs*/ } from 'vue'
-import { Image as AImage } from 'ant-design-vue'
+import { onBeforeUnmount, ref, shallowRef, computed /*useSlots, useAttrs*/ } from 'vue'
+import { Image as AImage, Tooltip as ATooltip } from 'ant-design-vue'
 import { tavI18n } from '@tav-ui/locales'
 import { type FormActionType, type FormSchema, TaForm, useForm } from '@tav-ui/components'
+import { transformUrlToFileUploadPreviewPropFile } from '@tav-ui/components/file'
+import {
+  DEFAULT_FILEUPLOAD_CLASSNAME,
+  DEFAULT_FILE_ACCEPT_TYPES,
+} from '@tav-ui/components/file/src/consts'
 import {
   DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_CLASSNAME,
   DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_ID,
+  DEFAULT_FILE_IMAGE_TYPES,
   DEFAULT_FILE_LINK_REGEXP_STRING,
+  DEFAULT_FILE_OFFICE_TYPES,
 } from '../../../../consts'
 import { type FileUploadImageResponseRecord } from '../../../../typings'
 import { editorUploadimageLinkProps } from './types'
@@ -51,6 +58,7 @@ const formSchemas: FormSchema[] = [
               imageOriginUrl: url,
               imageCompressUrl: url,
               imageScaleUrl: url,
+              ...transformUrlToFileUploadPreviewPropFile(url, DEFAULT_FILE_IMAGE_TYPES),
             }
             const imgEl = new Image()
             imgEl.src = url
@@ -138,6 +146,37 @@ async function handleDeleteBtnClick() {
   await formActions.resetFields()
 }
 
+const fileType = computed(() => (suffix: string) => {
+  if (DEFAULT_FILE_ACCEPT_TYPES.includes(suffix)) {
+    if (DEFAULT_FILE_OFFICE_TYPES.includes(suffix)) {
+      if (
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[0]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[1])
+      ) {
+        return 'doc'
+      } else if (
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[2]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[3])
+      ) {
+        return 'xls'
+      } else if (
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[4]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[5])
+      ) {
+        return 'ppt'
+      } else {
+        return 'pdf'
+      }
+    } else if (DEFAULT_FILE_IMAGE_TYPES.includes(suffix)) {
+      return 'image'
+    } else {
+      return 'unknown'
+    }
+  } else {
+    return 'unknown'
+  }
+})
+
 // 清空状态
 async function cleanup() {
   await formActions.resetFields()
@@ -175,7 +214,138 @@ defineExpose({
     :id="DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_ID"
     :class="DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_CLASSNAME"
   >
-    <div
+    <div v-if="uploadedFile" :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-files`">
+      <div
+        v-for="_uploadedFile in [uploadedFile]"
+        :key="_uploadedFile.url"
+        :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file`"
+        :style="{
+          ...(props.imageAspectRatio && props.imageWidth
+            ? {
+                width: 'auto',
+                height: 'auto',
+              }
+            : {}),
+        }"
+      >
+        <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-info`">
+          <div
+            :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-thumbnail`"
+            :style="
+              fileType(_uploadedFile.suffix) !== 'image'
+                ? {
+                    display: 'flex',
+                    'flex-direction': 'column',
+                    gap: '2px',
+                  }
+                : {}
+            "
+          >
+            <i
+              v-if="fileType(_uploadedFile.suffix) !== 'image'"
+              :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon icon--${fileType(
+                _uploadedFile.suffix
+              )}`"
+            />
+            <template v-else>
+              <div
+                v-if="props.imageAspectRatio && props.imageWidth"
+                class="aspect-ratio-wrapper"
+                :style="{
+                  ...(props.imageWidth ? { width: `${props.imageWidth}px !important` } : {}),
+                }"
+              >
+                <div :class="`aspect-ratio aspect-ratio--${props.imageAspectRatio}`">
+                  <img
+                    :src="_uploadedFile.url"
+                    width="240"
+                    height="240"
+                    :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon ${
+                      props.imageAspectRatio ? 'aspect-ratio-image' : ''
+                    }`"
+                    :style="{
+                      'object-fit': `${
+                        props.keepImageOriginalAspectRatio ? 'contain' : 'cover'
+                      } !important`,
+                    }"
+                  />
+                </div>
+              </div>
+              <img
+                v-else
+                :src="_uploadedFile.url"
+                width="240"
+                height="240"
+                :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon`"
+                :style="{
+                  'object-fit': `${
+                    props.keepImageOriginalAspectRatio ? 'contain' : 'cover'
+                  } !important`,
+                }"
+              />
+            </template>
+          </div>
+        </div>
+        <ATooltip placement="bottom">
+          <template #title>
+            <span>{{ _uploadedFile.name }}</span>
+          </template>
+          <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-title`">
+            {{ _uploadedFile.name }}
+          </div>
+        </ATooltip>
+        <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-actions`">
+          <button
+            class="ant-btn ant-btn-text ant-btn-sm ant-btn-icon-only"
+            :title="tavI18n('Tav.file.upload.7')"
+            type="button"
+            @click="() => handleViewBtnClick(_uploadedFile)"
+          >
+            <span role="img" aria-label="eye" class="anticon anticon-eye">
+              <svg
+                focusable="false"
+                class=""
+                data-icon="eye"
+                width="1em"
+                height="1em"
+                fill="currentColor"
+                aria-hidden="true"
+                viewBox="64 64 896 896"
+              >
+                <path
+                  d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"
+                />
+              </svg>
+            </span>
+          </button>
+          <button
+            class="ant-btn ant-btn-text ant-btn-sm ant-btn-icon-only"
+            :title="tavI18n('Tav.file.upload.8')"
+            type="button"
+            @click="() => handleDeleteBtnClick(_uploadedFile)"
+          >
+            <span role="img" aria-label="delete" class="anticon anticon-delete">
+              <svg
+                focusable="false"
+                class=""
+                data-icon="delete"
+                width="1em"
+                height="1em"
+                fill="currentColor"
+                aria-hidden="true"
+                viewBox="64 64 896 896"
+              >
+                <path
+                  d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div
       v-if="uploadedFile"
       :class="`${DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_CLASSNAME}-file`"
     >
@@ -235,7 +405,7 @@ defineExpose({
           </span>
         </button>
       </div>
-    </div>
+    </div> -->
     <TaForm
       ref="formRef"
       :class="`${DEFAULT_EDITOR_CUSTOM_UPLOADIMAGE_MODAL_TAB_IMAGE_LINK_CLASSNAME}-form`"

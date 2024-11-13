@@ -209,6 +209,7 @@ defineExpose({
             :preview-api="mergedProps.apiPreviewFile"
             :api="mergedProps.apiUploadImage"
             :after-api="handleFileUploadAfterApi"
+            keep-image-original-aspect-ratio
           />
           <ImageLink v-if="tabsActive === '1'" ref="imageLinkRef" />
         </div>

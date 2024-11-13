@@ -33,6 +33,9 @@ export const fileUploadPreviewProps = {
   close: {
     type: Function as PropType<(...args: any[]) => any>,
   },
+  imageAspectRatio: {
+    type: String as PropType<'1-1' | '4-3' | '3-4' | '16-9'>,
+  },
 }
 
 export type FileUploadPreviewProps = ExtractPropTypes<typeof fileUploadPreviewProps>
