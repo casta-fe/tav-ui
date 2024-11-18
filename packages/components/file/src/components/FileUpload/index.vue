@@ -292,13 +292,19 @@ const fileType = computed(() => (suffix: string) => {
 const previewVisible = ref(false)
 const previewFile = ref<FileUploadApiResponseRecord>({ url: '', name: '', suffix: '' })
 async function handleViewBtnClick(row: FileUploadApiResponseRecord) {
-  const { url, name, suffix } = row
-  if (row.url) {
+  let { url, name, suffix } = row
+  if (computedProps.value.beforePreviewApiAction) {
+    const result = await computedProps.value.beforePreviewApiAction(row)
+    if (result.url) url = result.url
+    if (result.name) name = result.name
+    if (result.suffix) suffix = result.suffix
+  }
+  if (url) {
     previewVisible.value = !previewVisible.value
 
     if (computedProps.value.previewApi) {
       loading.value.value = true
-      const options = previewFileApiOptions(row)
+      const options = previewFileApiOptions({ url, name, suffix })
       if (!options) {
         loading.value.value = false
         return

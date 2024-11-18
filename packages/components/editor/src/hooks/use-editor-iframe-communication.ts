@@ -47,13 +47,14 @@ export function useEditorIframeCommunication(options: { mergedProps: ComputedRef
         }
 
         function handleFileOfficeClick(targetEl) {
-          const fileOfficeElClassnames = ['file-office', 'file-icon', 'file-content']
+          const fileOfficeElClassnames = ['file-office', 'file-office__icon', 'file-office__content']
           if(targetEl && targetEl.className && fileOfficeElClassnames.some(cls => targetEl.className.includes(cls))) {
             const fileOfficeEl = closest(targetEl, '.file.file-office')
             if(fileOfficeEl) {
+              const uploadvarsjson = fileOfficeEl.dataset.uploadvarsjson
               const previewjson = fileOfficeEl.dataset.previewjson
               if(previewjson) {
-                const previewInfo = JSON.parse(previewjson)
+                const previewInfo = Object.assign(JSON.parse(previewjson), {uploadVarsJson: uploadvarsjson})
                 previewInfo && window.postMessage(JSON.stringify({ eventType: 'preview:file-office', data: previewInfo }), window.location.origin)
               }
             }

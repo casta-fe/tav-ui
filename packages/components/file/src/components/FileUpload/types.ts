@@ -81,6 +81,9 @@ export const fileUploadProps = {
   afterApi: {
     type: Function as PropType<(apiResult: any) => Promise<any>>,
   },
+  beforePreviewApiAction: {
+    type: Function as PropType<(params: Record<string, any>) => Promise<any>>,
+  },
   beforePreviewApi: {
     type: Function as PropType<(apiParams: Record<string, any>) => Promise<any>>,
   },
