@@ -475,6 +475,7 @@ const editConfig = computed<any>(() =>
 
           if (!isEdit) {
             createMessage.warn(`${tavI18n('Tav.common.notAuthorised')}`)
+            return false
           }
           return isEdit
         },
