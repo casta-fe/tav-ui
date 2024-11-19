@@ -59,8 +59,7 @@ export function useEditorPlugin(options: {
     setup: () => import('tinymce/plugins/autosave'),
     name: 'autosave',
     options: {
-      autosave_interval: '10s',
-      autosave_restore_when_empty: true,
+      // autosave_restore_when_empty: true, // 如果为 true 打开/关闭 弹窗后会保留结果暂时的富文本编辑都是一次性的，暂时不开启
     },
   }
 
@@ -426,6 +425,7 @@ export function useEditorPlugin(options: {
 
   const filterPluginNames = [
     'autoresize',
+    'autosave',
     'charmap',
     'codesample',
     'emoticons',
@@ -437,7 +437,6 @@ export function useEditorPlugin(options: {
     'insertdatetime',
     'legacyoutput',
     'media',
-    'noneditable',
     'print',
     'spellchecker',
     'tabfocus',

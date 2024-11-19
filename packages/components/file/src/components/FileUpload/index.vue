@@ -292,13 +292,19 @@ const fileType = computed(() => (suffix: string) => {
 const previewVisible = ref(false)
 const previewFile = ref<FileUploadApiResponseRecord>({ url: '', name: '', suffix: '' })
 async function handleViewBtnClick(row: FileUploadApiResponseRecord) {
-  const { url, name, suffix } = row
-  if (row.url) {
+  let { url, name, suffix } = row
+  if (computedProps.value.beforePreviewApiAction) {
+    const result = await computedProps.value.beforePreviewApiAction(row)
+    if (result.url) url = result.url
+    if (result.name) name = result.name
+    if (result.suffix) suffix = result.suffix
+  }
+  if (url) {
     previewVisible.value = !previewVisible.value
 
     if (computedProps.value.previewApi) {
       loading.value.value = true
-      const options = previewFileApiOptions(row)
+      const options = previewFileApiOptions({ url, name, suffix })
       if (!options) {
         loading.value.value = false
         return
@@ -418,32 +424,81 @@ defineExpose({
           v-for="uploadedFile in modelValue"
           :key="uploadedFile.url"
           :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file`"
+          :style="{
+            ...(props.imageAspectRatio && props.imageWidth
+              ? {
+                  width: 'auto',
+                  height: 'auto',
+                }
+              : {}),
+          }"
         >
           <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-info`">
-            <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-thumbnail`">
+            <div
+              :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-thumbnail`"
+              :style="
+                fileType(uploadedFile.suffix) !== 'image'
+                  ? {
+                      display: 'flex',
+                      'flex-direction': 'column',
+                      gap: '2px',
+                    }
+                  : {}
+              "
+            >
               <i
                 v-if="fileType(uploadedFile.suffix) !== 'image'"
                 :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon icon--${fileType(
                   uploadedFile.suffix
                 )}`"
               />
-              <img
-                v-else
-                :src="uploadedFile.url"
-                width="240"
-                height="240"
-                :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon`"
-              />
-              <ATooltip placement="bottom">
-                <template #title>
-                  <span>{{ uploadedFile.name }}</span>
-                </template>
-                <span :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-thumbnail-title`">
-                  {{ uploadedFile.name }}
-                </span>
-              </ATooltip>
+              <template v-else>
+                <div
+                  v-if="props.imageAspectRatio && props.imageWidth"
+                  class="aspect-ratio-wrapper"
+                  :style="{
+                    ...(props.imageWidth ? { width: `${props.imageWidth}px !important` } : {}),
+                  }"
+                >
+                  <div :class="`aspect-ratio aspect-ratio--${props.imageAspectRatio}`">
+                    <img
+                      :src="uploadedFile.url"
+                      width="240"
+                      height="240"
+                      :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon ${
+                        props.imageAspectRatio ? 'aspect-ratio-image' : ''
+                      }`"
+                      :style="{
+                        'object-fit': `${
+                          props.keepImageOriginalAspectRatio ? 'contain' : 'cover'
+                        } !important`,
+                      }"
+                    />
+                  </div>
+                </div>
+                <img
+                  v-else
+                  :src="uploadedFile.url"
+                  width="240"
+                  height="240"
+                  :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-icon`"
+                  :style="{
+                    'object-fit': `${
+                      props.keepImageOriginalAspectRatio ? 'contain' : 'cover'
+                    } !important`,
+                  }"
+                />
+              </template>
             </div>
           </div>
+          <ATooltip placement="bottom">
+            <template #title>
+              <span>{{ uploadedFile.name }}</span>
+            </template>
+            <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-title`">
+              {{ uploadedFile.name }}
+            </div>
+          </ATooltip>
           <div :class="`${DEFAULT_FILEUPLOAD_CLASSNAME}-file-actions`">
             <button
               class="ant-btn ant-btn-text ant-btn-sm ant-btn-icon-only"
@@ -496,6 +551,10 @@ defineExpose({
         </div>
       </div>
     </div>
-    <TaFileUploadPreview v-model:visible="previewVisible" :file="previewFile" />
+    <TaFileUploadPreview
+      v-model:visible="previewVisible"
+      :file="previewFile"
+      :image-aspect-ratio="props.previewImageAspectRatio"
+    />
   </section>
 </template>

@@ -4188,6 +4188,9 @@ body {
 
 .@{component-name} {
   &-content {
+    font-size: 16px;
+    line-height: 1.8;
+
     table {
       border-collapse: collapse;
     }
@@ -4248,12 +4251,17 @@ body {
       padding-right: 1rem;
     }
     .file {
+      display: inline-block;
+
+      &-office {
+        cursor: pointer !important;
+      }
+
       &-content {
         color: #1890ff;
         text-decoration: none;
         background-color: transparent;
         outline: none;
-        cursor: pointer;
         transition: color 0.3s;
         -webkit-text-decoration-skip: objects;
   

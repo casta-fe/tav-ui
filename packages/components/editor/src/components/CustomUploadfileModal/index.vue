@@ -2,7 +2,11 @@
 import { onBeforeUnmount, ref, watch /*useSlots, useAttrs*/ } from 'vue'
 import { TaButton, TaModal } from '@tav-ui/components'
 import { tavI18n } from '@tav-ui/locales'
-import { TaFileUpload, transformUrlToFileUploadPreviewPropFile } from '@tav-ui/components/file'
+import {
+  type FileUploadApiResponseRecord,
+  TaFileUpload,
+  transformUrlToFileUploadPreviewPropFile,
+} from '@tav-ui/components/file'
 import { refreshUploadVars, replaceFileUrlVarsToValue } from '../../utils'
 import {
   DEFAULT_EDITOR_CUSTOM_UPLOADFILE_MODAL_CLASSNAME,
@@ -34,6 +38,35 @@ const mergedProps = useMergedProps<EditorCustomUploadfileModalProps>(globalConfi
 const tabsActive = ref('0')
 
 const fileUploadModelValue = ref<any[]>([])
+
+// uploadvarsjson 5分钟更新一次然后实时更新，消耗性能暂时不用
+// watch(
+//   () => mergedProps.value.uploadVarsJson,
+//   (curuploadVarsJson, preuploadVarsJson) => {
+//     if (
+//       modalVisible.value &&
+//       curuploadVarsJson &&
+//       preuploadVarsJson &&
+//       preuploadVarsJson !== '{}' &&
+//       curuploadVarsJson !== preuploadVarsJson
+//     ) {
+//       if (fileUploadModelValue.value.length > 0) {
+//         fileUploadModelValue.value = fileUploadModelValue.value.map((v) => ({
+//           ...v,
+//           uploadVarsJson: curuploadVarsJson,
+//           url: refreshUploadVars(
+//             v.url,
+//             JSON.parse(curuploadVarsJson),
+//             JSON.parse(preuploadVarsJson)
+//           ),
+//         }))
+//       }
+//     }
+//   }
+// )
+
+// 保存最新的 uploadvarsjson，只有在用到的地方（确定按钮向富文本传递数据）时更新
+let curUploadVarsJson = mergedProps.value.uploadVarsJson!
 watch(
   () => mergedProps.value.uploadVarsJson,
   (curuploadVarsJson, preuploadVarsJson) => {
@@ -44,20 +77,52 @@ watch(
       preuploadVarsJson !== '{}' &&
       curuploadVarsJson !== preuploadVarsJson
     ) {
-      if (fileUploadModelValue.value.length > 0) {
-        fileUploadModelValue.value = fileUploadModelValue.value.map((v) => ({
-          ...v,
-          uploadVarsJson: curuploadVarsJson,
-          url: refreshUploadVars(
-            v.url,
-            JSON.parse(curuploadVarsJson),
-            JSON.parse(preuploadVarsJson)
-          ),
-        }))
-      }
+      curUploadVarsJson = curuploadVarsJson
     }
   }
 )
+
+function refreshDataUploadVars(data: any) {
+  // curUploadVarsJson '{}' 是初始化的值时也直接返回
+  if (curUploadVarsJson === '{}') return data
+
+  const preUploadVarsJson = data.uploadVarsJson
+  // curUploadVarsJson 未更新时直接返回
+  if (preUploadVarsJson === curUploadVarsJson) return data
+
+  const url = refreshUploadVars(
+    data.url,
+    JSON.parse(curUploadVarsJson),
+    JSON.parse(preUploadVarsJson)
+  )
+  return {
+    ...data,
+    uploadVarsJson: curUploadVarsJson,
+    url,
+  }
+}
+
+/**
+ * 点击预览时使用最新的 uploadvarsjson 更新当前文件 url
+ * @param row
+ */
+function handleBeforePreviewApiAction(row: FileUploadApiResponseRecord & Record<string, any>) {
+  if (!row.url) return row
+  return refreshDataUploadVars(row)
+}
+
+/**
+ * 点击确定按钮时使用最新的 uploadvarsjson 更新所有图片 url
+ */
+function handleConfirmValue() {
+  const value = JSON.parse(JSON.stringify(fileUploadModelValue.value))
+  return value.map((row: any) => refreshDataUploadVars(row))
+}
+
+/**
+ * 上传完毕后使用最新的 uploadvars 更新当前文件 url
+ * @param apiData
+ */
 async function handleFileUploadAfterApi(apiData: any) {
   if (!(mergedProps.value.uploadVarsJson && mergedProps.value.uploadVarsJson !== '{}'))
     return Promise.reject('[tavui TaEditor] uploadVarsJson is empty')
@@ -87,7 +152,9 @@ async function handleFileUploadAfterApi(apiData: any) {
 async function getUploadfileModalValue() {
   const values: Record<string, any> = {}
   const componentsValue = {
-    0: JSON.parse(JSON.stringify(fileUploadModelValue.value)),
+    // uploadvarsjson 5分钟更新一次然后实时更新，消耗性能暂时不用
+    // 0: JSON.parse(JSON.stringify(fileUploadModelValue.value)),
+    0: handleConfirmValue(),
   }
   for (const [k, v] of Object.entries(componentsValue)) {
     if (!values[k]) {
@@ -174,6 +241,7 @@ defineExpose({
             :multiple="true"
             :max-count="DEFAULT_FILE_MAX_COUNT"
             :keep-upload-visible="true"
+            :before-preview-api-action="handleBeforePreviewApiAction"
             :preview-api="mergedProps.apiPreviewFile"
             :api="mergedProps.apiUploadFile"
             :after-api="handleFileUploadAfterApi"

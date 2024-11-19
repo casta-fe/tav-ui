@@ -159,9 +159,13 @@ export default defineComponent({
     onMounted(async () => {
       // const { setWatermark } = useWatermark({ color: 'red', size: { width: 320, height: 150 } })
       // setWatermark('系统管理员9999')
-      setInterval(() => {
-        fetchUploadVars()
-      }, 1000 * 30)
+      setInterval(
+        () => {
+          fetchUploadVars()
+        },
+        1000 * 60 * 5
+        // 1000 * 30
+      )
     })
 
     return {

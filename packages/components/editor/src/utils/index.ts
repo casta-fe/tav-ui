@@ -95,14 +95,18 @@ export function replaceEditorMediaFileUrlVarsToValue(
       el.innerHTML = contentEl.innerHTML
     }
     const medias = [
-      ...Array.from(el.querySelectorAll('img.file-image')),
-      ...Array.from(el.querySelectorAll('span.file-office')),
+      ...Array.from(el.querySelectorAll('.file.file-image')),
+      ...Array.from(el.querySelectorAll('.file.file-office')),
     ]
     medias.forEach((media: any) => {
       const uploadVars = JSON.parse(media.dataset.uploadvarsjson)
-      media.outerHTML = replaceFileUrlVarsToValue(media.outerHTML, uploadVars).replace(
-        media.dataset.uploadvarsjson,
-        JSON.stringify(vars)
+      media.outerHTML = refreshUploadVars(
+        replaceFileUrlVarsToValue(media.outerHTML, uploadVars).replace(
+          media.dataset.uploadvarsjson,
+          JSON.stringify(vars)
+        ),
+        vars,
+        uploadVars
       )
     })
     _content = el.innerHTML
@@ -130,8 +134,8 @@ export function replaceEditorMediaFileUrlValueToVars(
     el.classList.add('ta-editor-content')
     el.innerHTML = content
     const medias = [
-      ...Array.from(el.querySelectorAll('img.file-image')),
-      ...Array.from(el.querySelectorAll('span.file-office')),
+      ...Array.from(el.querySelectorAll('.file.file-image')),
+      ...Array.from(el.querySelectorAll('.file.file-office')),
     ]
     medias.forEach((media: any) => {
       const uploadVars = JSON.parse(media.dataset.uploadvarsjson)
