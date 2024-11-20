@@ -88,7 +88,7 @@ export function useFormEvents({
     })
     useValidate &&
       validateFields(validKeys).catch((_) => {
-        console.log(_)
+        // console.log(_)
       })
   }
   /**

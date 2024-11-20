@@ -100,7 +100,7 @@ export default defineComponent({
     )
     //为了手动输入的时候不让改加的变量
     const canUpdatePrecision = ref(true)
-    const numberPrecision = ref(2)
+    const numberPrecision = ref<undefined | number>(6)
     const editableItemValue = ref<any>(itemValue.value) // 默认值
     const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
@@ -610,7 +610,6 @@ export default defineComponent({
         undefined
       )
     }
-
     function renderComponent() {
       const {
         renderComponentContent,
@@ -628,6 +627,7 @@ export default defineComponent({
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
+          console.log(`change李的${args}`)
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[eventKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -645,6 +645,15 @@ export default defineComponent({
       if (component === 'InputNumber') {
         on[focusKey] = (...args: Nullable<Recordable>[]) => {
           canUpdatePrecision.value = false
+          // numberPrecision.value = undefined
+          // setTimeout(() => {
+          //   if (itemRef.value) {
+          //     const inputEle = itemRef.value.querySelector('input')
+          //     if (inputEle) {
+          //       inputEle.setSelectionRange(inputEle.value.length, inputEle.value.length)
+          //     }
+          //   }
+          // }, 50)
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[focusKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define

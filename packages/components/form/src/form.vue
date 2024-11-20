@@ -210,7 +210,7 @@ export default defineComponent({
       if (!validateTrigger || validateTrigger === 'change')
         validateFields([key]).catch((_) => {
           // eslint-disable-next-line no-console
-          console.warn(_)
+          // console.warn(_)
         })
     }
 
