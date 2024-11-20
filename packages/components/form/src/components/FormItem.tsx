@@ -627,14 +627,23 @@ export default defineComponent({
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
-          console.log(`change李的${args}`)
+
+          let value
+          if (component === 'InputNumber') {
+            const inputEle = itemRef.value?.querySelector('input')
+            if (inputEle) {
+              // eslint-disable-next-line @typescript-eslint/no-use-before-define
+              args[0] = value = inputEle.value
+            }
+          } else {
+            const target = e ? e.target : null
+            value = target ? (isCheck ? target.checked : target.value) : e
+          }
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[eventKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[eventKey](...args)
           }
-          const target = e ? e.target : null
-          const value = target ? (isCheck ? target.checked : target.value) : e
           props.setFormModel(field, value)
 
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
