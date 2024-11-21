@@ -472,11 +472,10 @@ const editConfig = computed<any>(() =>
             globalConfigUserInfo.value,
             row.owner
           )
-
           if (!isEdit) {
             createMessage.warn(`${tavI18n('Tav.common.notAuthorised')}`)
-            return false
           }
+
           return isEdit
         },
       }

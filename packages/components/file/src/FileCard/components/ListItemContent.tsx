@@ -85,8 +85,9 @@ export default defineComponent({
             } else {
               isEdit.value = false
             }
+          } else {
+            isEdit.value = true
           }
-          isEdit.value = true
         }
       }
     }
