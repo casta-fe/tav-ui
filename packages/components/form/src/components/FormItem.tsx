@@ -631,9 +631,12 @@ export default defineComponent({
           let value
           if (component === 'InputNumber') {
             const inputEle = itemRef.value?.querySelector('input')
-            if (inputEle) {
+            if (inputEle && inputEle.value) {
               // @ts-ignore
-              args[0] = value = inputEle.value
+              args[0] = value = Number(inputEle.value)
+            } else {
+              const target = e ? e.target : null
+              value = target ? (isCheck ? target.checked : target.value) : e
             }
           } else {
             const target = e ? e.target : null
