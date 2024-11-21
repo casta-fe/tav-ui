@@ -632,7 +632,7 @@ export default defineComponent({
           if (component === 'InputNumber') {
             const inputEle = itemRef.value?.querySelector('input')
             if (inputEle) {
-              // eslint-disable-next-line @typescript-eslint/no-use-before-define
+              // @ts-ignore
               args[0] = value = inputEle.value
             }
           } else {
