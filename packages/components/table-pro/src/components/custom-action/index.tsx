@@ -304,6 +304,7 @@ export default defineComponent({
           errorFields = e.errorFields
           exportModalFormScrollToField(errorFields[0].name[0])
         } finally {
+          exportModalLoading.value = false
           // eslint-disable-next-line no-unsafe-finally
           return { data, errors: errorFields }
         }
