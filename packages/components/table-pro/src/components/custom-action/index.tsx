@@ -100,6 +100,7 @@ export default defineComponent({
         required: true,
         defaultValue: 'xlsx',
         componentProps: {
+          disabled: true,
           placeholder: tavI18n('Tav.tablePro.export.3p'),
           options: [
             {
