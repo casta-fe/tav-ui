@@ -629,14 +629,27 @@ export default defineComponent({
           const [e] = args
 
           let value
-          const target = e ? e.target : null
-          value = target ? (isCheck ? target.checked : target.value) : e
+          if (component === 'InputNumber') {
+            const inputEle = itemRef.value?.querySelector('input')
+            if (inputEle && inputEle.value) {
+              console.log('change触发')
+              const cleanedInput = inputEle.value.replace(/[^-.\d]/g, '') // 只保留数字、小数点和负号
+              const numericValue = parseFloat(cleanedInput) // 转换为数字
+              // @ts-ignore
+              args[0] = value = numericValue
+            } else {
+              const target = e ? e.target : null
+              value = target ? (isCheck ? target.checked : target.value) : e
+            }
+          } else {
+            const target = e ? e.target : null
+            value = target ? (isCheck ? target.checked : target.value) : e
+          }
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           if (propsData[eventKey]) {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             propsData[eventKey](...args)
           }
-          console.log(value)
           props.setFormModel(field, value)
 
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
@@ -771,6 +784,7 @@ export default defineComponent({
           </>
         ) : (
           <>
+            {JSON.stringify(canUpdatePrecision.value)} ==
             <Comp {...compAttr}></Comp>
             {showNumberToChinese() && (
               // <transition name="fade-bottom" mode="out-in">
