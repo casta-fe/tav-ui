@@ -784,7 +784,6 @@ export default defineComponent({
           </>
         ) : (
           <>
-            {JSON.stringify(canUpdatePrecision.value)} ==
             <Comp {...compAttr}></Comp>
             {showNumberToChinese() && (
               // <transition name="fade-bottom" mode="out-in">
