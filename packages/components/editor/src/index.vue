@@ -268,6 +268,10 @@ const editorOptions = computed(() => {
     /** 放过 span 内联事件 */
     extended_valid_elements: 'span[class|onclick],i[class]',
     // resize_img_proportional: true,
+    // 不转换插入资源的url
+    relative_urls: false,
+    convert_urls: false,
+    remove_script_host: false,
     //:============================================================:  tinymce 内部功能设置  :============================================================://
 
     //:============================================================:  tinymce 插件（plugin）  :============================================================://
