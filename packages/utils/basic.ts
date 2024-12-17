@@ -75,8 +75,8 @@ export function kebabCaseToCamelCase(text) {
 export function kebabCaseToPascalCase(text) {
   return text.replace(/(^\w|-\w)/g, clearAndUpper)
 }
-
-export function numberToCNText(number) {
+// 即将废弃
+export function numberToCNText(number: number) {
   const data = {
     0: '零',
     1: '一',

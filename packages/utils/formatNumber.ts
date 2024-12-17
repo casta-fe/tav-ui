@@ -152,6 +152,103 @@ export function numberToChinese(num: number | string, chineseMultip = 1, max = 1
   return trimEnd(result, '零')
 }
 
+export function numberToSimpleChinese(num: number): string {
+  const numbers = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+  const units = ['', '十', '百', '千']
+  const bigUnits = ['', '万', '亿']
+  if (num < 0 || num >= 10e12) {
+    console.warn('数字太大')
+    return '-'
+  }
+
+  // 处理 0
+  if (num === 0) return numbers[0]
+
+  // 处理负数
+  const isNegative = num < 0
+  num = Math.abs(num)
+
+  // 分离整数和小数部分
+  const [integer, decimal] = num.toString().split('.')
+
+  const convertSection = (section: number): string => {
+    let result = ''
+    let unitPos = 0
+    let needZero = false
+
+    while (section > 0) {
+      const digit = section % 10
+      if (digit === 0) {
+        if (needZero) {
+          result = numbers[0] + result
+          needZero = false
+        }
+      } else {
+        result = numbers[digit] + units[unitPos] + result
+        needZero = true
+      }
+      unitPos++
+      section = Math.floor(section / 10)
+    }
+    return result
+  }
+
+  // 处理整数部分
+  let integerResult = ''
+  let section = 0
+  let sectionPos = 0
+  let needZero = false
+  let tmp = parseInt(integer)
+
+  while (tmp > 0) {
+    section = tmp % 10000
+    if (section !== 0) {
+      const sectionStr = convertSection(section)
+      if (needZero) {
+        integerResult = numbers[0] + integerResult
+      }
+      integerResult = sectionStr + (section === 0 ? '' : bigUnits[sectionPos]) + integerResult
+      needZero = section < 1000 && section > 0
+    }
+    sectionPos++
+    tmp = Math.floor(tmp / 10000)
+  }
+
+  // 处理特殊情况
+  integerResult = integerResult.replace(/零+$/, '')
+  integerResult = integerResult.replace(/零+/g, '零')
+  integerResult = integerResult.replace(/零([万亿])/g, '$1')
+
+  if (integerResult.startsWith('一十')) {
+    integerResult = integerResult.substring(1)
+  }
+
+  // 处理小数部分
+  let decimalResult = ''
+  if (decimal) {
+    decimalResult = '点'
+    for (const digit of decimal) {
+      decimalResult += numbers[parseInt(digit)]
+    }
+  }
+
+  // 组合最终结果
+  let result = ''
+
+  // 添加负号
+  if (isNegative) {
+    result += '负'
+  }
+
+  // 添加整数和小数部分
+  result += integerResult
+  if (decimalResult) {
+    result += decimalResult
+  }
+
+  return result || numbers[0]
+}
+
 export function add(arg1, arg2) {
   let r1, r2
   try {
