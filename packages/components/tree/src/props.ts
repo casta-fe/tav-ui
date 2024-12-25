@@ -5,17 +5,17 @@ import type {
   CheckKeys,
   ContextMenuItem,
   ContextMenuOptions,
+  FieldNames,
   Keys,
   Recordable,
-  ReplaceFields,
   TreeActionItem,
   TreeItem,
 } from './types'
 
 export const treeProps = {
-  value: {
-    type: [Object, Array] as PropType<Keys | CheckKeys>,
-  },
+  // value: {
+  //   type: [Object, Array] as PropType<Keys | CheckKeys>,
+  // },
   renderIcon: {
     type: Function as PropType<(params: Recordable) => string>,
   },
@@ -38,8 +38,8 @@ export const treeProps = {
   },
   defaultExpandAll: propTypes.bool.def(false),
 
-  replaceFields: {
-    type: Object as PropType<ReplaceFields>,
+  fieldNames: {
+    type: Object as PropType<FieldNames>,
   },
 
   treeData: {
@@ -78,7 +78,7 @@ export const treeProps = {
   // 自定义数据过滤判断方法(注: 不是整个过滤方法，而是内置过滤的判断方法，用于增强原本仅能通过title进行过滤的方式)
   filterFn: {
     type: Function as PropType<
-      (searchValue: any, node: TreeItem, replaceFields: ReplaceFields) => boolean
+      (searchValue: any, node: TreeItem, fieldNames: FieldNames) => boolean
     >,
     default: null,
   },
@@ -87,12 +87,21 @@ export const treeProps = {
     type: [Boolean, String] as PropType<boolean | string>,
     default: false,
   },
-  // 搜索完成时自动展开结果
-  expandOnSearch: propTypes.bool.def(false),
-  // 搜索完成自动选中所有结果,当且仅当 checkable===true 时生效
-  checkOnSearch: propTypes.bool.def(false),
-  // 搜索完成自动select所有结果
-  selectedOnSearch: propTypes.bool.def(false),
+  // // 搜索完成时自动展开结果
+  // expandOnSearch: propTypes.bool.def(false),
+  // // 搜索完成自动选中所有结果,当且仅当 checkable===true 时生效
+  // checkOnSearch: propTypes.bool.def(false),
+  // // 搜索完成自动select所有结果
+  // selectedOnSearch: propTypes.bool.def(false),
+  /** 控制某一级横向排列，-1代表最后一级 */
+  inlineLayoutLevel: {
+    type: Number,
+    default: -1,
+  },
+  // // 筛选清空后是否回到之前的展开状态
+  // keepExpandOnClearSearch: propTypes.bool.def(false),
+  // // 筛选清空后是否回到之前的选中状态
+  // keepCheckOnClearSearch: propTypes.bool.def(false),
 }
 
 export type TreeProps = ExtractPropTypes<typeof treeProps>
@@ -102,8 +111,8 @@ export const treeNodeProps = {
     type: Array as PropType<TreeActionItem[]>,
     default: () => [],
   },
-  replaceFields: {
-    type: Object as PropType<ReplaceFields>,
+  fieldNames: {
+    type: Object as PropType<FieldNames>,
   },
   treeData: {
     type: Array as PropType<TreeDataItem[]>,

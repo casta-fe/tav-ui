@@ -87,6 +87,11 @@ const routes: RouteRecordRaw[] = [
     name: 'EditorForm',
     component: () => import('../components/Editor/form.vue'),
   },
+  {
+    path: '/tree',
+    name: 'tree',
+    component: () => import('../components/Tree/index.vue'),
+  },
 ]
 
 export const router = createRouter({

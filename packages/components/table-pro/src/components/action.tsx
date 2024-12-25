@@ -77,8 +77,12 @@ export default defineComponent({
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-    const ActionLabelLimit =
-      unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit || MAX_ACTION_NUMBER
+    const ActionLabelLimit = computed(
+      () =>
+        props.limit ||
+        unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit ||
+        MAX_ACTION_NUMBER
+    )
 
     // 根据 enabled 控制显隐
     function isEnabled(action: TableProActionItem): boolean {
@@ -127,15 +131,15 @@ export default defineComponent({
 
       const Actions = computed(() => {
         const actions = unref(permissonFilterActions)
-        if (actions.length <= ActionLabelLimit) {
+        if (actions.length <= ActionLabelLimit.value) {
           restActions = []
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(actions, ActionLabelLimit)
+            const handleActions = limitActionLabel(actions, ActionLabelLimit.value)
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
-                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
-                ActionLabelLimit,
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit.value),
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -145,7 +149,7 @@ export default defineComponent({
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
                 unref(permissonFilterActions),
-                ActionLabelLimit,
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -153,15 +157,15 @@ export default defineComponent({
             return actions
           }
         } else {
-          const _actions = actions.slice(0, ActionLabelLimit - 1)
-          restActions = actions.slice(ActionLabelLimit - 1)
+          const _actions = actions.slice(0, ActionLabelLimit.value - 1)
+          restActions = actions.slice(ActionLabelLimit.value - 1)
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(_actions, ActionLabelLimit)
+            const handleActions = limitActionLabel(_actions, ActionLabelLimit.value)
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
-                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
-                ActionLabelLimit,
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit.value),
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -171,7 +175,7 @@ export default defineComponent({
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
                 unref(permissonFilterActions),
-                ActionLabelLimit,
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
