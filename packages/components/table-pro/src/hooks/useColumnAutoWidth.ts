@@ -20,7 +20,7 @@ export function useCanvasCalcContent() {
     if (ctx) {
       ctx.font = font
       const { width = 0 } = ctx.measureText(content)
-      return Math.ceil(width)
+      return Math.ceil(width) + 0.5 // 补 0.5 避免文字尾部截断
     }
     return 0
   }

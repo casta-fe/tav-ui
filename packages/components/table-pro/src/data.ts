@@ -332,6 +332,14 @@ export async function API__INVEST_COMPANY_LIST(
   return await __post(url, data)
 }
 
+export async function API__INVEST_COMPANY_DELETE(
+  data,
+  url = '/api/STARLIGHT-INVEST-WEB/company/information/deleteBatch'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
 // 文件更新
 export async function API__FILE_UPDATE(data: any, url = '/api/TIANTA-FILE/api/file/updateFile') {
   const { appId, formData, instantUpdate, fileActualId } = data

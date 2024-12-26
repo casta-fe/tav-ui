@@ -290,7 +290,8 @@ export default defineComponent({
           isCheckboxCacheEnabled,
           checkboxCacheList,
           deleteCheckboxCache,
-          deleteAllCheckboxCache
+          deleteAllCheckboxCache,
+          currentPage
         )
       ),
     })
@@ -469,6 +470,12 @@ export default defineComponent({
                 currentPage.value = args[0].currentPage ?? currentPage.value
                 clearCellTooltip()
                 // clearColumnAutoWidth()
+
+                if (unref(getBindValues).scrollTopActions.includes('pagination')) {
+                  nextTick(() => {
+                    unref(tableRef)?.scrollTo?.(0, 0)
+                  })
+                }
               }}
               onSortChange={() => {
                 // unref(getBindValues).onSortChange?.(...args)

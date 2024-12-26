@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, ref, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
 import TaButton from '@tav-ui/components/button'
 import { isObject } from '@tav-ui/utils/is'
@@ -51,6 +51,13 @@ export default defineComponent({
     const handleRefresh = (e: Event) => {
       if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
         props.config?.refresh.handleAction(e)
+
+      if (unref(tablePropsRef).scrollTopActions.includes('refresh')) {
+        nextTick(() => {
+          unref(props.tableRef)?.scrollTo?.(0, 0)
+        })
+      }
+
       // query 保留query状态刷新数据
       // reload 清空状态回到第一页
       unref(props.tableRef)?.commitProxy('query')

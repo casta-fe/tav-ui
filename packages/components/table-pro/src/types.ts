@@ -590,10 +590,10 @@ export const tableProProps = {
     type: Boolean,
     default: true,
   },
-  /** 当数据源被更改时，自动将横向滚动条滚动到顶部，自动将横向滚动条滚动到左侧 */
-  scrollToRawPos: {
-    type: Boolean,
-    default: true,
+  /** vxetable 默认会自动还原滚动条，这里只控制筛选、翻页、点击刷新后是否滚到顶部 */
+  scrollTopActions: {
+    type: Array as PropType<('pagination' | 'refresh')[]>,
+    default: () => ['pagination', 'refresh'],
   },
   /** 给table填充颜色，将table和filterform区分开 */
   fillInner: {

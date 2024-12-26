@@ -12,7 +12,8 @@ function createExendApis(
   isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
   checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
   deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
-  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache'],
+  currentPage: Ref<number>
 ) {
   function getSelectRowKeys(): string[] {
     const {
@@ -125,7 +126,10 @@ function createExendApis(
     if (options?.clearSelect && hasCheckbox) unref(tableRef)!.clearCheckboxRow()
     if (options?.clearSelect && hasRadioConfig) unref(tableRef)!.clearRadioRow()
 
-    const apiParams: TableProApiParams = { filter: tableFilterSearchParams, model: {} }
+    const apiParams: TableProApiParams = {
+      filter: tableFilterSearchParams,
+      model: { page: currentPage.value },
+    }
     if (options) {
       if (options.filter) {
         apiParams.filter = { ...apiParams.filter, ...(options.filter ?? {}) }
@@ -148,8 +152,24 @@ function createExendApis(
       await nextTick()
     }
 
-    // unref(tableRef)!.commitProxy('query', { ...apiParams }) 同一个表格实例下使用 query 无法重置页码，改为 reload
-    unref(tableRef)!.commitProxy('reload', { ...apiParams })
+    // 同一个表格实例下使用 query 无法重置页码，改为 reload
+    // unref(tableRef)!.commitProxy('query', { ...apiParams })
+    // 使用 reload 后表格的滚动条重置，这里需要手动记录并置回
+    const { scrollTop: prevScrollTop, scrollLeft: prevScrollLeft } = unref(tableRef)!.getScroll()
+    await unref(tableRef)!.commitProxy('reload', { ...apiParams })
+    if (currentPage.value === apiParams?.model?.page) {
+      nextTick(async () => {
+        await unref(tableRef)!.refreshScroll()
+        setTimeout(() => {
+          unref(tableRef)!.scrollTo(prevScrollLeft, prevScrollTop)
+        }, 16.7 * 2)
+      })
+    }
+    // reload 后 vxetable 控制自动回到第一页这里强行把页码置回
+    const proxyInfo = unref(tableRef)!.getProxyInfo()
+    if (apiParams?.model?.page && proxyInfo) {
+      proxyInfo.pager.currentPage = apiParams.model.page
+    }
   }
 
   return {
@@ -188,7 +208,8 @@ export function useExtendInstance(
   isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
   checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
   deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
-  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache']
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache'],
+  currentPage: Ref<number>
 ) {
   const state = reactive<{
     instance: TableProInstance | null
@@ -208,7 +229,8 @@ export function useExtendInstance(
           isCheckboxCacheEnabled,
           checkboxCacheList,
           deleteCheckboxCache,
-          deleteAllCheckboxCache
+          deleteAllCheckboxCache,
+          currentPage
         )
         Object.keys(extendApis).forEach((name) => {
           //@ts-ignore
