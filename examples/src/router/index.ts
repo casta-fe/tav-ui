@@ -92,6 +92,11 @@ const routes: RouteRecordRaw[] = [
     name: 'tree',
     component: () => import('../components/Tree/index.vue'),
   },
+  {
+    path: '/permission',
+    name: 'permission',
+    component: () => import('../components/Permission/index.vue'),
+  },
 ]
 
 export const router = createRouter({

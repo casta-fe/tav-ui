@@ -1,5 +1,5 @@
 // import { deepMerge } from '@tav-ui/utils/basic'
-// import { cloneDeep } from 'lodash-es'
+// import { cloneDeep, pick } from 'lodash-es'
 import { computed, unref } from 'vue'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
@@ -50,8 +50,11 @@ function handleExtendApi(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  const { api, beforeApi, afterApi, customActionConfig, apiSetting } = unref(tablePropsRef)
-  const hasApi = api && isFunction(api)
+  const { api, beforeApi, afterApi, customActionConfig, apiSetting, permission } =
+    unref(tablePropsRef)
+  const permissionApi = (permission as any)?.apiPermissionData ?? undefined
+  const permissionApiParams = (permission as any)?.apiParams ?? undefined
+  const hasApi = (permissionApi && isFunction(permissionApi)) || (api && isFunction(api))
   const hasExportAllApi =
     customActionConfig &&
     customActionConfig.export &&
@@ -67,9 +70,9 @@ function handleExtendApi(
     }
 
     // 缓存api option
-    let params: TableProApiParams = {
-      filter: {},
-      model: {},
+    let params: TableProApiParams & { [key: string]: any } = {
+      filter: permissionApiParams?.body?.filter ?? {},
+      model: permissionApiParams?.body?.model ?? {},
     }
     let result: Record<string, any> = {}
 
@@ -125,18 +128,35 @@ function handleExtendApi(
         ? option.model
           ? { ...option, ...{ model: { ...model, ...option.model } }, ...option.model }
           : { ...option, ...{ model } }
-        : { ...params, ...{ model } }
+        : { ...(params?.body ?? params), ...{ model } }
 
       try {
         if (beforeApi && isFunction(beforeApi)) {
           params = (await beforeApi(params)) || params
         }
 
-        if (api && isFunction(api)) {
+        let _api = api
+
+        if (permissionApi && permissionApiParams) {
+          _api = permissionApi
+          params = {
+            ...permissionApiParams,
+            ...((params.filter ?? {}) && (params.model ?? {})
+              ? {
+                  body: {
+                    filter: params.filter ?? {},
+                    model: params.model ?? {},
+                  },
+                }
+              : {}),
+          }
+        }
+
+        if (_api && isFunction(_api)) {
           // eslint-disable-next-line no-console
           console.log('hijack table pro api 😂')
 
-          const apiResult = await api(params)
+          const apiResult = await _api(params)
 
           if (apiResult.data && apiResult.success) {
             result = apiResult

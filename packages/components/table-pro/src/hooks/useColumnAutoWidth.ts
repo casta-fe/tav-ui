@@ -86,7 +86,9 @@ export function useColumnActionAutoWidth(
     }, 0)
   }
 
-  const handledActions = JSON.parse(JSON.stringify(actions))
+  // 只保留计算宽度时用到的属性其他属性删除
+  const actionsDefault = actions.map((action) => ({ label: action.label }))
+  const handledActions = JSON.parse(JSON.stringify(actionsDefault))
 
   if (handledActions.length <= labelMaxLength) {
     const total = getTotal(handledActions)

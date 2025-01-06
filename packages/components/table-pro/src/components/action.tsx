@@ -1,6 +1,7 @@
 import { computed, defineComponent, ref, toRaw, unref } from 'vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
 import { Button, Divider } from 'ant-design-vue'
+import { usePermissionMatchedByParent } from '@tav-ui/components/permission'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
@@ -31,6 +32,13 @@ const props = {
   divider: {
     type: Boolean,
     default: true,
+  },
+  usePermission: {
+    type: Object as PropType<{
+      code: string
+      ref: any
+      row?: any
+    }>,
   },
   /** 是否在tablepro 外使用 */
   outside: {
@@ -111,6 +119,11 @@ export default defineComponent({
     function handlePermissions(Permissions: any) {
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
+          const computedUsePermission = action.usePermission
+            ? usePermissionMatchedByParent({
+                ...action.usePermission,
+              }).value
+            : true
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
           const PermissionFlag = isUnDef(action.permission)
             ? true
@@ -118,7 +131,13 @@ export default defineComponent({
           const PermisionCodeFlag = isUnDef(action.permissionCode)
             ? true
             : action.permissionCode === 1
-          return PermissionFlag && PermisionCodeFlag && isEnabled(action) && isIfShow(action)
+          return (
+            computedUsePermission &&
+            PermissionFlag &&
+            PermisionCodeFlag &&
+            isEnabled(action) &&
+            isIfShow(action)
+          )
         })
       })
     }

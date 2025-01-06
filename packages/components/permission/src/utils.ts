@@ -1,0 +1,93 @@
+import { computed } from 'vue'
+import { useNamespace } from '@tav-ui/utils/namespace'
+import { nanoid } from '@tav-ui/utils/uuid'
+import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import { DEFAULT_PERMISSIONQUERY_KEYS, type PermissionQueryContent } from './PermissionQuery/types'
+
+export function createNS(name: string) {
+  return useNamespace(name)
+}
+
+export function createId(className: string) {
+  return `${className}-${nanoid()}`
+}
+
+export function normalizedPermissionCodes(codes: string[]) {
+  return codes.reduce((result, code) => {
+    if (!result[code]) result[code] = code
+    return result
+  }, {} as Record<string, any>)
+}
+
+export function normalizedPermissionQueryContent(content: Record<string, any>) {
+  let permissionQueryContent: PermissionQueryContent | undefined
+
+  Object.keys(content).forEach((key: string) => {
+    if (!permissionQueryContent) permissionQueryContent = {} as any
+    if (DEFAULT_PERMISSIONQUERY_KEYS.includes(key as any)) {
+      if (key === DEFAULT_PERMISSIONQUERY_KEYS[1]) {
+        ;(permissionQueryContent as any)[key] = normalizedPermissionCodes(content[key])
+      } else {
+        ;(permissionQueryContent as any)[key] = content[key]
+      }
+    }
+  })
+
+  return permissionQueryContent
+}
+
+export function usePermissionMatchedByParent(options: { code: string; ref: any; row?: any }) {
+  const { code, ref: vnode, row } = options
+  const PermissionParentNames = ['TaPermissionQuery']
+
+  function filterVNodeProps(filterVNode: any) {
+    const tableProVNode = (
+      filterVNode.instance ? filterVNode.instance._ || filterVNode.instance.$ : {}
+    ).parent
+    return tableProVNode ?? filterVNode.parent ?? null
+  }
+
+  function findPermissionParent(_vnode: any): boolean {
+    if (!_vnode) return false
+
+    if (
+      _vnode.type &&
+      _vnode.type.name &&
+      PermissionParentNames.includes(_vnode.type.name) &&
+      _vnode.exposed &&
+      _vnode.exposed.permissionContext &&
+      _vnode.exposed.permissionContext.permission &&
+      _vnode.exposed.permissionContext.permission.permissionCodes
+    ) {
+      return !!_vnode.exposed.permissionContext.permission.permissionCodes[code]
+    } else {
+      return findPermissionParent(filterVNodeProps(_vnode))
+    }
+  }
+
+  function findRowPermission(row: any) {
+    if (row && row.RECORD_PREMISSION && row.RECORD_PREMISSION.permissionCodes) {
+      return row.RECORD_PREMISSION.permissionCodes.includes(code)
+    }
+    return true
+  }
+
+  return computed(() => {
+    if (!(code && vnode)) {
+      // console.warn('[tavui permission usePermissionMatchedByParent] code、ref is required')
+      return false
+    }
+    const resourceMapPermissions = useGlobalConfig('permissions') as Record<string, any>
+    const findRowPermissionResult = !!row && findRowPermission(row)
+    if (findRowPermissionResult) {
+      return true
+    } else {
+      const findPermissionParentResult = findPermissionParent(filterVNodeProps(vnode))
+      if (findPermissionParentResult) {
+        return true
+      } else {
+        return resourceMapPermissions.value?.[code]?.ifShow ?? false
+      }
+    }
+  })
+}

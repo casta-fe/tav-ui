@@ -1,31 +1,65 @@
 <template>
+  <!-- <TaPermissions ref="permissionsRef"> -->
   <!-- <PageWrapper content-full-height fixed-height> -->
-  <TaTablePro ref="tableProRef" v-bind="tableProps">
-    <template #customAction>
-      <TaButton
-        type="primary"
-        permission="invest_sub_company_export"
-        pre-icon="ant-design:export-outlined"
-      >
-        导出子公司
-      </TaButton>
-    </template>
-    <template #name="{ column, row }">
-      <a v-if="true">
-        <!-- @mousedown="(e) => onMousedown(row, e)" -->
-        {{ row[column.field] }}
-      </a>
-      <template v-else>{{ row[column.field] }}</template>
-    </template>
-    <template #action="{ row }">
-      <TaTableProAction :actions="getThisButtons(row)" />
-    </template>
-  </TaTablePro>
+  <TaPermissionQuery ref="permissionQueryRef" :api-params="permissionQueryApiParams">
+    <!-- <template #default="TaPermissionQuerySlotProps"> -->
+    <TaTablePermissionDataQuery
+      ref="tablePermissionDataQueryRef"
+      :api-params="tablePermissionDataQueryApiParams"
+    >
+      <template #default="TaTablePermissionDataQuerySlotProps">
+        <TaTablePro
+          ref="tableProRef"
+          v-bind="{ ...tableProps, permission: TaTablePermissionDataQuerySlotProps.permission }"
+        >
+          <template #customAction>
+            <!-- permission="invest_sub_company_export" -->
+            <!-- permission="FASTP_ROJECT" -->
+            <TaButton
+              type="primary"
+              pre-icon="ant-design:export-outlined"
+              :use-permission="{
+                code: 'invest_sub_company_export',
+                ref: tableProRef,
+              }"
+            >
+              导出子公司
+            </TaButton>
+          </template>
+          <template #name="{ column, row }">
+            <a v-if="true">
+              <!-- @mousedown="(e) => onMousedown(row, e)" -->
+              {{ row[column.field] }}
+            </a>
+            <template v-else>{{ row[column.field] }}</template>
+          </template>
+          <template #action="{ row }">
+            <TaTableProAction :actions="getThisButtons(row)" />
+          </template>
+        </TaTablePro>
+        <div ref="test1ElRef" class="test1">
+          <div ref="test2ElRef" class="test2">
+            <button :disabled="testHtmlTagButtonShow">test html tag button</button>
+          </div>
+        </div>
+      </template>
+    </TaTablePermissionDataQuery>
+    <!-- </template> -->
+  </TaPermissionQuery>
   <!-- </PageWrapper> -->
+  <!-- </TaPermissions> -->
 </template>
 <script lang="ts">
-import { createVNode, defineComponent, onActivated, ref } from 'vue'
-import { type FormSchema, TaButton, TaTableTags } from '@tav-ui/components'
+import { computed, createVNode, defineComponent, onActivated, ref } from 'vue'
+import {
+  type FormSchema,
+  TaButton,
+  TaPermissionQuery,
+  // TaPermissions,
+  TaTablePermissionDataQuery,
+  TaTableTags,
+  usePermissionMatchedByParent,
+} from '@tav-ui/components'
 import {
   type ITableProInstance,
   TaTablePro,
@@ -46,8 +80,41 @@ export default defineComponent({
     TaButton,
     TaTablePro,
     TaTableProAction,
+    TaPermissionQuery,
+    // TaPermissions,
+    TaTablePermissionDataQuery,
   },
   setup() {
+    const permissionsRef = ref()
+    const permissionQueryRef = ref()
+    const tablePermissionDataQueryRef = ref()
+    const test1ElRef = ref()
+    const test2ElRef = ref()
+    const testHtmlTagButtonShow = computed(() => {
+      const result = usePermissionMatchedByParent({
+        code: 'document_batch_d_check_warter',
+        ref: test2ElRef,
+      }).value
+      return result
+    })
+    const permissionQueryApiParams = ref({
+      code: 'PERMISSION_TEST_1',
+      // "subCodes": []
+    })
+    const tablePermissionDataQueryApiParams = ref({
+      code: 'PERMISSION_DATA_FILTER_111',
+      // "subCodes": [],
+      // url: null,
+      body: {
+        filter: {},
+        model: {},
+      },
+      recordkeyName: 'id',
+    })
+    setTimeout(() => {
+      console.log('🚀 ~ setTimeout ~ permissionsRef:', permissionsRef)
+    }, 16.7 * 100)
+
     const tabsActive = { value: '0' }
     const typeEnums = {
       casSubjectNature: [
@@ -398,6 +465,12 @@ export default defineComponent({
         },
         {
           label: '删除',
+          usePermission: {
+            code: 'FILTER_DELET_BUTTON',
+            // code: 'FILTER_DELET_BUTTON123',
+            ref: tableProRef,
+            row: record,
+          },
           popConfirm: {
             title: '是否确认删除?',
             confirm: () => {
@@ -495,6 +568,22 @@ export default defineComponent({
         refresh: true,
       },
       pagerConfig: { pageSize: 30 },
+      apiPermissionParams: {
+        code: 'PERMISSION_TEST_1',
+        // "subCodes": []
+      },
+      apiPermissionDataParams: {
+        code: 'PERMISSION_DATA_FILTER_111',
+        // "subCodes": [],
+        requestUrl: '/company/information/listPager',
+        requestPayload: {
+          filter: {},
+          model: {},
+        },
+        fieldNames: {
+          id: 'id',
+        },
+      },
     }
 
     const handleDelete = (companyCodes: string[]) => {
@@ -509,6 +598,15 @@ export default defineComponent({
       tableProRef,
       tableProps,
       getThisButtons,
+      permissionsRef,
+      permissionQueryRef,
+      tablePermissionDataQueryRef,
+      permissionQueryApiParams,
+      tablePermissionDataQueryApiParams,
+      test1ElRef,
+      test2ElRef,
+      testHtmlTagButtonShow,
+      usePermissionMatchedByParent,
     }
   },
 })

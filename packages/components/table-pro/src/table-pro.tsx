@@ -471,7 +471,7 @@ export default defineComponent({
                 clearCellTooltip()
                 // clearColumnAutoWidth()
 
-                if (unref(getBindValues).scrollTopActions.includes('pagination')) {
+                if (unref(getBindValues).scrollTopActions.includes('paginate')) {
                   nextTick(() => {
                     unref(tableRef)?.scrollTo?.(0, 0)
                   })

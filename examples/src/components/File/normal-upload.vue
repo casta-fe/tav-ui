@@ -5,7 +5,7 @@ import {
   TaFileUpload,
   transformUrlToFileUploadPreviewPropFile,
 } from '@tav-ui/components/file'
-import { replaceEditorUrlVarsToValue } from '@tav-ui/components/editor'
+// import { replaceEditorUrlVarsToValue } from '@tav-ui/components/editor'
 import { taUploadProvideData } from '../TaUpload'
 import { previewEditorWPSFile } from '../TaUpload/provideData'
 
@@ -26,11 +26,11 @@ async function handleUploadAfterApi(apiData: any) {
   // console.log('🚀 ~ handleUploadAfterApi ~ apiData:', apiData)
   const { data: uploadImageVars, success } = await taUploadProvideData.uploadEditorImageVars()
   if (uploadImageVars && success) {
-    return apiData.map((uploadedFile, idx) => {
+    return apiData.map((uploadedFile: any) => {
       let handledUrlUploadedFile: Record<string, any> = {}
       for (const [k, v] of Object.entries(uploadedFile)) {
         if (v && typeof v === 'string') {
-          handledUrlUploadedFile[k] = replaceEditorUrlVarsToValue(v, uploadImageVars)
+          // handledUrlUploadedFile[k] = replaceEditorUrlVarsToValue(v, uploadImageVars)
         } else {
           handledUrlUploadedFile[k] = v
         }

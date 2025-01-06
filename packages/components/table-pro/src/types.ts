@@ -1,3 +1,4 @@
+import { type PermissionContext } from '../../permission/src/types'
 import {
   DEFAULT_ALIGN,
   DEFAULT_LINE_HEIGTH,
@@ -592,8 +593,8 @@ export const tableProProps = {
   },
   /** vxetable 默认会自动还原滚动条，这里只控制筛选、翻页、点击刷新后是否滚到顶部 */
   scrollTopActions: {
-    type: Array as PropType<('pagination' | 'refresh')[]>,
-    default: () => ['pagination', 'refresh'],
+    type: Array as PropType<('paginate' | 'refresh')[]>,
+    default: () => ['paginate', 'refresh'],
   },
   /** 给table填充颜色，将table和filterform区分开 */
   fillInner: {
@@ -609,6 +610,10 @@ export const tableProProps = {
   fixedLineHeight: {
     type: Boolean,
     default: true,
+  },
+  /** 接权限相关参数 */
+  permission: {
+    type: Object as PropType<PermissionContext['permission']>,
   },
   //:==================================================: 扩展配置 :==================================================://
 }

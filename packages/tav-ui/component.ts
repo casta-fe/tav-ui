@@ -53,6 +53,12 @@ import {
   TaFileVersion,
 } from '@tav-ui/components/file'
 import { TaEditor } from '@tav-ui/components/editor'
+import {
+  TaPermissionDataQuery,
+  TaPermissionQuery,
+  TaPermissions,
+  TaTablePermissionDataQuery,
+} from '@tav-ui/components/permission'
 
 import type { Plugin } from 'vue'
 
@@ -116,4 +122,8 @@ export default [
   TaFileUpload,
   TaFileUploadPreview,
   TaEditor,
+  TaPermissions,
+  TaPermissionQuery,
+  TaPermissionDataQuery,
+  TaTablePermissionDataQuery,
 ] as Plugin[]

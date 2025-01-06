@@ -740,13 +740,13 @@ export const taUploadProvideData: Partial<
   },
 }
 
-export const previewFile = async (id: string, appId?: string) => {
+export const previewFile = async (id: string) => {
   const response = await __post(`/api/TIANTA-FILE/api/file/online/${id}`)
 
   return response
 }
 
-export const previewWPSFile = async (params: any, appId?: string) => {
+export const previewWPSFile = async (params: any) => {
   const response = await __post(`/api/TIANTA-FILE/api/file/webOnline/${params.id}`)
   return response
 }
@@ -774,9 +774,25 @@ export const queryFileByFileActualIds = async (params: any) => {
   return response
 }
 
-export async function UserListApi(data, url = '/api/TIANTA-SYSTEM/sys/user/listExcludeDel') {
+export async function UserListApi(data: any, url = '/api/TIANTA-SYSTEM/sys/user/listExcludeDel') {
   // 复制 ai at rd cookie：guid
   // await __get('/api/TIANTA-SYSTEM/test.html')
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
+}
+
+export const apiPermission = async (params: any) => {
+  const response = await __post(
+    `/api/TIANTA-SYSTEM/sysv2/permission/query/queryPermission?t=${new Date().getTime()}`,
+    params
+  )
+  return response
+}
+
+export const apiPermissionData = async (params: any) => {
+  const response = await __post(
+    `/api/TIANTA-SYSTEM/sysv2/permission/query/queryPermissionData?t=${new Date().getTime()}`,
+    params
+  )
+  return response
 }
