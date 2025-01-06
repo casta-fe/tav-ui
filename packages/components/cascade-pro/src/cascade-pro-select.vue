@@ -67,7 +67,6 @@ import { cascadeProSelectProps } from './types'
 import CascadePro from './components/cascade-pro.vue'
 import { DEFAULT_CASCADE_PRO_OPTIONS_KEY_CONFIG, buildCascadeProId } from './constants'
 import type { CascadeProOption } from './types'
-import type { CascadeProInstance } from './components/cascade-pro.vue'
 export default defineComponent({
   name: 'TaCascadeProSelect',
   components: { Modal, Button, CascadePro },
@@ -76,7 +75,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { attrs, emit }) {
     const id = props.id ?? buildCascadeProId()
-    const cascadeProRef = ref<CascadeProInstance | null>(null)
+    const cascadeProRef = ref<any>(null)
     const visible = ref<boolean>(false)
     const selectValue = ref<CascadeProOption[]>([])
     const selectDefaultValue = ref<CascadeProOption[]>(props.value)
