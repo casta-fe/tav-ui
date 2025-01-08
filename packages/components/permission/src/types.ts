@@ -22,8 +22,8 @@ export interface ApiPermissionResponse {
 }
 
 export interface ApiPermissionDataParams extends ApiPermissionParams {
-  /** 父code对应的接口地址，可以如果url上有参数，则必传，而且必须填充好 */
-  url?: string
+  /** 父code对应的接口地址，可以如果resource上有参数，则必传，而且必须填充好 */
+  resource?: string
   /** 如数据接口有参数则必传 */
   body?: Record<string, any>
   /** 数据唯一标识的名称，可以不传，默认为 id */

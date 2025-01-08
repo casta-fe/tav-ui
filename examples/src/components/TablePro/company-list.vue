@@ -98,13 +98,13 @@ export default defineComponent({
       return result
     })
     const permissionQueryApiParams = ref({
-      code: 'PERMISSION_TEST_1',
+      code: 'PERMISSION_DEMO',
       // "subCodes": []
     })
     const tablePermissionDataQueryApiParams = ref({
-      code: 'PERMISSION_DATA_FILTER_111',
+      code: 'PERMISSION_DEMO:DATA_TABLE',
       // "subCodes": [],
-      // url: null,
+      resource: '/demo/listPager',
       body: {
         filter: {},
         model: {},
