@@ -28,18 +28,25 @@ function showCellTooltip(
       title = ((column.type === 'html' ? el.innerText : el.textContent) ?? '').trim()
       isCellOverflow = el.scrollWidth > el.clientWidth
     }
-    let instance
-    if (!instances.has(id)) {
-      instance = $Tooltip(el as HTMLElement, {
-        placement: TOOLTIP_PLACEMENT,
-        title,
-        id,
-        delay: 100,
-      })
-      instances.set(id, instance)
-    } else {
-      instance = instances.get(id)
-    }
+    // let instance
+    // if (!instances.has(id)) {
+    //   instance = $Tooltip(el as HTMLElement, {
+    //     placement: TOOLTIP_PLACEMENT,
+    //     title,
+    //     id,
+    //     delay: 100,
+    //   })
+    //   instances.set(id, instance)
+    // } else {
+    //   instance = instances.get(id)
+    // }
+    const instance = $Tooltip(el as HTMLElement, {
+      placement: TOOLTIP_PLACEMENT,
+      title,
+      id,
+      delay: 100,
+    })
+    instances.set(id, instance)
     isCellOverflow && instance?.showTooltip(el)
   }
 }

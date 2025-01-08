@@ -86,7 +86,7 @@ export const $Tooltip = (el: HTMLElement, props: any) => {
   }
 }
 
-export function useHideTooltips(instances) {
+export function useHideTooltips(instances: any) {
   if (!instances) return
   const browse = XEUtils.browse()
   // 监听全局事件
