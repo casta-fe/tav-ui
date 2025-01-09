@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, unref } from 'vue'
 import { useNamespace } from '@tav-ui/utils/namespace'
 import { nanoid } from '@tav-ui/utils/uuid'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
@@ -38,17 +38,19 @@ export function normalizedPermissionQueryContent(content: Record<string, any>) {
 
 export function usePermissionMatchedByParent(options: { code: string; ref: any; row?: any }) {
   const { code, ref: vnode, row } = options
-  const PermissionParentNames = ['TaPermissionQuery']
+  const PermissionParentNames = ['TaPermissionQuery', 'TaPermissionDataQuery']
 
-  function filterVNodeProps(filterVNode: any) {
+  function filterVNodeProps(_vnode: any) {
+    const filterVNode = unref(_vnode)
     const tableProVNode = (
       filterVNode.instance ? filterVNode.instance._ || filterVNode.instance.$ : {}
     ).parent
-    return tableProVNode ?? filterVNode.parent ?? null
+    return tableProVNode ?? filterVNode.parent ?? filterVNode.__vueParentComponent ?? null
   }
 
-  function findPermissionParent(_vnode: any): boolean {
-    if (!_vnode) return false
+  function findPermissionParent(__vnode: any): boolean {
+    const _vnode = unref(__vnode)
+    if (!unref(_vnode)) return false
 
     if (
       _vnode.type &&
@@ -57,9 +59,16 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
       _vnode.exposed &&
       _vnode.exposed.permissionContext &&
       _vnode.exposed.permissionContext.permission &&
-      _vnode.exposed.permissionContext.permission.permissionCodes
+      (_vnode.exposed.permissionContext.permission.permissionCodes ||
+        _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes)
     ) {
-      return !!_vnode.exposed.permissionContext.permission.permissionCodes[code]
+      const permissionCodes =
+        _vnode.exposed.permissionContext.permission.permissionCodes ||
+        _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes
+
+      return !!(Array.isArray(permissionCodes)
+        ? permissionCodes.includes(code)
+        : permissionCodes[code])
     } else {
       return findPermissionParent(filterVNodeProps(_vnode))
     }
