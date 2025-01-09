@@ -55,6 +55,7 @@ import {
 import { TaEditor } from '@tav-ui/components/editor'
 import {
   TaPermissionDataQuery,
+  TaPermissionFragment,
   TaPermissionQuery,
   TaPermissions,
   TaTablePermissionDataQuery,
@@ -122,6 +123,7 @@ export default [
   TaFileUpload,
   TaFileUploadPreview,
   TaEditor,
+  TaPermissionFragment,
   TaPermissions,
   TaPermissionQuery,
   TaPermissionDataQuery,

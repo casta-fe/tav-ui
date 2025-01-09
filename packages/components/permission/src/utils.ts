@@ -45,7 +45,13 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
     const tableProVNode = (
       filterVNode.instance ? filterVNode.instance._ || filterVNode.instance.$ : {}
     ).parent
-    return tableProVNode ?? filterVNode.parent ?? filterVNode.__vueParentComponent ?? null
+    return (
+      tableProVNode ??
+      filterVNode.parent ??
+      filterVNode.__vueParentComponent ??
+      filterVNode.$?.parent ??
+      null
+    )
   }
 
   function findPermissionParent(__vnode: any): boolean {
