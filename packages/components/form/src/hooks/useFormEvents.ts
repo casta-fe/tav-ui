@@ -2,7 +2,7 @@ import { toRaw, unref } from 'vue'
 import { cloneDeep, uniqBy } from 'lodash-es'
 import { deepMerge } from '@tav-ui/utils/basic'
 import { dateUtil } from '@tav-ui/utils/dateUtil'
-import { isArray, isFunction, isObject, isString } from '@tav-ui/utils/is'
+import { isArray, isFunction, isNullOrUnDef, isObject, isString } from '@tav-ui/utils/is'
 import { error } from '@tav-ui/utils/log'
 import { dateItemType, handleInputNumberValue } from '../helper'
 import type { NamePath } from 'ant-design-vue/lib/form/interface'
@@ -203,10 +203,22 @@ export function useFormEvents({
     schemaRef.value = uniqBy(schema, 'field')
   }
 
+  // 转换数据，由于InputNumber现在是string类型，需要转换为number
+  function transFormFieldsValue(values: Recordable): Recordable {
+    for (let i = 0; i < unref(getSchema).length; i++) {
+      const item = unref(getSchema)[i]
+      if (item.component === 'InputNumber' && !isNullOrUnDef(values[item.field])) {
+        values[item.field] = Number(values[item.field])
+      }
+    }
+    return values
+  }
+
   function getFieldsValue(): Recordable {
     const formEl = unref(formElRef)
     if (!formEl) return {}
-    return handleFormValues(toRaw(unref(formModel)))
+    const res = handleFormValues(toRaw(unref(formModel)))
+    return transFormFieldsValue(res)
   }
 
   /**
@@ -224,7 +236,12 @@ export function useFormEvents({
 
   async function validate(nameList?: NamePath[] | undefined) {
     // eslint-disable-next-line no-return-await
-    return await unref(formElRef)?.validate(nameList)
+    try {
+      const res = await unref(formElRef)?.validate(nameList)
+      return transFormFieldsValue(res)
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   async function clearValidate(name?: string | string[]) {
