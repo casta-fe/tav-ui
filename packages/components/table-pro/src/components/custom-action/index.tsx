@@ -694,6 +694,7 @@ export default defineComponent({
           permissionCode={
             isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
           }
+          usePermission={props.config?.export ? undefined : props.config?.export?.usePermission}
         >
           {tavI18n('Tav.common.exportText')}
         </Button>

@@ -423,7 +423,7 @@ export default defineComponent({
         rules.push({
           validator: (_, value) => {
             if (isNullOrUnDef(value)) return Promise.resolve()
-            const regex = /^\d{1,8}(\.\d{1,6})?$/
+            const regex = /^-?\d{1,8}(\.\d{1,6})?$/
             if (!regex.test(value)) {
               return Promise.reject('整数位不能大于8位小数位不能大于6位')
             }

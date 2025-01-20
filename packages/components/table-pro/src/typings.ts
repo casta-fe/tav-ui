@@ -22,6 +22,11 @@ export interface TableProFilterFormConfig extends TableProFilterForm {
 interface CustomAction {
   permission?: string
   permissionCode?: number
+  usePermission?: {
+    code: string
+    ref: any
+    row?: any
+  }
   handleBeforeAction?: (e: Event) => void
   handleAction?: (e: Event) => void
   handleAfterAction?: (e: Event) => void
