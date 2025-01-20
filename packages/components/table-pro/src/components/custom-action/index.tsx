@@ -178,7 +178,7 @@ export default defineComponent({
     })
 
     const getPermission = (data: any) => (isObject(data) ? data?.permission : undefined)
-
+    const getUsePermission = (data: any) => (isObject(data) ? data?.usePermission : undefined)
     // 统计按钮配置
     const handleStatistical = (e: Event) => {
       emit('triggerStatistical')
@@ -694,7 +694,7 @@ export default defineComponent({
           permissionCode={
             isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
           }
-          usePermission={props.config?.export ? undefined : props.config?.export?.usePermission}
+          usePermission={getUsePermission(props.config?.export)}
         >
           {tavI18n('Tav.common.exportText')}
         </Button>
