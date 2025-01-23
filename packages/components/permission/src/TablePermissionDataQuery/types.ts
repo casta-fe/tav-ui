@@ -1,7 +1,7 @@
 import { type ExtractPropTypes, type PropType } from 'vue'
-// import { omit } from 'lodash-es'
+import { omit } from 'lodash-es'
 import { type ApiPermissionDataParams } from '../types'
-// import { permissionApiProps } from '../global-config-types'
+import { permissionApiProps } from '../global-config-types'
 
 export const tablePermissionDataQueryProps = {
   disabled: {
@@ -14,7 +14,7 @@ export const tablePermissionDataQueryProps = {
   permission: {
     type: Object,
   },
-  // ...omit(permissionApiProps, 'apiPermission'),
+  ...omit(permissionApiProps, 'apiPermission'),
   immediate: {
     type: Boolean,
     default: true,

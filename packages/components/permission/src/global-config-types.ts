@@ -21,7 +21,7 @@ export const globalConfigFileProps = {
     ...omit(permissionApiProps, 'apiPermissionData'),
   },
   TaPermissionDataQuery: {
-    ...omit(permissionApiProps, 'apiPermissionData'),
+    ...omit(permissionApiProps, 'apiPermission'),
   },
   TaTablePermissionDataQuery: {
     ...omit(permissionApiProps, 'apiPermission'),
