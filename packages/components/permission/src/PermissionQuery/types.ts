@@ -19,6 +19,16 @@ export const permissionQueryProps = {
     type: Object as PropType<ApiPermissionResponse>,
   },
   ...omit(permissionApiProps, 'apiPermissionData'),
+  immediate: {
+    type: Boolean,
+    default: true,
+  },
 }
 
 export type PermissionQueryProps = ExtractPropTypes<typeof permissionQueryProps>
+
+export const permissionQueryEmits = {
+  apiSuccess: (...args: [PermissionQueryContent]) => args instanceof Object,
+}
+
+export type PermissionQueryEmits = typeof permissionQueryEmits

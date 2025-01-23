@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import {
+  TaPermissionDataQuery,
   TaPermissionQuery,
   TaPermissions,
-  TaTablePermissionDataQuery,
 } from '@tav-ui/components/permission'
 
+const permissionQueryRef = ref()
 const permissionQueryApiParams = ref({
-  code: 'PERMISSION_TEST_1',
+  code: 'PERMISSION_DEMO',
   // "subCodes": []
 })
 
-const tablePermissionDataQueryApiParams = ref({
-  code: 'PERMISSION_DATA_FILTER_111',
+const permissionDataQueryRef = ref()
+const permissionDataQueryApiParams = ref({
+  code: 'PERMISSION_DEMO:DATA_TABLE:ACTION_DETAIL',
   // "subCodes": [],
-  // url: null,
+  resource: `/demo/load/88933`,
   body: {
     filter: {},
     model: {},
@@ -22,26 +24,18 @@ const tablePermissionDataQueryApiParams = ref({
   recordkeyName: 'id',
 })
 
-const permissionsRef = ref()
-const permissionQueryRef1 = ref()
-const permissionQueryRef2 = ref()
-const permissionQueryRef3 = ref()
-const tablePermissionDataQueryRef = ref()
-const tableElRef = ref()
+function handleApiSuccess(...args: any) {
+  console.log('🚀 ~ handleApiSuccess ~ args:', args)
+}
 
 setTimeout(() => {
-  console.log(
-    '🚀 ~ setTimeout ~ refs:',
-    permissionsRef,
-    // permissionQueryRef1,
-    // permissionQueryRef2,
-    // permissionQueryRef3,
-    tablePermissionDataQueryRef
-  )
+  console.log('🚀 ~ setTimeout ~ refs:', permissionQueryRef, permissionDataQueryRef)
+  // permissionQueryApiParams.value = { ...permissionQueryApiParams.value, code: 'ccc' }
 
   setTimeout(() => {
-    console.log('🚀 ~ setTimeout ~ setTimeout:', tableElRef)
-  }, 1000)
+    permissionQueryRef.value?.reload?.()
+    permissionDataQueryRef.value?.reload?.()
+  }, 16.7 * 200)
 }, 16.7 * 100)
 </script>
 
@@ -49,30 +43,16 @@ setTimeout(() => {
   <TaPermissions ref="permissionsRef">
     <section class="page-permission">
       <header>page-permission header</header>
-      <TaPermissionQuery
-        ref="permissionQueryRef1"
-        :api-params="{ ...permissionQueryApiParams, code: 'section1' }"
-      >
+      <TaPermissionQuery ref="permissionQueryRef" :api-params="permissionQueryApiParams">
         <section>
-          page-permission content
-          <TaPermissionQuery
-            ref="permissionQueryRef2"
-            :api-params="{ ...permissionQueryApiParams, code: 'section2' }"
+          <div>page-permission content</div>
+          <TaPermissionDataQuery
+            ref="permissionDataQueryRef"
+            :api-params="permissionDataQueryApiParams"
+            @api-success="handleApiSuccess"
           >
-            <div>page-permission content group1</div>
-          </TaPermissionQuery>
-          <TaPermissionQuery
-            ref="permissionQueryRef3"
-            :api-params="{ ...permissionQueryApiParams, code: 'section3' }"
-          >
-            <div>page-permission content group2</div>
-            <TaTablePermissionDataQuery
-              ref="tablePermissionDataQueryRef"
-              :api-params="tablePermissionDataQueryApiParams"
-            >
-              <div ref="tableElRef">page-permission content group2 table</div>
-            </TaTablePermissionDataQuery>
-          </TaPermissionQuery>
+            page-permission content data
+          </TaPermissionDataQuery>
         </section>
       </TaPermissionQuery>
     </section>

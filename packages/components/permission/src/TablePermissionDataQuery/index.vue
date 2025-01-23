@@ -50,7 +50,9 @@ async function handlePermission() {
 }
 
 onBeforeMount(async () => {
-  await handlePermission()
+  if (props.immediate) {
+    await handlePermission()
+  }
 })
 
 watch(

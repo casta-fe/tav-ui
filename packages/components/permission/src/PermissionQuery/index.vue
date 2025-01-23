@@ -18,7 +18,7 @@ import { DEFAULT_APIPARAMS, permissionContextKey, permissionsContextKey } from '
 import { useMergedProps } from '../hooks/use-props'
 import { normalizedPermissionQueryContent } from '../utils'
 import { DEFAULT_PERMISSIONQUERY_CLASSNAME, DEFAULT_PERMISSIONQUERY_ID } from './constants'
-import { type PermissionQueryContent, permissionQueryProps } from './types'
+import { type PermissionQueryContent, permissionQueryEmits, permissionQueryProps } from './types'
 import type { PermissionContext } from '../types'
 
 defineOptions({
@@ -29,7 +29,7 @@ defineOptions({
 const id = ref(DEFAULT_PERMISSIONQUERY_ID())
 const type = ref(DEFAULT_PERMISSIONQUERY_CLASSNAME)
 const props = defineProps(permissionQueryProps)
-// const emits = defineEmits(pagePermissionEmits)
+const emits = defineEmits(permissionQueryEmits)
 // const slots = useSlots()
 const attrs = useAttrs()
 
@@ -38,17 +38,33 @@ const permissionContent = shallowRef<PermissionQueryContent>()
 const isUseApi = computed(() => mergedProps.value.apiParams && mergedProps.value.apiPermission)
 const loading = ref(false)
 
+async function reload() {
+  try {
+    const { data, success } = await mergedProps.value.apiPermission!(mergedProps.value.apiParams!)
+    if (data && success) {
+      const _data = normalizedPermissionQueryContent(data)
+      emits('apiSuccess', {
+        ...(_data as any),
+      })
+      return _data
+    } else {
+      return undefined
+    }
+  } catch (error: any) {
+    console.warn('[tavui TaPermissionQuery] api has error', error)
+    return undefined
+  }
+}
+
 async function handlePermission() {
   if (mergedProps.value.disabled) return
   if (isUseApi.value) {
     try {
       loading.value = true
-      const { data, success } = await mergedProps.value.apiPermission!(mergedProps.value.apiParams!)
-      if (data && success) {
-        permissionContent.value = normalizedPermissionQueryContent(data)
-      }
+      const data = await reload()
+      permissionContent.value = data
     } catch (error: any) {
-      console.warn('[tavui TaPermissionQuery] apiPermission has error', error)
+      console.warn('[tavui TaPermissionQuery] api has error', error)
     } finally {
       loading.value = false
     }
@@ -62,7 +78,9 @@ async function handlePermission() {
 }
 
 onBeforeMount(async () => {
-  await handlePermission()
+  if (props.immediate) {
+    await handlePermission()
+  }
 })
 
 watch(
@@ -94,9 +112,11 @@ onBeforeUnmount(() => {
 })
 
 provide(permissionContextKey, context)
+
 defineExpose({
   id,
   permissionContext: context,
+  reload,
 })
 </script>
 

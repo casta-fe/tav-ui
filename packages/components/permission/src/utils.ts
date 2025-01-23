@@ -88,11 +88,11 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
   }
 
   return computed(() => {
-    if (!(code && vnode)) {
+    if (!(code && unref(vnode))) {
       // console.warn('[tavui permission usePermissionMatchedByParent] code、ref is required')
       return false
     }
-    const resourceMapPermissions = useGlobalConfig('permissions') as Record<string, any>
+
     const findRowPermissionResult = !!row && findRowPermission(row)
     if (findRowPermissionResult) {
       return true
@@ -101,6 +101,7 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
       if (findPermissionParentResult) {
         return true
       } else {
+        const resourceMapPermissions = useGlobalConfig('permissions') as Record<string, any>
         return resourceMapPermissions.value?.[code]?.ifShow ?? false
       }
     }
