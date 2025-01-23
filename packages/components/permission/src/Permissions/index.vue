@@ -52,6 +52,7 @@ provide(
     removePermission,
   })
 )
+
 defineExpose({
   id,
   permissionsContext,

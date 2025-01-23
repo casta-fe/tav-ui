@@ -82,6 +82,7 @@ onBeforeUnmount(() => {
 })
 
 provide(permissionContextKey, context)
+
 defineExpose({
   id,
   permissionContext: context,
