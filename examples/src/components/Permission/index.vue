@@ -33,7 +33,7 @@ setTimeout(() => {
   // permissionQueryApiParams.value = { ...permissionQueryApiParams.value, code: 'ccc' }
 
   setTimeout(() => {
-    permissionQueryRef.value?.reload?.()
+    // permissionQueryRef.value?.reload?.()
     permissionDataQueryRef.value?.reload?.()
   }, 16.7 * 200)
 }, 16.7 * 100)
