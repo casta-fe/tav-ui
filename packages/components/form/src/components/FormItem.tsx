@@ -356,6 +356,7 @@ export default defineComponent({
     }
 
     function handleClickOutside() {
+      if (!unref(hasEditable)) return
       // 处理普通组件，如 input 等
       showEditableDom(editableTriggeClickoutsideToCloseComponentMap, props.schema)
     }
@@ -712,24 +713,19 @@ export default defineComponent({
         const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix
 
         // ::==================== i7eo：更新 ///// start ///// ====================:: //
-        const createItem = () =>
-          unref(hasEditable) ? (
+        const createItem = () => (
+          <>
             <div
               ref={itemRef}
               v-click-outside={handleClickOutside}
               style="flex: 1;  max-width:100%; position: relative;"
             >
               {getContent()}
-              {showSuffix && <span class="suffix">{getSuffix}</span>}
             </div>
-          ) : (
-            <>
-              <div ref={itemRef} style="flex:1; max-width:100%">
-                {getContent()}
-              </div>
-              {showSuffix && <span class="suffix">{getSuffix}</span>}
-            </>
-          )
+            {showSuffix && <span class="suffix">{getSuffix}</span>}
+          </>
+        )
+
         const getEditableFormContent = () => {
           // return <div>{editableItemValue.value}</div>;
           // 暂时不强制格式化到6位
@@ -769,6 +765,7 @@ export default defineComponent({
             <div
               class={getEditableFormItemClass()}
               title={editableItemValue.value}
+              style="flex: 1;  max-width:100%; position: relative;"
               onClick={() => {
                 if (!unref(getDisable)) {
                   isEditableItemClicked.value = true
@@ -780,7 +777,6 @@ export default defineComponent({
               }}
             >
               {getEditableFormContent()}
-
               {!unref(getDisable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />
               ) : (
@@ -823,7 +819,7 @@ export default defineComponent({
             labelCol={labelCol}
             wrapperCol={wrapperCol}
           >
-            <div>{renderFormItem()}</div>
+            <div style="display: flex">{renderFormItem()}</div>
           </Form.Item>
         )
         // ::==================== i7eo：更新 ///// end   ///// ====================:: //
