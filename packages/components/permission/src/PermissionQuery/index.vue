@@ -43,9 +43,7 @@ async function reload() {
     const { data, success } = await mergedProps.value.apiPermission!(mergedProps.value.apiParams!)
     if (data && success) {
       const _data = normalizedPermissionQueryContent(data)
-      emits('apiSuccess', {
-        ...(_data as any),
-      })
+      emits('apiSuccess', _data as any)
       return _data
     } else {
       return undefined

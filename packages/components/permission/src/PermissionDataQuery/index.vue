@@ -47,9 +47,7 @@ async function reload() {
       mergedProps.value.apiParams!
     )
     if (data && success) {
-      emits('apiSuccess', {
-        ...data,
-      })
+      emits('apiSuccess', data)
       return data
     } else {
       return undefined
