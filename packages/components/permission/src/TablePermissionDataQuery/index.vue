@@ -59,7 +59,9 @@ watch(
   () => JSON.stringify(mergedProps.value.apiParams),
   async (curVal, preVal) => {
     if (curVal && curVal !== '{}' && curVal !== preVal) {
-      await handlePermission()
+      if (props.immediate) {
+        await handlePermission()
+      }
     }
   }
 )
