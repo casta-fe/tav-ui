@@ -349,6 +349,7 @@ type BasicPropsType = {
  * 从App.vue注入的全局 数据/配置项/api接口
  */
 type ProvideDataType = {
+  [key: string]: any
   // 删除文件接口
   removeFile?: PromiseFn
   actionLimit?: number
@@ -364,8 +365,10 @@ type ProvideDataType = {
       sort?: string
     }
   }) => Promise<Result<{ result: FileItemType[] }>>
+  queryFileList?: (params: any) => any
   // 上传文件接口
   uploadFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
+  uploadFileLink?: (params: any) => Promise<Result<FileItemType[]>>
   // 更新文件
   updateFile?: (formData: FormData) => Promise<Result<FileItemType[]>>
   // 上传超链接接口
@@ -376,6 +379,7 @@ type ProvideDataType = {
   }) => Promise<Result<FileItemType>>
   // 文件下载方法
   download?: (file: FileItemType, ...args: any[]) => void
+  downloadWaterMarker?: (file: FileItemType, ...args: any[]) => void
   updateFileNameAndAddress?: (
     file: Pick<FileItemType, 'id' | 'name' | 'address'>,
     ...args: any[]

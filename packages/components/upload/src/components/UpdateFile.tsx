@@ -38,7 +38,7 @@ export const UpdateFile = defineComponent({
       const files = event.target.files
       const { beforeUpload } = props.parentProps
 
-      if (beforeUpload && !(await beforeUpload(files))) {
+      if (beforeUpload && !(await beforeUpload(files, rawFile))) {
         uploadRef.value.value = ''
         return
       }

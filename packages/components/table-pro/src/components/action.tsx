@@ -1,6 +1,7 @@
 import { computed, defineComponent, ref, toRaw, unref } from 'vue'
 import { MoreOutlined } from '@ant-design/icons-vue'
 import { Button, Divider } from 'ant-design-vue'
+import { usePermissionMatchedByParent } from '@tav-ui/components/permission'
 import ModalButton from '@tav-ui/components/button-modal'
 import Dropdown from '@tav-ui/components/dropdown'
 import Icon from '@tav-ui/components/icon'
@@ -31,6 +32,13 @@ const props = {
   divider: {
     type: Boolean,
     default: true,
+  },
+  usePermission: {
+    type: Object as PropType<{
+      code: string
+      ref: any
+      row?: any
+    }>,
   },
   /** 是否在tablepro 外使用 */
   outside: {
@@ -77,7 +85,12 @@ export default defineComponent({
 
     // 获取全局注入的 permissions
     const Permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
-    const ActionLabelLimit = unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit || 3
+    const ActionLabelLimit = computed(
+      () =>
+        props.limit ||
+        unref(useGlobalConfig('components'))?.TaTablePro?.actionLabelLimit ||
+        MAX_ACTION_NUMBER
+    )
 
     // 根据 enabled 控制显隐
     function isEnabled(action: TableProActionItem): boolean {
@@ -92,10 +105,25 @@ export default defineComponent({
       return isEnabled
     }
 
+    // 根据 ifShow 控制显隐
+    function isIfShow(action: TableProActionItem): boolean {
+      const enabled = action.ifShow
+      let isEnabled = true
+      if (isBoolean(enabled)) {
+        isEnabled = enabled
+      }
+      return isEnabled
+    }
+
     // 根据 permissions 控制显隐
     function handlePermissions(Permissions: any) {
       return computed(() => {
         return (toRaw(props.actions) || []).filter((action) => {
+          const computedUsePermission = action.usePermission
+            ? usePermissionMatchedByParent({
+                ...action.usePermission,
+              }).value
+            : true
           // 先判断 permission 是否有值，无值走正常的逻辑；有值判断 resourcemap中是否存在不存在走正常逻辑，存在就取值
           const PermissionFlag = isUnDef(action.permission)
             ? true
@@ -103,12 +131,18 @@ export default defineComponent({
           const PermisionCodeFlag = isUnDef(action.permissionCode)
             ? true
             : action.permissionCode === 1
-          return PermissionFlag && PermisionCodeFlag && isEnabled(action)
+          return (
+            computedUsePermission &&
+            PermissionFlag &&
+            PermisionCodeFlag &&
+            isEnabled(action) &&
+            isIfShow(action)
+          )
         })
       })
     }
 
-    // 根据 MAX_ACTION_NUMBER 控制 action 列显示数，多余的改为省略号
+    // 根据 ActionLabelLimit 控制 action 列显示数，多余的改为省略号
     let restActions: TableProActionItem[] = []
 
     function getActions() {
@@ -116,15 +150,15 @@ export default defineComponent({
 
       const Actions = computed(() => {
         const actions = unref(permissonFilterActions)
-        if (actions.length <= MAX_ACTION_NUMBER) {
+        if (actions.length <= ActionLabelLimit.value) {
           restActions = []
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(actions, ActionLabelLimit)
+            const handleActions = limitActionLabel(actions, ActionLabelLimit.value)
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
-                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
-                ActionLabelLimit,
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit.value),
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -134,7 +168,7 @@ export default defineComponent({
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
                 unref(permissonFilterActions),
-                ActionLabelLimit,
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -142,15 +176,15 @@ export default defineComponent({
             return actions
           }
         } else {
-          const _actions = actions.slice(0, MAX_ACTION_NUMBER - 1)
-          restActions = actions.slice(MAX_ACTION_NUMBER - 1)
+          const _actions = actions.slice(0, ActionLabelLimit.value - 1)
+          restActions = actions.slice(ActionLabelLimit.value - 1)
           const isOverMax = isOverMaxWidth(actions, calcContent)
           if (isOverMax) {
-            const handleActions = limitActionLabel(_actions, ActionLabelLimit)
+            const handleActions = limitActionLabel(_actions, ActionLabelLimit.value)
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
-                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit),
-                ActionLabelLimit,
+                limitActionLabel(unref(permissonFilterActions), ActionLabelLimit.value),
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -160,7 +194,7 @@ export default defineComponent({
             if (setCacheActionWidths) {
               const total = useColumnActionAutoWidth(
                 unref(permissonFilterActions),
-                ActionLabelLimit,
+                ActionLabelLimit.value,
                 calcContent
               )
               setCacheActionWidths({ key: id, value: total })
@@ -221,7 +255,7 @@ export default defineComponent({
           // type: 'link',
           // size: 'small',
           ...action,
-          text: action.label,
+          text: action.blankLabel || action.label,
           divider: index < list.length - 1 ? props.divider : false,
         }))
       )

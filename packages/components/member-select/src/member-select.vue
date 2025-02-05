@@ -1,5 +1,5 @@
 <template>
-  <div class="ta-member-select">
+  <div ref="memberSelectElRef" class="ta-member-select">
     <div v-if="!noSelect">
       <template v-if="type == 'user'">
         <Select
@@ -10,6 +10,7 @@
           option-filter-prop="label"
           :allow-clear="allowClear"
           :options="userList"
+          :filter-option="filterHandle"
           :max-tag-count="maxTagCount"
           :max-tag-placeholder="maxTagPlaceholder"
           :disabled="disabled"
@@ -18,21 +19,32 @@
           :autofocus="autofocus"
           :default-open="defaultOpen"
           :get-popup-container="getPopupContainer"
-          :filter-option="filterOptionHandle"
-          @dropdown-visible-change="userVisibleChange"
           @change="emitHandle"
           @blur="handleBlur"
         >
+          <!-- @inputKeyDown="preventInnerKeydownTriggerOuterKeydown" -->
+
+          <template #tagRender="{ label, option }">
+            <Tag color="blue" closable @close.prevent="removeItem(option)"> {{ label }}</Tag>
+          </template>
           <template #option="item">
             <div class="ta-member-select-option-item">
-              <span
-                >{{ item.label }}
-                <template v-if="item.status === 0">
-                  ({{ tavI18n('Tav.member.4') }})
-                </template></span
-              >
-              <span>{{ item.sex == 1 ? tavI18n('Tav.member.8') : tavI18n('Tav.member.9') }}</span>
-              <span>{{ item.phone }}</span>
+              <span>
+                {{ item.label }}
+                <template v-if="item.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
+              </span>
+              <span>
+                <template v-if="item.userOrgs && item.userOrgs.length > 0">
+                  <Tooltip>
+                    <template #title>
+                      <span>{{ item.userOrgs.map((v) => v.organizationName).join('、') }}</span>
+                    </template>
+                    {{ item.userOrgs[0]?.organizationName }}
+                  </Tooltip>
+                </template>
+                <template v-else> - </template>
+              </span>
+              <span :title="item.phone">{{ item.phone }}</span>
             </div>
           </template>
           <template #dropdownRender="{ menuNode: menu }">
@@ -70,6 +82,8 @@
           show-checked-strategy="SHOW_ALL"
           @change="emitHandle"
         >
+          <!-- @inputKeyDown="preventInnerKeydownTriggerOuterKeydown" -->
+
           <!-- :treeDefaultExpandedKeys="orgExpandedKey" -->
           <!-- 自己循环得递归，暂时不这样写 -->
           <!-- <TreeSelectNode v-for="item in orgList" :key="item.id">
@@ -79,7 +93,7 @@
       </template>
     </div>
     <BasicModal
-      :title="title"
+      :title="title || tavI18n('Tav.member.3')"
       :width="850"
       :destroy-on-close="true"
       :get-container="getPopupContainer"
@@ -99,8 +113,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, nextTick, provide, reactive, ref, toRefs, watch } from 'vue'
-import { Select, TreeSelect } from 'ant-design-vue'
-import { isEqual } from 'lodash-es'
+import { Select, Tag, Tooltip, TreeSelect } from 'ant-design-vue'
+import { isEqual, pull } from 'lodash-es'
 import pinyin from 'js-pinyin'
 import Button from '@tav-ui/components/button'
 import BasicModal from '@tav-ui/components/modal'
@@ -117,6 +131,8 @@ export default defineComponent({
     VNodes: (_, { attrs }) => {
       return attrs.vnodes
     },
+    Tooltip,
+    Tag,
     BasicModal,
     MemberModal,
     Button,
@@ -126,15 +142,14 @@ export default defineComponent({
   props: memberSelectProps,
   emits: ['change', 'update:value', 'blur'],
   setup(props, { emit }) {
+    const memberSelectElRef = ref<HTMLDivElement>()
     const userSelectRef = ref<any>(null)
     const state = reactive({
       modalIsShow: false,
       searchValue: '',
-      count: 0,
       selectedData: [] as any[], //组件里面选中的数据
       catchData: [] as any[],
       userList: [] as UserItem[],
-      userOptions: [] as Options[],
       orgList: [] as any, //组织树下用的数据
       orgExpandedKey: [] as any[], //默认展开的数据
       orgFileds: { label: 'name', value: 'id' },
@@ -157,7 +172,6 @@ export default defineComponent({
     const userListApi = props.userListApi || globalConfig.value?.TaMemberSelect?.userListApi
     const [registerMemberModal, { openModal: openMemberModal, closeModal: closeMemberModal }] =
       useModal()
-
     const showModal = () => {
       // 如果是用户选择器，打开弹窗时候 也请求下组织列表，可以根据组织选择用户
       if (props.type == 'user') {
@@ -187,17 +201,14 @@ export default defineComponent({
 
     // 这块是用户基础数据，更多选项里面也有用
     const getTrueUserList = (userList = [] as UserItem[]) => {
+      // 非ignoreUser的用户才能选择
       const list: Options[] = userList
+        .filter((v) => !props.ignoreUser.includes(v.id))
         .map((v) => {
-          // 非ignoreUser的用户才能选择
           const fullCharts = pinyin.getFullChars(v.name).toLowerCase()
           const obj = { ...v, label: v.name, value: v.id, fullCharts }
-          if (!Reflect.has(obj, 'disabled') && !props.ignoreUser.includes(obj.id)) {
-            obj.disabled = props.useDisabledUser
-              ? false
-              : props.ignoreFrozenUser
-              ? obj.status === 0
-              : false
+          if (!Reflect.has(obj, 'disabled')) {
+            obj.disabled = props.useDisabledUser ? false : obj.status === 0
           }
           return obj
         })
@@ -208,13 +219,12 @@ export default defineComponent({
     }
     // 获取用户数据
     const getUserList = async () => {
-      state.count++
       if (Array.isArray(props.options)) {
         // 将其处理成 人员的数据格式
         // let data = JSON.parse(JSON.stringify(props.options));
         state.userList = getTrueUserList(props.options)
       } else {
-        userListApi(props.userListParams).then((res) => {
+        userListApi(props.userListParams).then((res: any) => {
           state.userList = getTrueUserList(res.data)
         })
       }
@@ -222,12 +232,12 @@ export default defineComponent({
     }
     // 获取组织数据
     const getOrgList = (): void => {
-      orgApi({}).then((res) => {
+      orgApi({}).then((res: any) => {
         state.orgList = res.data
       })
     }
     // 弹窗里面的数据变化
-    const modalChange = (value) => {
+    const modalChange = (value: any[]) => {
       state.catchData = value
     }
     // 弹窗下面的确定事件
@@ -246,7 +256,7 @@ export default defineComponent({
       }
     }
     const emitHandle = (): void => {
-      const userMap = allUserList.filter((v) => {
+      const userMap = allUserList.filter((v: UserItem) => {
         if (props.multiple) {
           return state.selectedData[0].includes(v.id)
         } else {
@@ -279,24 +289,32 @@ export default defineComponent({
     // 检查用户在当前的用户列表中是否存在，不存在就去全部用户列表中匹配，匹配到后塞到现有用户列表中去
     const checkUserIsExist = () => {
       if (props.multiple) {
-        state.selectedData[0].forEach((userId) => {
+        state.selectedData[0].forEach((userId: string) => {
           getUserItem(userId)
         })
       } else {
         getUserItem(state.selectedData[0])
       }
-      function getUserItem(userId) {
+      function getUserItem(userId: string) {
         // 如果当前用户列表中查不到该用户就在所用用户中去匹配，匹配到后插入当当前用户列表中
-        if (!state.userList.some((v) => v.id === userId)) {
-          const item = allUserList.find((v) => v.id === userId)
+        if (!state.userList.some((v) => v.id == userId)) {
+          const item = allUserList.find((v: UserItem) => v.id === userId)
           if (item) {
             state.userList.push(item)
           }
         }
       }
     }
-    const filterOptionHandle = (keyword: string, user: any) => {
-      return user.fullCharts.indexOf(keyword) > -1 || user.name.indexOf(keyword) > -1
+    const filterHandle = (keyword: string, user: UserItem) => {
+      if (!keyword) {
+        return true
+      } else {
+        return (
+          user.fullCharts.indexOf(keyword) > -1 ||
+          user.name.indexOf(keyword) > -1 ||
+          user.userOrgs[0]?.organizationName.indexOf(keyword) > -1
+        )
+      }
     }
     // 下拉列表中的查看更多点击事件
     const userShowMore = () => {
@@ -304,12 +322,12 @@ export default defineComponent({
         showModal()
       }, 200)
     }
-    const userVisibleChange = () => {
-      // if (v) {
-      // }
-    }
     const orgVisibleChange = () => {
       // console.log(v);
+    }
+    const removeItem = (item: UserItem) => {
+      pull(state.selectedData[0], item.id)
+      emitHandle()
     }
 
     watch(
@@ -366,13 +384,25 @@ export default defineComponent({
       }
     }
     pageInit()
+
+    /**
+     * 劫持组件内部的回车事件，暂时不用。勿删
+     * @param event
+     */
+    // function preventInnerKeydownTriggerOuterKeydown(event: KeyboardEvent) {
+    //   event.stopPropagation()
+    //   const evt = new Event('keydown')
+    //   memberSelectElRef.value?.dispatchEvent(evt)
+    // }
+
     return {
-      userSelectRef,
-      tavI18n,
       ...toRefs(state),
-      filterOptionHandle,
+      memberSelectElRef,
+      userSelectRef,
+      removeItem,
+      filterHandle,
+      tavI18n,
       userShowMore,
-      userVisibleChange,
       orgVisibleChange,
       showModal,
       hideModal,
@@ -381,6 +411,7 @@ export default defineComponent({
       emitHandle,
       handleBlur,
       registerMemberModal,
+      // preventInnerKeydownTriggerOuterKeydown,
     }
   },
 })

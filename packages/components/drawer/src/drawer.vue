@@ -1,5 +1,9 @@
 <template>
   <Drawer :class="prefixCls" v-bind="getBindValues" @close="onClose">
+    <template v-if="!$slots.closeIcon" #closeIcon>
+      <DrawerClose @cancel="onClose" />
+    </template>
+
     <template v-if="!$slots.title" #title>
       <DrawerHeader
         :title="getMergeProps.title"
@@ -17,9 +21,9 @@
     </template>
 
     <ScrollContainer
-      v-loading="getLoading"
+      v-loading="getProps.loading"
       :style="getScrollContentStyle"
-      :loading-tip="loadingText || tavI18n('Tav.common.loadingText')"
+      :loading-tip="getProps.loadingText || tavI18n('Tav.common.loadingText')"
     >
       <slot />
     </ScrollContainer>
@@ -49,6 +53,7 @@ import { deepMerge } from '@tav-ui/utils/basic'
 import { isFunction, isNumber } from '@tav-ui/utils/is'
 import DrawerFooter from './components/DrawerFooter.vue'
 import DrawerHeader from './components/DrawerHeader.vue'
+import DrawerClose from './components/DrawerClose.vue'
 import { drawerProps } from './types'
 import type { CSSProperties } from 'vue'
 import type { DrawerInstance, DrawerProps } from './typing'
@@ -58,7 +63,7 @@ type Recordable<T = any> = Record<string, T>
 
 export default defineComponent({
   name: 'TaDrawer',
-  components: { Drawer, ScrollContainer, DrawerFooter, DrawerHeader },
+  components: { Drawer, ScrollContainer, DrawerFooter, DrawerHeader, DrawerClose },
   inheritAttrs: false,
   props: drawerProps,
   emits: ['visible-change', 'ok', 'close', 'register'],
@@ -78,7 +83,10 @@ export default defineComponent({
     instance && emit('register', drawerInstance, instance.uid)
 
     const getMergeProps = computed((): DrawerProps => {
-      return deepMerge(toRaw(props), unref(propsRef))
+      return {
+        ...props,
+        ...(unref(propsRef) as any),
+      }
     })
 
     const getProps = computed((): DrawerProps => {
@@ -127,10 +135,6 @@ export default defineComponent({
         position: 'relative',
         height: `calc(100% - ${footerHeight})`,
       }
-    })
-
-    const getLoading = computed(() => {
-      return !!unref(getProps)?.loading
     })
 
     watch(
@@ -183,7 +187,6 @@ export default defineComponent({
       getMergeProps: getMergeProps as any,
       getScrollContentStyle,
       getProps: getProps as any,
-      getLoading,
       getBindValues,
       getFooterHeight,
       handleOk,

@@ -1,42 +1,77 @@
 <template>
+  <!-- <TaPermissions ref="permissionsRef"> -->
   <!-- <PageWrapper content-full-height fixed-height> -->
-  <TaTablePro ref="tableProRef" v-bind="tableProps">
-    <template #customAction>
-      <TaButton
-        type="primary"
-        permission="invest_sub_company_export"
-        pre-icon="ant-design:export-outlined"
-      >
-        导出子公司
-      </TaButton>
-    </template>
-    <template #name="{ column, row }">
-      <a v-if="true">
-        <!-- @mousedown="(e) => onMousedown(row, e)" -->
-        {{ row[column.field] }}
-      </a>
-      <template v-else>{{ row[column.field] }}</template>
-    </template>
-    <template #action="{ row }">
-      <TaTableProAction :actions="getThisButtons(row)" />
-    </template>
-  </TaTablePro>
+  <TaPermissionQuery ref="permissionQueryRef" :api-params="permissionQueryApiParams">
+    <!-- <template #default="TaPermissionQuerySlotProps"> -->
+    <TaTablePermissionDataQuery
+      ref="tablePermissionDataQueryRef"
+      :api-params="tablePermissionDataQueryApiParams"
+    >
+      <template #default="TaTablePermissionDataQuerySlotProps">
+        <TaTablePro
+          ref="tableProRef"
+          v-bind="{ ...tableProps, permission: TaTablePermissionDataQuerySlotProps.permission }"
+        >
+          <template #customAction>
+            <!-- permission="invest_sub_company_export" -->
+            <!-- permission="FASTP_ROJECT" -->
+            <TaButton
+              type="primary"
+              pre-icon="ant-design:export-outlined"
+              :use-permission="{
+                code: 'invest_sub_company_export',
+                ref: tableProRef,
+              }"
+            >
+              导出子公司
+            </TaButton>
+          </template>
+          <template #name="{ column, row }">
+            <a v-if="true">
+              <!-- @mousedown="(e) => onMousedown(row, e)" -->
+              {{ row[column.field] }}
+            </a>
+            <template v-else>{{ row[column.field] }}</template>
+          </template>
+          <template #action="{ row }">
+            <TaTableProAction :actions="getThisButtons(row)" />
+          </template>
+        </TaTablePro>
+        <div ref="test1ElRef" class="test1">
+          <div ref="test2ElRef" class="test2">
+            <button :disabled="testHtmlTagButtonShow">test html tag button</button>
+          </div>
+        </div>
+      </template>
+    </TaTablePermissionDataQuery>
+    <!-- </template> -->
+  </TaPermissionQuery>
   <!-- </PageWrapper> -->
+  <!-- </TaPermissions> -->
 </template>
 <script lang="ts">
-import { createVNode, defineComponent, onActivated, ref } from 'vue'
-import { TaButton, TaTableTags } from '@tav-ui/components'
+import { computed, createVNode, defineComponent, onActivated, ref } from 'vue'
 import {
-  type FilterForms,
+  type FormSchema,
+  TaButton,
+  TaPermissionQuery,
+  // TaPermissions,
+  TaTablePermissionDataQuery,
+  TaTableTags,
+  usePermissionMatchedByParent,
+} from '@tav-ui/components'
+import {
   type ITableProInstance,
   TaTablePro,
   TaTableProAction,
   type TableProActionItem,
   type TableProColumn,
-  type TableProProps,
 } from '@tav-ui/components/table-pro'
 import { ProvinceCityOptions, ProvinceCityRecord, formatToDate, isObject } from '@tav-ui/utils'
-import { API__INVEST_COMPANY_LIST } from '@tav-ui/components/table-pro/src/data'
+import {
+  API__INVEST_COMPANY_DELETE,
+  API__INVEST_COMPANY_LIST,
+} from '@tav-ui/components/table-pro/src/data'
 // import { PageWrapper } from '/@/components/Page'
 
 export default defineComponent({
@@ -45,8 +80,41 @@ export default defineComponent({
     TaButton,
     TaTablePro,
     TaTableProAction,
+    TaPermissionQuery,
+    // TaPermissions,
+    TaTablePermissionDataQuery,
   },
   setup() {
+    const permissionsRef = ref()
+    const permissionQueryRef = ref()
+    const tablePermissionDataQueryRef = ref()
+    const test1ElRef = ref()
+    const test2ElRef = ref()
+    const testHtmlTagButtonShow = computed(() => {
+      const result = usePermissionMatchedByParent({
+        code: 'document_batch_d_check_warter',
+        ref: test2ElRef,
+      }).value
+      return result
+    })
+    const permissionQueryApiParams = ref({
+      code: 'PERMISSION_DEMO',
+      // "subCodes": []
+    })
+    const tablePermissionDataQueryApiParams = ref({
+      code: 'PERMISSION_DEMO:DATA_TABLE',
+      // "subCodes": [],
+      resource: '/demo/listPager',
+      body: {
+        filter: {},
+        model: {},
+      },
+      recordkeyName: 'id',
+    })
+    setTimeout(() => {
+      console.log('🚀 ~ setTimeout ~ permissionsRef:', permissionsRef)
+    }, 16.7 * 100)
+
     const tabsActive = { value: '0' }
     const typeEnums = {
       casSubjectNature: [
@@ -136,7 +204,7 @@ export default defineComponent({
     typeEnums.enumsIsTrueOrNot.map(({ value, label }) => {
       return IsTrueOrNotMap.set(value, label)
     })
-    const useTableFilter = (): FilterForms => {
+    const useTableFilter = (): any => {
       return {
         inputForm: {
           field: 'searchValue',
@@ -180,28 +248,28 @@ export default defineComponent({
           if (row[column.field]) {
             return createVNode(TaTableTags, { tags: '挖掘转化' })
           }
-          return ''
+          return '-'
         },
       },
       {
         title: '是否成立公司',
         field: 'incorporationOrNot',
         params: {
-          formatter: ({ cellValue }) => IsTrueOrNotMap.get(cellValue) || '-',
+          formatter: ({ cellValue }: any) => IsTrueOrNotMap.get(cellValue) || '-',
         },
       },
       {
         title: '企业最新负责人',
         field: 'principalName',
       },
-      {
-        title: '状态',
-        field: 'investmentStatus',
-        customRender: ({ row, column }) =>
-          row[column.field] < 3
-            ? { type: ['warn', 'info', 'danger'][row[column.field]] }
-            : { color: '#0008' },
-      },
+      // {
+      //   title: '状态',
+      //   field: 'investmentStatus',
+      //   customRender: ({ row }): any =>
+      //     row['investmentStatus'] < 3
+      //       ? { type: ['warn', 'info', 'danger'][row['investmentStatus']] }
+      //       : { color: '#0008' },
+      // },
       {
         title: '最早投资轮次',
         field: 'investDepartRoundsValue',
@@ -210,22 +278,22 @@ export default defineComponent({
         title: '是否涉密项目',
         field: 'isSecrecy',
         params: {
-          formatter({ row }) {
+          formatter({ row }: any) {
             const { isSecrecy } = row
             if (undefined === isSecrecy) return ''
             return IsTrueOrNotMap.get(isSecrecy) || ''
           },
         },
       },
-      {
-        title: '企业标签',
-        field: 'lableValue',
-        width: 300,
-        customRender: ({ row, column }) =>
-          createVNode(TaTableTags, {
-            tags: row[column.field]?.replace(/(null,)|(,null)|(null)/g, ``),
-          }),
-      },
+      // {
+      //   title: '企业标签',
+      //   field: 'lableValue',
+      //   width: 300,
+      //   customRender: ({ row, column }) =>
+      //     createVNode(TaTableTags, {
+      //       tags: row[column.field]?.replace(/(null,)|(,null)|(null)/g, ``),
+      //     }),
+      // },
       {
         title: '专精特新标签',
         field: 'specializedRefinedAndInnovativeLabel',
@@ -237,8 +305,10 @@ export default defineComponent({
       {
         title: '所在地',
         field: 'provinceLocation',
-        customRender: ({ row: { province, city, districts } }) => {
+        customRender: ({ row: { province, city, districts } }: any) => {
+          //@ts-ignore
           return `${ProvinceCityRecord[province] || ''}${ProvinceCityRecord[city] || ''}${
+            //@ts-ignore
             ProvinceCityRecord[districts] || ''
           }`
         },
@@ -263,8 +333,8 @@ export default defineComponent({
         title: '是否中科院项目',
         field: 'whetherCas',
         params: {
-          formatter({ row }) {
-            const record: ListPagerRowType = row
+          formatter({ row }: any) {
+            const record: any = row
             if (!record.companyInstitutesVo) return ''
             const { whetherCas } = record.companyInstitutesVo
             if (undefined === whetherCas) return ''
@@ -292,8 +362,8 @@ export default defineComponent({
         field: 'whetherCollege',
         visible: false,
         params: {
-          formatter({ row }) {
-            const record: ListPagerRowType = row
+          formatter({ row }: any) {
+            const record: any = row
             if (!record.companyInstitutesVo) return ''
             const { whetherCollege } = record.companyInstitutesVo
             if (undefined === whetherCollege) return ''
@@ -311,8 +381,8 @@ export default defineComponent({
         field: 'projectSourceValue',
         visible: false,
         params: {
-          formatter({ row }) {
-            const record: ListPagerRowType = row
+          formatter({ row }: any) {
+            const record: any = row
             if (!record.companyInspectInfomationVo) return ''
             const { projectSourceValue } = record.companyInspectInfomationVo
             if (undefined === projectSourceValue) return ''
@@ -387,7 +457,7 @@ export default defineComponent({
      * 贾旭鹏告知:
      * 与我相关"投资部助理"可以编辑所有,仅可删除(我创建的)
      */
-    const getThisButtons = (): TableProActionItem[] => {
+    const getThisButtons = (record: any): TableProActionItem[] => {
       return [
         {
           label: '编辑',
@@ -395,7 +465,18 @@ export default defineComponent({
         },
         {
           label: '删除',
-          enabled: true,
+          usePermission: {
+            code: 'FILTER_DELET_BUTTON',
+            // code: 'FILTER_DELET_BUTTON123',
+            ref: tableProRef,
+            row: record,
+          },
+          popConfirm: {
+            title: '是否确认删除?',
+            confirm: () => {
+              handleDelete([record.companyCode])
+            },
+          },
         },
         {
           label: '商务审批',
@@ -409,13 +490,13 @@ export default defineComponent({
 
     const filterFormConfig = useTableFilter()
 
-    const tableProps: TableProProps = {
-      api: ({ filter, model }) =>
+    const tableProps: any = {
+      api: ({ filter, model }: any) =>
         API__INVEST_COMPANY_LIST({
           filter,
           model,
         }),
-      beforeApi(opt) {
+      beforeApi(opt: any) {
         let { filter = {} } = opt
         isObject(filter) || (filter = {})
         if (filter.isXmwjRelat) {
@@ -423,7 +504,7 @@ export default defineComponent({
         }
         // #region 创建时间
         if (Reflect.has(filter, 'timeRange')) {
-          ;[filter.startTime, filter.endTime] = filter.timeRange.map((el) => formatToDate(el))
+          ;[filter.startTime, filter.endTime] = filter.timeRange.map((el: any) => formatToDate(el))
           if (filter.startTime && filter.endTime)
             [filter.startTime, filter.endTime] = [
               `${filter.startTime} 00:00:00`,
@@ -434,7 +515,7 @@ export default defineComponent({
         // #region 第一笔拨款时间
         if (Reflect.has(filter, 'allocationTimeRange')) {
           ;[filter.firstGrantStartDate, filter.firstGrantEndDate] = filter.allocationTimeRange.map(
-            (el) => formatToDate(el)
+            (el: any) => formatToDate(el)
           )
           if (filter.firstGrantStartDate && filter.firstGrantEndDate)
             [filter.firstGrantStartDate, filter.firstGrantEndDate] = [
@@ -470,7 +551,7 @@ export default defineComponent({
             Reflect.deleteProperty(filter, k)
           }
         }
-        // copyFilter = JSON.parse(JSON.stringify(opt))
+        console.log('🚀 ~ beforeApi ~ JSON:', JSON.parse(JSON.stringify(opt)))
         return opt
       },
       checkboxConfig: { enabled: false },
@@ -480,24 +561,52 @@ export default defineComponent({
         add: {
           permission: 'invest_company_add',
           handleAction() {
-            formProps.editId = 0
-            formProps.companyCode = ''
-            modalProps.title = '新增企业'
-            modalProps.destroyOnClose = false
-            openModal()
+            console.log('🚀 ~ handleAction ~ handleAction:', 'invest_company_add')
           },
         },
         // column: true,
         refresh: true,
       },
       pagerConfig: { pageSize: 30 },
+      apiPermissionParams: {
+        code: 'PERMISSION_TEST_1',
+        // "subCodes": []
+      },
+      apiPermissionDataParams: {
+        code: 'PERMISSION_DATA_FILTER_111',
+        // "subCodes": [],
+        requestUrl: '/company/information/listPager',
+        requestPayload: {
+          filter: {},
+          model: {},
+        },
+        fieldNames: {
+          id: 'id',
+        },
+      },
+    }
+
+    const handleDelete = (companyCodes: string[]) => {
+      API__INVEST_COMPANY_DELETE({ companyCodes }).then(() => {
+        reload()
+      })
     }
 
     onActivated(reload)
 
     return {
+      tableProRef,
       tableProps,
       getThisButtons,
+      permissionsRef,
+      permissionQueryRef,
+      tablePermissionDataQueryRef,
+      permissionQueryApiParams,
+      tablePermissionDataQueryApiParams,
+      test1ElRef,
+      test2ElRef,
+      testHtmlTagButtonShow,
+      usePermissionMatchedByParent,
     }
   },
 })

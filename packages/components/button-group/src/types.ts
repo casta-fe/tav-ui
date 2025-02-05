@@ -9,6 +9,12 @@ export interface ButtonGroupItem {
   badgeMax?: number
   disabled?: boolean
   permission?: string
+  permissionCode?: number
+  usePermission?: {
+    code: string
+    ref: any
+    row?: any
+  }
   loading?: boolean
 }
 

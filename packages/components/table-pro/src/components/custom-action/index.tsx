@@ -100,6 +100,7 @@ export default defineComponent({
         required: true,
         defaultValue: 'xlsx',
         componentProps: {
+          disabled: true,
           placeholder: tavI18n('Tav.tablePro.export.3p'),
           options: [
             {
@@ -176,8 +177,8 @@ export default defineComponent({
       state.filter = filter
     })
 
-    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
-
+    const getPermission = (data: any) => (isObject(data) ? data?.permission : undefined)
+    const getUsePermission = (data: any) => (isObject(data) ? data?.usePermission : undefined)
     // 统计按钮配置
     const handleStatistical = (e: Event) => {
       emit('triggerStatistical')
@@ -287,6 +288,11 @@ export default defineComponent({
     const [exportModalRegister, { openModal: exportModalOpen, closeModal: exportModalClose }] =
       useModal()
 
+    const exportModalLoading = ref(false)
+    function exportModalChangeLoading(loading: boolean) {
+      exportModalLoading.value = loading
+    }
+
     const exportModal = () => {
       const handleSubmit = async () => {
         let data: Record<string, any> = {}
@@ -299,11 +305,13 @@ export default defineComponent({
           errorFields = e.errorFields
           exportModalFormScrollToField(errorFields[0].name[0])
         } finally {
+          exportModalLoading.value = false
           // eslint-disable-next-line no-unsafe-finally
           return { data, errors: errorFields }
         }
       }
       const handleExport = async () => {
+        exportModalChangeLoading(true)
         const { data, errors } = await handleSubmit()
         if (errors.length === 0) {
           const _columns = props.tableRef?.value?.getTableColumn().collectColumn ?? []
@@ -362,31 +370,38 @@ export default defineComponent({
             fileStyles = props.config?.export.styles
           }
 
-          // console.log(data, _columns, columns)
-          props.tableRef?.value?.exportData({
-            filename: data.fileName,
-            sheetName: data.fileName,
-            type: data.fileType,
-            mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
-            modeType: data.fileDataType,
-            isHeader: true,
-            // isFooter: true,
-            isMerge: true,
-            isColgroup: true,
-            // message: true,
-            // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
-            // original: true,
-            columns,
-            backupColumns,
-            exportModalClose,
-            useStyle: true,
-            fileDescription,
-            fileStyles,
-            fileSeq: !!data.fileSeq,
-          } as any)
+          try {
+            await props.tableRef?.value?.exportData({
+              filename: data.fileName,
+              sheetName: data.fileName,
+              type: data.fileType,
+              mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
+              modeType: data.fileDataType,
+              isHeader: true,
+              // isFooter: true,
+              isMerge: true,
+              isColgroup: true,
+              // message: true,
+              // 虚拟滚动情况下，要么设置 fixedLineHeight 为 false，要么设置 original 为 true 否则导出有问题
+              // original: true,
+              columns,
+              backupColumns,
+              exportModalClose: () => {
+                exportModalChangeLoading(false)
+                exportModalClose()
+              },
+              useStyle: true,
+              fileDescription,
+              fileStyles,
+              fileSeq: !!data.fileSeq,
+            } as any)
 
-          // props.tableRef?.value?.loadColumn(backupColumns.value)
-          // exportModalClose()
+            // props.tableRef?.value?.loadColumn(backupColumns.value)
+            // exportModalClose()
+          } catch (error) {
+            console.warn(error)
+            exportModalChangeLoading(false)
+          }
         }
       }
 
@@ -398,6 +413,8 @@ export default defineComponent({
           wrapClassName={`${ComponentPrefixCls}-btn export-modal`}
           destroyOnClose={true}
           maskClosable={false}
+          loading={exportModalLoading.value}
+          confirmLoading={exportModalLoading.value}
           onVisible-change={(isOpen) => {
             if (!isOpen) {
               props.tableRef?.value?.loadColumn(backupColumns.value)
@@ -647,15 +664,14 @@ export default defineComponent({
         ])
         await nextTick()
         console.log(props.config)
-        const defaultFileName = isBoolean(props.config?.export)
-          ? ''
-          : props.config?.export?.fileName
-        // exportModalFormSetFieldsValue
+        const exportConfig = isBoolean(props.config?.export) ? null : props.config?.export
+        const defaultValue = exportConfig ? exportConfig.defaultValue : {}
         await exportModalFormSetFieldsValue(
           {
-            fileName: defaultFileName || '',
+            fileName: exportConfig ? exportConfig.fileName : '',
             fileContainFields: selectedKeys,
             fileDataType: _fileDataTypeDefaultValue,
+            ...defaultValue,
           },
           false
         )
@@ -678,6 +694,7 @@ export default defineComponent({
           permissionCode={
             isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
           }
+          usePermission={getUsePermission(props.config?.export)}
         >
           {tavI18n('Tav.common.exportText')}
         </Button>

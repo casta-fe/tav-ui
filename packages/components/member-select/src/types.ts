@@ -16,6 +16,7 @@ export interface UserItem {
   sex: number
   status: number
   disabled: boolean
+  ifShow: boolean
   userOrgs: UserOrgs[]
 }
 export interface Options extends UserItem {
@@ -84,9 +85,9 @@ export const memberSelectProps = {
   // 忽略用户列表
   ignoreUser: {
     type: Array,
-    default: [],
+    default: () => [],
   },
-  // 是否忽略已冻结用户
+  // 是否忽略已冻结用户 废弃
   ignoreFrozenUser: {
     type: Boolean,
     default: true,

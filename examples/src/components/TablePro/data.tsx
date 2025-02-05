@@ -141,27 +141,27 @@ export const columns1 = (): TableProColumn[] => {
                     console.log('edit')
                   },
                 },
-                {
-                  label: '测试1',
-                  onClick: () => {
-                    console.log('test 1')
-                  },
-                },
-                {
-                  label: '测试2',
-                  onClick: () => {
-                    console.log('test 2')
-                  },
-                },
-                {
-                  label: '删除',
-                  popConfirm: {
-                    title: '删除后将无法恢复，确定删除吗？',
-                    confirm: () => {
-                      console.log('del')
-                    },
-                  },
-                },
+                // {
+                //   label: '测试1',
+                //   onClick: () => {
+                //     console.log('test 1')
+                //   },
+                // },
+                // {
+                //   label: '测试2',
+                //   onClick: () => {
+                //     console.log('test 2')
+                //   },
+                // },
+                // {
+                //   label: '删除',
+                //   popConfirm: {
+                //     title: '删除后将无法恢复，确定删除吗？',
+                //     confirm: () => {
+                //       console.log('del')
+                //     },
+                //   },
+                // },
               ]}
             />,
           ]
@@ -568,14 +568,17 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
 
   return {
     inputForm: {
-      field: 'customerName',
-      componentProps: {
-        placeholder: '请输入客户名称',
-      },
+      // field: 'customerName',
+      // // component: 'InputSearch',
+      // componentProps: {
+      //   placeholder: '请输入客户名称',
+      // },
+
       // field: 'time',
       // component: 'DateInterval',
       // componentProps: {
-      //   defaultRange: 'lastYear',
+      //   // defaultRange: 'lastYear',
+      //   defaultRange: "",
       //   onChange: (v: any) => {
       //     console.log(v)
       //   },
@@ -583,6 +586,19 @@ export const filterForm2 = async (): Promise<TableProFilterForm> => {
       //     console.log(data, '=============')
       //   },
       // },
+
+      field: 'operator',
+      component: 'MemberSelect',
+      label: '',
+      valueType: 'number',
+      defaultValue: [],
+      componentProps: {
+        multiple: true,
+        maxTagCount: 2,
+        allowClear: true,
+        ignoreFrozenUser: false,
+        placeholder: '请选择操作人',
+      },
     },
     pannelForm: [
       // {

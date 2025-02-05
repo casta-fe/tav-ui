@@ -26,6 +26,14 @@
         visibility: visible;
       }
     }
+
+    &__content {
+      &--highlight {
+        .highlight-keyword {
+          background-color: #ff0;
+        }
+      }
+    }
   }
 
   &__content {
@@ -43,8 +51,19 @@
     margin-left: 4px;
     visibility: hidden;
   }
-}
 
-.basic-tree-header {
-  border-bottom: 1px solid @border-color-base;
+  &.inline-layout-level {
+    .ant-tree-list-holder-inner {
+      display: block !important;
+
+      .level---1 {
+        display: inline-flex !important;
+
+        .ant-tree-node-content-wrapper .ant-tree-title {
+          position: relative !important; 
+        }
+      }
+    }
+
+  }
 }

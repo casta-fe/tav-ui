@@ -1,6 +1,6 @@
-import { computed, defineComponent, ref, unref } from 'vue'
+import { computed, defineComponent, nextTick, ref, unref } from 'vue'
 import { Tooltip } from 'ant-design-vue'
-import Button from '@tav-ui/components/button'
+import TaButton from '@tav-ui/components/button'
 import { isObject } from '@tav-ui/utils/is'
 import { tavI18n } from '@tav-ui/locales'
 import {
@@ -9,6 +9,7 @@ import {
 } from '../../../const'
 import { useTableContext } from '../../../hooks/useTableContext'
 import ColumnSetting from './column'
+import CheckboxCache from './checkbox-cache'
 import type { PropType, Ref, Slots } from 'vue'
 import type { TableProInstance } from '../../../types'
 import type { CustomActionSettingColumn, TableProCustomActionConfig } from '../../../typings'
@@ -32,18 +33,9 @@ export default defineComponent({
   name: ComponentCustomActionName,
   props,
   setup(props, { expose }) {
-    const { tablePropsRef } = useTableContext()
+    const { tablePropsRef, isCheckboxCacheEnabled } = useTableContext()
     const columnRef = ref<CustomActionSettingColumn | null>(null)
-    const getPermission = (data) => (isObject(data) ? data?.permission : undefined)
-
-    // 刷新按钮配置
-    const handleRefresh = (e: Event) => {
-      if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
-        props.config?.refresh.handleAction(e)
-      // query 保留query状态刷新数据
-      // reload 清空状态回到第一页
-      unref(props.tableRef)?.commitProxy('query')
-    }
+    const getPermission = (data: any) => (isObject(data) ? data?.permission : undefined)
 
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
@@ -55,10 +47,25 @@ export default defineComponent({
       }
     })
 
+    // 刷新按钮配置
+    const handleRefresh = (e: Event) => {
+      if (isObject(props.config?.refresh) && props.config?.refresh.handleAction)
+        props.config?.refresh.handleAction(e)
+
+      if (unref(tablePropsRef).scrollTopActions.includes('refresh')) {
+        nextTick(() => {
+          unref(props.tableRef)?.scrollTo?.(0, 0)
+        })
+      }
+
+      // query 保留query状态刷新数据
+      // reload 清空状态回到第一页
+      unref(props.tableRef)?.commitProxy('query')
+    }
     const refreshButton = () =>
       props.config?.refresh ? (
         <Tooltip placement="bottom" title={tavI18n('Tav.common.redo')}>
-          <Button
+          <TaButton
             class={`${ComponentPrefixCls}-btn refresh`}
             type="text"
             preIcon={'material-symbols:refresh-rounded'}
@@ -78,9 +85,18 @@ export default defineComponent({
     })
 
     return () => {
-      const isSettingsShow = props.config?.refresh || props.config?.column
+      const isSettingsShow =
+        props.config?.refresh || props.config?.column || isCheckboxCacheEnabled.value
+
       return isSettingsShow ? (
         <div class={ComponentPrefixCls}>
+          {isCheckboxCacheEnabled.value ? (
+            <CheckboxCache
+              config={props.config}
+              tableRef={props.tableRef}
+              tableSlots={props.tableSlots}
+            />
+          ) : null}
           {refreshButton()}
           {!unref(hasTreeConfig) ? (
             <ColumnSetting

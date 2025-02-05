@@ -12,11 +12,13 @@
         <Tabs v-model:activeKey="tabActive">
           <TabPane v-if="!hideOrgTabs" key="0" :tab="tavI18n('Tav.member.1')">
             <template v-if="propsData.multiple">
-              <CheckboxGroup v-model:value="checkboxData">
+              <CheckboxGroup :value="checkboxData">
+                <!-- loaded-keys 为了解决loaddata会无限递归问题 -->
                 <Tree
-                  :tree-data="orgList"
+                  :tree-data="orgTree"
                   block-node
                   :expanded-keys="orgExpandedKeys"
+                  :loaded-keys="orgExpandedKeys"
                   :auto-expand-parent="autoExpandParent"
                   :selectable="false"
                   :load-data="getOrgUser"
@@ -25,8 +27,13 @@
                 >
                   <template #title="item">
                     <!-- ant的bug 如果没查到会把他转成isleaf，但是 组织我们有不让选的 -->
+                    <!-- {{ item.isLeaf }} == {{ item.leaf }} -->
                     <template v-if="item.isLeaf && !item.leaf">
-                      <Checkbox :value="item.userId" :disabled="item.disabled">
+                      <Checkbox
+                        :value="item.userId"
+                        :disabled="item.disabled"
+                        @change="treeCheckboxChange"
+                      >
                         <firstLetter :value="item" />{{ item.name }}
                         <template v-if="item.status === 0">
                           ({{ tavI18n('Tav.member.4') }})
@@ -41,7 +48,7 @@
             <template v-else>
               <RadioGroup v-model:value="radioData">
                 <Tree
-                  :tree-data="orgList"
+                  :tree-data="orgTree"
                   block-node
                   :expanded-keys="orgExpandedKeys"
                   :auto-expand-parent="autoExpandParent"
@@ -125,38 +132,46 @@
               </div>
             </div>
             <div v-else class="user-wrap">
-              <!-- {{ realUserList }} -->
-              <template v-if="propsData.multiple">
-                <CheckboxGroup v-model:value="checkboxData">
-                  <ul>
-                    <li v-for="v in realUserList" :key="v.id">
-                      <Checkbox :value="v.id" :disabled="v.disabled">
-                        <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
-                        <template v-if="repeatUserNames.includes(v.name)">
-                          <span>（{{ v.phone }}）</span>
-                        </template>
-                      </Checkbox>
-                      <p class="org-name">{{ getOrgName(v) }}</p>
-                    </li>
-                  </ul>
-                </CheckboxGroup>
+              <template v-if="realLength > 0">
+                <template v-if="propsData.multiple">
+                  <CheckboxGroup v-model:value="checkboxData">
+                    <ul>
+                      <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
+                        <Checkbox :value="user.id" :disabled="user.disabled">
+                          <firstLetter :value="user" />{{ user.name }}
+                          <template v-if="user.status === 0">
+                            ({{ tavI18n('Tav.member.4') }})
+                          </template>
+                          <template v-if="repeatUserNames.includes(user.name)">
+                            <span>（{{ user.phone }}）</span>
+                          </template>
+                        </Checkbox>
+                        <p class="org-name">{{ getOrgName(user) }}</p>
+                      </li>
+                    </ul>
+                  </CheckboxGroup>
+                </template>
+                <template v-else>
+                  <RadioGroup v-model:value="radioData">
+                    <ul>
+                      <li v-for="user in realUserList" v-show="user.ifShow" :key="user.id">
+                        <Radio :value="user.id" :disabled="user.disabled">
+                          <firstLetter :value="user" />{{ user.name }}
+                          <template v-if="user.status === 0">
+                            ({{ tavI18n('Tav.member.4') }})
+                          </template>
+                          <template v-if="repeatUserNames.includes(user.name)">
+                            <span>（{{ user.phone }}）</span>
+                          </template>
+                        </Radio>
+                        <p class="org-name">{{ getOrgName(user) }}</p>
+                      </li>
+                    </ul>
+                  </RadioGroup>
+                </template>
               </template>
               <template v-else>
-                <RadioGroup v-model:value="radioData">
-                  <ul>
-                    <li v-for="v in realUserList" :key="v.id">
-                      <Radio :value="v.id" :disabled="v.disabled">
-                        <firstLetter :value="v" />{{ v.name }}
-                        <template v-if="v.status === 0"> ({{ tavI18n('Tav.member.4') }}) </template>
-                        <template v-if="repeatUserNames.includes(v.name)">
-                          <span>（{{ v.phone }}）</span>
-                        </template>
-                      </Radio>
-                      <p class="org-name">{{ getOrgName(v) }}</p>
-                    </li>
-                  </ul>
-                </RadioGroup>
+                <Empty description="没有找到结果" :image="simpleImage" />
               </template>
             </div>
           </TabPane>
@@ -188,6 +203,7 @@ import { computed, defineComponent, inject, onMounted, reactive, ref, toRefs, wa
 import {
   Checkbox,
   CheckboxGroup,
+  Empty,
   FormItemRest,
   Input,
   Radio,
@@ -198,7 +214,7 @@ import {
 } from 'ant-design-vue'
 import pinyin from 'js-pinyin'
 import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons-vue'
-import { countBy, pickBy, sortBy } from 'lodash-es'
+import { countBy, pickBy, pull, sortBy } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
@@ -217,6 +233,7 @@ export default defineComponent({
     Checkbox,
     RadioGroup,
     Radio,
+    Empty,
     FirstLetter,
     FormItemRest,
     SearchOutlined,
@@ -233,6 +250,7 @@ export default defineComponent({
     const propsData = inject('propsData') as any
     const userList = inject('userList') as any
     const orgList = inject('orgList') as any
+    const orgTree = ref<any[]>([])
     const state = reactive({
       fieldNames: {
         title: 'name',
@@ -250,21 +268,31 @@ export default defineComponent({
       activeLetter: '', //当前选中的字母
     })
     const repeatUserNames = ref<string[]>([])
-    const realUserList = computed(() => {
-      return userList.value.filter(
-        (v: UserItem) => v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
-      )
+    const realUserList = computed((): UserItem[] => {
+      // 由于checkbox里面数据少了会清之前选中的数据，导致重复筛选后之前的用户丢失 所以用display控制
+      return userList.value.map((v: UserItem) => {
+        v.ifShow = v.name.includes(state.keyword) || v.fullCharts.includes(state.keyword)
+        return v
+      })
     })
+    const realLength = computed(() => realUserList.value.filter((v) => v.ifShow).length)
     // 多选时候右侧展示的列表
     const tagList = computed((): any[] => {
-      return userList.value.filter((item: any) => state.checkboxData.some((v) => v === item.id))
+      const list: UserItem[] = []
+      state.checkboxData.forEach((userId) => {
+        const item = userList.value.find((user: UserItem) => userId === user.id)
+        if (item) {
+          list.push(item)
+        }
+      })
+      return list
     })
     // 是否显示组织的tab,如果传入了options 就不显示org？这个很奇怪 不过先留着
     const hideOrgTabs = computed(() => {
       return propsData.value.noOrg || !!propsData.value.options
     })
     // 移除已选中的用户
-    const removeTag = (id): void => {
+    const removeTag = (id: number): void => {
       const data = state.checkboxData
       const index = data.findIndex((v) => v == id)
       data.splice(index, 1)
@@ -288,11 +316,7 @@ export default defineComponent({
         const upperChart = chart.toUpperCase()
         // 如果列表中有了就往他的list中插入
         Reflect.has(v, 'disabled') ||
-          (v.disabled = propsData.value.useDisabledUser
-            ? false
-            : propsData.value.ignoreFrozenUser
-            ? v.status === 0
-            : false)
+          (v.disabled = propsData.value.useDisabledUser ? false : v.status === 0)
         const item = list.find((v) => v.key === upperChart)
         if (item) {
           item.list.push(v)
@@ -326,10 +350,11 @@ export default defineComponent({
     // 部门树加载用户
     const getOrgUser = (treeNode: any) => {
       return new Promise((resolve) => {
-        const oldData = [...treeNode.dataRef.children]
-        if (oldData.length == 0) {
-          console.log('empty')
-        }
+        const oldData = treeNode.dataRef.children
+        // if (oldData.length == 0) {
+        //   resolve(null)
+        //   return
+        // }
         const children = userList.value
           .filter((v: any) => v.userOrgs?.some((v: any) => v.organizationId == treeNode.id))
           .map((user: any) => {
@@ -339,10 +364,13 @@ export default defineComponent({
             obj.userId = user.id
             obj.id = `name-${user.id}`
             // 忽略列表中的用户需要禁止选中
-            obj.disabled = propsData.value.ignoreUser.includes(user.userId) || user.status === 0
+            obj.disabled = propsData.useDisabledUser
+              ? false
+              : propsData.value.ignoreUser.includes(user.userId) || user.status === 0
             return obj
           })
         treeNode.dataRef.children = deWeightThree([...oldData, ...children])
+        orgTree.value = [...orgTree.value]
         resolve(null)
       })
     }
@@ -358,17 +386,10 @@ export default defineComponent({
     }
     const openFirstOrg = () => {
       // 默认打开第一个节点，并获取他下面的用户
-      const firstOrg = orgList.value[0]
       // 如果当前打开的就是第一个就不执行后面的
-      if (firstOrg && state.orgExpandedKeys.length == 0) {
-        state.orgExpandedKeys = [firstOrg.id]
-        const children = userList.value
-          .filter((v: any) => v.userOrgs?.some((v) => v.organizationId == firstOrg.id))
-          .map((v: any) => {
-            v.isLeaf = true
-            return v
-          })
-        firstOrg.children = [...firstOrg.children, ...children]
+      if (orgTree.value.length === 0) {
+        console.log(orgList)
+        orgTree.value = orgList?.value[0].children || []
       }
     }
     // 监听滚动 设置当前选中的字母
@@ -401,6 +422,17 @@ export default defineComponent({
     }
     const getOrgName = (user: UserItem) => {
       return user.userOrgs?.map((v) => v.organizationName).join('，')
+    }
+    const treeCheckboxChange = ({ target }) => {
+      if (!target) {
+        return
+      }
+      const { checked, value } = target
+      if (checked) {
+        state.checkboxData.push(value)
+      } else {
+        pull(state.checkboxData, value)
+      }
     }
     watch(
       () => state.checkboxData,
@@ -459,14 +491,17 @@ export default defineComponent({
       hideOrgTabs,
       propsData,
       userList,
-      orgList,
+      orgTree,
       tagList,
       realUserList,
+      realLength,
       getOrgUser,
       removeTag,
       clearTag,
       onExpand,
       letterClick,
+      treeCheckboxChange,
+      simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
     }
   },
 })

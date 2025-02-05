@@ -169,6 +169,7 @@ export interface FormSchema {
 
   // Validation rules
   rules?: Rule[]
+  ignoreDefaultRule?: boolean //是否加默认校验，目前就给inputNumber和inputNumberRange加了
   // Check whether the information is added to the label
   rulesMessageJoinLabel?: boolean
 

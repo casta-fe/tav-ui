@@ -3,6 +3,7 @@ import { computed, defineComponent, unref } from 'vue'
 import { Button } from 'ant-design-vue'
 import { useAttrs } from '@tav-ui/hooks/core/useAttrs'
 import Icon from '@tav-ui/components/icon'
+import { usePermissionMatchedByParent } from '@tav-ui/components/permission'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { isUnDef } from '@tav-ui/utils'
 import { buttonProps } from './types'
@@ -29,19 +30,29 @@ export default defineComponent({
     // get inherit binding value
     const getBindValue = computed(() => ({ ...unref(attrs), ...props }))
 
-    const IfShow = computed(() => (code) => {
+    const IfShow = computed(() => (code: any) => {
       const permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
       const PermissionFlag = isUnDef(code) ? true : unref(permissions)[code]?.ifShow
       const PermisionCodeFlag = isUnDef(props.permissionCode) ? true : props.permissionCode === 1
       return PermissionFlag && PermisionCodeFlag && props.ifShow
     })
-    return { getButtonClass, getBindValue, IfShow }
+
+    const computedUsePermission = computed(() => {
+      if (props.usePermission) {
+        return usePermissionMatchedByParent({
+          ...props.usePermission,
+        }).value
+      }
+      return true
+    })
+
+    return { getButtonClass, getBindValue, IfShow, computedUsePermission }
   },
 })
 </script>
 <template>
   <Button
-    v-show="IfShow(permission)"
+    v-show="computedUsePermission && IfShow(permission)"
     v-bind="getBindValue"
     :class="getButtonClass"
     class="ta-basic-button"

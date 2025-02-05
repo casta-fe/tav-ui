@@ -762,7 +762,7 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
       if (showMsg && modal) {
         modal.close(msgKey)
         // modal.message({ content: t('vxe.table.expSuccess'), status: 'success' })
-        createMessage.success(t('vxe.table.expSuccess'))
+        // createMessage.success(t('vxe.table.expSuccess'))
       }
       $table.loadColumn(backupColumns.value)
       exportModalClose()
@@ -776,7 +776,7 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     //   duration: -1,
     // })
     // setTimeout(exportMethod, 1500)
-    createMessage.loading(t('vxe.table.expLoading'), 2).then(
+    createMessage.loading(tavI18n('Tav.tablePro.export.6'), 2).then(
       () => exportMethod(),
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {}

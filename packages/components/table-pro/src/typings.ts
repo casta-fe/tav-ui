@@ -1,5 +1,5 @@
 import type { FormSchema } from '@tav-ui/components/form/src/types/form'
-import type { ButtonProps } from 'ant-design-vue/es/button/buttonTypes'
+import type { ButtonProps } from '@tav-ui/components/button/src/types'
 import type { TooltipProps } from 'ant-design-vue/es/tooltip/Tooltip'
 import type { CSSProperties, ComputedRef, Ref } from 'vue'
 import type { VxeGridPropTypes } from 'vxe-table'
@@ -22,11 +22,16 @@ export interface TableProFilterFormConfig extends TableProFilterForm {
 interface CustomAction {
   permission?: string
   permissionCode?: number
+  usePermission?: {
+    code: string
+    ref: any
+    row?: any
+  }
   handleBeforeAction?: (e: Event) => void
   handleAction?: (e: Event) => void
   handleAfterAction?: (e: Event) => void
 }
-
+type defaultValueKey = 'fileName' | 'fileSeq' | 'fileType' | 'fileContainFields'
 export interface TableProCustomActionConfig {
   enabled?: boolean
   add?: CustomAction | boolean
@@ -36,7 +41,7 @@ export interface TableProCustomActionConfig {
     | (CustomAction & {
         fileName?: string
         /** 这里是对数据中全量字段进行配置，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
-        columns: {
+        columns?: {
           field: string
           title?: string
           minWidth?: number
@@ -45,6 +50,7 @@ export interface TableProCustomActionConfig {
           // columnFormat?: (...args: any[]) => any
           cellFormat?: (...args: any[]) => any
         }[]
+        defaultValue: Partial<Record<defaultValueKey, any>>
         /** color 相关的格式必须为 argb，即 #212121 => 212121 */
         styles?: {
           headerHeight?: number
@@ -72,6 +78,7 @@ export interface TableProCustomActionConfig {
   refresh?: CustomAction | boolean
   column?: CustomAction | boolean
   statistical?: CustomAction | boolean
+  checkboxCache?: CustomAction | boolean
 }
 
 export type VxeQueryParams = VxeGridPropTypes.ProxyAjaxQueryParams

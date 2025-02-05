@@ -13,7 +13,6 @@ import { TaCountDown, TaCountDownButton } from '@tav-ui/components/count-down'
 import { TaCountTo } from '@tav-ui/components/count-to'
 import { TaDrawer } from '@tav-ui/components/drawer'
 import { TaDropdown } from '@tav-ui/components/dropdown'
-import { TaFileView } from '@tav-ui/components/file-view'
 import { TaFollow } from '@tav-ui/components/follow'
 import { ApiSelect, RadioButtonGroup, TaForm } from '@tav-ui/components/form'
 import { TaIcon } from '@tav-ui/components/icon'
@@ -38,6 +37,29 @@ import { TaVerify, TaVerifyRotate } from '@tav-ui/components/verify'
 import { TaVirtualScroll } from '@tav-ui/components/virtual-scroll'
 import { TaCountButton } from '@tav-ui/components/count-button'
 import { TaCascadeProSelect } from '@tav-ui/components/cascade-pro'
+import { TaFileView } from '@tav-ui/components/file-view'
+import {
+  TaFile,
+  TaFileActionUpload,
+  TaFileActionUploadLink,
+  TaFileCard,
+  TaFileCards,
+  TaFileLog,
+  TaFilePreview,
+  TaFileTable,
+  TaFileTypeSelect,
+  TaFileUpload,
+  TaFileUploadPreview,
+  TaFileVersion,
+} from '@tav-ui/components/file'
+import { TaEditor } from '@tav-ui/components/editor'
+import {
+  TaPermissionDataQuery,
+  TaPermissionFragment,
+  TaPermissionQuery,
+  TaPermissions,
+  TaTablePermissionDataQuery,
+} from '@tav-ui/components/permission'
 
 import type { Plugin } from 'vue'
 
@@ -58,7 +80,6 @@ export default [
   TaCountTo,
   TaDrawer,
   TaDropdown,
-  TaFileView,
   TaFollow,
   TaForm,
   ApiSelect,
@@ -88,4 +109,23 @@ export default [
   TaVirtualScroll,
   TaCountButton,
   TaCascadeProSelect,
+  TaFileView,
+  TaFile,
+  TaFileTypeSelect,
+  TaFileActionUpload,
+  TaFileActionUploadLink,
+  TaFileTable,
+  TaFileVersion,
+  TaFilePreview,
+  TaFileLog,
+  TaFileCards,
+  TaFileCard,
+  TaFileUpload,
+  TaFileUploadPreview,
+  TaEditor,
+  TaPermissionFragment,
+  TaPermissions,
+  TaPermissionQuery,
+  TaPermissionDataQuery,
+  TaTablePermissionDataQuery,
 ] as Plugin[]

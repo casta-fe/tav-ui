@@ -20,7 +20,7 @@ export function useCanvasCalcContent() {
     if (ctx) {
       ctx.font = font
       const { width = 0 } = ctx.measureText(content)
-      return Math.ceil(width)
+      return Math.ceil(width) + 0.5 // 补 0.5 避免文字尾部截断
     }
     return 0
   }
@@ -86,7 +86,9 @@ export function useColumnActionAutoWidth(
     }, 0)
   }
 
-  const handledActions = JSON.parse(JSON.stringify(actions))
+  // 只保留计算宽度时用到的属性其他属性删除
+  const actionsDefault = actions.map((action) => ({ label: action.label }))
+  const handledActions = JSON.parse(JSON.stringify(actionsDefault))
 
   if (handledActions.length <= labelMaxLength) {
     const total = getTotal(handledActions)

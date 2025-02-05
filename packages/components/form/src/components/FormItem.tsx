@@ -1,18 +1,8 @@
 /* eslint-disable dot-notation */
-import {
-  computed,
-  defineComponent,
-  h,
-  nextTick,
-  ref,
-  toRefs,
-  unref,
-  watch,
-  withDirectives,
-} from 'vue'
+import { computed, defineComponent, h, ref, toRefs, unref, watch, withDirectives } from 'vue'
 import { EditOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { Col, Divider, Form } from 'ant-design-vue'
-import { cloneDeep, uniqBy, upperFirst } from 'lodash-es'
+import { cloneDeep, debounce, uniqBy, upperFirst } from 'lodash-es'
 import dayjs from 'dayjs'
 import AutoFocusDirective from '@tav-ui/directives/src/autoFocus'
 import clickOutside from '@tav-ui/directives/src/clickOutside'
@@ -48,11 +38,11 @@ import type { PropType, Ref } from 'vue'
 import type { RuleType, RuleObject as ValidationRule } from 'ant-design-vue/lib/form/interface'
 import type { TableActionType } from '@tav-ui/components/table/src/types/table'
 import type { FormActionType, FormProps, FormSchema } from '../types/form'
+import type { LabelValueOption } from '@tav-ui/components/upload/src/types'
 
 type Recordable<T = any> = Record<string, T>
 type Nullable<T> = T | null
 
-const NUMBER_MAX = 9999999999
 export default defineComponent({
   name: 'BasicFormItem',
   directives: {
@@ -99,38 +89,50 @@ export default defineComponent({
       () => props.formModel[props.schema.field] || props.schema.defaultValue
     )
     //为了手动输入的时候不让改加的变量
-    const canUpdatePrecision = ref(true)
-    const numberPrecision = ref(2)
     const editableItemValue = ref<any>(itemValue.value) // 默认值
     const hasEditable = computed(() => !!props.formProps.editable)
     const isEditableItemClicked = ref<boolean>(false) // 控制显示/隐藏
     const itemRef = ref<HTMLElement | null>(null) // 弹窗插入点
     const AntItemRef = ref<FormProps | null>(null)
-    /** 函数处理 */
-    const componentProps = computed((): any => {
-      let componentProps = props.schema.componentProps
-      if (isFunction(props.schema.componentProps)) {
-        const { schema, tableAction, formModel, formActionType } = props
-        componentProps =
-          props.schema.componentProps!({
-            schema,
-            // @ts-ignore
-            tableAction,
-            formModel,
-            // @ts-ignore
-            formActionType,
-          }) ?? {}
+
+    const getComponentsProps = computed(() => {
+      const { schema, tableAction, formModel, formActionType } = props
+      let { componentProps = {} } = schema
+      if (isFunction(componentProps))
+        componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {}
+
+      if (schema.component === 'Divider') {
+        componentProps = Object.assign({ type: 'horizontal' }, componentProps, {
+          orientation: 'left',
+          plain: true,
+        })
       }
-      return componentProps ?? {}
+
+      if (schema.component === 'Select') {
+        componentProps = Object.assign(
+          {
+            showSearch: true,
+            filterOption: true,
+            optionFilterProp: 'label',
+          },
+          componentProps
+        )
+      }
+      if (schema.component === 'InputNumber') {
+        componentProps = Object.assign(
+          {
+            stringMode: true,
+          },
+          componentProps
+        )
+      }
+
+      return componentProps as Recordable
     })
 
     watch(
       () => props.formModel[props.schema.field],
       (newVal, oldVal) => {
-        if (newVal !== oldVal) {
-          getFormItemPrecision(newVal)
-          // debounce(getFormItemPrecision.bind(null, newVal, false), DebounceDely)()
-        }
         if (!unref(hasEditable)) {
           return
         }
@@ -176,7 +178,7 @@ export default defineComponent({
     )
     // 修改editable updateschema在 setFieldsValue之前调用，文本更新异常的问题
     watch(
-      () => (unref(componentProps) as any)?.options,
+      () => (unref(getComponentsProps) as any)?.options,
       () => {
         if (!unref(hasEditable)) {
           return
@@ -184,20 +186,14 @@ export default defineComponent({
         setEditableFormItemValue(props.schema, itemValue.value)
       }
     )
-    function setEditableFormItemValue(schema, _value) {
+    function setEditableFormItemValue(schema: any, _value: any) {
       const value = unref(_value)
-      let { componentProps = {} } = schema
-      if (isFunction(componentProps)) {
-        const { schema: propsSchema, tableAction, formModel, formActionType } = props
-        componentProps =
-          componentProps({ schema: propsSchema, tableAction, formModel, formActionType }) ?? {}
-      }
-
+      const componentProps = unref(getComponentsProps)
       if (isString(value)) {
         // select 要回显 label
         if (editableComponentSelectTypeMap.has(schema.component)) {
           const target = componentProps?.options?.find(
-            (option) => option.value === value || option.label === value
+            (option: LabelValueOption) => option.value === value || option.label === value
           )
           editableItemValue.value = target ? target.label : '-'
         } else if (editableComponentTimeTypeMap.has(schema.component)) {
@@ -305,21 +301,21 @@ export default defineComponent({
       if (unref(hasEditable) && props.schema.component) {
         const isMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          unref(componentProps) &&
-          ((unref(componentProps) as any).mode === 'multiple' ||
-            (unref(componentProps) as any).mode === 'tags')
+          unref(getComponentsProps) &&
+          ((unref(getComponentsProps) as any).mode === 'multiple' ||
+            (unref(getComponentsProps) as any).mode === 'tags')
         const isCheckTypeGroup =
           editableComponentChecksTypeMap.has(props.schema.component) &&
           props.schema.component.includes('Group')
         const isTimePicker = props.schema.component === 'TimePicker'
         const isRangePickerHasTimePicker =
           props.schema.component === 'RangePicker' &&
-          unref(componentProps) &&
-          (unref(componentProps) as any).showTime
+          unref(getComponentsProps) &&
+          (unref(getComponentsProps) as any).showTime
         const isOpenMultipleSelect =
           editableComponentSelectTypeMap.has(props.schema.component) &&
-          unref(componentProps) &&
-          (unref(componentProps) as any).multiple === true
+          unref(getComponentsProps) &&
+          (unref(getComponentsProps) as any).multiple === true
 
         // 给 rangepicker右下角的确定按钮开启后门
         if (go) {
@@ -353,18 +349,6 @@ export default defineComponent({
       }
       if (schema.required) {
         const schemaValue = props.formModel[schema.field]
-        //  添加针对0的兼容 by hyb
-        // eslint-disable-next-line eqeqeq
-        // if (schema.component == 'InputNumber') {
-        //   if (!isNullOrUnDef(schemaValue)) hide()
-        // } else {
-        //   if (!isNullOrUnDef(schemaValue)) {
-        //     hide()
-        //   } else {
-        //     // 必填项此时无值不能隐藏表单项
-        //     // 这里最好手动调一下表单项的校验，难点在于怎么抓到失去焦点的时机，因为 async-validator 默认时机是 change blur？
-        //   }
-        // }
         if (!isNullOrUnDef(schemaValue)) hide()
       } else {
         hide()
@@ -372,6 +356,7 @@ export default defineComponent({
     }
 
     function handleClickOutside() {
+      if (!unref(hasEditable)) return
       // 处理普通组件，如 input 等
       showEditableDom(editableTriggeClickoutsideToCloseComponentMap, props.schema)
     }
@@ -392,33 +377,6 @@ export default defineComponent({
         schema,
         formActionType: props.formActionType,
       }
-    })
-
-    const getComponentsProps = computed(() => {
-      const { schema, tableAction, formModel, formActionType } = props
-      let { componentProps = {} } = schema
-      if (isFunction(componentProps))
-        componentProps = componentProps({ schema, tableAction, formModel, formActionType }) ?? {}
-
-      if (schema.component === 'Divider') {
-        componentProps = Object.assign({ type: 'horizontal' }, componentProps, {
-          orientation: 'left',
-          plain: true,
-        })
-      }
-
-      if (schema.component === 'Select') {
-        componentProps = Object.assign(
-          {
-            showSearch: true,
-            filterOption: true,
-            optionFilterProp: 'label',
-          },
-          componentProps
-        )
-      }
-
-      return componentProps as Recordable
     })
 
     const getDisable = computed(() => {
@@ -459,7 +417,51 @@ export default defineComponent({
       isShow = isShow && itemIsAdvanced
       return { isShow, isIfShow }
     }
-
+    // 处理动态校验和普通校验针对InputNumber加公共校验
+    function ruleCommonHandle(originRules: ValidationRule[]): ValidationRule[] {
+      const rules = cloneDeep(originRules)
+      const { label, component, ignoreDefaultRule } = schema.value
+      const defaultRule = (value: any) => {
+        if (isNullOrUnDef(value)) return Promise.resolve()
+        const regex = /^-?\d{1,8}(\.\d{1,6})?$/
+        if (value < 0) {
+          return Promise.reject(`${label}必须大于0`)
+        }
+        if (!regex.test(value)) {
+          return Promise.reject(`${label}值整数位不能大于8位,小数位不能大于6位`)
+        }
+        return Promise.resolve()
+      }
+      if (ignoreDefaultRule !== true) {
+        if (component === 'InputNumber') {
+          rules.push({
+            validator: (_, value) => {
+              console.log(value)
+              return defaultRule(value)
+            },
+          })
+        }
+        if (component === 'InputNumberRange') {
+          rules.push({
+            validator: (_, value) => {
+              if (value && value[0] && value[1]) {
+                if (value[0] > value[1]) {
+                  return Promise.reject(`${label}的最小值必须大于最大值`)
+                }
+              }
+              if (Array.isArray(value)) {
+                // 对数组中的每个值调用 defaultRule
+                const promises = value.map((val) => defaultRule(val))
+                return Promise.all(promises) as any
+              }
+              // 如果不是数组，直接调用 defaultRule
+              return defaultRule(value)
+            },
+          })
+        }
+      }
+      return rules
+    }
     function handleRules(): ValidationRule[] {
       const {
         rules: defRules = [],
@@ -471,10 +473,12 @@ export default defineComponent({
         required,
       } = props.schema
 
-      if (isFunction(dynamicRules)) return dynamicRules(unref(getValues)) as ValidationRule[]
+      if (isFunction(dynamicRules)) {
+        const rules = dynamicRules(unref(getValues)) as ValidationRule[]
+        return ruleCommonHandle(rules)
+      }
 
       let rules: ValidationRule[] = cloneDeep(defRules) as ValidationRule[]
-
       const joinLabel = Reflect.has(props.schema, 'rulesMessageJoinLabel')
         ? rulesMessageJoinLabel
         : props.formProps['rulesMessageJoinLabel']
@@ -547,53 +551,7 @@ export default defineComponent({
           rules[characterInx].message ||
           '字符数应小于{0}位'.replace('{0}', `${rules[characterInx].max}`)
       }
-      return rules
-    }
-    // 理论不用传，但是watch监听里面某些情况下，取getComponentProps是undefined，所以还是传过来别删
-    function getRealInputValue(value: number | undefined, precision: number, componentsProps: any) {
-      const max = componentsProps?.max ?? NUMBER_MAX
-      const min = componentsProps?.min ?? 0
-      if (isNullOrUnDef(value)) {
-        return value
-      } else {
-        if (Number(value) > max) {
-          return max
-        }
-        if (Number(value) < min) {
-          return min
-        }
-        return Number(Number(value).toFixed(precision))
-      }
-    }
-    // 获取数字类型数据精度 最小为2最大为6
-    function getFormItemPrecision(value: number | undefined) {
-      const { schema, tableAction, formModel, formActionType } = props
-      const { componentProps = {}, component, field } = schema
-      const realcomponentProps = isFunction(componentProps)
-        ? componentProps({ schema, tableAction, formModel, formActionType })
-        : componentProps
-      if (
-        component !== 'InputNumber' ||
-        value === undefined ||
-        !unref(canUpdatePrecision) ||
-        realcomponentProps['noAutoPrecision']
-      ) {
-        return
-      }
-      let precision = 0
-      if (!isNullOrUnDef(value)) {
-        const newValDecimal = String(value).split('.')[1]
-        if (!newValDecimal || newValDecimal.length <= 2) {
-          precision = 2
-        } else if (newValDecimal.length >= 6) {
-          precision = 6
-        } else {
-          precision = newValDecimal.length
-        }
-      }
-
-      numberPrecision.value = precision
-      props.setFormModel(field, getRealInputValue(value, precision, realcomponentProps))
+      return ruleCommonHandle(rules)
     }
     const showNumberToChinese = () => {
       const { component } = props.schema
@@ -610,7 +568,6 @@ export default defineComponent({
         undefined
       )
     }
-
     function renderComponent() {
       const {
         renderComponentContent,
@@ -623,55 +580,26 @@ export default defineComponent({
       const isCheck = component && ['Switch', 'Checkbox'].includes(component)
 
       const eventKey = `on${upperFirst(changeEvent)}`
-      const focusKey = 'onFocus'
-      const blurKey = 'onBlur'
       const on = {
         [eventKey]: (...args: Nullable<Recordable>[]) => {
           const [e] = args
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          if (propsData[eventKey]) {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            propsData[eventKey](...args)
-          }
           const target = e ? e.target : null
           const value = target ? (isCheck ? target.checked : target.value) : e
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          if (propsData[eventKey]) {
+            if (component === 'InputNumber') {
+              propsData[eventKey](Number(args[0]))
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-use-before-define
+              propsData[eventKey](...args)
+            }
+          }
           props.setFormModel(field, value)
+
           // ::==================== i7eo：添加 ///// start ///// ====================:: //
           handleOnChange()
           // ::==================== i7eo：添加 ///// end   ///// ====================:: //
         },
-      }
-      if (component === 'InputNumber') {
-        on[focusKey] = (...args: Nullable<Recordable>[]) => {
-          canUpdatePrecision.value = false
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          if (propsData[focusKey]) {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            propsData[focusKey](...args)
-          }
-        }
-        on[blurKey] = (...args: Nullable<Recordable>[]) => {
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          if (propsData[blurKey]) {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            propsData[blurKey](...args)
-          }
-          // 针对InputNumber精度问题兼容
-          if (component === 'InputNumber' && itemRef.value) {
-            const inputEle = itemRef.value.querySelector('input')
-            if (inputEle) {
-              const inputVal = inputEle.value.match(/\d+(?![\d\s])/g)?.join('.')
-              const value = inputVal ? Number(inputVal) : undefined
-              setTimeout(() => {
-                canUpdatePrecision.value = true
-                getFormItemPrecision(value)
-                nextTick(() => {
-                  props.setFormModel(field, value)
-                })
-              }, 10)
-            }
-          }
-        }
       }
       const Comp = component && (componentMap.get(component) as ReturnType<typeof defineComponent>)
       const size = props.formProps['size']
@@ -716,12 +644,6 @@ export default defineComponent({
           compAttr.maxlength = (unref(getComponentsProps) as any)?.maxLength ?? 32
         }
       }
-      if (component === 'InputNumber') {
-        compAttr.max = unref(getComponentsProps)?.max ?? NUMBER_MAX
-        compAttr.min = (unref(getComponentsProps) as any)?.min ?? 0
-        compAttr.precision = unref(getComponentsProps)?.precision ?? unref(numberPrecision)
-      }
-
       if (unref(hasEditable)) {
         if (component && editableComponentSelectTypeMap.has(component)) {
           compAttr.autofocus = true
@@ -819,24 +741,19 @@ export default defineComponent({
         const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix
 
         // ::==================== i7eo：更新 ///// start ///// ====================:: //
-        const createItem = () =>
-          unref(hasEditable) ? (
+        const createItem = () => (
+          <>
             <div
               ref={itemRef}
               v-click-outside={handleClickOutside}
               style="flex: 1;  max-width:100%; position: relative;"
             >
               {getContent()}
-              {showSuffix && <span class="suffix">{getSuffix}</span>}
             </div>
-          ) : (
-            <>
-              <div ref={itemRef} style="flex:1; max-width:100%">
-                {getContent()}
-              </div>
-              {showSuffix && <span class="suffix">{getSuffix}</span>}
-            </>
-          )
+            {showSuffix && <span class="suffix">{getSuffix}</span>}
+          </>
+        )
+
         const getEditableFormContent = () => {
           // return <div>{editableItemValue.value}</div>;
           // 暂时不强制格式化到6位
@@ -844,24 +761,25 @@ export default defineComponent({
             return getSlot(slots, editSlot, unref(getValues))
           }
           let realContent = editableItemValue.value
-          if (
-            props.schema.component === 'InputNumber' &&
-            typeof editableItemValue.value == 'number'
-          ) {
-            if (unref(componentProps)) {
-              const precision = unref(getComponentsProps)?.precision ?? unref(numberPrecision)
-              const value = isNullOrUnDef(precision)
-                ? editableItemValue.value
-                : editableItemValue.value.toFixed(precision)
-              realContent = value
-            }
-          }
-          const inputFormatter = unref(componentProps)['formatter']
+          const inputFormatter = unref(getComponentsProps)['formatter']
           if (inputFormatter && realContent !== '-') {
             // 处理 inputNumber formatter
             realContent = inputFormatter(realContent)
           }
-          return <>{realContent}</>
+          // 这里为了处理空数据时候展示符号很奇怪所以做个判断
+          return (
+            <>
+              {realContent !== '-' ? (
+                <>
+                  {unref(getComponentsProps)?.addonBefore}
+                  {realContent}
+                  {unref(getComponentsProps)?.addonAfter}
+                </>
+              ) : (
+                realContent
+              )}
+            </>
+          )
         }
         const getEditableFormItemClass = () => {
           let className = unref(getDisable) ? 'ta-form-item__cell disabled' : 'ta-form-item__cell'
@@ -875,6 +793,7 @@ export default defineComponent({
             <div
               class={getEditableFormItemClass()}
               title={editableItemValue.value}
+              style="flex: 1;  max-width:100%; position: relative;"
               onClick={() => {
                 if (!unref(getDisable)) {
                   isEditableItemClicked.value = true
@@ -886,7 +805,6 @@ export default defineComponent({
               }}
             >
               {getEditableFormContent()}
-
               {!unref(getDisable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />
               ) : (
@@ -929,7 +847,7 @@ export default defineComponent({
             labelCol={labelCol}
             wrapperCol={wrapperCol}
           >
-            <div>{renderFormItem()}</div>
+            <div style="display: flex">{renderFormItem()}</div>
           </Form.Item>
         )
         // ::==================== i7eo：更新 ///// end   ///// ====================:: //

@@ -27,7 +27,7 @@ export default defineComponent({
     const sizeHeight = ref('0')
     const moveX = ref(0)
     const moveY = ref(0)
-    const wrap = ref<any>({})
+    const wrap = ref<HTMLElement>()
     const resize = ref()
     const isBackTopShow = ref<boolean>(false)
 
@@ -40,9 +40,9 @@ export default defineComponent({
     })
 
     const handleScroll = () => {
-      if (!props.native) {
-        moveY.value = (unref(wrap).scrollTop * 100) / unref(wrap).clientHeight
-        moveX.value = (unref(wrap).scrollLeft * 100) / unref(wrap).clientWidth
+      if (!props.native && wrap.value) {
+        moveY.value = (wrap.value.scrollTop * 100) / wrap.value.clientHeight
+        moveX.value = (wrap.value.scrollLeft * 100) / wrap.value.clientWidth
 
         if (props.backTopVisibilityHeight && moveY.value > props.backTopVisibilityHeight) {
           isBackTopShow.value = true
@@ -53,16 +53,16 @@ export default defineComponent({
     }
 
     const update = () => {
-      if (!unref(wrap)) return
-      const heightPercentage = (unref(wrap).clientHeight * 100) / unref(wrap).scrollHeight
-      const widthPercentage = (unref(wrap).clientWidth * 100) / unref(wrap).scrollWidth
+      if (!wrap.value) return
+      const heightPercentage = (wrap.value.clientHeight * 100) / wrap.value.scrollHeight
+      const widthPercentage = (wrap.value.clientWidth * 100) / wrap.value.scrollWidth
 
       sizeHeight.value = heightPercentage < 100 ? `${heightPercentage}%` : ''
       sizeWidth.value = widthPercentage < 100 ? `${widthPercentage}%` : ''
     }
 
     const handleBackTopClick = () => {
-      unref(wrap).scrollTop = 0
+      if (wrap.value) wrap.value.scrollTop = 0
     }
 
     onMounted(() => {
@@ -74,7 +74,7 @@ export default defineComponent({
 
       if (!props.noresize) {
         addResizeListener(unref(resize), update)
-        addResizeListener(unref(wrap), update)
+        wrap.value && addResizeListener(wrap.value, update)
         addEventListener('resize', update)
       }
     })
@@ -83,7 +83,7 @@ export default defineComponent({
       if (props.native) return
       if (!props.noresize) {
         removeResizeListener(unref(resize), update)
-        removeResizeListener(unref(wrap), update)
+        wrap.value && removeResizeListener(wrap.value, update)
         removeEventListener('resize', update)
       }
     })

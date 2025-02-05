@@ -194,3 +194,65 @@ export function treeMapEach(
     }
   }
 }
+
+export function findChildrens<T = any>(
+  tree: T[],
+  childrenId: string | number,
+  func: (n: T) => boolean | string,
+  config: Partial<TreeHelperConfig> = {}
+): T[] {
+  config = getConfig(config)
+  const childrens: any[] = []
+  const list: any[] = [...tree]
+  const { children, id, pid } = config
+
+  function traverse(_list: T[], _childrenId: string | number, _parentId?: string | number) {
+    for (let i = 0; i < _list.length; i++) {
+      const item = _list[i] as any
+      if (item[id!] === _childrenId || item[pid!] === _parentId) {
+        childrens.push(func(item) ?? item)
+        if (item[children!] && item[children!].length) {
+          traverse(item[children!], _childrenId, item[id!])
+        }
+      } else {
+        if (item[children!] && item[children!].length) {
+          traverse(item[children!], _childrenId)
+        }
+      }
+    }
+  }
+
+  traverse(list, childrenId)
+  return childrens
+}
+
+export function findParents<T = any>(
+  tree: T[],
+  parentId: string | number,
+  func: (n: T) => boolean | string,
+  config: Partial<TreeHelperConfig> = {}
+): T[] {
+  config = getConfig(config)
+  const parents: any[] = []
+  const list: any[] = [...tree]
+  const { children, pid, id } = config
+
+  function traverse(_list: T[], _parentId: string | number) {
+    // 遍历树
+    for (let i = 0; i < _list.length; i++) {
+      const item = _list[i] as any
+      if (item[id!] === _parentId) {
+        parents.push(func(item) ?? item)
+        traverse(list, item[pid!])
+        break
+      } else {
+        if (item[children!] && item[children!].length) {
+          traverse(item[children!], _parentId)
+        }
+      }
+    }
+  }
+
+  traverse(list, parentId)
+  return parents
+}

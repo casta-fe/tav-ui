@@ -25,3 +25,5 @@ export function useLoading(
 
   return { loading: _loading, setLoading }
 }
+
+export type UseLoadingReturn = ReturnType<typeof useLoading>

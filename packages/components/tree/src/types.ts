@@ -22,10 +22,12 @@ export interface TreeItem extends TreeDataItem {
   icon?: any
 }
 
-export interface ReplaceFields {
+export interface FieldNames {
   children?: string
   title?: string
   key?: string
+  id?: string
+  pid?: string
 }
 
 export type Keys = (string | number)[]

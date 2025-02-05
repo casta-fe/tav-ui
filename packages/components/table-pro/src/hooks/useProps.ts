@@ -1,7 +1,6 @@
 // import { deepMerge } from '@tav-ui/utils/basic'
-// import { cloneDeep } from 'lodash-es'
+// import { cloneDeep, pick } from 'lodash-es'
 import { computed, unref } from 'vue'
-import { useTimeoutFn } from '@tav-ui/hooks/core/useTimeout'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
@@ -41,40 +40,6 @@ function handleExtendProxyConfig(tablePropsRef: ComputedRef<TableProProps>) {
 }
 
 /**
- * 根据 props scrollToRawPos 扩展 afterapi
- * @param tablePropsRef
- * @param tableRef
- * @param emit
- */
-function handleExtendAfterApi(
-  tablePropsRef: ComputedRef<TableProProps>,
-  tableRef: Ref<TableProInstance | null>
-) {
-  const { afterApi, scrollToRawPos } = unref(tablePropsRef)
-  const hasAfterApi = afterApi && isFunction(afterApi)
-  if (hasAfterApi) {
-    const _afterApi = afterApi
-    unref(tablePropsRef)['afterApi'] = async function (result) {
-      const returnValue = _afterApi(result)
-      scrollToRawPos &&
-        useTimeoutFn(() => {
-          unref(tableRef.value)?.scrollTo(0, 0)
-        }, 16)
-      if (returnValue) return returnValue
-    }
-  } else {
-    unref(tablePropsRef)['afterApi'] = async function () {
-      scrollToRawPos &&
-        useTimeoutFn(() => {
-          unref(tableRef.value)?.scrollTo(0, 0)
-        }, 16)
-    }
-  }
-
-  return tablePropsRef
-}
-
-/**
  * 根据 props api/beforeapi/afterapi 扩展 proxyconfig
  * @param tablePropsRef
  * @param emit
@@ -85,8 +50,11 @@ function handleExtendApi(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  const { api, beforeApi, afterApi, customActionConfig, apiSetting } = unref(tablePropsRef)
-  const hasApi = api && isFunction(api)
+  const { api, beforeApi, afterApi, customActionConfig, apiSetting, permission } =
+    unref(tablePropsRef)
+  const permissionApi = (permission as any)?.apiPermissionData ?? undefined
+  const permissionApiParams = (permission as any)?.apiParams ?? undefined
+  const hasApi = (permissionApi && isFunction(permissionApi)) || (api && isFunction(api))
   const hasExportAllApi =
     customActionConfig &&
     customActionConfig.export &&
@@ -102,9 +70,9 @@ function handleExtendApi(
     }
 
     // 缓存api option
-    let params: TableProApiParams = {
-      filter: {},
-      model: {},
+    let params: TableProApiParams & { [key: string]: any } = {
+      filter: permissionApiParams?.body?.filter ?? {},
+      model: permissionApiParams?.body?.model ?? {},
     }
     let result: Record<string, any> = {}
 
@@ -158,20 +126,37 @@ function handleExtendApi(
       // model 中的值已vxetable计算的为准，其他值已传入为准，reload 传入 model 后，要对vxetable的model进行合并
       params = option
         ? option.model
-          ? { ...option, ...{ model }, ...option.model }
+          ? { ...option, ...{ model: { ...model, ...option.model } }, ...option.model }
           : { ...option, ...{ model } }
-        : { ...params, ...{ model } }
+        : { ...(params?.body ?? params), ...{ model } }
 
       try {
         if (beforeApi && isFunction(beforeApi)) {
           params = (await beforeApi(params)) || params
         }
 
-        if (api && isFunction(api)) {
+        let _api = api
+
+        if (permissionApi && permissionApiParams) {
+          _api = permissionApi
+          params = {
+            ...permissionApiParams,
+            ...((params.filter ?? {}) && (params.model ?? {})
+              ? {
+                  body: {
+                    filter: params.filter ?? {},
+                    model: params.model ?? {},
+                  },
+                }
+              : {}),
+          }
+        }
+
+        if (_api && isFunction(_api)) {
           // eslint-disable-next-line no-console
           console.log('hijack table pro api 😂')
 
-          const apiResult = await api(params)
+          const apiResult = await _api(params)
 
           if (apiResult.data && apiResult.success) {
             result = apiResult
@@ -216,8 +201,7 @@ function handleExtendProps(
   emit: TableProGridEmit
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
-  const handleExtendAfterApiResult = handleExtendAfterApi(handleExtendProxyConfigResult, tableRef)
-  const handleExtendApiResult = handleExtendApi(handleExtendAfterApiResult, tableRef, emit)
+  const handleExtendApiResult = handleExtendApi(handleExtendProxyConfigResult, tableRef, emit)
   return handleExtendApiResult
 }
 
@@ -261,8 +245,10 @@ function mergePropsRef(
 ): ComputedRef<TableProProps> {
   return computed(() => {
     for (const [key] of Object.entries(unref(paramPropsRef))) {
+      //@ts-ignore
       if (unref(defaultPropsRef)[key]) {
         // 只对对象进行合并，其他类型已传入的值为准
+        //@ts-ignore
         if (isObject(unref(defaultPropsRef)[key])) {
           // // 会有性能问题，暂时浅合并
           // unref(paramPropsRef)[key] = deepMerge(
@@ -270,8 +256,11 @@ function mergePropsRef(
           //   cloneDeep(unref(paramPropsRef)[key])
           // )
           // 浅合并
+          //@ts-ignore
           unref(paramPropsRef)[key] = {
+            //@ts-ignore
             ...unref(defaultPropsRef)[key],
+            //@ts-ignore
             ...unref(paramPropsRef)[key],
           }
         }
@@ -295,6 +284,7 @@ function createDefaultPropsRef(defaultProps: TableProProps): ComputedRef<Partial
     const defaultValue = (value as any).default
     if (defaultValue) {
       // 这里指判断了有对象默认值的情况，函数默认值需要做判断
+      //@ts-ignore
       _defaultProps[key] = typeof defaultValue === 'function' ? defaultValue() : defaultValue
     }
   }

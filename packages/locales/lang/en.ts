@@ -43,6 +43,11 @@ export default {
     tips: 'Tips',
     greater: 'Greater',
     less: 'Less',
+    httpError: 'Http has some error, please contact system admin',
+    notAuthorised: 'User not be authorised',
+    required: 'required',
+    clear: 'Clear',
+    clearAll: 'Clear all',
   },
   countButton: {
     text1: 'Send verification code',
@@ -97,6 +102,8 @@ export default {
     '9': 'Female',
     '10': '', // 这个空不能删！
     '11': 'Pleace enter user name',
+    '12': 'Other',
+    '13': 'Secrecy',
   },
   tree: {
     '1': 'Expand all',
@@ -117,6 +124,7 @@ export default {
       '4': 'Selection status',
       '5': 'Export settings',
       '6': 'Statistics',
+      '7': 'Checked data',
     },
     export: {
       '1': 'File name',
@@ -135,6 +143,7 @@ export default {
       '4o4': 'All data by search',
       '5': 'File fields',
       '5p': 'Please select the file fields to export.',
+      '6': 'Data processing',
     },
     columns: { '1': 'No.', '2': 'Selecte' },
     page: { '1': 'Prev', '2': 'Next' },
@@ -143,6 +152,7 @@ export default {
       '2': 'Table save failed, please refresh and try again！',
       '3': 'Do not allow dragging into fixed columns.',
       '4': 'Do not allow merging columns.',
+      '5': 'row(s) selected',
     },
   },
   form: {
@@ -157,6 +167,11 @@ export default {
     },
   },
   file: {
+    filter: {
+      '1': 'Please input file name',
+      '2': 'File type',
+      '3': 'File name',
+    },
     actions: {
       '1': 'View',
       '2': 'Download',
@@ -166,24 +181,34 @@ export default {
       '41': 'Watermark..',
       '5': 'Update',
       '6': 'Delete',
+      '7': 'Log',
     },
     columns: {
       '1': 'File name',
       '2': 'File type',
       '3': 'File size',
       '4': 'Version',
-      '5': 'Uploader',
+      '5': 'File Owner',
       '6': 'Upload time',
       '7': 'Updater',
       '8': 'Update time',
       '9': 'Link address',
+      '10': 'Upload trigger',
+      '11': 'Operation',
+      '12': 'Applier',
+      '13': 'Consumer',
+      '14': 'Operator',
+      '15': 'Operation Time',
     },
     upload: {
       '1': 'Upload file',
-      '2': 'Hide hyperlink upload',
-      '3': 'Upload hyperlink',
+      '2': 'Cancel upload',
+      '3': 'Upload link',
       '4': 'Too large',
       '5': 'File name contains illegal char: ',
+      '6': 'Not support file type',
+      '7': 'Preview file',
+      '8': 'Delete file',
     },
     message: {
       '1': 'The preview of this format is temporarily not supported.',
@@ -195,6 +220,20 @@ export default {
       '7': 'Please enter the correct link',
       '8': 'Update successfully!',
       '9': 'Confirm delete?',
+      '10': 'will not upload!',
+      '11': 'Upload failed!',
+    },
+    download: {
+      '1': 'Please select file which you want to download',
+      '2': 'Multiple download',
+    },
+    modal: {
+      '1': 'Version List',
+      '2': 'Log List',
+    },
+    cards: {
+      '1': 'Upload',
+      '2': 'Uploaded',
     },
   },
 }

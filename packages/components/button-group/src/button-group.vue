@@ -1,11 +1,16 @@
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
-import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
+import {
+  //  computed,
+  defineComponent,
+  ref,
+  watch,
+} from 'vue'
+// import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import Button from '@tav-ui/components/button'
 import { useScrollToCenter } from '@tav-ui/hooks'
 import { isNullOrUnDef } from '@tav-ui/utils'
 import { buttonGroupProps } from './types'
-import type { Ref } from 'vue'
+// import type { Ref } from 'vue'
 import type { ButtonGroupItem } from './types'
 import type { ElRef } from '../../modal/src/types'
 
@@ -17,7 +22,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const scrollRef = ref(null)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const clickHandle = (data: ButtonGroupItem, index: number, event) => {
+    const clickHandle = (data: ButtonGroupItem, index: number, event?: Event) => {
       if (data.value == props.active) return
       emit('update:active', data.value)
       emit('btnClick', data)
@@ -36,24 +41,23 @@ export default defineComponent({
       }
     )
 
-    const permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+    // const permissions = useGlobalConfig('permissions') as Ref<Record<string, any>>
+    // const filterButton = computed(() =>
+    //   props.buttons.filter((btn) => {
+    //     if (!btn.permission) return true
+    //     return permissions.value[btn.permission]?.ifShow
+    //   })
+    // )
+    // if (props.buttons.length !== filterButton.value.length) {
+    //   const nextBtn = filterButton.value[0]
+    //   if (nextBtn) {
+    //     clickHandle(nextBtn, 0)
+    //   } else {
+    //     emit('update:active', -1)
+    //   }
+    // }
 
-    const filterButton = computed(() =>
-      props.buttons.filter((btn) => {
-        if (!btn.permission) return true
-        return permissions.value[btn.permission]?.ifShow
-      })
-    )
-
-    if (props.buttons.length !== filterButton.value.length) {
-      const nextBtn = filterButton.value[0]
-      if (nextBtn) {
-        clickHandle(nextBtn, 0, undefined)
-      } else {
-        emit('update:active', -1)
-      }
-    }
-    const getNumber = (num, item): string | number => {
+    const getNumber = (num: any, item: any): string | number => {
       if (isNullOrUnDef(num)) {
         return 0
       }
@@ -69,7 +73,7 @@ export default defineComponent({
       scrollRef,
       getNumber,
       clickHandle,
-      filterButton,
+      // filterButton,
     }
   },
 })
@@ -79,11 +83,14 @@ export default defineComponent({
   <div class="ta-button-group" @click.stop>
     <div ref="scrollRef" class="ta-button-group-inner">
       <Button
-        v-for="(item, index) in filterButton"
+        v-for="(item, index) in buttons"
         :key="item.value"
         :type="active == item.value ? 'primary' : 'default'"
         :disabled="item.disabled"
         :loading="item.loading"
+        :permission="item.permission"
+        :permission-code="item.permissionCode"
+        :use-permission="item.usePermission"
         @click="clickHandle(item, index, $event)"
       >
         {{ item.label }}

@@ -34,7 +34,7 @@ export const buttonProps = {
   // // }
 
   // extend
-  color: { type: String, validator: (v) => ['error', 'warning', 'success', ''].includes(v) },
+  color: { type: String, validator: (v: any) => ['error', 'warning', 'success', ''].includes(v) },
   // loading: { type: Boolean },
   disabled: { type: Boolean },
   /**
@@ -52,9 +52,16 @@ export const buttonProps = {
    * @default: 14
    */
   iconSize: { type: Number, default: 14 },
-  onClick: { type: Function as PropType<(...args) => any>, default: null },
+  onClick: { type: Function as PropType<(...args: any[]) => any>, default: null },
   permission: { type: String },
   permissionCode: { type: Number },
+  usePermission: {
+    type: Object as PropType<{
+      code: string
+      ref: any
+      row?: any
+    }>,
+  },
   ifShow: { type: Boolean, default: true },
 }
 

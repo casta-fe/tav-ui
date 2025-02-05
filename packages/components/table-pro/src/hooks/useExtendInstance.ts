@@ -1,5 +1,6 @@
-import { reactive, unref, watch } from 'vue'
+import { nextTick, reactive, unref, watch } from 'vue'
 import { ROW_KEY } from '../const'
+import { type UseCheckboxCacheReturn } from './useCheckboxCache'
 import type { ComputedRef, Ref } from 'vue'
 import type { ITableProInstance, TableProInstance, TableProProps } from '../types'
 import type { TableProApiParams } from '../typings'
@@ -7,42 +8,68 @@ import type { TableProApiParams } from '../typings'
 function createExendApis(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
-  filterRef
+  filterRef: any,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache'],
+  currentPage: Ref<number>
 ) {
   function getSelectRowKeys(): string[] {
     const {
       rowConfig: { keyField = ROW_KEY },
     } = unref(tablePropsRef)
-    return unref(tableRef)!
-      .getCheckboxRecords()
-      .map((record) => `${record[keyField]}`)
+
+    if (isCheckboxCacheEnabled.value) {
+      return checkboxCacheList.value.map((cache) => `${cache[keyField]}`)
+    } else {
+      return unref(tableRef)!
+        .getCheckboxRecords()
+        .map((record) => `${record[keyField]}`)
+    }
   }
 
-  function clearSelectedRowByKey(keyField: string | number) {
+  async function clearSelectedRowByKey(keyField: string | number) {
     const rowKey = `${keyField}`
     const {
       rowConfig: { keyField: _keyField = ROW_KEY },
     } = unref(tablePropsRef)
+
     const selectedRow = unref(tableRef)!
       .getCheckboxRecords()
       .find((record) => {
         const recordRowKey = `${record[_keyField]}`
         return recordRowKey === rowKey
       })
-    unref(tableRef)!.toggleCheckboxRow(selectedRow)
+
+    if (isCheckboxCacheEnabled.value) {
+      await deleteCheckboxCache(selectedRow)
+    } else {
+      await unref(tableRef)!.toggleCheckboxRow(selectedRow)
+    }
   }
 
   function getSelectRows(): any[] {
-    return unref(tableRef)!.getCheckboxRecords()
+    if (isCheckboxCacheEnabled.value) {
+      return checkboxCacheList.value
+    } else {
+      return unref(tableRef)!.getCheckboxRecords()
+    }
   }
 
-  function clearSelectedRows() {
+  async function clearSelectedRows() {
     const { checkboxConfig = {}, radioConfig = {} } = unref(tablePropsRef)
 
-    const hasCheckbox = Object.keys(checkboxConfig).length > 0
-    const hasRadioConfig = Object.keys(radioConfig).length > 0
-    if (hasCheckbox) unref(tableRef)!.clearCheckboxRow()
-    if (hasRadioConfig) unref(tableRef)!.clearRadioRow()
+    if (isCheckboxCacheEnabled.value) {
+      await deleteAllCheckboxCache({
+        deleteByPage: false,
+      })
+    } else {
+      const hasCheckbox = Object.keys(checkboxConfig).length > 0
+      const hasRadioConfig = Object.keys(radioConfig).length > 0
+      if (hasCheckbox) await unref(tableRef)!.clearCheckboxRow()
+      if (hasRadioConfig) await unref(tableRef)!.clearRadioRow()
+    }
   }
 
   function insertRow(records: Record<string, any> | Record<string, any>[]) {
@@ -87,7 +114,7 @@ function createExendApis(
     unref(tableRef)!.remove(_records)
   }
 
-  function reload(options?: TableProApiParams) {
+  async function reload(options?: TableProApiParams) {
     const tableFilterSearchParams = filterRef.value
       ? JSON.parse(filterRef.value.$el.dataset.filterParams)
       : {}
@@ -99,14 +126,50 @@ function createExendApis(
     if (options?.clearSelect && hasCheckbox) unref(tableRef)!.clearCheckboxRow()
     if (options?.clearSelect && hasRadioConfig) unref(tableRef)!.clearRadioRow()
 
-    const apiParams: TableProApiParams = { filter: tableFilterSearchParams, model: {} }
+    const apiParams: TableProApiParams = {
+      filter: tableFilterSearchParams,
+      model: { page: currentPage.value },
+    }
     if (options) {
-      if (options.page && options.page > 0) {
-        apiParams.model = { ...(options.model ?? {}), page: options.page }
+      if (options.filter) {
+        apiParams.filter = { ...apiParams.filter, ...(options.filter ?? {}) }
+      }
+      apiParams.model = {
+        ...(options.model ?? {}),
+        ...(options.page && options.page > 0 ? { page: options.page } : {}),
       }
     }
 
-    unref(tableRef)!.commitProxy('query', { ...apiParams })
+    if (
+      isCheckboxCacheEnabled.value &&
+      options?.filter &&
+      Object.keys(options?.filter).length > 0 &&
+      JSON.stringify(options?.filter) !== JSON.stringify(tableFilterSearchParams)
+    ) {
+      await deleteAllCheckboxCache({
+        deleteByPage: false,
+      })
+      await nextTick()
+    }
+
+    // 同一个表格实例下使用 query 无法重置页码，改为 reload
+    // unref(tableRef)!.commitProxy('query', { ...apiParams })
+    // 使用 reload 后表格的滚动条重置，这里需要手动记录并置回
+    const { scrollTop: prevScrollTop, scrollLeft: prevScrollLeft } = unref(tableRef)!.getScroll()
+    await unref(tableRef)!.commitProxy('reload', { ...apiParams })
+    if (currentPage.value === apiParams?.model?.page) {
+      nextTick(async () => {
+        await unref(tableRef)!.refreshScroll()
+        setTimeout(() => {
+          unref(tableRef)!.scrollTo(prevScrollLeft, prevScrollTop)
+        }, 16.7 * 2)
+      })
+    }
+    // reload 后 vxetable 控制自动回到第一页这里强行把页码置回
+    const proxyInfo = unref(tableRef)!.getProxyInfo()
+    if (apiParams?.model?.page && proxyInfo) {
+      proxyInfo.pager.currentPage = apiParams.model.page
+    }
   }
 
   return {
@@ -128,6 +191,7 @@ type OuterExtendApis = {
   resizeTableHeight: () => void
   showExportModal: () => void
   showColumnsModa: () => void
+  clearCellTooltip: () => void
 }
 export type TableProExtendApis = ReturnType<typeof createExendApis> & OuterExtendApis
 
@@ -140,7 +204,12 @@ export function useExtendInstance(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
   outerExtendApis: OuterExtendApis,
-  filterRef: Ref<ComputedRef | null>
+  filterRef: Ref<ComputedRef | null>,
+  isCheckboxCacheEnabled: UseCheckboxCacheReturn['isCheckboxCacheEnabled'],
+  checkboxCacheList: UseCheckboxCacheReturn['checkboxCacheList'],
+  deleteCheckboxCache: UseCheckboxCacheReturn['deleteCheckboxCache'],
+  deleteAllCheckboxCache: UseCheckboxCacheReturn['deleteAllCheckboxCache'],
+  currentPage: Ref<number>
 ) {
   const state = reactive<{
     instance: TableProInstance | null
@@ -153,13 +222,26 @@ export function useExtendInstance(
     (curTableRef, preTableRef) => {
       if (curTableRef && curTableRef !== preTableRef) {
         state.instance = curTableRef
-        const extendApis = createExendApis(tableRef, tablePropsRef, filterRef)
+        const extendApis = createExendApis(
+          tableRef,
+          tablePropsRef,
+          filterRef,
+          isCheckboxCacheEnabled,
+          checkboxCacheList,
+          deleteCheckboxCache,
+          deleteAllCheckboxCache,
+          currentPage
+        )
         Object.keys(extendApis).forEach((name) => {
+          //@ts-ignore
           state.instance![name] = extendApis[name]
         })
         Object.keys(outerExtendApis).forEach((name) => {
+          //@ts-ignore
           state.instance![name] = outerExtendApis[name]
         })
+        //@ts-ignore
+        state.instance!['filterRef'] = filterRef.value
       }
     }
   )

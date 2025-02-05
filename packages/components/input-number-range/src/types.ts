@@ -53,7 +53,6 @@ export const inputNumberRangeProps = {
   },
   precision: {
     type: Number as PropType<IInputNumberRangeProps['precision']>,
-    default: 4,
   },
 }
 

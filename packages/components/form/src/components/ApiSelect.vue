@@ -3,12 +3,11 @@
     v-model:value="state"
     :disabled="disabled"
     :placeholder="placeholder"
-    :options="selectState.list"
+    :options="selectState.allList"
     :mode="mode"
-    :filter-option="false"
+    :filter-option="filterHandle"
     show-search
     @change="handleChange"
-    @search="handleSearch"
   >
     <template v-for="item in Object.keys($slots)" #[item]="data">
       <slot :name="item" v-bind="data || {}" />
@@ -79,10 +78,6 @@ export default defineComponent({
       type: String as PropType<TypeItems>,
       default: undefined,
     },
-    immediate: {
-      type: Boolean,
-      default: true,
-    },
     disabled: {
       type: Boolean,
       default: false,
@@ -90,12 +85,10 @@ export default defineComponent({
     resultField: propTypes.string.def(''),
     labelField: propTypes.string.def('name'),
     valueField: propTypes.string.def('id'),
-    // immediate: propTypes.bool.def(true)
   },
   emits: ['options-change', 'change'],
   setup(props, { emit }) {
     const selectState = reactive({
-      list: [] as OptionsItem[],
       searchValue: '',
       allList: [] as OptionsItem[],
     })
@@ -118,7 +111,7 @@ export default defineComponent({
     async function fetch() {
       const api = props.api
       if (!api || !isFunction(api)) return
-      selectState.list.length = 0
+      selectState.allList = []
       try {
         loading.value = true
         const params = { ...props.params }
@@ -136,7 +129,7 @@ export default defineComponent({
         if (props.custom && selectState.searchValue != '') {
           list = [{ label: selectState.searchValue, value: '0' }, ...list]
         }
-        selectState.list = selectState.allList = list
+        selectState.allList = list
         nextTick(() => {
           emitChange()
         })
@@ -147,50 +140,28 @@ export default defineComponent({
     }
 
     function emitChange() {
-      emit('options-change', unref(selectState.list))
+      emit('options-change', unref(selectState.allList))
     }
 
     function handleChange(_, ...args) {
       emitData.value = args
       emit('change', state.value, ...args)
     }
-    function handleSearch(data) {
-      // 如果加载远端数据 就请求接口
-      if (!props.immediate) {
-        if (data == '') {
-          return
-        }
-        console.log('远程搜索')
-        selectState.searchValue = data
-        setTimeout(() => {
-          if (selectState.searchValue != data) {
-            return
-          } else {
-            fetch()
-          }
-        }, 1000)
-        // throttle(fetch(), 1500);
-      } else {
-        console.log('本地搜索')
-        if (data == '') {
-          selectState.list = selectState.allList
-        } else {
-          selectState.list = selectState.allList.filter((v) => v.label.indexOf(data) > -1)
-        }
-      }
+    const filterHandle = (keyword: string, item: OptionsItem) => {
+      return item.label.indexOf(keyword) > -1
     }
     const pageInit = () => {
-      props.immediate && fetch()
+      fetch()
     }
     pageInit()
     return {
       state: state as unknown as string,
+      filterHandle,
       tavI18n,
       attrs,
       selectState,
       loading,
       handleChange,
-      handleSearch,
     }
   },
 })

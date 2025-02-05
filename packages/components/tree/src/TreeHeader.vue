@@ -12,8 +12,8 @@
         <InputSearch
           v-model:value="searchValue"
           :placeholder="tavI18n('Tav.common.searchText')"
-          size="small"
           allow-clear
+          @search="handleSearch"
         />
       </div>
       <Dropdown v-if="toolbar" @click.prevent>
@@ -149,12 +149,12 @@ export default defineComponent({
     }
     const debounceEmitChange = useDebounceFn(emitChange, 200)
 
-    watch(
-      () => searchValue.value,
-      (v) => {
-        debounceEmitChange(v)
-      }
-    )
+    // watch(
+    //   () => searchValue.value,
+    //   (v) => {
+    //     debounceEmitChange(v)
+    //   }
+    // )
     watch(
       () => props.searchText,
       (v) => {
@@ -163,11 +163,11 @@ export default defineComponent({
         }
       }
     )
-    // function handleSearch(e: ChangeEvent): void {
-    //   debounceEmitChange(e.target.value);
-    // }
+    function handleSearch(e: any): void {
+      debounceEmitChange(e)
+    }
 
-    return { tavI18n, toolbarList, handleMenuClick, searchValue, getInputSearchCls }
+    return { tavI18n, toolbarList, handleMenuClick, searchValue, getInputSearchCls, handleSearch }
   },
 })
 </script>

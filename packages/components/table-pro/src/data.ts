@@ -115,7 +115,7 @@ function getCookie(objName: string) {
 //     address: 'ShenzhenShenzhenShenzhenShenzhen',
 //   },
 // ]
-const ai = '10002'
+const ai = '10001'
 let at = ''
 let rd = ''
 const Encryptor = new JSEncrypt()
@@ -222,7 +222,7 @@ export async function __post(url = '', data: any = {}, isFormData = false) {
     headers: {
       'Content-Type': 'application/json',
       // 'Content-Type': 'application/x-www-form-urlencoded',
-      ai,
+      ai: data.appId || ai,
       at,
       rd,
     },
@@ -233,6 +233,7 @@ export async function __post(url = '', data: any = {}, isFormData = false) {
 
   if (isFormData) {
     Reflect.deleteProperty(options.headers, 'Content-Type')
+    // Reflect.set(options.headers, 'Content-Type', 'multipart/form-data;charset=UTF-8')
     options.body = data
   }
 
@@ -249,7 +250,6 @@ export async function __get(url = '') {
   })
   return response.ok
 }
-
 export async function API__POE_INVEST_ALL(
   data,
   url = '/api/STARLIGHT-POE-WEB/invesinstitution/listPager'
@@ -330,4 +330,43 @@ export async function API__INVEST_COMPANY_LIST(
 ) {
   // eslint-disable-next-line no-return-await
   return await __post(url, data)
+}
+
+export async function API__INVEST_COMPANY_DELETE(
+  data,
+  url = '/api/STARLIGHT-INVEST-WEB/company/information/deleteBatch'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
+// 文件更新
+export async function API__FILE_UPDATE(data: any, url = '/api/TIANTA-FILE/api/file/updateFile') {
+  const { appId, formData, instantUpdate, fileActualId } = data
+  // eslint-disable-next-line no-return-await
+  return await __post(
+    `${url}/${appId}?fileActualId=${fileActualId}&instantUpdate=${instantUpdate}`,
+    formData,
+    true
+  )
+}
+
+// 文件删除
+export async function API__FILE_DELETE(
+  data: any,
+  url = '/api/TIANTA-FILE/api/file/deleteFileByActualIds'
+) {
+  const { appId, actualIds } = data
+  // eslint-disable-next-line no-return-await
+  return await __post(`${url}/${appId}`, actualIds)
+}
+
+// 文件更新 name & link
+export async function API__FILE_UPDATENAMEORLINK(
+  data: any,
+  url = '/api/TIANTA-FILE/api/file/updateFileNameAndAddress'
+) {
+  const { appId } = data
+  // eslint-disable-next-line no-return-await
+  return await __post(`${url}/${appId}`, data)
 }

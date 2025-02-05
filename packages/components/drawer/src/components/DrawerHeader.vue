@@ -1,8 +1,7 @@
 <template>
-  <BasicTitle v-if="!isDetail" :class="prefixCls">
-    <slot name="title" />
+  <TaBasicTitle v-if="!isDetail" :class="prefixCls" :help-message="helpMessage">
     {{ !$slots.title ? title : '' }}
-  </BasicTitle>
+  </TaBasicTitle>
 
   <div v-else :class="[prefixCls, `${prefixCls}--detail`]">
     <span :class="`${prefixCls}__twrap`">
@@ -18,17 +17,20 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { type PropType, defineComponent } from 'vue'
 import { ArrowLeftOutlined } from '@ant-design/icons-vue'
-import BasicTitle from '@tav-ui/components/basic-title'
+import TaBasicTitle from '@tav-ui/components/basic-title'
 import { propTypes } from '@tav-ui/utils/propTypes'
 
 export default defineComponent({
   name: 'BasicDrawerHeader',
-  components: { BasicTitle, ArrowLeftOutlined },
+  components: { TaBasicTitle, ArrowLeftOutlined },
   props: {
     isDetail: propTypes.bool,
     showDetailBack: propTypes.bool,
+    helpMessage: {
+      type: [String, Array] as PropType<string | string[]>,
+    },
     title: propTypes.string,
   },
   emits: ['close'],

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, watch } from 'vue'
-import { FormItem, Input, InputNumber } from 'ant-design-vue'
+import { FormItem, InputNumber } from 'ant-design-vue'
 // import { cloneDeep } from "lodash-es";
 import { useMessage } from '@tav-ui/hooks/web/useMessage'
 import { tavI18n } from '@tav-ui/locales'
@@ -14,7 +14,6 @@ export default defineComponent({
   name: 'TaInputNumberRange',
   components: {
     FormItem,
-    Input,
     InputNumber,
   },
   props: inputNumberRangeProps,
@@ -28,34 +27,18 @@ export default defineComponent({
     })
     const minCompProps = computed(() => ({
       ...props.minProps,
-      min: props.min ? props.min : props.minProps.min || 0,
+      min: props.min ? props.min : props.minProps.min,
       max: props.max ? props.max : props.minProps.max || Infinity,
       placeholder: props.minPlaceHolder ? props.minPlaceHolder : props.minProps.placeholder,
     }))
     const maxCompProps = computed(() => ({
       ...props.maxProps,
-      min: props.min ? props.min : props.maxProps.min || 0,
+      min: props.min ? props.min : props.maxProps.min,
       max: props.max ? props.max : props.maxProps.max || Infinity,
       placeholder: props.maxPlaceHolder ? props.maxPlaceHolder : props.maxProps.placeholder,
     }))
-    const blurValueMin = (e) => {
-      const value = e.target.value
-      if (value && state.max && Number(value) > Number(state.max)) {
-        createMessage.warning(tavI18n('Tav.form.inputRange.1'))
-        emit('change', [null, state.max])
-      } else {
-        emit('change', [state.min, state.max])
-      }
-    }
-
-    const blurValueMax = (e) => {
-      const value = e.target.value
-      if (state.min && value && Number(state.min) > Number(value)) {
-        createMessage.warning(tavI18n('Tav.form.inputRange.2'))
-        emit('change', [state.min, null])
-      } else {
-        emit('change', [state.min, state.max])
-      }
+    const changeHandle = (value) => {
+      emit('change', [state.min, state.max])
     }
     watch(
       () => props.value,
@@ -72,8 +55,7 @@ export default defineComponent({
     return {
       minCompProps,
       maxCompProps,
-      blurValueMax,
-      blurValueMin,
+      changeHandle,
       ...toRefs(state),
     }
   },
@@ -81,29 +63,26 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="ta-input-number-range">
+  <div class="ta-input-number-range" :class="{ disabled }">
     <FormItem>
       <InputNumber
         v-bind="{ ...minCompProps }"
         v-model:value="min"
         :size="size"
+        :disabled="disabled"
         :precision="precision"
-        @blur="blurValueMin"
+        @change="changeHandle"
       />
     </FormItem>
-    <Input
-      style="width: 30px; border: none; pointer-events: none; background-color: #fff"
-      :placeholder="prefixCenter"
-      disabled
-      size="small"
-    />
+    <span class="ta-input-number-range-prefix">{{ prefixCenter }}</span>
     <FormItem>
       <InputNumber
         v-bind="{ ...maxCompProps }"
         v-model:value="max"
         :size="size"
+        :disabled="disabled"
         :precision="precision"
-        @blur="blurValueMax"
+        @change="changeHandle"
       />
     </FormItem>
   </div>

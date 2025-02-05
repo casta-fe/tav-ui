@@ -2,6 +2,10 @@
 .ta-member-select {
   .ant-select {
     min-width: 100%;
+    .ant-tag{
+      font-size: 14px;
+      margin-right: 3px
+    }
   }
 
   &-option {
@@ -9,11 +13,10 @@
 
     &-item {
       display: flex;
-      margin-right: 20px;
+      margin-right: 10px;
 
       span:nth-child(1) {
-        flex: 1;
-        width: calc(100% - 140px);
+        width: 25%;
         overflow: hidden;
         text-overflow: ellipsis;
         // word-break: break-all;
@@ -21,7 +24,12 @@
       }
 
       span:nth-child(2) {
-        width: 50px;
+        flex: 1;
+        margin: 0 10px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       span:nth-child(3) {
@@ -136,6 +144,9 @@
         .user-list {
           flex: 1;
           overflow-y: auto;
+        }
+        .ant-empty {
+          transform: translateY(50%);
         }
         .org-name {
           margin-bottom: 1em;

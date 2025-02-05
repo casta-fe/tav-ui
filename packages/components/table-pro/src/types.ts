@@ -1,3 +1,4 @@
+import { type PermissionContext } from '../../permission/src/types'
 import {
   DEFAULT_ALIGN,
   DEFAULT_LINE_HEIGTH,
@@ -83,12 +84,15 @@ export const tableProProps = {
    */
   height: {
     type: [String, Number] as PropType<VxeTablePropTypes.Height>,
-    default: '100%',
-    // default: 'auto',
+    // default: '100%',
+    default: 'auto',
   },
   /** 表格最大高度（超出自动出现 y轴 滚动条） */
   maxHeight: {
     type: [String, Number] as PropType<VxeTablePropTypes.MaxHeight>,
+  },
+  minHeight: {
+    type: [String, Number] as PropType<VxeTablePropTypes.MinHeight>,
   },
   /**
    * 表格数据（数据为响应式，在使用时建议每次变化直接赋值，与 loadData 行为一致，更新数据是不会重置状态）
@@ -247,19 +251,19 @@ export const tableProProps = {
   showOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 设置表头所有内容过长时显示为省略号 */
   showHeaderOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowHeaderOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 设置表尾所有内容过长时显示为省略号 */
   showFooterOverflow: {
     type: [String, Boolean, null] as PropType<VxeTablePropTypes.ShowFooterOverflow>,
     // default: 'ellipsis',
-    default: true,
+    default: false,
   },
   /** 保持原始值的状态，被某些功能所依赖，比如编辑状态、还原数据等（开启后影响性能，具体取决于数据量） */
   keepSource: {
@@ -271,6 +275,12 @@ export const tableProProps = {
     type: Boolean as PropType<VxeTablePropTypes.AutoResize>,
     // default: true,
   },
+  resizeConfig: {
+    type: Object as PropType<VxeTablePropTypes.ResizeConfig>,
+    default: () => ({
+      refreshDelay: 500,
+    }),
+  },
   /** 自动跟随某个属性的变化去重新计算表格，和手动调用 recalculate 方法是一样的效果（对于通过某个属性来控制显示/隐藏切换时可能会用到） */
   syncResize: {
     type: [String, Number, Boolean] as PropType<VxeTablePropTypes.SyncResize>,
@@ -280,9 +290,10 @@ export const tableProProps = {
     type: Object as PropType<VxeTablePropTypes.ScrollX>,
     default: () => ({
       enabled: true,
-      gt: 30,
+      gt: 20,
       /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
-      oSize: 0,
+      oSize: 10,
+      // scrollToLeftOnChange: true
     }),
   },
   /** 纵向虚拟滚动配置（不支持展开行） */
@@ -293,8 +304,8 @@ export const tableProProps = {
       mode: 'default',
       gt: 50,
       /** 设置过大会出现空白间隙，设置为0会实时渲染但是会卡顿 */
-      oSize: 0,
-      scrollToTopOnChange: true,
+      oSize: 10,
+      // scrollToTopOnChange: true,
     }),
   },
   //:==================================================: 全局设置 :==================================================://
@@ -373,11 +384,15 @@ export const tableProProps = {
    * 复选框配置项（详情查看：https://vxetable.cn/#/grid/api）
    */
   checkboxConfig: {
-    type: Object as PropType<VxeTablePropTypes.CheckboxConfig & { enabled?: boolean }>,
+    type: Object as PropType<
+      // reserve 无法清除跨页的行选中，使用cache即可
+      Omit<VxeTablePropTypes.CheckboxConfig, 'reserve'> & { enabled?: boolean; cache?: boolean }
+    >,
     default: () => ({
       enabled: true,
       range: true,
       highlight: true,
+      cache: false,
     }),
   },
   /**
@@ -576,10 +591,10 @@ export const tableProProps = {
     type: Boolean,
     default: true,
   },
-  /** 当数据源被更改时，自动将横向滚动条滚动到顶部，自动将横向滚动条滚动到左侧 */
-  scrollToRawPos: {
-    type: Boolean,
-    default: true,
+  /** vxetable 默认会自动还原滚动条，这里只控制筛选、翻页、点击刷新后是否滚到顶部 */
+  scrollTopActions: {
+    type: Array as PropType<('paginate' | 'refresh')[]>,
+    default: () => ['paginate', 'refresh'],
   },
   /** 给table填充颜色，将table和filterform区分开 */
   fillInner: {
@@ -595,6 +610,10 @@ export const tableProProps = {
   fixedLineHeight: {
     type: Boolean,
     default: true,
+  },
+  /** 接权限相关参数 */
+  permission: {
+    type: Object as PropType<PermissionContext['permission']>,
   },
   //:==================================================: 扩展配置 :==================================================://
 }

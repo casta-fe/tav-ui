@@ -1,4 +1,4 @@
-import { buildUUID } from '@tav-ui/utils/uuid'
+import { nanoid } from '@tav-ui/utils/uuid'
 import componentSetting from '@tav-ui/settings/src/componentSetting'
 
 export const ComponentName = 'TaTablePro'
@@ -23,12 +23,12 @@ export function CamelCaseToCls(name: string) {
 }
 
 export function buildTableId() {
-  const uuid = buildUUID()
+  const uuid = nanoid()
   return `${ComponentName}-${uuid}`
 }
 
 export function buildTableActionId() {
-  const uuid = buildUUID()
+  const uuid = nanoid()
   return `${ComponentActionName}-${uuid}`
 }
 

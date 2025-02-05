@@ -1,0 +1,174 @@
+import { type ComputedRef, unref } from 'vue'
+import { tavI18n } from '@tav-ui/locales'
+import {
+  type FileActionUploadApiResponseRecord,
+  type GlobalConfigFileProps,
+} from '../../../typings'
+import { type FileActionUploadProps } from '../types'
+// import { type FileActionUploadHandleApiOptions } from './use-request'
+import { type UseRequestHandleApiDefaultOptions } from '../../../hooks'
+import { validateVersionCachesHasApiFile } from '../../../utils'
+
+export function useMode(options: {
+  mergedProps: ComputedRef<GlobalConfigFileProps & FileActionUploadProps>
+}) {
+  const { mergedProps } = options
+
+  //:========================================: api actions :========================================://
+  function uploadApiOptions(
+    apiParams: FileActionUploadProps['apiParams'],
+    files: File[],
+    callback: () => void
+  ) {
+    if (!mergedProps.value.apiUploadFile) {
+      console.warn('[tavui TaFileActionUpload] apiUploadFile is undefined')
+      return
+    }
+
+    const options: UseRequestHandleApiDefaultOptions<
+      FileActionUploadProps['apiParams'],
+      FileActionUploadApiResponseRecord[]
+    > = {
+      api: mergedProps.value.apiUploadFile,
+      beforeApi: mergedProps.value.beforeApiUploadFile,
+      afterApi: mergedProps.value.afterApiUploadFile,
+      catchError: mergedProps.value.catchApiUploadFileError,
+      apiParams: {
+        appId: apiParams.appId,
+        files: unref(files),
+        moduleCode: apiParams.moduleCode,
+        typeCode: apiParams.typeCode,
+        businessParamsJson: apiParams.businessParamsJson,
+        ...(apiParams.fileName
+          ? {
+              fileName: apiParams.fileName,
+            }
+          : {}),
+      },
+      transformApiParamsToFormData: {
+        fileFiledName: mergedProps.value.name!,
+        filterNames: ['appId'],
+      },
+      successMessage: () => {
+        return tavI18n('Tav.file.message.6')
+      },
+      failureMessage: () => {
+        return tavI18n('Tav.common.httpError')
+      },
+      callback,
+    }
+
+    if (mergedProps.value.mode === 'read') {
+      //
+    } else if (mergedProps.value.mode === 'create') {
+      //
+    } else if (mergedProps.value.mode === 'update') {
+      //
+    } else {
+      options['apiParams'] = {
+        ...options['apiParams'],
+        ...(apiParams.businessId
+          ? {
+              businessId: apiParams.businessId,
+            }
+          : {}),
+        ...(apiParams.businessKey
+          ? {
+              businessKey: apiParams.businessKey,
+            }
+          : {}),
+      }
+    }
+
+    return options
+  }
+  function updateApiOptions(
+    apiParams: FileActionUploadProps['apiParams'],
+    files: File[],
+    row:
+      | (FileActionUploadApiResponseRecord & {
+          cache: FileActionUploadApiResponseRecord[] | undefined
+        })
+      | undefined,
+    callback: () => void
+  ) {
+    if (!mergedProps.value.apiUpdateFile) {
+      console.warn('[tavui TaFileActionUpload] apiUpdateFile is undefined')
+      return
+    }
+
+    const options: UseRequestHandleApiDefaultOptions<
+      FileActionUploadProps['apiParams'],
+      FileActionUploadApiResponseRecord[]
+    > = {
+      api: mergedProps.value.apiUploadFile,
+      beforeApi: mergedProps.value.beforeApiUploadFile,
+      afterApi: mergedProps.value.afterApiUploadFile,
+      catchError: mergedProps.value.catchApiUpdateFileError,
+      apiParams: {
+        appId: apiParams.appId,
+        files: unref(files),
+        moduleCode: row?.moduleCode ?? apiParams.moduleCode,
+        typeCode: row?.typeCode ?? apiParams.typeCode,
+        businessParamsJson: apiParams.businessParamsJson,
+      },
+      transformApiParamsToFormData: {
+        fileFiledName: 'files',
+        filterNames: ['appId', 'fileActualId', 'instantUpdate'],
+      },
+      successMessage: () => {
+        return tavI18n('Tav.file.message.8')
+      },
+      failureMessage: () => {
+        return tavI18n('Tav.common.httpError')
+      },
+      callback,
+    }
+
+    if (mergedProps.value.mode === 'read') {
+      //
+    } else if (mergedProps.value.mode === 'create') {
+      //
+    } else if (mergedProps.value.mode === 'update') {
+      if (validateVersionCachesHasApiFile(row?.cache)) {
+        options['transformApiParamsToFormData'] = undefined
+        options['api'] = mergedProps.value.apiUpdateFile as any
+        options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
+        options['afterApi'] = mergedProps.value.afterApiUpdateFile
+        const formData = new FormData()
+        files.forEach((file) => formData.append('file', file))
+        options['apiParams'] = {
+          appId: apiParams.appId,
+          fileActualId: row?.actualId,
+          instantUpdate: false,
+          formData,
+        } as any
+      } else {
+        //
+      }
+    } else {
+      options['transformApiParamsToFormData'] = undefined
+      options['api'] = mergedProps.value.apiUpdateFile as any
+      options['beforeApi'] = mergedProps.value.beforeApiUpdateFile as any
+      options['afterApi'] = mergedProps.value.afterApiUpdateFile
+      const formData = new FormData()
+      files.forEach((file) => formData.append('file', file))
+      options['apiParams'] = {
+        appId: apiParams.appId,
+        fileActualId: row?.actualId,
+        instantUpdate: true,
+        formData,
+      } as any
+    }
+
+    return options
+  }
+  //:========================================: api actions :========================================://
+
+  return {
+    apiActions: {
+      uploadApiOptions,
+      updateApiOptions,
+    },
+  }
+}

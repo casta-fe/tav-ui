@@ -227,9 +227,11 @@ export default defineComponent({
           // 必须走天眼查 -> 可自定义输入
           if (v) {
             emitValue()
-            if (state.value?.length < 2) {
-              return
-            }
+            state.options = []
+            return
+            // if (state.value?.length < 2) {
+            //   return
+            // }
           } else {
             emitValue(true)
           }
@@ -252,7 +254,7 @@ export default defineComponent({
     })
 
     return () => (
-      <div>
+      <div class={{ 'searchable-apiselect-nosearch': unref(props.canInputRef) }}>
         <Search
           ref={selfRef}
           {...attrs}
@@ -292,11 +294,15 @@ export default defineComponent({
                */
             } else {
               emitValue(true)
+              // canInputRef为true时候不再请求接口，让只输入，如果要请求放到外面去 by hyb
+              throttleFetchCurrentKeyword()
             }
-            throttleFetchCurrentKeyword()
           }}
           onSearch={(keyword) => {
             // 直接点搜索或点击清除按钮
+            if (unref(props.canInputRef)) {
+              return
+            }
             if (!keyword) {
               emitValue(true)
               return
