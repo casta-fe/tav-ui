@@ -420,17 +420,45 @@ export default defineComponent({
     // 处理动态校验和普通校验针对InputNumber加公共校验
     function ruleCommonHandle(originRules: ValidationRule[]): ValidationRule[] {
       const rules = cloneDeep(originRules)
-      if (props.schema.component === 'InputNumber') {
-        rules.push({
-          validator: (_, value) => {
-            if (isNullOrUnDef(value)) return Promise.resolve()
-            const regex = /^-?\d{1,8}(\.\d{1,6})?$/
-            if (!regex.test(value)) {
-              return Promise.reject('整数位不能大于8位小数位不能大于6位')
-            }
-            return Promise.resolve()
-          },
-        })
+      const { label, component, ignoreDefaultRule } = schema.value
+      const defaultRule = (value: any) => {
+        if (isNullOrUnDef(value)) return Promise.resolve()
+        const regex = /^-?\d{1,8}(\.\d{1,6})?$/
+        if (value < 0) {
+          return Promise.reject(`${label}必须大于0`)
+        }
+        if (!regex.test(value)) {
+          return Promise.reject(`${label}值整数位不能大于8位,小数位不能大于6位`)
+        }
+        return Promise.resolve()
+      }
+      if (ignoreDefaultRule === true) {
+        if (component === 'InputNumber') {
+          rules.push({
+            validator: (_, value) => {
+              console.log(value)
+              return defaultRule(value)
+            },
+          })
+        }
+        if (component === 'InputNumberRange') {
+          rules.push({
+            validator: (_, value) => {
+              if (value && value[0] && value[1]) {
+                if (value[0] > value[1]) {
+                  return Promise.reject(`${label}的最小值必须大于最大值`)
+                }
+              }
+              if (Array.isArray(value)) {
+                // 对数组中的每个值调用 defaultRule
+                const promises = value.map((val) => defaultRule(val))
+                return Promise.all(promises)
+              }
+              // 如果不是数组，直接调用 defaultRule
+              return defaultRule(value)
+            },
+          })
+        }
       }
       return rules
     }

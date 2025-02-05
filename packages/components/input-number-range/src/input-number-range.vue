@@ -27,34 +27,18 @@ export default defineComponent({
     })
     const minCompProps = computed(() => ({
       ...props.minProps,
-      min: props.min ? props.min : props.minProps.min || 0,
+      min: props.min ? props.min : props.minProps.min,
       max: props.max ? props.max : props.minProps.max || Infinity,
       placeholder: props.minPlaceHolder ? props.minPlaceHolder : props.minProps.placeholder,
     }))
     const maxCompProps = computed(() => ({
       ...props.maxProps,
-      min: props.min ? props.min : props.maxProps.min || 0,
+      min: props.min ? props.min : props.maxProps.min,
       max: props.max ? props.max : props.maxProps.max || Infinity,
       placeholder: props.maxPlaceHolder ? props.maxPlaceHolder : props.maxProps.placeholder,
     }))
-    const blurValueMin = (e) => {
-      const value = e.target.value
-      if (value && state.max && Number(value) > Number(state.max)) {
-        createMessage.warning(tavI18n('Tav.form.inputRange.1'))
-        emit('change', [null, state.max])
-      } else {
-        emit('change', [state.min, state.max])
-      }
-    }
-
-    const blurValueMax = (e) => {
-      const value = e.target.value
-      if (state.min && value && Number(state.min) > Number(value)) {
-        createMessage.warning(tavI18n('Tav.form.inputRange.2'))
-        emit('change', [state.min, null])
-      } else {
-        emit('change', [state.min, state.max])
-      }
+    const changeHandle = (value) => {
+      emit('change', [state.min, state.max])
     }
     watch(
       () => props.value,
@@ -71,8 +55,7 @@ export default defineComponent({
     return {
       minCompProps,
       maxCompProps,
-      blurValueMax,
-      blurValueMin,
+      changeHandle,
       ...toRefs(state),
     }
   },
@@ -88,7 +71,7 @@ export default defineComponent({
         :size="size"
         :disabled="disabled"
         :precision="precision"
-        @blur="blurValueMin"
+        @change="changeHandle"
       />
     </FormItem>
     <span class="ta-input-number-range-prefix">{{ prefixCenter }}</span>
@@ -99,7 +82,7 @@ export default defineComponent({
         :size="size"
         :disabled="disabled"
         :precision="precision"
-        @blur="blurValueMax"
+        @change="changeHandle"
       />
     </FormItem>
   </div>
