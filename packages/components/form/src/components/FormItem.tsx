@@ -452,7 +452,7 @@ export default defineComponent({
               if (Array.isArray(value)) {
                 // 对数组中的每个值调用 defaultRule
                 const promises = value.map((val) => defaultRule(val))
-                return Promise.all(promises)
+                return Promise.all(promises) as any
               }
               // 如果不是数组，直接调用 defaultRule
               return defaultRule(value)
