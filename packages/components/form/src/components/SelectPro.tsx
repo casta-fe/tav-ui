@@ -98,7 +98,12 @@ export default defineComponent({
 
     // 通过拼音过滤，无论是否开启 enabledadd 都会用到
     function handleFilter(inputValue: string, option: any) {
-      if (option.pyfls?.includes(inputValue) || option.pyls?.includes(inputValue)) {
+      console.log(`inputValue: ${inputValue}`)
+      if (
+        option.pyfls?.includes(inputValue) ||
+        option.pyls?.includes(inputValue) ||
+        option[getDataFromFieldNames('label')].toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+      ) {
         return true
       }
       return false
