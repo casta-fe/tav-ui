@@ -432,7 +432,7 @@ export default defineComponent({
         }
         return Promise.resolve()
       }
-      if (ignoreDefaultRule === true) {
+      if (ignoreDefaultRule !== true) {
         if (component === 'InputNumber') {
           rules.push({
             validator: (_, value) => {
