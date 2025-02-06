@@ -1,4 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+// import TableProSingleHeader from '../components/TablePro/single-header'
+// import TableProMultiHeader from '../components/TablePro/multi-header'
+// import TestDemo from '../components/TablePro/test-demo.vue'
+// import MultiSelect from '../components/Form/multi-select.vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
@@ -46,6 +50,11 @@ const routes: RouteRecordRaw[] = [
     path: '/form',
     name: 'Form',
     component: () => import('../components/Form/index.vue'),
+  },
+  {
+    path: '/multi-select',
+    name: 'MultiSelect',
+    component: () => import('../components/Form/multi-select.vue'),
   },
   {
     path: '/file',

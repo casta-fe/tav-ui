@@ -128,5 +128,5 @@ columns: [
   },
 ]
 ```
-1. 持久化过程中需要给每个table生成唯一id，目前getTableProId逻辑的实现是取当前页面的router name，与传入的字符串组合，所以必须要保证每个router都有唯一的英文name。
+1. 持久化过程中需要给每个table生成唯一id，目前getTableProId逻辑的实现是取当前页面的router name，与传入的字符串组合，所以必须要保证每个router都有唯一的英文name
 2. 如果表头有层级则每一层必须加field,field也要保持唯一

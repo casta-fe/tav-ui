@@ -58,6 +58,7 @@
     "js-pinyin": "0.1.9",
     "lodash-es": "4.17.21",
     "masonry-layout": "^4.2.2",
+    "pinyin-pro": "^3.20.4",
     "qrcode": "1.4.4",
     "resize-observer-polyfill": "1.5.1",
     "sanitize-html": "^2.13.1",

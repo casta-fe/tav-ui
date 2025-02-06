@@ -79,6 +79,9 @@ importers:
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
+      pinyin-pro:
+        specifier: ^3.20.4
+        version: 3.20.4
       masonry-layout:
         specifier: ^4.2.2
         version: 4.2.2
@@ -8012,6 +8015,10 @@ packages:
   /pinkie@2.0.4:
     resolution: {integrity: sha512-MnUuEycAemtSaeFSjXKW/aroV7akBbY+Sv+RkyqFjgAe73F+MR0TBWKBRDkmfWq/HiFmdavfZ1G7h4SPZXaCSg==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /pinyin-pro@3.20.4:
+    resolution: {integrity: sha512-R4/TG7jgr2UTLqrhiirZf5Gg5RpCsYZlbde7hJs8vF7JUHPuozIyCwDw1WJthielgy8jxuBk1TDvWBPh6TYvFw==}
     dev: false
 
   /pirates@4.0.5:
