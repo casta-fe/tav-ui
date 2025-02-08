@@ -334,11 +334,11 @@ export default defineComponent({
             }
             return null
           }
-          const traverse = (columns, result: any[]) => {
+          const traverse = (columns: any, result: any[]) => {
             for (let i = 0; i < columns.length; i++) {
               const column = columns[i]
               if (column.children && column.children.length) {
-                const current = handleFilterSelectedColumn(column)
+                const current = handleFilterSelectedColumn(column) as any
                 const children = traverse(column.children, [])
                 if (current) {
                   current.children = children
@@ -349,7 +349,7 @@ export default defineComponent({
                   result.push(...children)
                 }
               } else {
-                const current = handleFilterSelectedColumn(column)
+                const current = handleFilterSelectedColumn(column) as any
                 if (current) {
                   current['childNodes'] = current.children
                   result.push(current)
@@ -415,7 +415,7 @@ export default defineComponent({
           maskClosable={false}
           loading={exportModalLoading.value}
           confirmLoading={exportModalLoading.value}
-          onVisible-change={(isOpen) => {
+          onVisible-change={(isOpen: any) => {
             if (!isOpen) {
               props.tableRef?.value?.loadColumn(backupColumns.value)
             }
@@ -448,10 +448,10 @@ export default defineComponent({
       } else {
         const _columns = props.tableRef?.value?.getTableColumn().collectColumn!
         backupColumns.value = _columns
-        const mergeColumns = (columns, exportColumns) => {
+        const mergeColumns = (columns: any, exportColumns: any) => {
           if (!(exportColumns && exportColumns.length)) return columns
-          const createTarget = (target, other?: TableProColumnInfo) => {
-            const params = {} // 必须放在 params 中否则 vxe 内部会把参数过滤掉
+          const createTarget = (target: any, other?: TableProColumnInfo) => {
+            const params: Record<string, any> = {} // 必须放在 params 中否则 vxe 内部会把参数过滤掉
             if (target.cellContent) {
               params['cellContent'] = target.cellContent
             }
@@ -481,12 +481,12 @@ export default defineComponent({
           const handledFields: string[] = []
 
           const traverse = (columns: TableProColumnInfo[], handledFields: string[]) => {
-            return columns.map((column) => {
+            return columns.map((column: any) => {
               if (column.children && column.children.length) {
                 return { ...column, children: traverse(column.children, handledFields) }
               } else {
                 const target = exportColumns.find(
-                  (exportColumn) => exportColumn.field === column.field
+                  (exportColumn: any) => exportColumn.field === column.field
                 )
                 if (target) {
                   handledFields.push(target.field)
@@ -506,8 +506,8 @@ export default defineComponent({
           return [
             ...mergedColumns,
             ...exportColumns
-              .filter((exportColumn) => !handledFields.includes(exportColumn.field))
-              .map((exportColumn) => {
+              .filter((exportColumn: any) => !handledFields.includes(exportColumn.field))
+              .map((exportColumn: any) => {
                 return {
                   visible: true,
                   minWidth: 100,
@@ -584,7 +584,7 @@ export default defineComponent({
               if (column.children && column.children.length) {
                 const current = handleTreeDataItem(column, pid)
                 // 因为export配置在分组表头的父表头中配置是没有意义的只有在最底部表头上才有效所以这里只对子表头做判断
-                const children = traverse(column.children, column.id).filter(Boolean)
+                const children = traverse(column.children, column.id).filter(Boolean) as any
                 return { ...current, children }
               } else {
                 return handleTreeDataItem(column, pid)
@@ -593,7 +593,7 @@ export default defineComponent({
             .filter(Boolean)
         }
         const treeData: TreeDataItem[] = traverse(columns)
-        const handleUnvisibleField = async (value) => {
+        const handleUnvisibleField = async (value: any) => {
           const target = unvisibleFields.find((field) => field.value === value)
           if (target) {
             await nextTick()
@@ -605,7 +605,7 @@ export default defineComponent({
             }
           }
         }
-        const handleUninitField = async (value) => {
+        const handleUninitField = async (value: any) => {
           const target = uninitFields.find((field) => field.value === value)
           if (target) {
             await nextTick()
@@ -617,7 +617,7 @@ export default defineComponent({
             }
           }
         }
-        const handleFieldSelect = (value) => {
+        const handleFieldSelect = (value: any) => {
           handleUnvisibleField(value)
           handleUninitField(value)
         }

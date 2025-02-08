@@ -83,6 +83,10 @@ function handleExtendApi(
         if (hasApiSetting) {
           listField = apiSetting.listField
         }
+        if (permissionApi && permissionApiParams) {
+          params.filter = { ...(params.body.filter || {}) }
+          params.model = { ...(params.body.model || {}) }
+        }
         params.model!['viewAll'] = true
         params.model!['modeType'] = refParam?.options?.modeType
         // 郭明说不分页接口返回的就是data数组这里自动包装
