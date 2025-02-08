@@ -420,7 +420,7 @@ export default defineComponent({
     // 处理动态校验和普通校验针对InputNumber加公共校验
     function ruleCommonHandle(originRules: ValidationRule[]): ValidationRule[] {
       const rules = cloneDeep(originRules)
-      const { label, component, ignoreDefaultRule } = schema.value
+      const { label = '', component, ignoreDefaultRule } = schema.value
       const defaultRule = (value: any) => {
         if (isNullOrUnDef(value)) return Promise.resolve()
         const regex = /^\d{1,8}(\.\d{1,6})?$/
