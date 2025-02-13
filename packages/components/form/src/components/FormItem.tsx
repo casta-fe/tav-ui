@@ -444,7 +444,7 @@ export default defineComponent({
         if (component === 'InputNumberRange') {
           rules.push({
             validator: (_, value) => {
-              if (value && value[0] && value[1]) {
+              if (value && !isNullOrUnDef(value[0]) && !isNullOrUnDef(value[1])) {
                 if (value[0] > value[1]) {
                   return Promise.reject(`${label}最小值必须小于最大值`)
                 }
