@@ -425,18 +425,18 @@ export default defineComponent({
         if (isNullOrUnDef(value)) return Promise.resolve()
         const regex = /^\d{1,8}(\.\d{1,6})?$/
         if (value < 0) {
-          return Promise.reject(`${label}必须大于0`)
+          return Promise.reject(`${label}必须大于或等于0`)
         }
         if (!regex.test(value)) {
           return Promise.reject(`${label}整数位不能大于8位,小数位不能大于6位`)
         }
         return Promise.resolve()
       }
+
       if (ignoreDefaultRule !== true) {
         if (component === 'InputNumber') {
           rules.push({
             validator: (_, value) => {
-              console.log(value)
               return defaultRule(value)
             },
           })
@@ -446,7 +446,7 @@ export default defineComponent({
             validator: (_, value) => {
               if (value && value[0] && value[1]) {
                 if (value[0] > value[1]) {
-                  return Promise.reject(`${label}的最小值必须大于最大值`)
+                  return Promise.reject(`${label}最小值必须小于最大值`)
                 }
               }
               if (Array.isArray(value)) {
@@ -477,7 +477,6 @@ export default defineComponent({
         const rules = dynamicRules(unref(getValues)) as ValidationRule[]
         return ruleCommonHandle(rules)
       }
-
       let rules: ValidationRule[] = cloneDeep(defRules) as ValidationRule[]
       const joinLabel = Reflect.has(props.schema, 'rulesMessageJoinLabel')
         ? rulesMessageJoinLabel
@@ -531,7 +530,7 @@ export default defineComponent({
             if (valueType) {
               rule.type = valueType as RuleType
             } else {
-              rule.type = component === 'InputNumber' ? 'number' : 'string'
+              // rule.type = component === 'InputNumber' ? 'number' : 'string'
             }
           }
 

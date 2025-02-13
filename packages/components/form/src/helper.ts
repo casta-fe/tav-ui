@@ -42,7 +42,7 @@ export function setComponentRuleType(
     rule.type = valueFormat ? 'string' : 'object'
   else if (['RangePicker', 'Upload', 'CheckboxGroup', 'TimePicker'].includes(component))
     rule.type = 'array'
-  else if (['InputNumber'].includes(component)) rule.type = 'number'
+  // else if (['InputNumber'].includes(component)) rule.type = 'number'
 }
 
 export function processDateValue(attr: Recordable, component: string) {
