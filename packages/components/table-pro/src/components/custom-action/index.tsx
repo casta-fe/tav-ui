@@ -198,6 +198,11 @@ export default defineComponent({
               ? undefined
               : props.config?.statistical?.permissionCode
           }
+          usePermission={
+            isBoolean(props.config?.statistical)
+              ? undefined
+              : props.config?.statistical?.usePermission
+          }
         >
           {tavI18n('Tav.tablePro.setting.6')}
         </Button>
@@ -219,6 +224,9 @@ export default defineComponent({
           permission={getPermission(props.config?.add)}
           permissionCode={
             isBoolean(props.config?.add) ? undefined : props.config?.add?.permissionCode
+          }
+          usePermission={
+            isBoolean(props.config?.add) ? undefined : props.config?.add?.usePermission
           }
         >
           {tavI18n('Tav.common.addText')}
@@ -242,6 +250,9 @@ export default defineComponent({
           permissionCode={
             isBoolean(props.config?.delete) ? undefined : props.config?.delete?.permissionCode
           }
+          usePermission={
+            isBoolean(props.config?.delete) ? undefined : props.config?.delete?.usePermission
+          }
         >
           {tavI18n('Tav.common.delText')}
         </Button>
@@ -263,6 +274,9 @@ export default defineComponent({
           permission={getPermission(props.config?.import)}
           permissionCode={
             isBoolean(props.config?.import) ? undefined : props.config?.import?.permissionCode
+          }
+          usePermission={
+            isBoolean(props.config?.import) ? undefined : props.config?.import?.usePermission
           }
         >
           {tavI18n('Tav.common.exportText')}
@@ -694,7 +708,9 @@ export default defineComponent({
           permissionCode={
             isBoolean(props.config?.export) ? undefined : props.config?.export?.permissionCode
           }
-          usePermission={getUsePermission(props.config?.export)}
+          usePermission={
+            isBoolean(props.config?.export) ? undefined : props.config?.export?.usePermission
+          }
         >
           {tavI18n('Tav.common.exportText')}
         </Button>
