@@ -121,6 +121,7 @@ import BasicModal from '@tav-ui/components/modal'
 import { useModal } from '@tav-ui/components/modal/src/hooks/useModal'
 import { useGlobalConfig } from '@tav-ui/hooks/global/useGlobalConfig'
 import { tavI18n } from '@tav-ui/locales'
+import { isNullOrUnDef } from '@tav-ui/utils'
 import MemberModal from './components/member-modal.vue'
 import { memberSelectProps } from './types'
 import type { Ref } from 'vue'
@@ -213,7 +214,11 @@ export default defineComponent({
           return obj
         })
         .sort((a) => {
-          return a.disabled ? 1 : -1
+          if (isNullOrUnDef(a.status)) {
+            return -1
+          } else {
+            return a.status === 1 ? -1 : 1
+          }
         })
       return list
     }

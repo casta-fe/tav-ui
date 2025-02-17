@@ -131,6 +131,7 @@ export function defaultFilterFormConfigBuilder(
         component: 'MemberSelect',
         defaultValue: [],
         componentProps: {
+          useDisabledUser: true,
           allowClear: true,
           multiple: true,
         },
