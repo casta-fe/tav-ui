@@ -519,7 +519,6 @@ export default defineComponent({
       const requiredRuleIndex: number = rules.findIndex(
         (rule) => Reflect.has(rule, 'required') && !Reflect.has(rule, 'validator')
       )
-
       if (requiredRuleIndex !== -1) {
         const rule = rules[requiredRuleIndex]
         const { isShow } = getShow()
@@ -535,8 +534,14 @@ export default defineComponent({
           }
 
           rule.message = rule.message || defaultMsg
-
-          if (component.includes('Input') || component.includes('Textarea')) rule.whitespace = true
+          if (component.includes('Input') || component.includes('Textarea')) {
+            rule.whitespace = true
+          }
+          if (component === 'InputNumber') {
+            if (rule.required && !rule.validator) {
+              rule.validator = validator
+            }
+          }
 
           const valueFormat = unref(getComponentsProps)?.valueFormat
           setComponentRuleType(rule, component, valueFormat)
