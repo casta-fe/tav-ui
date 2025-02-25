@@ -64,17 +64,24 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
       PermissionParentNames.includes(_vnode.type.name) &&
       _vnode.exposed &&
       _vnode.exposed.permissionContext &&
-      _vnode.exposed.permissionContext.permission &&
-      (_vnode.exposed.permissionContext.permission.permissionCodes ||
-        _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes)
+      _vnode.exposed.permissionContext.permission
     ) {
-      const permissionCodes =
-        _vnode.exposed.permissionContext.permission.permissionCodes ||
-        _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes
+      if (Array.isArray(_vnode.exposed.permissionContext.permission)) {
+        // 对象数组直接跳过 @guoming
+        return findPermissionParent(filterVNodeProps(_vnode))
+      } else {
+        const permissionCodes =
+          _vnode.exposed.permissionContext.permission.permissionCodes ||
+          _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes
 
-      return !!(Array.isArray(permissionCodes)
-        ? permissionCodes.includes(code)
-        : permissionCodes[code])
+        if (permissionCodes) {
+          return !!(Array.isArray(permissionCodes)
+            ? permissionCodes.includes(code)
+            : permissionCodes[code])
+        } else {
+          return findPermissionParent(filterVNodeProps(_vnode))
+        }
+      }
     } else {
       return findPermissionParent(filterVNodeProps(_vnode))
     }
