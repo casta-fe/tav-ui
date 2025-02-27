@@ -26,6 +26,7 @@ export type PermissionDataQueryProps = ExtractPropTypes<typeof permissionDataQue
 
 export const permissionDataQueryEmits = {
   apiSuccess: (...args: [PermissionQueryDataContent]) => args instanceof Object,
+  apiError: (...args: any) => args instanceof Object,
 }
 
 export type PermissionDataQueryEmits = typeof permissionDataQueryEmits

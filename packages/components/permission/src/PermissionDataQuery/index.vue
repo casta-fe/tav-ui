@@ -54,6 +54,7 @@ async function reload() {
     }
   } catch (error: any) {
     console.warn('[tavui TaPermissionDataQuery] api has error', error)
+    emits('apiError', error)
     return undefined
   }
 }
