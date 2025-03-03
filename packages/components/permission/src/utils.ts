@@ -91,7 +91,7 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
     if (row && row.RECORD_PREMISSION && row.RECORD_PREMISSION.permissionCodes) {
       return row.RECORD_PREMISSION.permissionCodes.includes(code)
     }
-    return true
+    return false
   }
 
   return computed(() => {
