@@ -75,9 +75,17 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
           _vnode.exposed.permissionContext.permission.RECORD_PREMISSION.permissionCodes
 
         if (permissionCodes) {
-          return !!(Array.isArray(permissionCodes)
-            ? permissionCodes.includes(code)
-            : permissionCodes[code])
+          if (Array.isArray(permissionCodes)) {
+            if (permissionCodes.includes(code)) {
+              return !!permissionCodes.includes(code)
+            } else {
+              return findPermissionParent(filterVNodeProps(_vnode))
+            }
+          } else if (Reflect.has(permissionCodes, code)) {
+            return !!permissionCodes[code]
+          } else {
+            return findPermissionParent(filterVNodeProps(_vnode))
+          }
         } else {
           return findPermissionParent(filterVNodeProps(_vnode))
         }
