@@ -18,7 +18,7 @@ const selectProProps = {
 
 export type SelectProProps = ExtractPropTypes<typeof selectProProps>
 
-function triggerEvent(el, type) {
+function triggerEvent(el: any, type: any) {
   if ('createEvent' in document) {
     // modern browsers, IE9+
     const e = document.createEvent('HTMLEvents')
@@ -98,7 +98,6 @@ export default defineComponent({
 
     // 通过拼音过滤，无论是否开启 enabledadd 都会用到
     function handleFilter(inputValue: string, option: any) {
-      console.log(`inputValue: ${inputValue}`)
       if (
         option.pyfls?.includes(inputValue) ||
         option.pyls?.includes(inputValue) ||
@@ -152,7 +151,7 @@ export default defineComponent({
       let values = _values
 
       if (unref(isEnabledAdd)) {
-        values = unref(selected).map((v) => formatValue(v))
+        values = unref(selected).map((v: any) => formatValue(v))
       }
       // 调用原本的 change event
       const onChangeEvent = (props as any).onChange
@@ -195,9 +194,9 @@ export default defineComponent({
         defaultValues = {
           ...defaultValues,
           value: unref(selected),
-          'onUpdate:value': (values) => {
+          'onUpdate:value': (values: any) => {
             // 未开启 enabledadd 时，values 中为 (string | number)[]
-            values = values.reduce((acc, cur) => {
+            values = values.reduce((acc: any, cur: any) => {
               const existedOption = unref(options).find(
                 (o) =>
                   o[getDataFromFieldNames('label')] === cur ||
@@ -205,12 +204,14 @@ export default defineComponent({
               )
               // 输入值在 option 中存在且 values 不存在直接将 option 的 value 保存
               if (existedOption) {
-                if (!acc.find((item) => item === existedOption[getDataFromFieldNames('value')])) {
+                if (
+                  !acc.find((item: any) => item === existedOption[getDataFromFieldNames('value')])
+                ) {
                   acc.push(existedOption[getDataFromFieldNames('value')])
                 }
               } else {
                 // 输入值在 option 中不存在且 values 不存在直接将输入值保存
-                if (!acc.find((item) => item === cur)) {
+                if (!acc.find((item: any) => item === cur)) {
                   acc.push(cur)
                 }
               }
@@ -223,13 +224,13 @@ export default defineComponent({
           dropdownClassName: dropdownCls,
           onSearch: handleSearch,
           onChange: handleChange,
-          onInputKeyDown: (event) => {
+          onInputKeyDown: (event: any) => {
             // ant-design bug, 按下回车后会将重复字段删除。see：https://github.com/ant-design/ant-design/issues/20198
             const dom = event.target as HTMLInputElement
             if (
               event.key === 'Enter' &&
               dom.value &&
-              unref(selected).find((item) => item === dom.value)
+              unref(selected).find((item: any) => item === dom.value)
             ) {
               // 阻止删除已存在的 tag
               event.stopPropagation()
@@ -245,10 +246,16 @@ export default defineComponent({
           mode: 'tags',
           labelInValue: true,
           value: unref(selected),
-          'onUpdate:value': (values) => {
+          'onUpdate:value': (values: any) => {
             // 去重
-            values = values.reduce((acc, cur) => {
-              if (!acc.find((item) => item.label === cur.label || item.label === cur.value)) {
+            values = values.reduce((acc: any, cur: any) => {
+              if (
+                !acc.find((item: any) =>
+                  item.label
+                    ? item.label === cur.label || item.label === cur.value
+                    : item.value === cur.label || item.value === cur.value
+                )
+              ) {
                 acc.push(cur)
               }
               return acc
@@ -264,13 +271,15 @@ export default defineComponent({
           dropdownClassName: dropdownCls,
           onSearch: handleSearch,
           onChange: handleChange,
-          onInputKeyDown: (event) => {
+          onInputKeyDown: (event: any) => {
             // ant-design bug, 按下回车后会将重复字段删除。see：https://github.com/ant-design/ant-design/issues/20198
             const dom = event.target as HTMLInputElement
             if (
               event.key === 'Enter' &&
               dom.value &&
-              unref(selected).find((item) => item.label === dom.value || item.value === dom.value)
+              unref(selected).find(
+                (item: any) => item.label === dom.value || item.value === dom.value
+              )
             ) {
               // 阻止删除已存在的 tag
               event.stopPropagation()
@@ -287,7 +296,7 @@ export default defineComponent({
       return (
         <Select class="ta-select-pro" ref={selectRef} {...unref(bindValues)}>
           {{
-            tagRender: (tag) => {
+            tagRender: (tag: any) => {
               const isAddOptions = !unref(options).find((o) =>
                 o[getDataFromFieldNames('label')].includes(tag.label)
               )
