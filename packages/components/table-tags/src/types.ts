@@ -14,7 +14,7 @@ export const tableTagsProps = {
 
 export type TableTagsProps = ExtractPropTypes<typeof tableTagsProps>
 export interface TagItem {
-  type: string
+  color: string
   text: string
 }
 export type Tags = TagItem[]

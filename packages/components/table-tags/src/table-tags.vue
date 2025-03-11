@@ -5,15 +5,28 @@
 -->
 <template>
   <div class="tatable-tag-list">
-    <Tag v-for="(item, index) in baseTags" :key="index" class="ta-table-tag" :title="item.text">
-      <span>{{ noShort ? item.text : getShortText(item.text) }}</span>
+    <Tag
+      v-for="(item, index) in baseTags"
+      :key="'tatable-tag-' + index"
+      :color="item.color || 'default'"
+      class="ta-table-tag"
+      :title="item.text"
+    >
+      <slot name="tagContent" :data="item">
+        <span>{{ noShort ? item.text : getShortText(item.text) }}</span>
+      </slot>
     </Tag>
     <template v-if="moreTags.length > 0">
       <Tooltip>
         <TagsOutlined />
         <template #title>
-          <Tag v-for="(item, index) in tags" :key="index" class="ta-table-tag">
-            {{ item.text }}
+          <Tag
+            v-for="(item, index) in allTags"
+            :key="'tatable-tag--tooltip' + index"
+            :color="item.color || 'default'"
+            class="ta-table-tag"
+          >
+            <slot name="tagContent" :data="item"> {{ item.text }}</slot>
           </Tag>
         </template>
       </Tooltip>
@@ -32,7 +45,7 @@ export default defineComponent({
   props: tableTagsProps,
   setup(props) {
     const state = reactive({
-      tags: [] as Tags,
+      allTags: [] as Tags,
       baseTags: [] as Tags,
       moreTags: [] as Tags,
     })
@@ -46,7 +59,7 @@ export default defineComponent({
         list.forEach((v) => {
           if (v && v !== 'null') {
             result.push({
-              type: 'default',
+              color: '',
               text: v,
             })
           }
@@ -58,7 +71,7 @@ export default defineComponent({
     }
     const pageInit = () => {
       const allTags = getAllTags()
-      state.tags = [...allTags]
+      state.allTags = [...allTags]
       const maxNum = props.maxNum
       if (allTags.length < maxNum) {
         state.baseTags = allTags
@@ -75,8 +88,8 @@ export default defineComponent({
         (val) => val && val.length && pageInit()
       )
     })
-    const getShortText = (text) => {
-      return text.length > 6 ? `${text.slice(0, 5)}...` : text
+    const getShortText = (text: string) => {
+      return text?.length > 6 ? `${text.slice(0, 5)}...` : text
     }
     return { ...toRefs(state), getShortText }
   },
