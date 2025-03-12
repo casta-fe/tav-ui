@@ -567,6 +567,11 @@ export const tableProProps = {
       enabled: true,
     }),
   },
+  /** 异步数据是分页还是列表 */
+  apiType: {
+    type: String as PropType<'pager' | 'list'>,
+    default: 'pager',
+  },
   /** 异步数据接口 */
   api: {
     type: Function as PropType<TableProApi<Promise<any>>>,

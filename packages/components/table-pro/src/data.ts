@@ -340,6 +340,15 @@ export async function API__INVEST_COMPANY_DELETE(
   return await __post(url, data)
 }
 
+// 投资者关系-募资详情
+export async function API__INVEST_INVESTORS_LIST(
+  data,
+  url = '/api/STARLIGHT-INVEST-WEB/raise/investors/list'
+) {
+  // eslint-disable-next-line no-return-await
+  return await __post(url, data)
+}
+
 // 文件更新
 export async function API__FILE_UPDATE(data: any, url = '/api/TIANTA-FILE/api/file/updateFile') {
   const { appId, formData, instantUpdate, fileActualId } = data

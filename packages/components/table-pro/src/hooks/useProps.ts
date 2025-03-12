@@ -50,7 +50,7 @@ function handleExtendApi(
   tableRef: Ref<TableProInstance | null>,
   emit: TableProGridEmit
 ) {
-  const { api, beforeApi, afterApi, customActionConfig, apiSetting, permission } =
+  const { api, beforeApi, afterApi, customActionConfig, apiSetting, permission, apiType } =
     unref(tablePropsRef)
   const permissionApi = (permission as any)?.apiPermissionData ?? undefined
   const permissionApiParams = (permission as any)?.apiParams ?? undefined
@@ -132,7 +132,7 @@ function handleExtendApi(
         ? option.model
           ? { ...option, ...{ model: { ...model, ...option.model } }, ...option.model }
           : { ...option, ...{ model } }
-        : { ...(params?.body ?? params), ...{ model } }
+        : { ...params, ...{ model } }
 
       try {
         if (beforeApi && isFunction(beforeApi)) {
@@ -147,10 +147,16 @@ function handleExtendApi(
             ...permissionApiParams,
             ...((params.filter ?? {}) && (params.model ?? {})
               ? {
-                  body: {
-                    filter: params.filter ?? {},
-                    model: params.model ?? {},
-                  },
+                  body:
+                    apiType === 'list'
+                      ? {
+                          ...(params.filter ?? {}),
+                          ...(params.model ?? {}),
+                        }
+                      : {
+                          filter: params.filter ?? {},
+                          model: params.model ?? {},
+                        },
                 }
               : {}),
           }
@@ -167,6 +173,16 @@ function handleExtendApi(
 
             if (afterApi && isFunction(afterApi)) {
               result = (await afterApi(result)) || result
+            }
+
+            // list 数据这里自动转换
+            if (apiType === 'list') {
+              result = {
+                data: {
+                  [apiSetting.listField!]: result.data,
+                  [apiSetting.totalField!]: result.data.length,
+                },
+              }
             }
           } else {
             result = DEF

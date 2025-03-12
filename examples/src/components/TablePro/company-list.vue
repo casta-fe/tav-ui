@@ -71,6 +71,7 @@ import { ProvinceCityOptions, ProvinceCityRecord, formatToDate, isObject } from 
 import {
   API__INVEST_COMPANY_DELETE,
   API__INVEST_COMPANY_LIST,
+  API__INVEST_INVESTORS_LIST,
 } from '@tav-ui/components/table-pro/src/data'
 // import { PageWrapper } from '/@/components/Page'
 
@@ -103,8 +104,9 @@ export default defineComponent({
     })
     const tablePermissionDataQueryApiParams = ref({
       code: 'PERMISSION_DEMO:DATA_TABLE',
-      // "subCodes": [],
       resource: '/demo/listPager',
+      // code: 'RAISE_MANAGE:DATA_DETAIL:VIEW_INVESTOR:DATA_INVESTOR',
+      // resource: '/raise/investors/list',
       body: {
         filter: {},
         model: {},
@@ -491,61 +493,18 @@ export default defineComponent({
     const filterFormConfig = useTableFilter()
 
     const tableProps: any = {
-      api: ({ filter, model }: any) =>
-        API__INVEST_COMPANY_LIST({
-          filter,
-          model,
-        }),
+      // apiType: 'list',
+      api: (args: any) => {
+        console.log('🚀 ~ setup ~ args:', args)
+        return API__INVEST_COMPANY_LIST({
+          ...args,
+        })
+      },
       beforeApi(opt: any) {
         let { filter = {} } = opt
         isObject(filter) || (filter = {})
-        if (filter.isXmwjRelat) {
-          filter.isXmwjRelat = Number(filter.isXmwjRelat)
-        }
-        // #region 创建时间
-        if (Reflect.has(filter, 'timeRange')) {
-          ;[filter.startTime, filter.endTime] = filter.timeRange.map((el: any) => formatToDate(el))
-          if (filter.startTime && filter.endTime)
-            [filter.startTime, filter.endTime] = [
-              `${filter.startTime} 00:00:00`,
-              `${filter.endTime} 23:59:59`,
-            ]
-          filter.timeRange = undefined
-        }
-        // #region 第一笔拨款时间
-        if (Reflect.has(filter, 'allocationTimeRange')) {
-          ;[filter.firstGrantStartDate, filter.firstGrantEndDate] = filter.allocationTimeRange.map(
-            (el: any) => formatToDate(el)
-          )
-          if (filter.firstGrantStartDate && filter.firstGrantEndDate)
-            [filter.firstGrantStartDate, filter.firstGrantEndDate] = [
-              `${filter.firstGrantStartDate} 00:00:00`,
-              `${filter.firstGrantEndDate} 23:59:59`,
-            ]
-          filter.allocationTimeRange = undefined
-        }
-        // #endregion
-
-        // #region 添加市筛选
-        const province = Reflect.get(filter, 'province')
-        if (province) {
-          Reflect.deleteProperty(filter, 'province')
-
-          const cityCodes = Reflect.get(filter, 'cityCodes')
-          // 用户选择市后又取消选择
-          if (!(Array.isArray(cityCodes) && cityCodes.length)) {
-            Reflect.set(
-              filter,
-              'cityCodes',
-              ProvinceCityOptions.find((el) => el.value === province)?.children?.map(
-                (el) => el.value
-              )
-            )
-          }
-        }
-        // #endregion
-
-        filter.status = tabsActive.value
+        filter.projectStatus = tabsActive.value
+        filter.fundId = '5132707fdf5042a7bc80748498ef4936'
         for (const k in filter) {
           if (filter[k] == undefined) {
             Reflect.deleteProperty(filter, k)
