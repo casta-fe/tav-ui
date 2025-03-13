@@ -407,7 +407,6 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
   const msgKey = 'xlsx'
   const { modal, t } = vxetable
   const { $table, options, columns: _columns, colgroups, datas } = params
-  const columns = deleteNotRequiredColumns(_columns)
   const { props, reactData } = $table
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = props
   const { rowHeight } = reactData
@@ -426,7 +425,9 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     backupColumns,
     exportModalClose,
     fileStyles,
+    // columns: _columns,
   } = options
+  const columns = deleteNotRequiredColumns(_columns)
 
   defaultHeaderHeight = fileStyles.headerHeight ?? defaultHeaderHeight
   defaultHeaderBackgroundColor = fileStyles.headerBackgroundColor ?? defaultHeaderBackgroundColor

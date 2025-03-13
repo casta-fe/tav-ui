@@ -36,8 +36,13 @@ export function normalizedPermissionQueryContent(content: Record<string, any>) {
   return permissionQueryContent
 }
 
-export function usePermissionMatchedByParent(options: { code: string; ref: any; row?: any }) {
-  const { code, ref: vnode, row } = options
+export function usePermissionMatchedByParent(options: {
+  code: string
+  ref: any
+  row?: any
+  useEffect?: boolean
+}) {
+  const { code, ref: vnode, row, useEffect = true } = options
   const PermissionParentNames = ['TaPermissionQuery', 'TaPermissionDataQuery']
 
   function filterVNodeProps(_vnode: any) {
@@ -102,7 +107,7 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
     return false
   }
 
-  return computed(() => {
+  function handler() {
     if (!(code && unref(vnode))) {
       // console.warn('[tavui permission usePermissionMatchedByParent] code、ref is required')
       return false
@@ -120,5 +125,7 @@ export function usePermissionMatchedByParent(options: { code: string; ref: any; 
         return resourceMapPermissions.value?.[code]?.ifShow ?? false
       }
     }
-  })
+  }
+
+  return useEffect ? computed(() => handler()) : handler()
 }

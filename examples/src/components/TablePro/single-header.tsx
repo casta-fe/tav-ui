@@ -52,190 +52,214 @@ export default defineComponent({
         },
       },
       export: {
-        columns: [
-          // {
-          //   field: 'round',
-          // },
-          {
-            field: 'id',
-            title: 'ID',
-          },
-          {
-            field: 'customerName',
-            title: '客户名称',
-            cellContent: ({ row: { customerName } }) => {
-              return `${customerName}123`
+        useUnvisibleColumn: true,
+        columns: () => {
+          return [
+            {
+              field: 'customerName',
+              title: '客户名称',
+              cellContent: ({ row: { customerName } }) => {
+                return `${customerName}123`
+              },
             },
-          },
-          {
-            field: 'customerCode',
-            title: '客户编号',
-          },
-          {
-            field: 'latestFinancingAmount',
-            title: '最新融资金额（万元）',
-          },
-          {
-            field: 'customerType',
-            title: '客户类型',
-          },
-          // 与下面重复了，保留一个即可
-          // {
-          //   field: 'classification',
-          //   title: '分类'
-          // },
-          {
-            field: 'classificationValue',
-            title: '客户分类',
-          },
-          {
-            field: 'valuation',
-            title: '最新估值（万元）',
-          },
-          {
-            field: 'annualRevenue',
-            title: '年度营收（万元）',
-            cellFormat: () => XLSXFormats['number|0.000000'],
-          },
-          {
-            field: 'financing',
-            title: '融资情况（万元）',
-          },
-          // 与下面重复了，保留一个即可
-          // {
-          //   field: 'shareholderList',
-          //   title: '主要股东列表'
-          // },
-          {
-            field: 'shareholder',
-            title: '主要股东',
-          },
-          {
-            field: 'sourceType',
-            title: '客户来源',
-          },
-          {
-            field: 'sourceOther',
-            title: '客户来源——其他',
-          },
-          // 与下面重复了，保留一个即可
-          // {
-          //   field: 'owner',
-          //   title: '客户负责ID'
-          // },
-          // {
-          //   field: 'ownerName',
-          //   title: '客户负责人',
-          // },
-          {
-            field: 'country',
-            title: '国家',
-          },
-          {
-            field: 'province',
-            title: '省份',
-          },
-          {
-            field: 'city',
-            title: '城市',
-          },
-          {
-            field: 'districts',
-            title: '区/县',
-          },
-          {
-            field: 'address',
-            title: '注册地',
-          },
-          {
-            field: 'compnayProfile',
-            title: '企业简介',
-          },
-          {
-            field: 'teamProfile',
-            title: '团队概况',
-          },
-          {
-            field: 'incomeProfile',
-            title: '收入概况',
-          },
-          {
-            field: 'businessProfile',
-            title: '业务概况',
-          },
-          {
-            field: 'industrialChain',
-            title: '产业链',
-          },
-          {
-            field: 'visitCount',
-            title: '拜访记录条数',
-          },
-          {
-            field: 'industryList',
-            title: '行业列表',
-          },
-          {
-            field: 'applicationList',
-            title: '应用领域列表',
-          },
-          {
-            field: 'creditCode',
-            title: '统一社会信用代码',
-          },
-          {
-            field: 'technologyList',
-            title: '技术标签列表',
-          },
-          {
-            field: 'technology',
-            title: '技术标签',
-          },
-          {
-            field: 'establishResult',
-            title: '立项结果',
-          },
-          {
-            field: 'pay',
-            title: '是否付费',
-          },
-          {
-            field: 'createBy',
-            title: '创建人',
-          },
-          {
-            field: 'createByName',
-            title: '创建人名称',
-          },
-          {
-            field: 'createDate',
-            title: '创建日期',
-            // cellFormat: (cell) => {
-            //   cell.value = formatToExcelTime(cell.value)
-            //   return XLSXFormats.date
+            {
+              field: 'province',
+              title: '年度营收（万元）',
+              cellFormat: () => XLSXFormats['number|0.000000'],
+            },
+            // {
+            //   field: 'appendColumn1',
+            //   title: 'Append Column 1',
+            //   cellContent: ({ row: { customerName } }) => {
+            //     return `${customerName} Append column 1`
+            //   },
             // },
-          },
-          {
-            field: 'updateBy',
-            title: '变更人',
-          },
-          {
-            field: 'updateDate',
-            title: '变更日期',
-          },
-          {
-            field: 'serviceNum',
-            title: '服务项目数量',
-          },
-          {
-            field: 'serviceDetail',
-            title: '服务项目详情',
-          },
-          {
-            field: 'deleted',
-            title: '删除状态',
-          },
-        ],
+          ]
+        },
+        // columns: [
+        //   // {
+        //   //   field: 'round',
+        //   // },
+        //   {
+        //     field: 'id',
+        //     title: 'ID',
+        //   },
+        //   {
+        //     field: 'customerName',
+        //     title: '客户名称',
+        //     cellContent: ({ row: { customerName } }) => {
+        //       return `${customerName}123`
+        //     },
+        //   },
+        //   {
+        //     field: 'customerCode',
+        //     title: '客户编号',
+        //   },
+        //   {
+        //     field: 'latestFinancingAmount',
+        //     title: '最新融资金额（万元）',
+        //   },
+        //   {
+        //     field: 'customerType',
+        //     title: '客户类型',
+        //   },
+        //   // 与下面重复了，保留一个即可
+        //   // {
+        //   //   field: 'classification',
+        //   //   title: '分类'
+        //   // },
+        //   {
+        //     field: 'classificationValue',
+        //     title: '客户分类',
+        //   },
+        //   {
+        //     field: 'valuation',
+        //     title: '最新估值（万元）',
+        //   },
+        //   {
+        //     field: 'annualRevenue',
+        //     title: '年度营收（万元）',
+        //     cellFormat: () => XLSXFormats['number|0.000000'],
+        //   },
+        //   {
+        //     field: 'financing',
+        //     title: '融资情况（万元）',
+        //   },
+        //   // 与下面重复了，保留一个即可
+        //   // {
+        //   //   field: 'shareholderList',
+        //   //   title: '主要股东列表'
+        //   // },
+        //   {
+        //     field: 'shareholder',
+        //     title: '主要股东',
+        //   },
+        //   {
+        //     field: 'sourceType',
+        //     title: '客户来源',
+        //   },
+        //   {
+        //     field: 'sourceOther',
+        //     title: '客户来源——其他',
+        //   },
+        //   // 与下面重复了，保留一个即可
+        //   // {
+        //   //   field: 'owner',
+        //   //   title: '客户负责ID'
+        //   // },
+        //   // {
+        //   //   field: 'ownerName',
+        //   //   title: '客户负责人',
+        //   // },
+        //   {
+        //     field: 'country',
+        //     title: '国家',
+        //   },
+        //   {
+        //     field: 'province',
+        //     title: '省份',
+        //   },
+        //   {
+        //     field: 'city',
+        //     title: '城市',
+        //   },
+        //   {
+        //     field: 'districts',
+        //     title: '区/县',
+        //   },
+        //   {
+        //     field: 'address',
+        //     title: '注册地',
+        //   },
+        //   {
+        //     field: 'compnayProfile',
+        //     title: '企业简介',
+        //   },
+        //   {
+        //     field: 'teamProfile',
+        //     title: '团队概况',
+        //   },
+        //   {
+        //     field: 'incomeProfile',
+        //     title: '收入概况',
+        //   },
+        //   {
+        //     field: 'businessProfile',
+        //     title: '业务概况',
+        //   },
+        //   {
+        //     field: 'industrialChain',
+        //     title: '产业链',
+        //   },
+        //   {
+        //     field: 'visitCount',
+        //     title: '拜访记录条数',
+        //   },
+        //   {
+        //     field: 'industryList',
+        //     title: '行业列表',
+        //   },
+        //   {
+        //     field: 'applicationList',
+        //     title: '应用领域列表',
+        //   },
+        //   {
+        //     field: 'creditCode',
+        //     title: '统一社会信用代码',
+        //   },
+        //   {
+        //     field: 'technologyList',
+        //     title: '技术标签列表',
+        //   },
+        //   {
+        //     field: 'technology',
+        //     title: '技术标签',
+        //   },
+        //   {
+        //     field: 'establishResult',
+        //     title: '立项结果',
+        //   },
+        //   {
+        //     field: 'pay',
+        //     title: '是否付费',
+        //   },
+        //   {
+        //     field: 'createBy',
+        //     title: '创建人',
+        //   },
+        //   {
+        //     field: 'createByName',
+        //     title: '创建人名称',
+        //   },
+        //   {
+        //     field: 'createDate',
+        //     title: '创建日期',
+        //     // cellFormat: (cell) => {
+        //     //   cell.value = formatToExcelTime(cell.value)
+        //     //   return XLSXFormats.date
+        //     // },
+        //   },
+        //   {
+        //     field: 'updateBy',
+        //     title: '变更人',
+        //   },
+        //   {
+        //     field: 'updateDate',
+        //     title: '变更日期',
+        //   },
+        //   {
+        //     field: 'serviceNum',
+        //     title: '服务项目数量',
+        //   },
+        //   {
+        //     field: 'serviceDetail',
+        //     title: '服务项目详情',
+        //   },
+        //   {
+        //     field: 'deleted',
+        //     title: '删除状态',
+        //   },
+        // ],
         styles: {
           descriptionBackgroundColor: '276dff',
         },
@@ -243,11 +267,15 @@ export default defineComponent({
           console.log(params)
         },
         handleDescription: () => 'dsahdjkashjkda',
-        handleAllApi: (param) => {
-          console.log('--handleAllApi-', param)
-
-          return API__POE_CUSTOM_ALL_LIST({})
+        handleExportedResult: (args: any) => {
+          console.log('🚀 ~ setup ~ args:', args)
         },
+        // handleWithFrontend: true,
+        // handleAllApi: (param) => {
+        //   console.log('--handleAllApi-', param)
+
+        //   return API__POE_CUSTOM_ALL_LIST({})
+        // },
         // handleBackendApi: async ({ filter, model }) => {
         //   console.log(filter, model)
         // },

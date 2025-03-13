@@ -1,4 +1,5 @@
 import { computed, defineComponent, nextTick, reactive, ref, unref } from 'vue'
+import { cloneDeep } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
@@ -156,6 +157,7 @@ export default defineComponent({
     const settingsRef = ref<CustomActionSetting | null>(null)
     const actionRef = ref<ComputedRef | null>(null)
     const { tableEmitter, tablePropsRef } = useTableContext()
+    const handledColumns = ref<any[]>([])
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
     const exportLoading = ref<boolean>(false)
@@ -178,7 +180,6 @@ export default defineComponent({
     })
 
     const getPermission = (data: any) => (isObject(data) ? data?.permission : undefined)
-    const getUsePermission = (data: any) => (isObject(data) ? data?.usePermission : undefined)
     // 统计按钮配置
     const handleStatistical = (e: Event) => {
       emit('triggerStatistical')
@@ -328,7 +329,7 @@ export default defineComponent({
         exportModalChangeLoading(true)
         const { data, errors } = await handleSubmit()
         if (errors.length === 0) {
-          const _columns = props.tableRef?.value?.getTableColumn().collectColumn ?? []
+          const _columns = handledColumns.value ?? []
           /** 扁平化树结构选中的 column id*/
           const getContainColumnIds = (fieldValue: string[]) => {
             const containColumnIds: string[] = []
@@ -452,100 +453,125 @@ export default defineComponent({
 
     const handleExportClick = async (e: Event) => {
       prepareExport.value = true
+      //@ts-ignore
+      const useUnvisibleColumn = (props.config?.export as any)?.useUnvisibleColumn ?? false
       if (isObject(props.config?.export) && props.config?.export.handleAction) {
         props.config?.export.handleAction(e)
       }
 
-      if (isObject(props.config?.export) && props.config?.export.handleBackendApi) {
-        await props.config?.export.handleBackendApi(state.filter)
+      if (isObject(props.config?.export) && props.config?.export.useBackendApi) {
+        await props.config?.export.useBackendApi(state.filter)
         prepareExport.value = false
       } else {
         const _columns = props.tableRef?.value?.getTableColumn().collectColumn!
-        backupColumns.value = _columns
-        const mergeColumns = (columns: any, exportColumns: any) => {
-          if (!(exportColumns && exportColumns.length)) return columns
-          const createTarget = (target: any, other?: TableProColumnInfo) => {
+        backupColumns.value = cloneDeep(_columns)
+
+        const mergeColumns = (columns: any, exportColumns: any = []) => {
+          const createExportColumnProps = (exportColumn: any, column?: TableProColumnInfo) => {
             const params: Record<string, any> = {} // 必须放在 params 中否则 vxe 内部会把参数过滤掉
-            if (target.cellContent) {
-              params['cellContent'] = target.cellContent
+            if (exportColumn.cellContent) {
+              params['cellContent'] = exportColumn.cellContent
             }
-            if (target.columnFormat) {
-              params['columnFormat'] = target.columnFormat
-            }
-            if (target.cellFormat) {
-              params['cellFormat'] = target.cellFormat
+            if (exportColumn.cellFormat) {
+              params['cellFormat'] = exportColumn.cellFormat
             }
 
             let title = ''
-            if (other) {
-              title = target.title || other.title || target.field
+            if (column) {
+              title = exportColumn.title || column.title || exportColumn.field
             } else {
-              title = target.title ?? target.field
+              title = exportColumn.title ?? exportColumn.field
             }
 
-            if (!other) {
+            if (!column) {
               params['isAppendColumn'] = true
+              exportColumn['id'] = exportColumn.field
             }
             return {
-              ...target,
+              ...exportColumn,
               title,
               params,
             }
           }
-          const handledFields: string[] = []
 
-          const traverse = (columns: TableProColumnInfo[], handledFields: string[]) => {
-            return columns.map((column: any) => {
-              if (column.children && column.children.length) {
-                return { ...column, children: traverse(column.children, handledFields) }
-              } else {
-                const target = exportColumns.find(
-                  (exportColumn: any) => exportColumn.field === column.field
-                )
-                if (target) {
-                  handledFields.push(target.field)
-                  const targetProps = createTarget(target, column)
-                  for (const [k, v] of Object.entries(targetProps)) {
-                    column[k] = v
+          // 存放通过 exportcolumn 新增的列 field
+          const matchedExportColumnFields: string[] = []
+
+          const traverse: any = (
+            columns: TableProColumnInfo[],
+            matchedExportColumnFields: string[]
+          ) => {
+            return columns
+              .map((column: any) => {
+                if (!column.visible && !useUnvisibleColumn) {
+                  const exportColumn = exportColumns.find(
+                    (exportColumn: any) => exportColumn.field === column.field
+                  )
+                  if (exportColumn) {
+                    exportColumn?.field && matchedExportColumnFields.push(exportColumn.field)
                   }
-                  return column
+                  return null
                 } else {
-                  return column
+                  if (column.children && column.children.length) {
+                    const children = traverse(column.children, matchedExportColumnFields).filter(
+                      Boolean
+                    )
+                    return {
+                      ...column,
+                      children,
+                    }
+                  } else {
+                    const exportColumn = exportColumns.find(
+                      (exportColumn: any) => exportColumn.field === column.field
+                    )
+                    if (exportColumn) {
+                      const exportColumnProps = createExportColumnProps(exportColumn, column)
+                      exportColumn?.field && matchedExportColumnFields.push(exportColumn.field)
+                      for (const [k, v] of Object.entries(exportColumnProps)) {
+                        column[k] = v
+                      }
+                      return column
+                    } else {
+                      return column
+                    }
+                  }
                 }
-              }
-            })
+              })
+              .filter(Boolean)
           }
 
-          const mergedColumns = traverse(columns, handledFields)
+          const mergedColumns = traverse(columns, matchedExportColumnFields)
           return [
             ...mergedColumns,
             ...exportColumns
-              .filter((exportColumn: any) => !handledFields.includes(exportColumn.field))
+              .filter(
+                (exportColumn: any) => !matchedExportColumnFields.includes(exportColumn.field)
+              )
               .map((exportColumn: any) => {
                 return {
                   visible: true,
                   minWidth: 100,
                   ...exportColumn,
-                  ...createTarget(exportColumn),
+                  ...createExportColumnProps(exportColumn),
                 }
               }),
           ]
         }
         const mergedColumns = mergeColumns(
           _columns,
-          isObject(props.config?.export) ? props.config?.export.columns : []
+          isObject(props.config?.export) ? props.config?.export.columns?.() : []
         )
         prepareExport.value = false
         exportModalOpen()
 
+        handledColumns.value = mergedColumns
         await props.tableRef?.value?.loadColumn(mergedColumns)
         await props.tableRef?.value?.refreshScroll()
         await props.tableRef?.value?.recalculate()
-        const columns = props.tableRef?.value?.getTableColumn().collectColumn!
 
         let selectedKeys: string[] = []
         const unvisibleFields: Record<string, any>[] = []
-        const uninitFields: Record<string, any>[] = []
+        const appendFields: Record<string, any>[] = []
         const handleTreeDataItem = (column: TableProColumnInfo, pid: string) => {
           const { id, type, field, title, visible, disabled, params } = column
           const currentId = pid ? `${pid}-${id}` : id
@@ -556,9 +582,11 @@ export default defineComponent({
             disabled: false,
           }
           selectedKeys.push(currentId)
+
           if (visible && !disabled && SELECT_COMPONENTS.includes(type!)) {
             item.title = tavI18n('Tav.tablePro.setting.4')
           }
+
           // 把选中、操作列设置为不可选择项
           if (
             visible &&
@@ -568,6 +596,7 @@ export default defineComponent({
           ) {
             item.disabled = true
           }
+
           // 把选中、操作列设置为不可选择项，默认不导出
           if (
             (type && SELECT_COMPONENTS.includes(type!)) ||
@@ -575,8 +604,10 @@ export default defineComponent({
           ) {
             selectedKeys = selectedKeys.filter((key) => key !== currentId)
           }
+
           // 把配置visible的列筛选出来添加样式
           !visible &&
+            useUnvisibleColumn &&
             unvisibleFields.push({
               value: currentId,
               label: title,
@@ -585,7 +616,7 @@ export default defineComponent({
           // 把通过追加的列筛选出来添加样式
           params &&
             params.isAppendColumn &&
-            uninitFields.push({
+            appendFields.push({
               value: currentId,
               label: title,
             })
@@ -597,75 +628,67 @@ export default defineComponent({
             .map((column) => {
               if (column.children && column.children.length) {
                 const current = handleTreeDataItem(column, pid)
-                // 因为export配置在分组表头的父表头中配置是没有意义的只有在最底部表头上才有效所以这里只对子表头做判断
-                const children = traverse(column.children, column.id).filter(Boolean) as any
-                return { ...current, children }
+                if (current) {
+                  // 因为export配置在分组表头的父表头中配置是没有意义的只有在最底部表头上才有效所以这里只对子表头做判断
+                  const children = traverse(column.children, column.id).filter(Boolean) as any
+                  return { ...current, children }
+                }
+                return null
               } else {
                 return handleTreeDataItem(column, pid)
               }
             })
             .filter(Boolean)
         }
-        const treeData: TreeDataItem[] = traverse(columns)
+        const treeData: any = traverse(mergedColumns)
         const handleUnvisibleField = async (value: any) => {
           const target = unvisibleFields.find((field) => field.value === value)
           if (target) {
             await nextTick()
-            const el: HTMLElement | null = document.querySelector(
-              `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
-            )
+            const el: HTMLElement | null =
+              document.querySelector(
+                `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
+              ) ??
+              document.querySelector(
+                `[codefield="fileContainFields"] .ant-select-selection-item[title="${target.label}"]`
+              )
             if (el) {
               el.style.backgroundColor = '#cccccc80'
             }
           }
         }
-        const handleUninitField = async (value: any) => {
-          const target = uninitFields.find((field) => field.value === value)
+        const handleAppendField = async (value: any) => {
+          const target = appendFields.find((field) => field.value === value)
           if (target) {
             await nextTick()
-            const el: HTMLElement | null = document.querySelector(
-              `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
-            )
+            const el: HTMLElement | null =
+              document.querySelector(
+                `#fileContainFields .ant-select-selection-item[title="${target.label}"]`
+              ) ??
+              document.querySelector(
+                `[codefield="fileContainFields"] .ant-select-selection-item[title="${target.label}"]`
+              )
             if (el) {
               el.style.backgroundColor = '#409eff80'
             }
           }
         }
         const handleFieldSelect = (value: any) => {
-          handleUnvisibleField(value)
-          handleUninitField(value)
+          useUnvisibleColumn && handleUnvisibleField(value)
+          handleAppendField(value)
         }
         await nextTick()
-        let _fileDataTypeDefaultValue = 'allSearch'
+        let _fileDataTypeDefaultValue = 'current'
         const selectData = props.tableRef?.value?.getCheckboxRecords()
-        let fileDataTypeOptions = FileDataTypeOptions
         if (selectData && selectData?.length > 0) {
           _fileDataTypeDefaultValue = 'selected'
-        } else {
-          // 没配置 handleAllApi，就不显示 all
-          if (!(isObject(props.config?.export) && props.config?.export.handleAllApi)) {
-            _fileDataTypeDefaultValue = 'current'
-            fileDataTypeOptions = fileDataTypeOptions.filter(
-              (fileType) => fileType.value.indexOf('all') == -1
-            )
-          }
         }
-
-        // const {
-        //   pager: { pageSize, total },
-        // } = props.tableRef?.value?.getProxyInfo() ?? {}
-        // if (total / pageSize <= 1) {
-        //   _fileDataTypeDefaultValue = 'current'
-        //   fileDataTypeOptions = fileDataTypeOptions.filter(
-        //     (fileType) => fileType.value.indexOf('all') > -1
-        //   )
-        // }
 
         await exportModalFormUpdateSchema([
           {
             field: 'fileDataType',
             componentProps: {
-              options: fileDataTypeOptions,
+              options: FileDataTypeOptions,
             },
           },
           {
@@ -677,7 +700,6 @@ export default defineComponent({
           },
         ])
         await nextTick()
-        console.log(props.config)
         const exportConfig = isBoolean(props.config?.export) ? null : props.config?.export
         const defaultValue = exportConfig ? exportConfig.defaultValue : {}
         await exportModalFormSetFieldsValue(
@@ -690,8 +712,8 @@ export default defineComponent({
           false
         )
         selectedKeys.forEach((key) => {
-          handleUnvisibleField(key)
-          handleUninitField(key)
+          useUnvisibleColumn && handleUnvisibleField(key)
+          handleAppendField(key)
         })
       }
     }

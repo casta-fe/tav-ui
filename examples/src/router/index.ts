@@ -39,7 +39,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/table-pro-export',
     name: 'TableProExport',
-    component: () => import('../components/TablePro/test'),
+    component: () => import('../components/TablePro/testTree'),
   },
   {
     path: '/upload',

@@ -14,7 +14,7 @@ import type {
 } from '@tav-ui/components/table-pro'
 
 export default defineComponent({
-  components: { TaButtonGroup },
+  components: { TaButton, TaButtonGroup },
   setup() {
     const router = useRouter()
     const id = ref<string>('')
@@ -342,12 +342,12 @@ export default defineComponent({
                 // filterForm: () => <div>123</div>,
                 customAction: () => (
                   <>
-                    <Button type={'primary'} preIcon={'ant-design:edit-filled'}>
+                    <TaButton type={'primary'} preIcon={'ant-design:edit-filled'}>
                       变更负责人
-                    </Button>
-                    <Button type={'primary'} preIcon={'ant-design:setting-filled'}>
+                    </TaButton>
+                    <TaButton type={'primary'} preIcon={'ant-design:setting-filled'}>
                       设置分组
-                    </Button>
+                    </TaButton>
                   </>
                 ),
                 // customerType: ({ row: { customerType } }) => (

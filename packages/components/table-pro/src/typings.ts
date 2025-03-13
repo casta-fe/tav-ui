@@ -40,14 +40,13 @@ export interface TableProCustomActionConfig {
   export?:
     | (CustomAction & {
         fileName?: string
-        /** 这里是对数据中全量字段进行配置，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
-        columns?: {
+        /** 对导出的数据进行格式化等操作，数据的导出与数据的展示列配置是分开管理的，只能是扁平数组 */
+        columns?: (...args: any[]) => {
           field: string
           title?: string
           minWidth?: number
           visible?: boolean
           cellContent?: (...args: any[]) => any
-          // columnFormat?: (...args: any[]) => any
           cellFormat?: (...args: any[]) => any
         }[]
         defaultValue: Partial<Record<defaultValueKey, any>>
@@ -70,9 +69,12 @@ export interface TableProCustomActionConfig {
           descriptionAlign?: string
         }
         handleDescription?: (...args: any[]) => any
-        /** 导出全部异步数据接口 */
-        handleAllApi?: TableProApi<Promise<any>>
-        handleBackendApi?: TableProApi<Promise<any>>
+        useUnvisibleColumn?: boolean
+        keepedApiParamKeys?: string[]
+        /** 使用默认接口进行前端导出后对数据做处理 */
+        afterApi?: (...args: any[]) => any
+        /** 使用后端导出，传入后端导出接口 */
+        useBackendApi?: (...args: any[]) => any
       })
     | boolean
   refresh?: CustomAction | boolean

@@ -86,7 +86,7 @@ export const columns1 = (): TableProColumn[] => {
       },
     },
     {
-      field: 'annualRevenue',
+      field: 'province',
       title: '年度营收（万元）',
     },
     {

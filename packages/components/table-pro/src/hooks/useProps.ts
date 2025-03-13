@@ -1,6 +1,7 @@
 // import { deepMerge } from '@tav-ui/utils/basic'
 // import { cloneDeep, pick } from 'lodash-es'
 import { computed, unref } from 'vue'
+import { cloneDeep } from 'lodash-es'
 import { isFunction, isObject } from '@tav-ui/utils/is'
 import { PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
@@ -56,11 +57,7 @@ function handleExtendApi(
   const permissionApiParams = (permission as any)?.apiParams ?? undefined
   const hasApi = (permissionApi && isFunction(permissionApi)) || (api && isFunction(api))
   const hasExportAllApi =
-    customActionConfig &&
-    customActionConfig.export &&
-    isObject(customActionConfig.export) &&
-    isFunction(customActionConfig.export.handleAllApi)
-  const hasApiSetting = Object.keys(apiSetting).length > 0
+    customActionConfig && customActionConfig.export && isObject(customActionConfig.export)
 
   /**  处理 vxetable proxy */
   if (hasApi) {
@@ -79,35 +76,53 @@ function handleExtendApi(
     // 挂载vxetable 导出全部接口
     if (hasExportAllApi) {
       unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = async (refParam) => {
-        let listField: string | undefined = undefined
-        if (hasApiSetting) {
-          listField = apiSetting.listField
-        }
+        const keepedApiParamKeys = (customActionConfig.export as any).keepedApiParamKeys ?? []
+        let _api = api
         if (permissionApi && permissionApiParams) {
-          params.filter = { ...(params.body.filter || {}) }
-          params.model = { ...(params.body.model || {}) }
+          _api = permissionApi
+          params.filter = { ...(params.body?.filter ?? {}) }
+          params.model = { ...(params.body?.model ?? {}) }
         }
         params.model!['viewAll'] = true
         params.model!['modeType'] = refParam?.options?.modeType
-        // 郭明说不分页接口返回的就是data数组这里自动包装
-        const allApiResult = await (customActionConfig.export as any).handleAllApi(params)
-        let data: any[] = []
-        if (allApiResult.success) {
-          data = allApiResult.data
+        let allParamsFilter: Record<string, any> = {}
+
+        if (params.model!['modeType'] === 'all') {
+          allParamsFilter = Object.keys(params.filter!).reduce((result, cur) => {
+            if (keepedApiParamKeys.includes(cur)) {
+              result[cur] = params.filter![cur]
+            }
+            return result
+          }, {} as any)
         }
-        let result = {}
-        if (listField) {
-          result = {
-            data: {
-              [listField]: data,
-            },
+
+        let exportResult: Record<string, any> = {}
+        const apiResult = await _api?.(
+          params.model!['modeType'] === 'all' ? { ...params, filter: allParamsFilter } : params
+        )
+        if (apiResult.data && apiResult.success) {
+          exportResult = apiResult
+
+          if (
+            (customActionConfig.export as any).afterApi &&
+            isFunction((customActionConfig.export as any).afterApi)
+          ) {
+            exportResult =
+              (await (customActionConfig.export as any).afterApi(apiResult)) || exportResult
           }
-        } else {
-          result = {
-            data,
+
+          // list 数据这里自动转换
+          if (apiType === 'list') {
+            exportResult = {
+              data: {
+                [apiSetting.listField!]: exportResult.data,
+                [apiSetting.totalField!]: exportResult.data.length,
+              },
+            }
           }
         }
-        return result
+
+        return exportResult
       }
     }
 
@@ -132,7 +147,7 @@ function handleExtendApi(
         ? option.model
           ? { ...option, ...{ model: { ...model, ...option.model } }, ...option.model }
           : { ...option, ...{ model } }
-        : { ...params, ...{ model } }
+        : { ...(params?.body ?? params), ...{ model } }
 
       try {
         if (beforeApi && isFunction(beforeApi)) {
@@ -150,8 +165,8 @@ function handleExtendApi(
                   body:
                     apiType === 'list'
                       ? {
-                          ...(params.filter ?? {}),
-                          ...(params.model ?? {}),
+                          ...(params.filter ?? params),
+                          ...(params.model ?? params),
                         }
                       : {
                           filter: params.filter ?? {},
