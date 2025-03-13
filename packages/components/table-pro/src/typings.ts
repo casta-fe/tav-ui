@@ -69,11 +69,13 @@ export interface TableProCustomActionConfig {
           descriptionAlign?: string
         }
         handleDescription?: (...args: any[]) => any
+        /** 是否在导出表格中显示隐藏列，默认 false（不显示） */
         useUnvisibleColumn?: boolean
+        /** 针对页面上有 tab 页签的情况，将 tab 对应的字段名传进来 */
         keepedApiParamKeys?: string[]
-        /** 使用默认接口进行前端导出后对数据做处理 */
+        /** 使用默认接口进行前端导出后对数据做处理，类似 tablepro 的 afterapi */
         afterApi?: (...args: any[]) => any
-        /** 使用后端导出，传入后端导出接口 */
+        /** 使用后端导出，传入后端导出接口，类似 tablepro 的 api */
         useBackendApi?: (...args: any[]) => any
       })
     | boolean

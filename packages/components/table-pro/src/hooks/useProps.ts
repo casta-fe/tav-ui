@@ -14,6 +14,57 @@ const DEF = {
   },
 }
 
+function getPropByPath(obj: Record<string, any>, path: string, strict = false) {
+  let tempObj = obj
+  path = path.replace(/\[(\w+)\]/g, '.$1')
+  path = path.replace(/^\./, '')
+
+  const keyArr = path.split('.')
+  let i = 0
+  for (let len = keyArr.length; i < len - 1; ++i) {
+    if (!tempObj && !strict) break
+    const key = keyArr[i]
+    if (key in tempObj) {
+      tempObj = tempObj[key]
+    } else {
+      if (strict) {
+        console.log(`please transfer a valid prop path to form item!`)
+      }
+      break
+    }
+  }
+  return {
+    o: tempObj,
+    k: keyArr[i],
+    v: tempObj ? tempObj[keyArr[i]] : null,
+  }
+}
+
+function deepSet(obj: any, path: string, val: any) {
+  //@ts-ignore
+  path = path.replaceAll('[', '.[')
+  const keys = path.split('.')
+
+  for (let i = 0; i < keys.length; i++) {
+    let currentKey = keys[i] as any
+    let nextKey = keys[i + 1] as any
+    if (currentKey.includes('[')) {
+      currentKey = parseInt(currentKey.substring(1, currentKey.length - 1))
+    }
+    if (nextKey && nextKey.includes('[')) {
+      nextKey = parseInt(nextKey.substring(1, nextKey.length - 1))
+    }
+
+    if (typeof nextKey !== 'undefined') {
+      obj[currentKey] = obj[currentKey] ? obj[currentKey] : isNaN(nextKey) ? {} : []
+    } else {
+      obj[currentKey] = val
+    }
+
+    obj = obj[currentKey]
+  }
+}
+
 /**
  * 根据 props api 扩展 proxyconfig
  * @param tablePropsRef
@@ -77,28 +128,60 @@ function handleExtendApi(
     if (hasExportAllApi) {
       unref(tablePropsRef).proxyConfig!['ajax']!['queryAll'] = async (refParam) => {
         const keepedApiParamKeys = (customActionConfig.export as any).keepedApiParamKeys ?? []
+        const isPermissionApi = permissionApi && permissionApiParams
         let _api = api
-        if (permissionApi && permissionApiParams) {
+        if (isPermissionApi) {
           _api = permissionApi
-          params.filter = { ...(params.body?.filter ?? {}) }
-          params.model = { ...(params.body?.model ?? {}) }
+          params = {
+            ...permissionApiParams,
+            ...((params.body?.filter ?? params.filter) && (params.body?.model ?? params.model)
+              ? {
+                  body:
+                    apiType === 'list'
+                      ? {
+                          ...(params.body?.filter ?? params.filter),
+                          ...{
+                            ...(params.body?.model ?? params.model),
+                            viewAll: true,
+                            modeType: refParam?.options?.modeType,
+                          },
+                        }
+                      : {
+                          filter: params.body?.filter ?? params.filter,
+                          model: {
+                            ...(params.body?.model ?? params.model),
+                            viewAll: true,
+                            modeType: refParam?.options?.modeType,
+                          },
+                        },
+                }
+              : {}),
+          }
+        } else {
+          params.model!['viewAll'] = true
+          params.model!['modeType'] = refParam?.options?.modeType
         }
-        params.model!['viewAll'] = true
-        params.model!['modeType'] = refParam?.options?.modeType
-        let allParamsFilter: Record<string, any> = {}
+        const allParamsFilter: Record<string, any> = {}
 
-        if (params.model!['modeType'] === 'all') {
-          allParamsFilter = Object.keys(params.filter!).reduce((result, cur) => {
-            if (keepedApiParamKeys.includes(cur)) {
-              result[cur] = params.filter![cur]
+        if ((params.body?.model ?? params.model)!['modeType'] === 'all') {
+          keepedApiParamKeys.forEach((key: string) => {
+            const { v } = getPropByPath(params, key)
+            if (v) {
+              deepSet(allParamsFilter, key, v)
             }
-            return result
-          }, {} as any)
+          })
         }
 
         let exportResult: Record<string, any> = {}
         const apiResult = await _api?.(
-          params.model!['modeType'] === 'all' ? { ...params, filter: allParamsFilter } : params
+          (params.body?.model ?? params.model)!['modeType'] === 'all'
+            ? params.body
+              ? {
+                  ...allParamsFilter,
+                  body: { filter: allParamsFilter.body?.filter ?? {}, model: params.body.model },
+                }
+              : { ...params, ...allParamsFilter }
+            : params
         )
         if (apiResult.data && apiResult.success) {
           exportResult = apiResult
