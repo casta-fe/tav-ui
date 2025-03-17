@@ -462,8 +462,8 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     ? $table.props.footerMethod({ columns, data: datas.map((d) => d._row) })
     : null
   columns.forEach((column) => {
-    const { id, property, renderWidth, width, minWidth } = column
-    colHead[id] = original ? property : column.getTitle()
+    const { id, field, renderWidth, width, minWidth } = column
+    colHead[id] = original ? field : column.getTitle()
     sheetCols.push({
       key: id,
       width: XEUtils.ceil((renderWidth || width || minWidth) / 8, 1),
@@ -472,7 +472,7 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
   // 处理表头
   if (isHeader) {
     // 处理分组
-    if (isColgroup && !original && colgroups) {
+    if (isColgroup && colgroups) {
       colgroups.forEach((cols, rIndex) => {
         const groupHead: any = {}
         columns.forEach((column) => {
@@ -482,7 +482,12 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
           const { _colSpan, _rowSpan } = column
           const validColumn = getValidColumn(column)
           const columnIndex = columns.indexOf(validColumn)
-          groupHead[validColumn.id] = original ? validColumn.property : column.getTitle()
+          const title = column.getTitle
+            ? column.getTitle()
+            : validColumn.parentId
+            ? $table.getColumnById(validColumn.parentId).title
+            : validColumn.field
+          groupHead[validColumn.id] = original ? validColumn.field : title
           if (_colSpan > 1 || _rowSpan > 1) {
             // sheetMerges.push({
             //   s: { r: rIndex, c: columnIndex },
@@ -502,7 +507,7 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     beforeRowCount += colList.length
   }
   // 处理合并
-  if (isMerge && !original) {
+  if (isMerge) {
     mergeCells.forEach((mergeItem) => {
       const {
         row: mergeRowIndex,
@@ -546,7 +551,7 @@ async function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportP
     const footers = getFooterData(options, _footerData || footerData)
     const mergeFooterItems = $table.getMergeFooterItems()
     // 处理合并
-    if (isMerge && !original) {
+    if (isMerge) {
       mergeFooterItems.forEach((mergeItem) => {
         const {
           row: mergeRowIndex,
@@ -843,7 +848,7 @@ function importXLSX(params: VxeGlobalInterceptorHandles.InterceptorImportParams)
   fileReader.onload = (evnt) => {
     const tableFields: string[] = []
     columns.forEach((column) => {
-      const field = column.property
+      const field = column.field
       if (field) {
         tableFields.push(field)
       }

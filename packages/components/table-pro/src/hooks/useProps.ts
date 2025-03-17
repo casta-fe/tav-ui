@@ -164,12 +164,13 @@ function handleExtendApi(
         const allParamsFilter: Record<string, any> = {}
 
         if ((params.body?.model ?? params.model)!['modeType'] === 'all') {
-          keepedApiParamKeys.forEach((key: string) => {
-            const { v } = getPropByPath(params, key)
-            if (v) {
-              deepSet(allParamsFilter, key, v)
-            }
-          })
+          keepedApiParamKeys.length &&
+            keepedApiParamKeys.forEach((key: string) => {
+              const { v } = getPropByPath(params, key)
+              if (v) {
+                deepSet(allParamsFilter, key, v)
+              }
+            })
         }
 
         let exportResult: Record<string, any> = {}
@@ -180,7 +181,7 @@ function handleExtendApi(
                   ...allParamsFilter,
                   body: { filter: allParamsFilter.body?.filter ?? {}, model: params.body.model },
                 }
-              : { ...params, ...allParamsFilter }
+              : { ...allParamsFilter, ...params.model }
             : params
         )
         if (apiResult.data && apiResult.success) {

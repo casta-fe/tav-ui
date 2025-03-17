@@ -291,10 +291,10 @@ export const footerMethod1: TableProFooter = ({ columns, data }) => {
 }
 
 export const columns2 = async ({ handleRoutePush, OpenModal }): Promise<TableProColumn[]> => {
-  await API__POE_CUSTOM_ALL({
-    filter: { tab: 0 },
-    model: { page: 1, limit: 50 },
-  })
+  // await API__POE_CUSTOM_ALL({
+  //   filter: { tab: 0 },
+  //   model: { page: 1, limit: 50 },
+  // })
 
   return [
     // {

@@ -59,22 +59,8 @@ export default defineComponent({
         },
       },
       export: {
-        handleAction: (params) => {
-          console.log(params)
-        },
-        handleDescription: () => 'dsahdjkashjkda',
-        handleAllApi: ({ filter, model }) =>
-          API__POE_CUSTOM_ALL({
-            filter,
-            model: {
-              // ...model,
-              // page: 7,
-              viewAll: true,
-            },
-          }),
-        // handleBackendApi: async ({ filter, model }) => {
-        //   console.log(filter, model)
-        // },
+        fileName: '测试',
+        keepedApiParamKeys: ['filter.tab'],
       },
       refresh: true,
       statistical: {
