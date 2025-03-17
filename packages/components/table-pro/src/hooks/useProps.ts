@@ -181,7 +181,7 @@ function handleExtendApi(
                   ...allParamsFilter,
                   body: { filter: allParamsFilter.body?.filter ?? {}, model: params.body.model },
                 }
-              : { ...allParamsFilter, ...params.model }
+              : { filter: allParamsFilter.filter ?? {}, model: params.model ?? {} }
             : params
         )
         if (apiResult.data && apiResult.success) {
