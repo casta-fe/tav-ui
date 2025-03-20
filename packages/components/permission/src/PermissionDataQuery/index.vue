@@ -47,13 +47,16 @@ async function reload() {
       mergedProps.value.apiParams!
     )
     if (data && success) {
+      permissionContent.value = data
       emits('apiSuccess', data)
       return data
     } else {
+      permissionContent.value = undefined
       return undefined
     }
   } catch (error: any) {
     console.warn('[tavui TaPermissionDataQuery] api has error', error)
+    permissionContent.value = undefined
     emits('apiError', error)
     return undefined
   }
@@ -64,8 +67,7 @@ async function handlePermission() {
   if (isUseApi.value) {
     try {
       loading.value = true
-      const data = await reload()
-      permissionContent.value = data
+      await reload()
     } catch (error: any) {
       console.warn('[tavui TaPermissionDataQuery] api has error', error)
     } finally {
