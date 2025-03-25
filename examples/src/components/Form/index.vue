@@ -144,21 +144,21 @@ const schemas = ref([
   //     // },
   //   },
   // },
-  // {
-  //   field: 'field0',
-  //   component: 'CascadeProSelect',
-  //   label: '字段0',
-  //   colProps: {
-  //     span: 8,
-  //   },
-  //   componentProps: {
-  //     // placeholder: '自定义placeholder',
-  //     // firstLetterTitle: 'aaa',
-  //     // generateHotList: (options) => {
-  //     //   return options
-  //     // }
-  //   },
-  // },
+  {
+    field: 'field0',
+    component: 'CascadeProSelect',
+    label: '字段0',
+    colProps: {
+      span: 8,
+    },
+    componentProps: {
+      // placeholder: '自定义placeholder',
+      // firstLetterTitle: 'aaa',
+      // generateHotList: (options) => {
+      //   return options
+      // }
+    },
+  },
   // {
   //   field: 'fieldapiSelect',
   //   component: 'ApiSelect',

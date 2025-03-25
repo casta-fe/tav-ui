@@ -22,36 +22,35 @@
         selectOptions.length ? 'ant-select-selector ant-select-multiple' : 'ant-input',
       ]"
       :style="!getBindValue.showPlaceholder ? { border: 'none', paddingLeft: '0' } : {}"
-      @click="handleClick"
     >
       <div class="ant-select-selection-overflow">
-        <template v-if="!selectOptions.length">
-          <Button
-            v-if="!getBindValue.showPlaceholder"
-            pre-icon="ant-design:plus-outlined"
-            style="min-width: 80px"
-            :disabled="($attrs.disabled as any)"
-          />
-          <span v-else class="ant-select-selection-placeholder">
-            {{ getBindValue.placeholder }}
-          </span>
-        </template>
-        <div
-          v-for="option in selectOptions"
-          v-else
-          :key="option.idPath"
-          class="ant-select-selection-overflow-item"
-        >
-          <div class="ant-select-selection-item" style="cursor: pointer">
-            <div class="ant-select-selection-item-content">{{ option.namePath }}</div>
-            <!-- <Icon
+        <template v-if="selectOptions.length > 0">
+          <div
+            v-for="option in selectOptions"
+            :key="option.idPath"
+            class="ant-select-selection-overflow-item"
+          >
+            <div class="ant-select-selection-item">
+              <div class="ant-select-selection-item-content">{{ option.namePath }}</div>
+              <!-- <Icon
             icon="ant-design:close-outlined"
             :size="12"
             class="ant-select-item-option-close-icon"
             @click.stop="() => handleClear(option)"
           /> -->
+            </div>
           </div>
-        </div>
+        </template>
+        <Button
+          v-if="!getBindValue.showPlaceholder"
+          pre-icon="ant-design:plus-outlined"
+          style="min-width: auto; height: 24px; margin: 2px 4px 2px 0px"
+          :disabled="($attrs.disabled as any)"
+          @click="handleClick"
+        />
+        <span v-else class="ant-select-selection-placeholder" @click="handleClick">
+          {{ getBindValue.placeholder }}
+        </span>
       </div>
     </div>
   </div>
