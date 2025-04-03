@@ -204,6 +204,10 @@ export default defineComponent({
               customActionConfig={handleCustomActionConfig()}
               // proxyConfig={handleProxyConfig()}
               api={handleApi}
+              checkboxConfig={{
+                enabled: true,
+                cache: true,
+              }}
               onCheckboxChange={handleCheckboxChange}
               onCheckboxAll={handleCheckboxAll}
               onPageChange={handlePageChange}

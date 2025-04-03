@@ -7,6 +7,7 @@ import { PAGE_SIZE } from '../const'
 import type { ComputedRef, Ref } from 'vue'
 import type { TableProGridEmit, TableProInstance, TableProProps } from '../types'
 import type { TableProApiParams, VxeQueryParams } from '../typings'
+import type { Emitter } from '@tav-ui/utils/mitt'
 
 const DEF = {
   data: {
@@ -100,7 +101,8 @@ function handleExtendProxyConfig(tablePropsRef: ComputedRef<TableProProps>) {
 function handleExtendApi(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  tableEmitter: Emitter
 ) {
   const { api, beforeApi, afterApi, customActionConfig, apiSetting, permission, apiType } =
     unref(tablePropsRef)
@@ -290,6 +292,7 @@ function handleExtendApi(
           result = DEF
         }
 
+        tableEmitter.emit('table-pro:api-success', { result })
         emit('ApiSuccess', {
           ...result,
         })
@@ -317,10 +320,16 @@ function handleExtendApi(
 function handleExtendProps(
   tablePropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  tableEmitter: Emitter
 ) {
   const handleExtendProxyConfigResult = handleExtendProxyConfig(tablePropsRef)
-  const handleExtendApiResult = handleExtendApi(handleExtendProxyConfigResult, tableRef, emit)
+  const handleExtendApiResult = handleExtendApi(
+    handleExtendProxyConfigResult,
+    tableRef,
+    emit,
+    tableEmitter
+  )
   return handleExtendApiResult
 }
 
@@ -360,7 +369,8 @@ function mergePropsRef(
   defaultPropsRef: ComputedRef<Partial<TableProProps>>,
   paramPropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  tableEmitter: Emitter
 ): ComputedRef<TableProProps> {
   return computed(() => {
     for (const [key] of Object.entries(unref(paramPropsRef))) {
@@ -386,7 +396,12 @@ function mergePropsRef(
       }
     }
     const handledRowLineHeightTablePropsRef = handleRowLineHeight(paramPropsRef)
-    const tablePropsRef = handleExtendProps(handledRowLineHeightTablePropsRef, tableRef, emit)
+    const tablePropsRef = handleExtendProps(
+      handledRowLineHeightTablePropsRef,
+      tableRef,
+      emit,
+      tableEmitter
+    )
     return { ...unref(tablePropsRef) }
   })
 }
@@ -415,9 +430,10 @@ export function useProps(
   tableProProps: any,
   paramPropsRef: ComputedRef<TableProProps>,
   tableRef: Ref<TableProInstance | null>,
-  emit: TableProGridEmit
+  emit: TableProGridEmit,
+  tableEmitter: Emitter
 ) {
   const defaultPropsRef = createDefaultPropsRef(tableProProps)
-  const tablePropsRef = mergePropsRef(defaultPropsRef, paramPropsRef, tableRef, emit)
+  const tablePropsRef = mergePropsRef(defaultPropsRef, paramPropsRef, tableRef, emit, tableEmitter)
   return tablePropsRef
 }

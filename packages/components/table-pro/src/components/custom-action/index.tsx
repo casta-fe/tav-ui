@@ -17,8 +17,8 @@ import type { FormSchema } from '@tav-ui/components/form'
 import type { ComputedRef, PropType, Ref, Slots } from 'vue'
 import type { TableProColumnInfo, TableProInstance } from '../../types'
 import type { CustomActionSetting, TableProCustomActionConfig, TreeDataItem } from '../../typings'
-const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 
+const ComponentPrefixCls = CamelCaseToCls(ComponentCustomActionName)
 const props = {
   config: {
     type: Object as PropType<TableProCustomActionConfig>,
@@ -41,17 +41,17 @@ export default defineComponent({
         label: tavI18n('Tav.tablePro.export.4o1'),
         value: 'selected',
       },
+      // {
+      //   label: tavI18n('Tav.tablePro.export.4o2'),
+      //   value: 'current',
+      // },
       {
-        label: tavI18n('Tav.tablePro.export.4o2'),
-        value: 'current',
+        label: tavI18n('Tav.tablePro.export.4o4'),
+        value: 'allSearch',
       },
       {
         label: tavI18n('Tav.tablePro.export.4o3'),
         value: 'all',
-      },
-      {
-        label: tavI18n('Tav.tablePro.export.4o4'),
-        value: 'allSearch',
       },
     ]
 
@@ -156,11 +156,13 @@ export default defineComponent({
     ]
     const settingsRef = ref<CustomActionSetting | null>(null)
     const actionRef = ref<ComputedRef | null>(null)
-    const { tableEmitter, tablePropsRef } = useTableContext()
+    const { tableEmitter, tablePropsRef, isCheckboxCacheEnabled, checkboxCacheList } =
+      useTableContext()
     const handledColumns = ref<any[]>([])
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
     const exportLoading = ref<boolean>(false)
+    const keyField = computed(() => unref(tablePropsRef).rowConfig.keyField)
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
 
@@ -385,12 +387,20 @@ export default defineComponent({
             fileStyles = props.config?.export.styles
           }
 
+          let checkedDatas = [] as any
+          if (isCheckboxCacheEnabled.value) {
+            checkedDatas = checkboxCacheList.value
+          } else {
+            checkedDatas = props.tableRef?.value?.getCheckboxRecords() as any
+          }
+
           try {
             await props.tableRef?.value?.exportData({
               filename: data.fileName,
               sheetName: data.fileName,
               type: data.fileType,
               mode: data.fileDataType.indexOf('all') > -1 ? 'all' : data.fileDataType,
+              ...(data.fileDataType === 'selected' ? { data: checkedDatas } : {}),
               modeType: data.fileDataType,
               isHeader: true,
               // isFooter: true,
@@ -678,7 +688,7 @@ export default defineComponent({
           handleAppendField(value)
         }
         await nextTick()
-        let _fileDataTypeDefaultValue = 'current'
+        let _fileDataTypeDefaultValue = 'allSearch'
         const selectData = props.tableRef?.value?.getCheckboxRecords()
         if (selectData && selectData?.length > 0) {
           _fileDataTypeDefaultValue = 'selected'

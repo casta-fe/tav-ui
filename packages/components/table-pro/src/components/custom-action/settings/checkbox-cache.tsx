@@ -186,7 +186,11 @@ export default defineComponent({
                                       maxWidth: 'calc(100% - 24px)',
                                     }}
                                   >
-                                    {cache.fullName}
+                                    {(props.config?.checkboxCache as any)?.fieldNames?.label
+                                      ? cache[
+                                          (props.config?.checkboxCache as any)?.fieldNames?.label
+                                        ]
+                                      : cache['fullName'] ?? cache['name']}
                                   </span>
                                   <TaButton
                                     class={`${ComponentPrefixCls}-popver-btn checkbox-cache-clear`}

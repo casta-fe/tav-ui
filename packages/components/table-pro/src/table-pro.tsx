@@ -76,7 +76,7 @@ export default defineComponent({
     })
 
     // 根据 default 生成默认属性并与传入的 props 合并
-    const getProps = useProps(tableProProps, _getProps, tableRef, emit)
+    const getProps = useProps(tableProProps, _getProps, tableRef, emit, tableEmitter)
 
     watch(
       () => props.columns,
@@ -102,7 +102,7 @@ export default defineComponent({
       createAllCheckboxCache,
       deleteCheckboxCache,
       deleteAllCheckboxCache,
-    } = useCheckboxCache(tableRef, getProps, currentPage)
+    } = useCheckboxCache(tableRef, getProps, currentPage, tableEmitter)
 
     // 扩展 columns
     const getColumns = computed(() => {

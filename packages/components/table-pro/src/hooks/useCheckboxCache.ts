@@ -1,15 +1,18 @@
-import { computed, ref, toRaw, unref, watch } from 'vue'
+import { computed, nextTick, ref, toRaw, unref, watch } from 'vue'
 import { ROW_KEY } from '../const'
 import type { TableProInstance, TableProProps } from '../types'
 import type { ComputedRef, Ref } from 'vue'
+import type { Emitter } from '@tav-ui/utils/mitt'
 
 export function useCheckboxCache(
   tableRef: Ref<TableProInstance | null>,
   tablePropsRef: ComputedRef<TableProProps>,
-  currentPage: Ref<number>
+  currentPage: Ref<number>,
+  tableEmitter: Emitter
 ) {
   const {
     rowConfig: { keyField = ROW_KEY },
+    api,
   } = unref(tablePropsRef)
 
   /** key：页码，value：rows */
@@ -31,13 +34,21 @@ export function useCheckboxCache(
     return caches
   })
 
-  /** 页码变化 */
-  watch(
-    () => currentPage.value,
-    async () => {
+  if (api) {
+    tableEmitter.on('table-pro:api-success', async () => {
+      await nextTick()
       await applyCheckboxCacheByCurrentPage()
-    }
-  )
+    })
+  } else {
+    /** 页码变化 */
+    watch(
+      () => currentPage.value,
+      async () => {
+        await nextTick()
+        await applyCheckboxCacheByCurrentPage()
+      }
+    )
+  }
 
   /**
    * checkbox 点击时调用，将行数据维护在 checkboxCaches 中
