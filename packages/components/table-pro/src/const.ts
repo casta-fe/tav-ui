@@ -43,7 +43,7 @@ const {
   defaultFilterFn,
 } = table
 
-export const ROW_KEY = 'id'
+export const ROW_KEY = '__id'
 export const DEFAULT_LINE_HEIGTH = 42
 
 // Optional display number per page;
