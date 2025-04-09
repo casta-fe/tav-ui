@@ -393,6 +393,7 @@ export default defineComponent({
           } else {
             checkedDatas = props.tableRef?.value?.getCheckboxRecords() as any
           }
+          checkedDatas = JSON.parse(JSON.stringify(checkedDatas))
           if (
             (props.config?.export as any)?.afterApi &&
             isFunction((props.config?.export as any)?.afterApi)
