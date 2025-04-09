@@ -398,7 +398,12 @@ export default defineComponent({
             isFunction((props.config?.export as any)?.afterApi)
           ) {
             checkedDatas =
-              (await (props.config?.export as any)?.afterApi(checkedDatas)) || checkedDatas
+              (
+                await (props.config?.export as any)?.afterApi({
+                  success: true,
+                  data: { result: checkedDatas },
+                })
+              )?.data?.result || checkedDatas
           }
 
           try {
