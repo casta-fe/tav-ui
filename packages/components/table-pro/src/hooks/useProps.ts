@@ -141,17 +141,17 @@ function handleExtendApi(
                   body:
                     apiType === 'list'
                       ? {
-                          ...(params.body?.filter ?? params.filter),
+                          ...(params.body?.filter ?? params.filter ?? {}),
                           ...{
-                            ...(params.body?.model ?? params.model),
+                            ...(params.body?.model ?? params.model ?? {}),
                             viewAll: true,
                             modeType: refParam?.options?.modeType,
                           },
                         }
                       : {
-                          filter: params.body?.filter ?? params.filter,
+                          filter: params.body?.filter ?? params.filter ?? {},
                           model: {
-                            ...(params.body?.model ?? params.model),
+                            ...(params.body?.model ?? params.model ?? {}),
                             viewAll: true,
                             modeType: refParam?.options?.modeType,
                           },
@@ -160,12 +160,26 @@ function handleExtendApi(
               : {}),
           }
         } else {
-          params.model!['viewAll'] = true
-          params.model!['modeType'] = refParam?.options?.modeType
+          if (apiType === 'list') {
+            params = {
+              ...params,
+              viewAll: true,
+              modeType: refParam?.options?.modeType,
+            }
+          } else {
+            params = {
+              filter: params.filter ?? {},
+              model: {
+                ...(params.model ?? {}),
+                viewAll: true,
+                modeType: refParam?.options?.modeType,
+              },
+            }
+          }
         }
         const allParamsFilter: Record<string, any> = {}
 
-        if ((params.body?.model ?? params.model)!['modeType'] === 'all') {
+        if ((params.body?.model ?? params.model ?? params)!['modeType'] === 'all') {
           keepedApiParamKeys.length &&
             keepedApiParamKeys.forEach((key: string) => {
               const { v } = getPropByPath(params, key)
@@ -177,7 +191,7 @@ function handleExtendApi(
 
         let exportResult: Record<string, any> = {}
         const apiResult = await _api?.(
-          (params.body?.model ?? params.model)!['modeType'] === 'all'
+          (params.body?.model ?? params.model ?? params)!['modeType'] === 'all'
             ? params.body
               ? {
                   ...allParamsFilter,
