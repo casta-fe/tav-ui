@@ -59,7 +59,7 @@ jobs:
       - name: Get git head
         run: echo "GIT_HEAD=${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Gen npmrc
-        run: echo "//registry.npmjs.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+        run: echo "//registry.npmjs.com/:_authToken=${{secrets.NPM_TOKEN}}" >> ./.npmrc
       - name: Build&publish
         run: sh ./scripts/publish.sh
         env:
@@ -68,5 +68,5 @@ jobs:
           GIT_HEAD: ${{env.GIT_HEAD}}
           REGISTRY: https://registry.npmjs.com/
           FORCE_COLOR: 2
-          GITHUB_TOKEN: ${{ secrets.SELF_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.SELF_TOKEN}}
           NODE_OPTIONS: --max-old-space-size=4096
