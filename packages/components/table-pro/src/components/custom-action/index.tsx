@@ -162,7 +162,7 @@ export default defineComponent({
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
     const exportLoading = ref<boolean>(false)
-    const keyField = computed(() => unref(tablePropsRef).rowConfig.keyField)
+    const apiType = computed(() => unref(tablePropsRef).apiType)
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
 
@@ -395,16 +395,24 @@ export default defineComponent({
           }
           checkedDatas = JSON.parse(JSON.stringify(checkedDatas))
           if (
+            checkedDatas.length > 0 &&
             (props.config?.export as any)?.afterApi &&
             isFunction((props.config?.export as any)?.afterApi)
           ) {
+            const result = await (props.config?.export as any)?.afterApi(
+              apiType.value === 'list'
+                ? {
+                    success: true,
+                    data: checkedDatas,
+                  }
+                : {
+                    success: true,
+                    data: { result: checkedDatas },
+                  }
+            )
+
             checkedDatas =
-              (
-                await (props.config?.export as any)?.afterApi({
-                  success: true,
-                  data: { result: checkedDatas },
-                })
-              )?.data?.result || checkedDatas
+              (apiType.value === 'list' ? result?.data : result?.data?.result) || checkedDatas
           }
 
           try {
