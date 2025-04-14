@@ -163,8 +163,18 @@ function handleExtendApi(
           if (apiType === 'list') {
             params = {
               ...params,
-              viewAll: true,
-              modeType: refParam?.options?.modeType,
+              ...(params.model
+                ? {
+                    model: {
+                      ...params.model,
+                      viewAll: true,
+                      modeType: refParam?.options?.modeType,
+                    },
+                  }
+                : {
+                    viewAll: true,
+                    modeType: refParam?.options?.modeType,
+                  }),
             }
           } else {
             params = {
@@ -195,9 +205,17 @@ function handleExtendApi(
             ? params.body
               ? {
                   ...allParamsFilter,
-                  body: { filter: allParamsFilter.body?.filter ?? {}, model: params.body.model },
+                  body: {
+                    filter: allParamsFilter.body?.filter ?? {},
+                    model: params.body.model,
+                  },
                 }
-              : { filter: allParamsFilter.filter ?? {}, model: params.model ?? {} }
+              : params.filter || params.model
+              ? {
+                  filter: allParamsFilter.filter ?? {},
+                  model: params.model ?? {},
+                }
+              : params
             : params
         )
         if (apiResult.data && apiResult.success) {
@@ -256,6 +274,7 @@ function handleExtendApi(
 
         let _api = api
 
+        // 跟 @hyb 商量后只对 permission api 做 list 参数兼容，对于普通 api 参数还是沿用之前分页的数据结构，这样做单纯是为了兼容，因为投管/其他项目里用的地方很多改起来太费劲
         if (permissionApi && permissionApiParams) {
           _api = permissionApi
           params = {

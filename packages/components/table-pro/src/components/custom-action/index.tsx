@@ -54,6 +54,12 @@ export default defineComponent({
         value: 'all',
       },
     ]
+    const fileDataTypeOptions = computed(() => {
+      return (
+        (props.config?.export as any)?.fileDataTypeOptionsConfig?.(FileDataTypeOptions) ??
+        FileDataTypeOptions
+      )
+    })
 
     const ExportModalFormSchemas: FormSchema[] = [
       {
@@ -714,12 +720,15 @@ export default defineComponent({
         if (selectData && selectData?.length > 0) {
           _fileDataTypeDefaultValue = 'selected'
         }
+        if (fileDataTypeOptions.value.length === 1) {
+          _fileDataTypeDefaultValue = fileDataTypeOptions.value[0].value
+        }
 
         await exportModalFormUpdateSchema([
           {
             field: 'fileDataType',
             componentProps: {
-              options: FileDataTypeOptions,
+              options: fileDataTypeOptions.value,
             },
           },
           {
