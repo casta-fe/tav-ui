@@ -187,9 +187,11 @@ function handleExtendApi(
             }
           }
         }
-        const allParamsFilter: Record<string, any> = {}
 
-        if ((params.body?.model ?? params.model ?? params)!['modeType'] === 'all') {
+        const allParamsFilter: Record<string, any> = {}
+        const isModeTypeAll = (params.body?.model ?? params.model ?? params)!['modeType'] === 'all'
+
+        if (isModeTypeAll) {
           keepedApiParamKeys.length &&
             keepedApiParamKeys.forEach((key: string) => {
               const { v } = getPropByPath(params, key)
@@ -201,7 +203,7 @@ function handleExtendApi(
 
         let exportResult: Record<string, any> = {}
         const apiResult = await _api?.(
-          (params.body?.model ?? params.model ?? params)!['modeType'] === 'all'
+          isModeTypeAll
             ? params.body
               ? {
                   ...allParamsFilter,
@@ -215,7 +217,10 @@ function handleExtendApi(
                   filter: allParamsFilter.filter ?? {},
                   model: params.model ?? {},
                 }
-              : params
+              : {
+                  viewAll: true,
+                  modeType: refParam?.options?.modeType,
+                }
             : params
         )
         if (apiResult.data && apiResult.success) {
