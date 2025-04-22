@@ -45,8 +45,23 @@ export const DEFAULT_FILEUPLOAD_ID = createId(DEFAULT_FILEUPLOAD_CLASSNAME)
 export const DEFAULT_FILEUPLOAD_PREVIEW_CLASSNAME = ns.b('upload-preview')
 export const DEFAULT_FILEUPLOAD_PREVIEW_ID = createId(DEFAULT_FILEUPLOAD_PREVIEW_CLASSNAME)
 
-export const DEFAULT_FILE_OFFICE_TYPES = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf']
-export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'jpeg', 'jpg', 'png']
+export const DEFAULT_FILE_OFFICE_TYPES = [
+  'doc',
+  'DOC',
+  'docx',
+  'DOCX',
+  'xls',
+  'XLS',
+  'xlsx',
+  'XLSX',
+  'ppt',
+  'PPT',
+  'pptx',
+  'PPTX',
+  'pdf',
+  'PDF',
+]
+export const DEFAULT_FILE_IMAGE_TYPES = ['gif', 'GIF', 'jpeg', 'JPEG', 'jpg', 'JPG', 'png', 'PNG']
 /** 支持的文件类型，目前只支持 wps 支持的类型与图片类型 */
 export const DEFAULT_FILE_ACCEPT_TYPES = [
   ...DEFAULT_FILE_OFFICE_TYPES, // office
@@ -54,10 +69,10 @@ export const DEFAULT_FILE_ACCEPT_TYPES = [
 ]
 /** 不支持的文件类型 */
 export const DEFAULT_FILE_IGNORE_TYPES = [
-  ...['zip', 'tar', '7z'], // previous ignoreList
-  ...['mp3', 'mp3', 'wav', 'rm', 'rpm'], // audio
-  ...['mpeg', 'mpg', 'avi', 'movie'], // video
-  ...['txt'], // text
+  ...['zip', 'ZIP', 'tar', 'TAR', '7z', '7Z'], // previous ignoreList
+  ...['mp3', 'MP3', 'wav', 'WAV', 'rm', 'RM', 'rpm', 'RPM'], // audio
+  ...['mpeg', 'MPEG', 'mpg', 'MPG', 'avi', 'AVI', 'movie', 'MOVIE'], // video
+  ...['txt', 'TXT'], // text
 ]
 /** 文件类型控制 */
 export const DEFAULT_FILE_ACCEPT = DEFAULT_FILE_ACCEPT_TYPES.map((t) => `.${t}`).join(',')
