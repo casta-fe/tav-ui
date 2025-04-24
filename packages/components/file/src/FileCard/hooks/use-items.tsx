@@ -37,17 +37,23 @@ export function defaultItemsBuilder(
               if (DEFAULT_FILE_OFFICE_TYPES.includes(fileSuffix)) {
                 if (
                   fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[0]) ||
-                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[1])
-                ) {
-                  return fileSvgs.fileDocSvg
-                } else if (
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[1]) ||
                   fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[2]) ||
                   fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[3])
                 ) {
-                  return fileSvgs.fileXlsSvg
+                  return fileSvgs.fileDocSvg
                 } else if (
                   fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[4]) ||
-                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[5])
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[5]) ||
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[6]) ||
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[7])
+                ) {
+                  return fileSvgs.fileXlsSvg
+                } else if (
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[8]) ||
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[9]) ||
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[10]) ||
+                  fileSuffix.includes(DEFAULT_FILE_OFFICE_TYPES[11])
                 ) {
                   return fileSvgs.filePptSvg
                 } else {
