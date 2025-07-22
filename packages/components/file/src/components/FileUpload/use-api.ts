@@ -91,7 +91,8 @@ export function transformUrlToFileUploadPreviewPropFile(
   const fileTypeRegexp = new RegExp(`\.(${acceptTypes.join('|')})`, 'g')
   const matchResult = data['url'].match(fileTypeRegexp)
   if (matchResult?.length) {
-    data['suffix'] = matchResult[0].split('.')[1]
+    const extResult = matchResult.find((r) => r.startsWith('.'))
+    data['suffix'] = extResult ? extResult.split('.')[1] : ''
   }
 
   let name = data['url'].split('/').at(-1)

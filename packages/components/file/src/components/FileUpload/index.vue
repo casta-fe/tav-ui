@@ -262,17 +262,23 @@ const fileType = computed(() => (suffix: string) => {
     if (DEFAULT_FILE_OFFICE_TYPES.includes(suffix)) {
       if (
         suffix.includes(DEFAULT_FILE_OFFICE_TYPES[0]) ||
-        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[1])
-      ) {
-        return 'doc'
-      } else if (
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[1]) ||
         suffix.includes(DEFAULT_FILE_OFFICE_TYPES[2]) ||
         suffix.includes(DEFAULT_FILE_OFFICE_TYPES[3])
       ) {
-        return 'xls'
+        return 'doc'
       } else if (
         suffix.includes(DEFAULT_FILE_OFFICE_TYPES[4]) ||
-        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[5])
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[5]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[6]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[7])
+      ) {
+        return 'xls'
+      } else if (
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[8]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[9]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[10]) ||
+        suffix.includes(DEFAULT_FILE_OFFICE_TYPES[11])
       ) {
         return 'ppt'
       } else {

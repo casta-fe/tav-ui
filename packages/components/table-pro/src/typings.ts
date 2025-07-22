@@ -50,6 +50,9 @@ export interface TableProCustomActionConfig {
           cellFormat?: (...args: any[]) => any
         }[]
         defaultValue: Partial<Record<defaultValueKey, any>>
+        fileDataTypeOptionsConfig?: (
+          ...args: [Record<string, string>[]]
+        ) => Record<string, string>[]
         /** color 相关的格式必须为 argb，即 #212121 => 212121 */
         styles?: {
           headerHeight?: number

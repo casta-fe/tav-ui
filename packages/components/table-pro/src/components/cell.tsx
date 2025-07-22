@@ -81,5 +81,31 @@ export const VxeCellRenderer: {
         ),
       ]
     },
+    exportMethod(opt: any) {
+      const { $table: $xetable, row, column } = opt
+      let cellValue = ''
+      if (column.params?.formatter) {
+        cellValue = useFormats(opt as any) ?? ''
+      } else {
+        cellValue = $xetable.getCellLabel(row, column)
+        if (column.type === 'html') {
+          let htmlCellElem: HTMLDivElement | null = document.createElement('div')
+          htmlCellElem.innerHTML = cellValue
+          cellValue = htmlCellElem.innerText.trim()
+          htmlCellElem = null
+        } else {
+          if (Array.isArray(cellValue)) {
+            cellValue = cellValue.join('，')
+          } else {
+            const cell = $xetable.getCell(row, column)
+            if (cell) {
+              cellValue = cell.innerText.trim()
+            }
+          }
+        }
+      }
+
+      return (cellValue ?? '').toString()
+    },
   },
 }

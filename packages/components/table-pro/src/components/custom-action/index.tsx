@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash-es'
 import Button from '@tav-ui/components/button'
 import { TaForm, useForm } from '@tav-ui/components/form'
 import { TaModal, useModal } from '@tav-ui/components/modal'
-import { isBoolean, isObject } from '@tav-ui/utils/is'
+import { isBoolean, isFunction, isObject } from '@tav-ui/utils/is'
 import { tavI18n } from '@tav-ui/locales'
 import {
   ACTION_COLUMNS,
@@ -54,6 +54,12 @@ export default defineComponent({
         value: 'all',
       },
     ]
+    const fileDataTypeOptions = computed(() => {
+      return (
+        (props.config?.export as any)?.fileDataTypeOptionsConfig?.(FileDataTypeOptions) ??
+        FileDataTypeOptions
+      )
+    })
 
     const ExportModalFormSchemas: FormSchema[] = [
       {
@@ -162,7 +168,7 @@ export default defineComponent({
     const backupColumns = ref<any[]>([])
     const prepareExport = ref<boolean>(false)
     const exportLoading = ref<boolean>(false)
-    const keyField = computed(() => unref(tablePropsRef).rowConfig.keyField)
+    const apiType = computed(() => unref(tablePropsRef).apiType)
     const hasTreeConfig = computed(() => {
       const treeConfig = unref(tablePropsRef).treeConfig
 
@@ -392,6 +398,27 @@ export default defineComponent({
             checkedDatas = checkboxCacheList.value
           } else {
             checkedDatas = props.tableRef?.value?.getCheckboxRecords() as any
+          }
+          checkedDatas = JSON.parse(JSON.stringify(checkedDatas))
+          if (
+            checkedDatas.length > 0 &&
+            (props.config?.export as any)?.afterApi &&
+            isFunction((props.config?.export as any)?.afterApi)
+          ) {
+            const result = await (props.config?.export as any)?.afterApi(
+              apiType.value === 'list'
+                ? {
+                    success: true,
+                    data: checkedDatas,
+                  }
+                : {
+                    success: true,
+                    data: { result: checkedDatas },
+                  }
+            )
+
+            checkedDatas =
+              (apiType.value === 'list' ? result?.data : result?.data?.result) || checkedDatas
           }
 
           try {
@@ -693,12 +720,15 @@ export default defineComponent({
         if (selectData && selectData?.length > 0) {
           _fileDataTypeDefaultValue = 'selected'
         }
+        if (fileDataTypeOptions.value.length === 1) {
+          _fileDataTypeDefaultValue = fileDataTypeOptions.value[0].value
+        }
 
         await exportModalFormUpdateSchema([
           {
             field: 'fileDataType',
             componentProps: {
-              options: FileDataTypeOptions,
+              options: fileDataTypeOptions.value,
             },
           },
           {

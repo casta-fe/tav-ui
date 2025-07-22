@@ -141,17 +141,17 @@ function handleExtendApi(
                   body:
                     apiType === 'list'
                       ? {
-                          ...(params.body?.filter ?? params.filter),
+                          ...(params.body?.filter ?? params.filter ?? {}),
                           ...{
-                            ...(params.body?.model ?? params.model),
+                            ...(params.body?.model ?? params.model ?? {}),
                             viewAll: true,
                             modeType: refParam?.options?.modeType,
                           },
                         }
                       : {
-                          filter: params.body?.filter ?? params.filter,
+                          filter: params.body?.filter ?? params.filter ?? {},
                           model: {
-                            ...(params.body?.model ?? params.model),
+                            ...(params.body?.model ?? params.model ?? {}),
                             viewAll: true,
                             modeType: refParam?.options?.modeType,
                           },
@@ -160,12 +160,38 @@ function handleExtendApi(
               : {}),
           }
         } else {
-          params.model!['viewAll'] = true
-          params.model!['modeType'] = refParam?.options?.modeType
+          if (apiType === 'list') {
+            params = {
+              ...params,
+              ...(params.model
+                ? {
+                    model: {
+                      ...params.model,
+                      viewAll: true,
+                      modeType: refParam?.options?.modeType,
+                    },
+                  }
+                : {
+                    viewAll: true,
+                    modeType: refParam?.options?.modeType,
+                  }),
+            }
+          } else {
+            params = {
+              filter: params.filter ?? {},
+              model: {
+                ...(params.model ?? {}),
+                viewAll: true,
+                modeType: refParam?.options?.modeType,
+              },
+            }
+          }
         }
-        const allParamsFilter: Record<string, any> = {}
 
-        if ((params.body?.model ?? params.model)!['modeType'] === 'all') {
+        const allParamsFilter: Record<string, any> = {}
+        const isModeTypeAll = (params.body?.model ?? params.model ?? params)!['modeType'] === 'all'
+
+        if (isModeTypeAll) {
           keepedApiParamKeys.length &&
             keepedApiParamKeys.forEach((key: string) => {
               const { v } = getPropByPath(params, key)
@@ -177,13 +203,24 @@ function handleExtendApi(
 
         let exportResult: Record<string, any> = {}
         const apiResult = await _api?.(
-          (params.body?.model ?? params.model)!['modeType'] === 'all'
+          isModeTypeAll
             ? params.body
               ? {
                   ...allParamsFilter,
-                  body: { filter: allParamsFilter.body?.filter ?? {}, model: params.body.model },
+                  body: {
+                    filter: allParamsFilter.body?.filter ?? {},
+                    model: params.body.model,
+                  },
                 }
-              : { filter: allParamsFilter.filter ?? {}, model: params.model ?? {} }
+              : params.filter || params.model
+              ? {
+                  filter: allParamsFilter.filter ?? {},
+                  model: params.model ?? {},
+                }
+              : {
+                  viewAll: true,
+                  modeType: refParam?.options?.modeType,
+                }
             : params
         )
         if (apiResult.data && apiResult.success) {
@@ -242,6 +279,7 @@ function handleExtendApi(
 
         let _api = api
 
+        // 跟 @hyb 商量后只对 permission api 做 list 参数兼容，对于普通 api 参数还是沿用之前分页的数据结构，这样做单纯是为了兼容，因为投管/其他项目里用的地方很多改起来太费劲
         if (permissionApi && permissionApiParams) {
           _api = permissionApi
           params = {
