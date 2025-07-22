@@ -174,7 +174,7 @@ export default defineComponent({
         options
           .map((option) => {
             if (option.children && option.children.length) {
-              return [...getCheckedList(option.children)]
+              return [option.key, ...getCheckedList(option.children)]
             } else {
               if (option.visible) {
                 return option.key
@@ -687,7 +687,7 @@ export default defineComponent({
     // }
 
     return () => {
-      return props.config?.column && unref(columnApiOptions) ? (
+      return props.config?.column ? (
         <Tooltip placement="bottomLeft" title={tavI18n('Tav.tablePro.setting.1')}>
           <Popover
             placement="bottomLeft"
