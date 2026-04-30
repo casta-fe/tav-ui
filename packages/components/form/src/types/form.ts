@@ -202,6 +202,12 @@ export interface FormSchema {
     | VNode[]
     | string
 
+  renderEditableContent?:
+    | ((renderCallbackParams: RenderCallbackParams) => any)
+    | VNode
+    | VNode[]
+    | string
+
   // Custom slot, in from-item
   slot?: string
   editSlot?: string

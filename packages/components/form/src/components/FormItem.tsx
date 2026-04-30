@@ -266,7 +266,7 @@ export default defineComponent({
                 result.push(option.label)
               return result
             }, [])
-            .filter((v) => v)
+            .filter((v: any) => v)
           editableItemValue.value = target && target.length > 0 ? target.join(',') : '-'
         } else {
           // date 回显 string
@@ -339,7 +339,7 @@ export default defineComponent({
       }
     }
 
-    function showEditableDom(componentMap, schema) {
+    function showEditableDom(componentMap: any, schema: any) {
       const hide = () => {
         if (componentMap.has(schema.component) && unref(isEditableItemClicked)) {
           isEditableItemClicked.value = false
@@ -758,8 +758,29 @@ export default defineComponent({
           </>
         )
 
+        const getRenderEditableContent = () => {
+          const { renderEditableContent } = props.schema
+
+          if (!renderEditableContent) {
+            return {}
+          }
+
+          if (isFunction(renderEditableContent)) {
+            return renderEditableContent(unref(getValues)) || {}
+          }
+
+          return {
+            default: () => renderEditableContent,
+          }
+        }
+
+        const resolveEditableAddon = (addon: any) => {
+          return isFunction(addon) ? addon(unref(getValues)) : addon
+        }
+
         const getEditableFormContent = () => {
-          // return <div>{editableItemValue.value}</div>;
+          const componentProps = unref(getComponentsProps)
+
           // 暂时不强制格式化到6位
           if (editSlot) {
             return getSlot(slots, editSlot, unref(getValues))
@@ -770,14 +791,26 @@ export default defineComponent({
             // 处理 inputNumber formatter
             realContent = inputFormatter(realContent)
           }
+
+          const editableContent = getRenderEditableContent()
+
+          const addonBefore =
+            resolveEditableAddon(editableContent?.addonBefore) ?? componentProps?.addonBefore
+          const addonAfter =
+            resolveEditableAddon(editableContent?.addonAfter) ?? componentProps?.addonAfter
+
+          if (editableContent?.default) {
+            const defaultContent = resolveEditableAddon(editableContent.default)
+            return <>{defaultContent}</>
+          }
           // 这里为了处理空数据时候展示符号很奇怪所以做个判断
           return (
             <>
               {realContent !== '-' ? (
                 <>
-                  {unref(getComponentsProps)?.addonBefore}
+                  {addonBefore}
                   {realContent}
-                  {unref(getComponentsProps)?.addonAfter}
+                  {addonAfter}
                 </>
               ) : (
                 realContent
