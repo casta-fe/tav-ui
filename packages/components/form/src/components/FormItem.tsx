@@ -572,9 +572,29 @@ export default defineComponent({
         undefined
       )
     }
+    function resolveRenderContent(content: any) {
+      if (!content) return null
+      return isFunction(content) ? content(unref(getValues)) : content
+    }
+
+    function wrapWithTopContent(node: any, topContent: any) {
+      const content = resolveRenderContent(topContent)
+
+      if (!content) return node
+
+      return (
+        <>
+          <div class="ta-form-item__top-content" style="font-size:12px;">
+            {content}
+          </div>
+          {node}
+        </>
+      )
+    }
     function renderComponent() {
       const {
         renderComponentContent,
+        renderComponentTopContent,
         component,
         label,
         field,
@@ -663,7 +683,7 @@ export default defineComponent({
         }
       }
       if (!renderComponentContent) {
-        return unref(hasEditable) ? (
+        const componentNode = unref(hasEditable) ? (
           <>
             {withDirectives(h(Comp, { ...compAttr }), [[AutoFocusDirective]])}
             {showNumberToChinese() && (
@@ -676,14 +696,14 @@ export default defineComponent({
           <>
             <Comp {...compAttr}></Comp>
             {showNumberToChinese() && (
-              // <transition name="fade-bottom" mode="out-in">
               <div class="number-to-chinese">
                 {numberToChinese(itemValue.value, unref(getComponentsProps)?.chineseMultip)}
               </div>
-              // </transition>
             )}
           </>
         )
+
+        return wrapWithTopContent(componentNode, renderComponentTopContent)
       }
 
       const compSlot = isFunction(renderComponentContent)
@@ -693,11 +713,13 @@ export default defineComponent({
           }
 
       // return <Comp {...compAttr}>{compSlot}</Comp>;
-      return unref(hasEditable) ? (
+      const componentNode = unref(hasEditable) ? (
         withDirectives(h(Comp, { ...compAttr }, compSlot), [[AutoFocusDirective]])
       ) : (
         <Comp {...compAttr}>{compSlot}</Comp>
       )
+
+      return wrapWithTopContent(componentNode, renderComponentTopContent)
       // ::==================== i7eo：更新 ///// end   ///// ====================:: //
     }
 
@@ -826,6 +848,8 @@ export default defineComponent({
           return className
         }
         const createEditableFormItem = () => {
+          const editableTopContent = resolveRenderContent(props.schema.renderEditableTopContent)
+
           return !unref(isEditableItemClicked) ? (
             <div
               class={getEditableFormItemClass()}
@@ -841,6 +865,11 @@ export default defineComponent({
                 }
               }}
             >
+              {editableTopContent && (
+                <div class="ta-form-item__top-content" style="font-size:12px">
+                  {editableTopContent}
+                </div>
+              )}
               {getEditableFormContent()}
               {!unref(getDisable) ? (
                 <EditOutlined class="ta-form-item--editable-icon" />

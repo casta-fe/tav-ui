@@ -202,7 +202,19 @@ export interface FormSchema {
     | VNode[]
     | string
 
+  renderComponentTopContent?:
+    | ((renderCallbackParams: RenderCallbackParams) => any)
+    | VNode
+    | VNode[]
+    | string
+
   renderEditableContent?:
+    | ((renderCallbackParams: RenderCallbackParams) => any)
+    | VNode
+    | VNode[]
+    | string
+
+  renderEditableTopContent?:
     | ((renderCallbackParams: RenderCallbackParams) => any)
     | VNode
     | VNode[]
